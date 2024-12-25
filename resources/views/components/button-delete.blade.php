@@ -1,0 +1,15 @@
+@props([
+'row' => '',
+'url' => '',
+])
+
+
+@if ($row)
+@can('delete', $row)
+<button type="button" {{ $attributes->merge(['class' => 'btn btn-danger btn-icon']) }}
+    onclick="deleteConfirmation('{{ $url }}')"><i class="bx bx-trash-alt"></i></button>
+@endcan
+@else
+<button type="button" {{ $attributes->merge(['class' => 'btn btn-danger btn-icon']) }}
+    onclick="deleteConfirmation('{{ $url }}')"><i class="fa fa-trash"></i></button>
+@endif

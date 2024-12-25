@@ -14,23 +14,119 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
+    <body>
+		<!-- Main Wrapper -->
+        <div class="main-wrapper">
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
+			<!-- Header -->
+            <div class="header">
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+				<!-- Logo -->
+                <div class="header-left">
+                    <a href="index.html" class="logo">
+						<img src="assets/img/logo.png" width="40" height="40" alt="">
+					</a>
+                </div>
+				<!-- /Logo -->
+
+				<a id="toggle_btn" href="javascript:void(0);">
+					<span class="bar-icon">
+						<span></span>
+						<span></span>
+						<span></span>
+					</span>
+				</a>
+
+				<!-- Header Title -->
+                <div class="page-title-box">
+					<h3>Dreamguy's Technologies</h3>
+                </div>
+				<!-- /Header Title -->
+
+				<a id="mobile_btn" class="mobile_btn" href="#sidebar"><i class="fa fa-bars"></i></a>
+
+				<!-- Header Menu -->
+				<ul class="nav user-menu">
+					<li class="nav-item dropdown has-arrow main-drop">
+						<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+							<span class="user-img"><img src="assets/img/profiles/avatar-21.jpg" alt="">
+							<span class="status online"></span></span>
+							<span>Admin</span>
+						</a>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="profile.html">My Profile</a>
+							<a class="dropdown-item" href="settings.html">Settings</a>
+							<a class="dropdown-item" href="login.html">Logout</a>
+						</div>
+					</li>
+				</ul>
+				<!-- /Header Menu -->
+
+				<!-- Mobile Menu -->
+				<div class="dropdown mobile-user-menu">
+					<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+					<div class="dropdown-menu dropdown-menu-right">
+						<a class="dropdown-item" href="profile.html">My Profile</a>
+						<a class="dropdown-item" href="settings.html">Settings</a>
+						<a class="dropdown-item" href="login.html">Logout</a>
+					</div>
+				</div>
+				<!-- /Mobile Menu -->
+
+            </div>
+			<!-- /Header -->
+
+			<!-- Sidebar -->
+            @include('layouts.nav')
+			<!-- /Sidebar -->
+
+			<!-- Page Wrapper -->
+            <div class="page-wrapper">
+
+				<!-- Page Content -->
+                <div class="content container-fluid">
+
+					<!-- Page Header -->
+					{{-- <div class="page-header">
+						<div class="row">
+							<div class="col-sm-12">
+								<h3 class="page-title">Blank Page</h3>
+								<ul class="breadcrumb">
+									<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+									<li class="breadcrumb-item active">Blank Page</li>
+								</ul>
+							</div>
+						</div>
+					</div> --}}
+					<!-- /Page Header -->
+
+					<!-- Content Starts -->
+						{{-- <div class="row"> --}}
+                            {{ $slot }}
+                        {{-- </div> --}}
+					<!-- /Content End -->
+                </div>
+				<!-- /Page Content -->
+
+            </div>
+			<!-- /Page Wrapper -->
+
         </div>
+		<!-- /Main Wrapper -->
+
+		<!-- jQuery -->
+        <script src="{{ asset('/assets/js/jquery-3.5.1.min.js') }}"></script>
+
+		<!-- Bootstrap Core JS -->
+        <script src="{{ asset('assets/js/popper.min.js') }}"></script>
+        <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+		<!-- Select2 JS -->
+		<script src="{{ asset('assets/js/select2.min.js') }}"></script>
+		<!-- Slimscroll JS -->
+		<script src="{{ asset('assets/js/jquery.slimscroll.min.js') }}"></script>
+
+		<!-- Custom JS -->
+		<script src="{{ asset('assets/js/app.js') }}"></script>
+
     </body>
 </html>

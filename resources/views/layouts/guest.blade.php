@@ -14,17 +14,38 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
-            </div>
+    <body class="account-page">
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
-            </div>
+		<!-- Main Wrapper -->
+        <div class="main-wrapper">
+			<div class="account-content">
+
+				<div class="container">
+
+					<!-- Account Logo -->
+					<div class="account-logo">
+						<a href="index.html"><img src="{{ asset('/assets/img/logo.png') }}" alt="Logo"></a>
+					</div>
+					<!-- /Account Logo -->
+
+					<div class="account-box">
+						<div class="account-wrapper">
+                            {{ $slot }}
+						</div>
+					</div>
+				</div>
+			</div>
         </div>
+		<!-- /Main Wrapper -->
+
+		<!-- jQuery -->
+        <script src="{{ asset('/assets/js/jquery-3.5.1.min.js') }}"></script>
+
+		<!-- Bootstrap Core JS -->
+        <script src="{{ asset('/assets/js/popper.min.js') }}"></script>
+        <script src="{{ asset('/assets/js/bootstrap.min.js') }}"></script>
+
+		<!-- Custom JS -->
+		<script src="{{ asset('/assets/js/app.js') }}"></script>
     </body>
 </html>

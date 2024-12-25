@@ -1,3 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "/public/assets/css/bootstrap.min.css";
+@import "/public/assets/css/font-awesome.min.css";
+@import "/public/assets/css/line-awesome.min.css";
+@import "/public/assets/css/select2.min.css";
+@import "/public/assets/css/dataTables.bootstrap4.min.css";
+@import "/public/assets/css/style.css";
