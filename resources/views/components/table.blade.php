@@ -2,12 +2,12 @@
 <div class="card">
     <div class="row m-2">
         <div class="col">
-            <h5 {{ $attributes->merge(['class' => 'card-header py-0']) }}>{{ $title }}</h5>
+            <h3>{{ $title }}</h3>
         </div>
         <div class="col-auto">
             @if ($addbtn)
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter">
-                <i class='me-1 bx bx-plus-circle'></i> Nouveau
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCenter">
+                <i class='me-1 fa fa-plus-circle'></i> New
             </button>
             @endif
             @if ($addcreate)

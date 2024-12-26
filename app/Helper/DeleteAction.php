@@ -33,18 +33,7 @@ trait DeleteAction
 
         return response()->json([
             'success' => true,
-            'message' => $delete ? class_basename($delete).' supprimer avec success ' : class_basename($delete).' non trouvé',
-        ]);
-    }
-
-    public function supp_auth(Model $delete): JsonResponse
-    {
-        $this->authorize('delete', $delete);
-        $delete->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => $delete ? class_basename($delete).' supprimer avec success ' : class_basename($delete).' non trouvé',
+            'message' => $delete ? class_basename($delete) . ' deleted with success ' : class_basename($delete) . ' not found',
         ]);
     }
 
@@ -88,48 +77,9 @@ trait DeleteAction
                     'folder_id' => $folder->id,
                     'chemin' => $chemin,
                 ]);
-
             }
         } catch (\Throwable $th) {
             new Exception('file uplode error');
         }
-    }
-
-    public function Restore(Model $delete): JsonResponse
-    {
-        $this->authorize('restore', $delete);
-        $delete->restore();
-
-        return response()->json([
-            'success' => true,
-            'message' => $delete ? class_basename($delete).' restaure avec success ' : class_basename($delete).' non trouvé',
-        ]);
-    }
-
-    public function Remove(Model $delete)
-    {
-        $this->authorize('forceDelete', $delete);
-        $delete->forceDelete();
-
-        return response()->json([
-            'success' => true,
-            'message' => $delete ? class_basename($delete).' definitivement supprimer avec success ' : class_basename($delete).' non trouvé',
-        ]);
-    }
-
-    public function All_restore(Builder $delete)
-    {
-        $delete->restore();
-        toastr()->success('Tous les elements ont été restaure avec success!');
-
-        return back();
-    }
-
-    public function All_remove(Builder $delete)
-    {
-        $delete->forceDelete();
-        toastr()->success('Tous les elements ont été definitivement supprimé avec success!');
-
-        return back();
     }
 }

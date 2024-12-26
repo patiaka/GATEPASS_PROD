@@ -5,7 +5,7 @@ $classes = Route::currentRouteName() == $url ? 'active' : '';
 
 <li>
     <a href="{{ route($url) }}" {{ $attributes->merge(['class' => $classes]) }}>
-        <i class="la la-dashboard"></i>
+
         {{ $slot }}
         <span>{{ $name }}</span>
     </a>

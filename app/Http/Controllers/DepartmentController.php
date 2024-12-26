@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Helper\DeleteAction;
 use App\Models\Department;
 use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
 {
+    use DeleteAction;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $rows = Department::all();
+        return \view('department.index', \compact('rows'));
     }
 
     /**
@@ -28,7 +31,11 @@ class DepartmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate(['name' => 'required|string|max:50']);
+        Department::create(['name' => $request->name]);
+        flash('Department created with success!');
+
+        return back();
     }
 
     /**
@@ -44,7 +51,7 @@ class DepartmentController extends Controller
      */
     public function edit(Department $department)
     {
-        //
+        return view('department.update', compact('department'));
     }
 
     /**
@@ -52,14 +59,19 @@ class DepartmentController extends Controller
      */
     public function update(Request $request, Department $department)
     {
-        //
+        $department->update($request->validate(['name' => 'required|string|max:50']));
+        flash('Department updated with success!');
+
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Department $department)
+    public function destroy(int $department)
     {
-        //
+        $delete = Department::findOrFail($department);
+
+        return $this->supp($delete);
     }
 }
