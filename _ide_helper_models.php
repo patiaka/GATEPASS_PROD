@@ -39,24 +39,54 @@ namespace App\Models{
  * 
  *
  * @property int $id
- * @property string $reference
- * @property int $user_id
- * @property int $hod_approval
- * @property int $gm_approval
- * @property string $document
- * @property \App\Enum\MaterialRequestStatus $status
+ * @property int $material_request_id
+ * @property string $chemin
  * @property string $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read string $delai_format
+ * @property-read \App\Models\User $material_request
+ * @method static \Database\Factories\DocumentFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereChemin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereMaterialRequestId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereUpdatedAt($value)
+ */
+	class Document extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
+ * @property string|null $reference
+ * @property int $user_id
+ * @property int|null $gm_approval_id
+ * @property int|null $hod_approval_id
+ * @property \App\Enum\MaterialRequestStatus $status
+ * @property string|null $comment
+ * @property string $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Document> $documents
+ * @property-read int|null $documents_count
+ * @property-read string $delai_format
+ * @property-read \App\Models\User|null $gm_approval
+ * @property-read \App\Models\User|null $hod_approval
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MaterialRequestItem> $material_request_items
+ * @property-read int|null $material_request_items_count
  * @property-read \App\Models\User $user
  * @method static \Database\Factories\MaterialRequestFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereComment($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereDocument($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereGmApproval($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereHodApproval($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereGmApprovalId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereHodApprovalId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereReference($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereStatus($value)
@@ -64,6 +94,32 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereUserId($value)
  */
 	class MaterialRequest extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
+ * @property int $material_request_id
+ * @property string $designation
+ * @property int $quantity
+ * @property string $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read string $delai_format
+ * @property-read \App\Models\MaterialRequest $material_request
+ * @method static \Database\Factories\MaterialRequestItemFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereDesignation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereMaterialRequestId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereUpdatedAt($value)
+ */
+	class MaterialRequestItem extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -81,6 +137,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Department $department
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MaterialRequest> $gm_approvals
+ * @property-read int|null $gm_approvals_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MaterialRequest> $hod_approvals
+ * @property-read int|null $hod_approvals_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MaterialRequest> $material_requests
  * @property-read int|null $material_requests_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications

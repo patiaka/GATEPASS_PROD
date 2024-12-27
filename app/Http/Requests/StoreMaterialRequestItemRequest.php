@@ -2,17 +2,16 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreMaterialRequestRequest extends FormRequest
+class StoreMaterialRequestItemRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -25,12 +24,5 @@ class StoreMaterialRequestRequest extends FormRequest
         return [
             //
         ];
-    }
-
-    protected function prepareForValidation()
-    {
-        $this->merge([
-            'user_id' => Auth::user()->id,
-        ]);
     }
 }

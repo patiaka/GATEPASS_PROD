@@ -11,7 +11,7 @@
                 <x-nav-link url='user.index' name="User">
                     <i class="la la-user"></i>
                 </x-nav-link>
-                <x-nav-link url='material-request.index' name="Material Request">
+                <x-nav-link url='material.index' name="Material Request">
                     <i class="la la-file-alt"></i>
                 </x-nav-link>
             </ul>

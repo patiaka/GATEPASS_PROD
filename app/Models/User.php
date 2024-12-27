@@ -72,4 +72,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(MaterialRequest::class);
     }
+
+    /**
+     * Get all of the hod_approvals for the User
+     */
+    public function hod_approvals(): HasMany
+    {
+        return $this->hasMany(MaterialRequest::class, 'hod_approval_id');
+    }
+
+    /**
+     * Get all of the gm_approvals for the User
+     */
+    public function gm_approvals(): HasMany
+    {
+        return $this->hasMany(MaterialRequest::class, 'gm_approval_id');
+    }
 }

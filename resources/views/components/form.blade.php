@@ -25,7 +25,7 @@
         </a>
         @else
         <button type="button" {{ $attributes->merge(['class'=>'btn btn-outline-danger']) }}
-            data-bs-dismiss="modal">
+            data-dismiss="modal">
             Close
         </button>
         @endif

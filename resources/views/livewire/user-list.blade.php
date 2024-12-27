@@ -15,7 +15,7 @@
                 </x-select-group>
             </div>
             <div class="col-sm-6 col-md-3">
-                <x-select-group label="Role" wire:model.live='role'>
+                <x-select-group label="Role">
                     @foreach (App\Enum\RoleEnum::cases() as $row)
                     <option value="{{ $row }}">{{ $row }}</option>
                     @endforeach
@@ -25,6 +25,7 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Department</th>
                 <th>Email/nom</th>
                 <th>role</th>
                 {{-- <th>change MDP</th> --}}
@@ -36,6 +37,7 @@
             @forelse ($this->rows as $row)
             <tr wire:key='{{ $row->id }}'>
                 <td>{{ $row->id }}</td>
+                <td>{{ $row->department->name }}</td>
                 <td>{{ $row->email }}<br>{{ $row->name }}</td>
                 <td>{{ $row->role }}</td>
                 {{-- <td>{{ $row->change_password ? 'OUI':'NON' }}</td> --}}

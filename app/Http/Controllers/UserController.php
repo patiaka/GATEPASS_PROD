@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\Department;
 use App\Helper\DeleteAction;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use App\Models\User;
 
 class UserController extends Controller
 {
@@ -35,7 +36,8 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('user.update', compact('user'));
+        $department = Department::all();
+        return view('user.update', compact('user', 'department'));
     }
 
     /**

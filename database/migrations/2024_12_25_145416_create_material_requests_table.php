@@ -16,14 +16,18 @@ return new class extends Migration
     {
         Schema::create('material_requests', function (Blueprint $table) {
             $table->id();
-            $table->string('reference')->unique();
+            $table->string('reference')->nullable()->unique();
             $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('hod_approval')->constrained('users');
-            $table->foreignId('gm_approval')->constrained('users');
-            // $table->string('description');
-            // $table->integer('quantity');
-            $table->string('document');
+            $table->foreignId('gm_approval_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->text('gm_comment')->nullable();
+            $table->timestamp('gm_approval_date')->nullable();
+
+            $table->foreignId('hod_approval_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->text('hod_comment')->nullable();
+            $table->timestamp('hod_approval_date')->nullable();
+
             $table->enum('status', array_map(fn($role) => $role->value, MaterialRequestStatus::cases()))->default(MaterialRequestStatus::Pending);
+            $table->string('comment')->nullable();
             $table->timestamps();
         });
     }

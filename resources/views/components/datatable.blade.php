@@ -1,6 +1,6 @@
 @props(['title','addbtn' => true])
 
-<div class="card">
+<div class="card p-2">
     <div class="card-datatable table-responsive">
         <div class="row m-2">
             <div class="col">
@@ -9,7 +9,7 @@
             <div class="col-auto">
                 @if ($addbtn)
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCenter">
-                    <i class='bx bx-plus-circle'></i> Nouveau
+                    <i class='fa fa-plus-circle'></i> New
                 </button>
                 @endif
             </div>

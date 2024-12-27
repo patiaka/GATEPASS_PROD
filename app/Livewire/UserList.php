@@ -22,11 +22,12 @@ class UserList extends Component
     #[Computed]
     public function rows()
     {
-        return User::when($this->search, function ($query) {
+        return User::with('department:id,name')->when($this->search, function ($query) {
             $query->whereAny(['name', 'email'], 'like', '%' . $this->search . '%');
         })->when($this->department, function ($query) {
             $query->where('department_id', $this->department);
         })->when($this->role, function ($query) {
+            dd('kksk');
             $query->where('role', $this->role);
         })->latest('id')->paginate(10);
     }

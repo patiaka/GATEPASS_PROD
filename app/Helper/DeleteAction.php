@@ -9,6 +9,7 @@ use App\Models\Devoir;
 use App\Models\Document;
 use App\Models\Folder;
 use App\Models\Journal;
+use App\Models\MaterialRequest;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -47,34 +48,16 @@ trait DeleteAction
         return $fileDeleted;
     }
 
-    public function file_uplode($request, Model $model): void
+    public function file_uplode($request, MaterialRequest $model): void
     {
         try {
-            $type = '';
-            $path = '';
-            if ($model instanceof Devoir) {
-                $type = 'Devoir';
-                $path = 'Devoir';
-            } elseif ($model instanceof Cours) {
-                $type = 'Cours';
-                $path = 'cours';
-            }
-            $folder = new Folder([
-                'nom' => $model->reference,
-                'type' => $type,
-                'user_id' => Auth::user()->id,
-            ]);
-
-            $model->folder()->save($folder);
-
             foreach ($request->file('files') as $key => $file) {
                 $filename = $file->hashName();
-                $chemin = $file->storeAs($path, $filename, 'public');
+                $chemin = $file->storeAs('material/document', $filename, 'public');
                 Document::create([
                     'libelle' => $file->getClientOriginalName(),
-                    'extension' => $file->extension(),
                     'user_id' => Auth::user()->id,
-                    'folder_id' => $folder->id,
+                    'material_request_id' => $model->id,
                     'chemin' => $chemin,
                 ]);
             }
