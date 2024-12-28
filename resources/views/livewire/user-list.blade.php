@@ -7,12 +7,18 @@
                 <x-input-group type="text" wire:model.live="search" label="Search" />
             </div>
             <div class="col-sm-6 col-md-3">
-                <x-select-group label="Department" wire:model.live='department'>
+                <x-select-group label="Department">
                     @foreach ($departments as $row)
                     <option value="{{ $row->id }}">{{ $row->name }}</option>
                     @endforeach
-
                 </x-select-group>
+                <div>
+                    <select wire:ignore class="select" wire:model.live='department'>
+                        <option value="">All</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </div>
             </div>
             <div class="col-sm-6 col-md-3">
                 <x-select-group label="Role">

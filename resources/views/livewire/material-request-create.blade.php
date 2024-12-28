@@ -51,7 +51,7 @@
                     @error('photos.*')
                     <small class="text-danger">{{ $message }}</small>
                     @enderror
-                    <x-textarea id="description" wire:model="comment" label="Comment" :required="false" />
+
                 </div>
                 <div class="modal-footer mt-2 justify-content-center">
 

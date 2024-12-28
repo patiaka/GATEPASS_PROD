@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
             $table->foreignId('material_request_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->string('libelle');
             $table->string('chemin');
             $table->timestamps();
         });

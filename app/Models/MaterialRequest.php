@@ -14,7 +14,32 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class MaterialRequest extends Model
 {
     /** @use HasFactory<\Database\Factories\MaterialRequestFactory> */
-    use DateFormat;
+    use HasFactory;
+
+    protected function getCreatedAtAttribute(string $date): string
+    {
+        return Carbon::parse($date)->format('d/m/Y H:i');
+    }
+
+    public function getGmApprovalDateFormatAttribute(): string
+    {
+        return Carbon::parse($this->gm_approval_date)->format('d/m/Y H:i');
+    }
+
+    public function getHodApprovalDateFormatAttribute(): string
+    {
+        return Carbon::parse($this->hod_approval_date)->format('d/m/Y H:i');
+    }
+
+    public function gm_approval_view(): string
+    {
+        return $this->gmApproval ? $this->user->name : 'no exist';
+    }
+
+    public function hod_approval_view(): string
+    {
+        return $this->hodApproval ? $this->user->name : 'no exist';
+    }
 
 
     /**
@@ -25,7 +50,6 @@ class MaterialRequest extends Model
     protected $fillable = [
         'user_id',
         'status',
-        'comment',
         'gm_approval_id',
         'gm_comment',
         'gm_approval_date',

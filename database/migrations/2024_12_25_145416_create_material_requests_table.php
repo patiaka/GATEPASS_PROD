@@ -27,7 +27,6 @@ return new class extends Migration
             $table->timestamp('hod_approval_date')->nullable();
 
             $table->enum('status', array_map(fn($role) => $role->value, MaterialRequestStatus::cases()))->default(MaterialRequestStatus::Pending);
-            $table->string('comment')->nullable();
             $table->timestamps();
         });
     }

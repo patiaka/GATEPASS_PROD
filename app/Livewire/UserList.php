@@ -19,12 +19,18 @@ class UserList extends Component
         $this->resetPage();
     }
 
+    public function updateSelect($model, $value)
+    {
+        dd($model, $value);
+    }
+
     #[Computed]
     public function rows()
     {
         return User::with('department:id,name')->when($this->search, function ($query) {
             $query->whereAny(['name', 'email'], 'like', '%' . $this->search . '%');
         })->when($this->department, function ($query) {
+            dd('kk');
             $query->where('department_id', $this->department);
         })->when($this->role, function ($query) {
             dd('kksk');

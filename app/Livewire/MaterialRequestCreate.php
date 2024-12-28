@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\DB;
 class MaterialRequestCreate extends Component
 {
     use DeleteAction, WithFileUploads;
-    public string $comment = '';
     public array $materials = []; // Tableau pour stocker les matériels
     public $photos = []; // Tableau pour stocker les fichiers
 
@@ -36,7 +35,6 @@ class MaterialRequestCreate extends Component
     public function save()
     {
         $this->validate([
-            'comment' => 'nullable|string',
             'materials' => 'required|array|min:1',
             'materials.*.designation' => 'required|string|min:3',
             'materials.*.quantity' => 'required|integer|min:1',
@@ -46,7 +44,6 @@ class MaterialRequestCreate extends Component
         DB::transaction(function () {
             $materialRequest = MaterialRequest::create([
                 'user_id' => 1,
-                'comment' => $this->comment,
             ]);
 
             $this->file_uplode($this->photos, $materialRequest);

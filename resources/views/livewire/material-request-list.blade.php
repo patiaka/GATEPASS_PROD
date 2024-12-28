@@ -41,10 +41,11 @@
                         @endforeach
                     </x-select-group>
 
-                    <button class="btn btn-primary btn-sm" wire:click="applyAction" {{ count($selectedRows)===0
-                        ? 'disabled' : '' }}>
-                        Appliquer
+                    <button class="btn btn-danger" wire:click="bulkDelete" @if(empty($selectedRows)) disabled @endif>
+                        Delete Selected
                     </button>
+
+
                 </div>
             </div>
 
@@ -52,56 +53,166 @@
         <thead>
             <tr>
                 <th>
-                    <input type="checkbox" wire:model="selectAll">
+                    <input type="checkbox" wire:click="selectAll" wire:model="selectedRows" id="select-all">
                 </th>
                 <th>ID</th>
                 <th>Reference</th>
-                <th>Email/nom</th>
+                <th>Email/Name</th>
                 <th>GM Approval</th>
-                <th>HOD approval</th>
-                <th>Statuts</th>
-                <th>Date creation</th>
+                <th>HOD Approval</th>
+                <th>Status</th>
+                <th>Created Date</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody class="table-border-bottom-0">
             @forelse ($this->rows as $row)
-
-            <tr wire:key='{{ $row->id }}'>
+            <tr wire:key="row-{{ $row->id }}" @class(['table-primary'=> in_array($row->id, $selectedRows)
+                ])>
                 <td>
-                    <input type="checkbox" wire:model="selectedRows" value="{{ $row->id }}">
+                    <input type="checkbox" wire:model.live="selectedRows" value="{{ $row->id }}">
                 </td>
                 <td>{{ $row->id }}</td>
                 <td>{{ $row->reference }}</td>
-                <td>{{ $row->user->email }}<br>{{ $row->user->name }}</td>
+                <td>{{ $row->user->name }}</td>
                 <td>{{ $row->gm_approval_view() }}</td>
                 <td>{{ $row->hod_approval_view() }}</td>
                 <td>
-
                     <div class="dropdown action-label">
                         <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-toggle="dropdown"
                             aria-expanded="false">
-                            <i class="fa fa-dot-circle-o text-success"></i> {{ $row->status }}
+                            <i @class([ 'fa fa-dot-circle-o' , 'text-success'=> $row->isApproved(),
+                                'text-danger' => $row->isRejected(),
+                                'text-info' => $row->isPending(),
+                                ]) aria-hidden="true"></i>
+                            {{ $row->status }}
                         </a>
-                        <div class="dropdown-menu" style="">
-
-                            <a class="dropdown-item" href="#"><i class="fa fa-dot-circle-o text-success"></i> Active</a>
-                            <a class="dropdown-item" href="#"><i class="fa fa-dot-circle-o text-danger"></i>
-                                Inactive</a>
-                        </div>
                     </div>
                 </td>
                 <td>{{ $row->created_at }}</td>
                 <td>
+                    <button wire:click="show_detail({{ $row->id }})" class="btn btn-success">
+                        <i class="fa fa-check-circle"></i>
+                    </button>
                     <x-button-edit href="{{ route('material.edit', ['material' => $row]) }}" />
                     <x-button-show href="{{ route('material.show', ['material' => $row]) }}" />
-                    <x-button-delete url="{{ url('material/'.$row->id) }}" />
+                    <x-button-delete url="{{ url('material/' . $row->id) }}" />
                 </td>
             </tr>
             @empty
-            <h2 class="text-center">No result</h2>
+            <tr>
+                <td colspan="9" class="text-center">No result</td>
+            </tr>
             @endforelse
         </tbody>
+
     </x-table>
 
+    <div wire:ignore.self>
+        <div id="modalCenter" class="modal custom-modal fade" role="dialog" data-backdrop="static">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Material request infos</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        @if ($material)
+                        <section class="review-section">
+                            <div class="review-header text-center">
+
+                                <h4 class="review-subtitle text-md-left">
+                                    <span class="review-subtitle-text">Reference: {{ $material->reference }}</span> <br>
+                                    <span class="review-subtitle-text">Status: {{ $material->status }}</span> <br>
+                                    <span class="review-subtitle-text">User Created: {{ $material->user->name }}</span>
+                                    <br>
+                                    <span class="review-subtitle-text">User Department: {{
+                                        $material->user->department->name }}</span>
+                                    <br>
+                                    <span class="review-subtitle-text">Created Date: {{ $material->created_at }}</span>
+                                </h4>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <div class="mt-3">
+                                        <h4 class="review-subtitle text-md-left mt-2">HOD Validation infos</h4>
+                                        @if(!$material->isHodApproved())
+                                        <form wire:submit.prevent="approveByHod({{ $material->id }})">
+                                            <x-textarea wire:model="hod_comment" :required="false"
+                                                label="Head of Department (HOD) comments"
+                                                place="add a comment (optionnel)" />
+                                            <button type="submit" class="btn btn-success mt-2">
+                                                Validate as HOD
+                                            </button>
+                                        </form>
+                                        @else
+                                        <p>HOD a validé le {{ $material->hod_approval_date_format }}</p>
+                                        <p>Comment : {{ $material->hod_comment }}</p>
+                                        @endif
+                                        <h4 class="review-subtitle text-md-left">GM Validation infos</h4>
+                                        @if(!$material->isGmApproved())
+                                        <form wire:submit.prevent="approveByGm({{ $material->id }})">
+                                            <x-textarea wire:model="gm_comment" label="General Manager (GM) comments"
+                                                place="Add a comment (optionnel)" :required="false" />
+                                            <button type="submit" class="btn btn-success mt-2">
+                                                Validate as HOD
+                                            </button>
+                                        </form>
+                                        @else
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered review-table mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>GM User</th>
+                                                        <th>Department</th>
+                                                        <th>Approv date</th>
+                                                        <th>Comment</th>
+                                                        <th>Signature</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                    <tr>
+                                                        <td>{{ $material->user->email }}<br>{{ $material->user->name }}
+                                                        </td>
+                                                        <td>{{ $material->user->department->name }}</td>
+                                                        <td>{{ $material->gm_approval_date_format }}</td>
+                                                        <td>
+                                                            <p class="text-wrap">{{ $material->gm_comment }}</p>
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        @endif
+
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <div class="modal-footer mt-2 justify-content-center">
+                            <button type="button" class="btn btn-outline-danger" data-dismiss="modal">
+                                Close
+                            </button>
+                        </div>
+                        @else
+                        <p>Loading...</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<script>
+    document.addEventListener('show-modal', function () {
+        $('#modalCenter').modal('show');
+    });
+</script>

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Helper\DateFormat;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -13,6 +14,13 @@ class Document extends Model
     use DateFormat;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['material_request_id', 'chemin'];
+
+    /**
      * Get the material_request that owns the Document
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -20,5 +28,10 @@ class Document extends Model
     public function material_request(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function DocLink(): string
+    {
+        return Storage::url($this->chemin);
     }
 }

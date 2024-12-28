@@ -55,8 +55,6 @@ trait DeleteAction
                 $filename = $file->hashName();
                 $chemin = $file->storeAs('material/document', $filename, 'public');
                 Document::create([
-                    'libelle' => $file->getClientOriginalName(),
-                    'user_id' => Auth::user()->id,
                     'material_request_id' => $model->id,
                     'chemin' => $chemin,
                 ]);
