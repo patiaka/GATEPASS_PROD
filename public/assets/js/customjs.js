@@ -31,13 +31,13 @@ $(function () {
 
 function deleteConfirmation(url) {
     swal.fire({
-        title: "Supprimer?",
+        title: "Delete?",
         icon: "question",
-        text: "Etes vous sur de vouloir supprimer cet element!",
+        text: "Are you sure you want to delete this element?",
         type: "warning",
         showCancelButton: true,
-        confirmButtonText: "Oui, Supprimer!",
-        cancelButtonText: "Non, Annuler!",
+        confirmButtonText: "Yes, Delete!",
+        cancelButtonText: "No, Cancel!",
         reverseButtons: true,
     }).then(
         function (e) {

@@ -2,50 +2,48 @@
     <x-table title="List of material request" :addbtn="false">
         <x-slot:addcreate>
             <a href="{{ route('material.create') }}" role="button" class="btn btn-primary">
-                <i class='me-1 fa fa-plus-circle'></i> Nouveau
+                <i class='me-1 bx bx-plus-circle'></i> New
             </a>
         </x-slot:addcreate>
         <x-slot:filter>
 
             <div class="col-sm-6 col-md-3">
-                <x-input-group type="text" wire:model.live="search" label="Search" />
+                <x-input type="text" wire:model.live="search" label="Search" />
             </div>
             <div class="col-sm-6 col-md-3">
-                <x-select-group label="Department" wire:model.live='department'>
+                <x-select label="Department" wire:model.live='department'>
                     @foreach ($departments as $row)
                     <option value="{{ $row->id }}">{{ $row->name }}</option>
                     @endforeach
-                </x-select-group>
+                </x-select>
             </div>
             <div class="col-sm-6 col-md-3">
-                <x-select-group label="User" wire:model.live='user'>
+                <x-select label="User" wire:model.live='user'>
                     @foreach ($users as $row)
-                    <option value="{{ $row->id }}">{{ $row->name }} <br>{{ $row->email }}</option>
+                    <option value="{{ $row->id }}">{{ $row->name }}</option>
                     @endforeach
-                </x-select-group>
+                </x-select>
             </div>
             <div class="col-sm-6 col-md-3">
-                <x-select-group label="Status" wire:model.live='status'>
+                <x-select label="Status" wire:model.live='status'>
                     @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
                     <option value="{{ $row }}">{{ $row }}</option>
                     @endforeach
-                </x-select-group>
+                </x-select>
             </div>
             <div class="col-md-5">
                 <hr>
                 <h3>apply Action</h3>
                 <div class="mb-3">
-                    <x-select-group label="Status" wire:model='bulkAction'>
+                    <x-select label="Status" wire:model='bulkAction'>
                         @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
                         <option value="{{ $row }}">{{ $row }}</option>
                         @endforeach
-                    </x-select-group>
+                    </x-select>
 
                     <button class="btn btn-danger" wire:click="bulkDelete" @if(empty($selectedRows)) disabled @endif>
                         Delete Selected
                     </button>
-
-
                 </div>
             </div>
 
@@ -79,20 +77,19 @@
                 <td>{{ $row->hod_approval_view() }}</td>
                 <td>
                     <div class="dropdown action-label">
-                        <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-toggle="dropdown"
-                            aria-expanded="false">
-                            <i @class([ 'fa fa-dot-circle-o' , 'text-success'=> $row->isApproved(),
+                        <span class="btn badge rounded-pill bg-success btn-sm">
+                            <i @class([ 'bx bx-dot-circle-o' , 'text-success'=> $row->isApproved(),
                                 'text-danger' => $row->isRejected(),
                                 'text-info' => $row->isPending(),
-                                ]) aria-hidden="true"></i>
+                                ]) ></i>
                             {{ $row->status }}
-                        </a>
+                        </span>
                     </div>
                 </td>
                 <td>{{ $row->created_at }}</td>
                 <td>
                     <button wire:click="show_detail({{ $row->id }})" class="btn btn-success">
-                        <i class="fa fa-check-circle"></i>
+                        <i class="bx bx-check-circle"></i>
                     </button>
                     <x-button-edit href="{{ route('material.edit', ['material' => $row]) }}" />
                     <x-button-show href="{{ route('material.show', ['material' => $row]) }}" />
@@ -109,20 +106,18 @@
     </x-table>
 
     <div wire:ignore.self>
-        <div id="modalCenter" class="modal custom-modal fade" role="dialog" data-backdrop="static">
+        <div id="modalCenter" class="modal custom-modal fade" role="dialog" data-bs-backdrop="static">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Material request infos</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
 
                         @if ($material)
                         <section class="review-section">
-                            <div class="review-header text-center">
+                            <div class="review-header text-star">
 
                                 <h4 class="review-subtitle text-md-left">
                                     <span class="review-subtitle-text">Reference: {{ $material->reference }}</span> <br>
@@ -215,4 +210,23 @@
     document.addEventListener('show-modal', function () {
         $('#modalCenter').modal('show');
     });
+    $(".select2").each(function () {
+            var current = $(this);
+            current.wrap('<div class="position-relative"></div>').select2({
+                placeholder: "Selectionner",
+                dropdownParent: current.parent(),
+            });
+            // Get the Livewire property name from the wire:model attribute
+            var propertyName = current.attr('wire:model.live');
+            // Listen for change event and update Livewire property
+            current.on('change', function (e) {
+            // Add opacity to table
+            $('.table-responsive').addClass('opacity-50');
+
+            @this.set(propertyName, $(this).val()).then(() => {
+                // Remove opacity after Livewire updates
+                $('.table-responsive').removeClass('opacity-50');
+            });
+            });
+        });
 </script>

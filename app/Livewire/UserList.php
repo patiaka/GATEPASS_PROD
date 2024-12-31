@@ -19,27 +19,20 @@ class UserList extends Component
         $this->resetPage();
     }
 
-    public function updateSelect($model, $value)
-    {
-        dd($model, $value);
-    }
-
     #[Computed]
     public function rows()
     {
         return User::with('department:id,name')->when($this->search, function ($query) {
             $query->whereAny(['name', 'email'], 'like', '%' . $this->search . '%');
         })->when($this->department, function ($query) {
-            dd('kk');
             $query->where('department_id', $this->department);
         })->when($this->role, function ($query) {
-            dd('kksk');
             $query->where('role', $this->role);
         })->latest('id')->paginate(10);
     }
     public function render()
     {
-        $departments = Department::all();
+        $departments = Department::select('name', 'id')->get();
         return view('livewire.user-list', compact('departments'));
     }
 }

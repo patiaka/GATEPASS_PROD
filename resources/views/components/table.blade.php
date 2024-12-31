@@ -5,11 +5,9 @@
             <h5 {{ $attributes->merge(['class' => 'card-header py-0']) }}>{{ $title }}</h5>
         </div>
         <div class="col-auto">
-
-
             @if ($addbtn)
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter">
-                <i class='me-1 bx bx-plus-circle'></i> Nouveau
+                <i class='me-1 bx bx-plus-circle'></i> New
             </button>
             @endif
             @if ($addcreate)
@@ -25,8 +23,8 @@
         <div class="col-md-4">
             <div class="input-group input-group-merge">
                 <span class="input-group-text" id="basic-addon-search31"><i class="bx bx-search"></i></span>
-                <input wire:model.live.debounce.100ms='search' type="text" class="form-control"
-                    placeholder="Recherche..." aria-label="Recherche..." aria-describedby="basic-addon-search31">
+                <input wire:model.live.debounce.100ms='search' type="text" class="form-control" placeholder="Search..."
+                    aria-label="Search..." aria-describedby="basic-addon-search31">
             </div>
         </div>
 

@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\DB;
 class MaterialRequestUpdate extends Component
 {
     use DeleteAction, WithFileUploads;
-    public string $comment = '';
     public array $materials = []; // Tableau pour stocker les matériels
     public $photos = []; // Tableau pour stocker les fichiers
     public $material;
@@ -20,7 +19,6 @@ class MaterialRequestUpdate extends Component
     {
         $material->loadMissing('material_request_items');
         $this->material = $material;
-        $this->comment = $material->comment;
         $material->material_request_items->pluck('quantity', 'designation')->each(function ($quantity, $designation) {
             $this->materials[] = ['designation' => $designation, 'quantity' => $quantity];
         });
@@ -40,14 +38,12 @@ class MaterialRequestUpdate extends Component
     public function save()
     {
         $this->validate([
-            'comment' => 'nullable|string',
             'materials' => 'required|array|min:1',
             'materials.*.designation' => 'required|string|min:3',
             'materials.*.quantity' => 'required|integer|min:1',
             'photos.*' => 'nullable|image',
         ]);
         DB::transaction(function () {
-            $this->material->update(['comment' => $this->comment]);
 
             if ($this->photos) {
                 $this->file_uplode($this->photos, $this->material);
@@ -56,10 +52,10 @@ class MaterialRequestUpdate extends Component
             $this->updateMaterialRequestItems();
             flash('Material request updated successfully');
         });
-        return redirect()->route('material.index');
+        return to_route('material.index');
     }
 
-    private function updateMaterialRequestItems()
+    private function updateMaterialRequestItems(): void
     {
         // Get the existing items as an associative array
         $existingItems = $this->material->material_request_items->keyBy('id');

@@ -5,7 +5,7 @@
     {{ $slot }}
 </select>
 <div {{ $attributes->merge(['class' => 'valid-feedback']) }} ></div>
-<div {{ $attributes->merge(['class' => 'invalid-feedback']) }}>Ce champ est obligatoire.</div>
+<div {{ $attributes->merge(['class' => 'invalid-feedback']) }}>This field is required.</div>
 <ul {{ $attributes->merge(['class' => 'text-sm text-danger space-y-1']) }}>
     @error($name)
     <li>{{ $message }}</li>

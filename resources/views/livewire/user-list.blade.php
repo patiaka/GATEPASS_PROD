@@ -2,30 +2,19 @@
     <x-table title="List of users">
 
         <x-slot:filter>
-
             <div class="col-sm-6 col-md-3">
-                <x-input-group type="text" wire:model.live="search" label="Search" />
-            </div>
-            <div class="col-sm-6 col-md-3">
-                <x-select-group label="Department">
+                <x-select label="Department">
                     @foreach ($departments as $row)
                     <option value="{{ $row->id }}">{{ $row->name }}</option>
                     @endforeach
-                </x-select-group>
-                <div>
-                    <select wire:ignore class="select" wire:model.live='department'>
-                        <option value="">All</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                    </select>
-                </div>
+                </x-select>
             </div>
             <div class="col-sm-6 col-md-3">
-                <x-select-group label="Role">
+                <x-select label="Role">
                     @foreach (App\Enum\RoleEnum::cases() as $row)
                     <option value="{{ $row }}">{{ $row }}</option>
                     @endforeach
-                </x-select-group>
+                </x-select>
             </div>
         </x-slot:filter>
         <thead>
@@ -34,7 +23,7 @@
                 <th>Department</th>
                 <th>Email/nom</th>
                 <th>role</th>
-                {{-- <th>change MDP</th> --}}
+                <th>change MDP</th>
                 <th>Date creation</th>
                 <th>Action</th>
             </tr>
@@ -46,7 +35,7 @@
                 <td>{{ $row->department->name }}</td>
                 <td>{{ $row->email }}<br>{{ $row->name }}</td>
                 <td>{{ $row->role }}</td>
-                {{-- <td>{{ $row->change_password ? 'OUI':'NON' }}</td> --}}
+                <td>{{ $row->change_password ? 'OUI':'NON' }}</td>
 
                 <td>{{ $row->created_at }}</td>
                 <td>
@@ -79,3 +68,24 @@
         </x-form>
     </x-modal>
 </div>
+<script>
+    $(".select2").each(function () {
+            var current = $(this);
+            current.wrap('<div class="position-relative"></div>').select2({
+                placeholder: "Selectionner",
+                dropdownParent: current.parent(),
+            });
+            // Get the Livewire property name from the wire:model attribute
+            var propertyName = current.attr('wire:model.live');
+            // Listen for change event and update Livewire property
+            current.on('change', function (e) {
+            // Add opacity to table
+            $('.table-responsive').addClass('opacity-50');
+
+            @this.set(propertyName, $(this).val()).then(() => {
+                // Remove opacity after Livewire updates
+                $('.table-responsive').removeClass('opacity-50');
+            });
+            });
+        });
+</script>

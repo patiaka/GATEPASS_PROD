@@ -8,7 +8,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'University') }}</title>
+    <title>{{ config('app.name', 'GatePass') }}</title>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="{{ asset('assets/vendor/libs/select2/select2.js') }}"></script>
     <!-- CSS pour DataTables -->
@@ -80,7 +80,7 @@
                                     <li>
                                         <a class="dropdown-item" href="{{ route('user.show',Auth::user()) }}">
                                             <i class="bx bx-user me-2"></i>
-                                            <span class="align-middle">Mon Profil</span>
+                                            <span class="align-middle">Profil</span>
                                         </a>
                                     </li>
                                     <li>

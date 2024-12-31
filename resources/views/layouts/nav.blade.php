@@ -46,7 +46,7 @@
                     </g>
                 </svg>
             </span>
-            <span class="app-brand-text demo menu-text fw-bold ms-2">University</span>
+            <span class="app-brand-text demo menu-text fw-bold ms-2">GatePass</span>
         </a>
 
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
@@ -57,7 +57,7 @@
     <div class="menu-inner-shadow"></div>
     <ul class="menu-inner py-1">
         <!-- Dashboard -->
-        <x-nav-link url='dashboard' name="Tableau de bord">
+        <x-nav-link url='dashboard' name="Dashboard">
             <i class="menu-icon tf-icons bx bx-home"></i>
         </x-nav-link>
         <x-nav-link url='department.index' name="Department">

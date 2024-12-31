@@ -6,17 +6,18 @@ use App\Models\User;
 use Livewire\Component;
 use App\Models\Department;
 use Livewire\Attributes\On;
+use App\Helper\ApproveAction;
 use App\Models\MaterialRequest;
-use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Computed;
+use Illuminate\Database\Eloquent\Model;
 
 class MaterialRequestList extends Component
 {
+    use ApproveAction;
     public string $search = "";
     public string $status = "";
+    public string $user = "";
     public string $department = "";
-    public string $hod_comment = "";
-    public string $gm_comment = "";
     public $material;
 
     public array $selectedRows = [];
@@ -63,34 +64,12 @@ class MaterialRequestList extends Component
         $this->dispatch('show-modal');
     }
 
-    public function approveByGm(int $id): void
-    {
-        $request =  MaterialRequest::find($id);
-        $request->update([
-            'gm_comment' => $this->gm_comment,
-            'gm_approval_date' => now(),
-            'gm_approval_id' => 1
-        ]);
-        flash('Material request approv successfully');
-    }
 
-    public function approveByHod(int $id): void
-    {
-        $request =  MaterialRequest::find($id);
-        $request->update([
-            'hod_comment' => $this->hod_comment,
-            'hod_approval_date' => now(),
-            'hod_approval_id' => 1
-        ]);
-
-        flash('Material request approved successfully');
-    }
 
 
     public function ResetFilter(): void
     {
-        $this->reset('department', 'status', 'search');
-        $this->resetPage();
+        $this->reset('department', 'status', 'search', 'user');
     }
 
     #[Computed]
@@ -98,6 +77,8 @@ class MaterialRequestList extends Component
     {
         return MaterialRequest::with('user', 'user.department', 'hodApproval', 'gmApproval')->when($this->search, function ($query) {
             $query->whereAny(['name', 'email'], 'like', '%' . $this->search . '%');
+        })->when($this->user, function ($query) {
+            $query->where('user_id', $this->user);
         })->when($this->department, function ($query) {
             $query->where('department_id', $this->department);
         })->when($this->status, function ($query) {

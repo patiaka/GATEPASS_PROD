@@ -12,6 +12,7 @@
                         <div class="row mb-2">
                             <!-- Désignation -->
                             <div class="col-md-6">
+
                                 <input type="text" wire:model="materials.{{ $index }}.designation"
                                     placeholder="Designation" class="form-control">
                                 @error("materials.$index.designation")
@@ -21,6 +22,7 @@
 
                             <!-- Quantité -->
                             <div class="col-md-4">
+
                                 <input type="number" wire:model="materials.{{ $index }}.quantity" placeholder="Quantity"
                                     class="form-control" min="1">
                                 @error("materials.$index.quantity")
@@ -32,7 +34,7 @@
                             <div class="col-md-2">
                                 <button type="button" wire:click="removeMaterial({{ $index }})"
                                     class="btn btn-danger w-100">
-                                    <i class="fa fa-trash-o"></i>
+                                    <i class="bx bx-trash"></i>
                                     Delete
                                 </button>
                             </div>
@@ -43,7 +45,7 @@
                     <!-- Bouton ajouter un matériel -->
                     <div class="mb-4">
                         <button type="button" wire:click="addMaterial" class="btn btn-success">
-                            <i class="fa fa-plus-circle"></i>
+                            <i class="bx bx-plus"></i>
                             Add field
                         </button>
                     </div>
@@ -51,7 +53,7 @@
                     @error('photos.*')
                     <small class="text-danger">{{ $message }}</small>
                     @enderror
-                    <x-textarea id="description" wire:model="comment" label="Comment" :required="false" />
+
                 </div>
                 <div class="modal-footer mt-2 justify-content-center">
 
