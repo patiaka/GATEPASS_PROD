@@ -6,5 +6,5 @@
 @endcan
 @else
 <a aria-label="Button" {{ $attributes->merge(['class' => 'btn btn-success btn-icon']) }}>
-    <i class="fa fa-eye"></i></a>
+    <i class="bx bx-show"></i></a>
 @endif

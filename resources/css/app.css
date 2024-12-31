@@ -1,6 +1,30 @@
-@import "/public/assets/css/bootstrap.min.css";
-@import "/public/assets/css/font-awesome.min.css";
-@import "/public/assets/css/line-awesome.min.css";
-@import "/public/assets/css/select2.min.css";
-@import "/public/assets/css/dataTables.bootstrap4.min.css";
-@import "/public/assets/css/style.css";
+@import "/node_modules/boxicons/css/boxicons.css";
+/* @import "/public/assets/vendor/fonts/fontawesome.css"; */
+@import "/public/assets/vendor/css/core.css";
+@import "/public/assets/vendor/css/theme-default.css";
+@import "/public/assets/css/demo.css";
+@import "/node_modules/perfect-scrollbar/css/perfect-scrollbar.css";
+@import "/public/assets/vendor/libs/@form-validation/umd/styles/index.min.css";
+@import "/public/assets/vendor/libs/bootstrap-maxlength/bootstrap-maxlength.css";
+@import "/public/assets/vendor/libs/select2/select2.css";
+@import "/public/assets/vendor/libs/typeahead-js/typeahead.css";
+@import "/public/assets/vendor/libs/fullcalendar/fullcalendar.css";
+@import "/public/assets/vendor/css/pages/app-calendar.css";
+@import "/public/assets/vendor/css/pages/app-academy.css";
+@import "/public/assets/vendor/css/pages/app-academy-details.css";
+/* @import "/public/assets/vendor/css/pages/app-chat.css"; */
+/* @import "/public/assets/vendor/css/pages/app-email.css"; */
+@import "/public/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css";
+@import "/public/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css";
+@import "/public/assets/vendor/css/pages/page-profile.css";
+@import "/public/assets/vendor/css/pages/page-auth.css";
+@import "/public/assets/vendor/libs/flatpickr/flatpickr.css";
+@import "/public/assets/vendor/libs/apex-charts/apex-charts.css";
+.light-style .select2-container--default .select2-results__group {
+    color: #696cff;
+}
+
+.opacity-50 {
+    opacity: 0.5;
+    transition: opacity 0.3s ease-in-out;
+}

@@ -1,7 +1,7 @@
 @props(['value'=>'', 'label'=>'','place'=>'', 'required'=> true, 'name'=>''])
 
-<div class="form-group">
-    <label for="{{ $name }}" {{ $attributes->merge(['class' => 'text-uppercase']) }}>
+<div class="mb-3">
+    <label for="{{ $name }}" {{ $attributes->merge(['class' => 'form-label text-uppercase']) }}>
         @empty($label)
         {{ $name }}
         @else

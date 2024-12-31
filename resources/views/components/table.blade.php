@@ -1,13 +1,15 @@
-@props(['title','addbtn' => true,'filter' => '','addcreate' => '', 'rows' => ''])
+@props(['title','addbtn' => true, 'filter' => '','addcreate' => '', 'rows' => ''])
 <div class="card">
     <div class="row m-2">
         <div class="col">
-            <h3>{{ $title }}</h3>
+            <h5 {{ $attributes->merge(['class' => 'card-header py-0']) }}>{{ $title }}</h5>
         </div>
         <div class="col-auto">
+
+
             @if ($addbtn)
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCenter">
-                <i class='me-1 fa fa-plus-circle'></i> New
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter">
+                <i class='me-1 bx bx-plus-circle'></i> Nouveau
             </button>
             @endif
             @if ($addcreate)
@@ -15,10 +17,18 @@
             @endif
         </div>
     </div>
-    <div class="row mx-2 filter-row">
+    <div class="row mx-2">
         {{ $filter }}
     </div>
     <div class="row mx-2 my-3">
+
+        <div class="col-md-4">
+            <div class="input-group input-group-merge">
+                <span class="input-group-text" id="basic-addon-search31"><i class="bx bx-search"></i></span>
+                <input wire:model.live.debounce.100ms='search' type="text" class="form-control"
+                    placeholder="Recherche..." aria-label="Recherche..." aria-describedby="basic-addon-search31">
+            </div>
+        </div>
 
         <div class="col">
             <button wire:click='ResetFilter' {{ $attributes->merge(['class' => 'btn btn-danger']) }}

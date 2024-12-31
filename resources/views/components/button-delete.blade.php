@@ -11,5 +11,5 @@
 @endcan
 @else
 <button type="button" {{ $attributes->merge(['class' => 'btn btn-danger btn-icon']) }}
-    onclick="deleteConfirmation('{{ $url }}')"><i class="fa fa-trash"></i></button>
+    onclick="deleteConfirmation('{{ $url }}')"><i class="bx bx-trash-alt"></i></button>
 @endif

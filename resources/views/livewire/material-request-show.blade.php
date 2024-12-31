@@ -56,7 +56,7 @@
                         <x-textarea wire:model="hod_comment" :required="false" label="Head of Department (HOD) comments"
                             place="add a comment (optionnel)" />
                         <button type="submit" class="btn btn-success mt-2">
-                            Validate as GM
+                            Validate as HOD
                         </button>
                     </form>
                     @else
@@ -68,16 +68,18 @@
                                     <th>GM User</th>
                                     <th>Department</th>
                                     <th>Approv date</th>
+                                    <th>Status</th>
                                     <th>Comment</th>
                                     <th>Signature</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>{{ $material->user->email }}<br>{{ $material->user->name }}
+                                    <td>{{ $material->user->name }}
                                     </td>
                                     <td>{{ $material->user->department->name }}</td>
                                     <td>{{ $material->gm_approval_date_format }}</td>
+                                    <td>{{ $material->status }}</td>
                                     <td>
                                         <p class="text-wrap">{{ $material->gm_comment }}</p>
                                     </td>
@@ -105,16 +107,18 @@
                                     <th>GM User</th>
                                     <th>Department</th>
                                     <th>Approv date</th>
+                                    <th>status</th>
                                     <th>Comment</th>
                                     <th>Signature</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>{{ $material->user->email }}<br>{{ $material->user->name }}
+                                    <td>{{ $material->user->name }}
                                     </td>
                                     <td>{{ $material->user->department->name }}</td>
                                     <td>{{ $material->gm_approval_date_format }}</td>
+                                    <td>{{ $material->status }}</td>
                                     <td>
                                         <p class="text-wrap">{{ $material->gm_comment }}</p>
                                     </td>

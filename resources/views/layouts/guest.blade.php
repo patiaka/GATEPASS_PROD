@@ -1,51 +1,73 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+<html lang="en" class="light-style layout-wide customizer-hide" dir="ltr" data-theme="theme-default"
+    data-assets-path="../../assets/" data-template="vertical-menu-template">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="account-page">
+    <title>Connexion</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico" />
 
-		<!-- Main Wrapper -->
-        <div class="main-wrapper">
-			<div class="account-content">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-				<div class="container">
+    <!-- Page CSS -->
+    @vite(['resources/css/app.css'])
+    <!-- Page -->
 
-					<!-- Account Logo -->
-					<div class="account-logo">
-						<a href="index.html"><img src="{{ asset('/assets/img/logo.png') }}" alt="Logo"></a>
-					</div>
-					<!-- /Account Logo -->
+    <!-- Helpers -->
+    <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
 
-					<div class="account-box">
-						<div class="account-wrapper">
-                            {{ $slot }}
-						</div>
-					</div>
-				</div>
-			</div>
+    <script src="{{ asset('assets/js/config.js') }}"></script>
+</head>
+
+<body>
+    <!-- Content -->
+
+    <div class="container-xxl">
+        <div class="authentication-wrapper authentication-basic container-p-y">
+            <div class="authentication-inner py-4">
+                <!-- Register -->
+                <div class="card">
+                    <div class="card-body">
+                        {{ $slot }}
+                    </div>
+                </div>
+                <!-- /Register -->
+            </div>
         </div>
-		<!-- /Main Wrapper -->
+    </div>
 
-		<!-- jQuery -->
-        <script src="{{ asset('/assets/js/jquery-3.5.1.min.js') }}"></script>
+    <!-- / Content -->
 
-		<!-- Bootstrap Core JS -->
-        <script src="{{ asset('/assets/js/popper.min.js') }}"></script>
-        <script src="{{ asset('/assets/js/bootstrap.min.js') }}"></script>
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
+    </script>
+    <script src="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}">
+    </script>
+    <script src="{{ asset('assets/vendor/js/menu.js') }}"></script>
 
-		<!-- Custom JS -->
-		<script src="{{ asset('/assets/js/app.js') }}"></script>
-    </body>
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+    <script src="{{ asset('assets/vendor/libs/@form-validation/umd/bundle/popular.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/libs/@form-validation/umd/plugin-bootstrap5/index.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/libs/@form-validation/umd/plugin-auto-focus/index.min.js') }}"></script>
+
+    <!-- Main JS -->
+    <script src="{{ asset('assets/js/main.js') }}"></script>
+
+    <!-- Page JS -->
+    <script src="{{ asset('assets/js/pages-auth.js') }}"></script>
+</body>
+
 </html>

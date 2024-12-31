@@ -1,12 +1,11 @@
 @props(['url'=>'','name' => ''])
 @php
-$classes = Route::currentRouteName() == $url ? 'active' : '';
+$classes = Route::currentRouteName() == $url ? 'menu-item active' : 'menu-item';
 @endphp
 
-<li>
-    <a href="{{ route($url) }}" {{ $attributes->merge(['class' => $classes]) }}>
-
+<li {{ $attributes->merge(['class' => $classes]) }}>
+    <a href="{{ route($url) }}" {{ $attributes->merge(['class' => "menu-link"]) }}>
         {{ $slot }}
-        <span>{{ $name }}</span>
+        <div data-i18n="Analytics">{{ $name }}</div>
     </a>
 </li>

@@ -8,6 +8,8 @@ use App\Models\MaterialRequest;
 class MaterialRequestShow extends Component
 {
     public $material;
+    public string $hod_comment = "";
+    public string $gm_comment = "";
     public function mount(MaterialRequest $material)
     {
         $this->material = $material;
