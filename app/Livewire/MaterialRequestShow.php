@@ -15,7 +15,7 @@ class MaterialRequestShow extends Component
     {
         $this->material = $material;
 
-        $this->material->loadMissing('user:id,name,email,department_id', 'user.department:id,name', 'gmApproval', 'hodApproval');
+        $this->material->loadMissing('user:id,name,email,department_id', 'user.department:id,name', 'gmApproval.department:id,name', 'hodApproval.department::id,name');
     }
 
 

@@ -19,7 +19,6 @@ namespace App\Models{
  * @property string $name
  * @property string $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read string $delai_format
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
  * @method static \Database\Factories\DepartmentFactory factory($count = null, $state = [])
@@ -40,11 +39,9 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $material_request_id
- * @property string $libelle
  * @property string $chemin
  * @property string $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read string $delai_format
  * @property-read \App\Models\User $material_request
  * @method static \Database\Factories\DocumentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Document newModelQuery()
@@ -53,7 +50,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereChemin($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereLibelle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereMaterialRequestId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereUpdatedAt($value)
  */
@@ -74,7 +70,6 @@ namespace App\Models{
  * @property string|null $hod_comment
  * @property string|null $hod_approval_date
  * @property \App\Enum\MaterialRequestStatus $status
- * @property string|null $comment
  * @property string $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Document> $documents
@@ -90,7 +85,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereComment($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereGmApprovalDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereGmApprovalId($value)
@@ -117,7 +111,6 @@ namespace App\Models{
  * @property int $quantity
  * @property string $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read string $delai_format
  * @property-read \App\Models\MaterialRequest $material_request
  * @method static \Database\Factories\MaterialRequestItemFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem newModelQuery()
@@ -143,6 +136,7 @@ namespace App\Models{
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property \App\Enum\RoleEnum $role
+ * @property int $change_password
  * @property string $password
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -160,6 +154,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereChangePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDepartmentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)

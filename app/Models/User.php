@@ -54,6 +54,26 @@ class User extends Authenticatable
         ];
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->role === RoleEnum::ADMIN;
+    }
+
+    public function isUser(): bool
+    {
+        return $this->role === RoleEnum::USER;
+    }
+
+    public function isHod(): bool
+    {
+        return $this->role === RoleEnum::HOD;
+    }
+
+    public function isGm(): bool
+    {
+        return $this->role === RoleEnum::GM;
+    }
+
     /**
      * Get the department that owns the User
      *

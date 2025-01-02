@@ -55,9 +55,9 @@
                 </th>
                 <th>ID</th>
                 <th>Reference</th>
-                <th>Email/Name</th>
-                <th>GM Approval</th>
+                <th>Name</th>
                 <th>HOD Approval</th>
+                <th>GM Approval</th>
                 <th>Status</th>
                 <th>Created Date</th>
                 <th>Action</th>
@@ -73,14 +73,15 @@
                 <td>{{ $row->id }}</td>
                 <td>{{ $row->reference }}</td>
                 <td>{{ $row->user->name }}</td>
-                <td>{{ $row->gm_approval_view() }}</td>
                 <td>{{ $row->hod_approval_view() }}</td>
+                <td>{{ $row->gm_approval_view() }}</td>
                 <td>
                     <div class="dropdown action-label">
                         <span class="btn badge rounded-pill bg-success btn-sm">
                             <i @class([ 'bx bx-dot-circle-o' , 'text-success'=> $row->isApproved(),
                                 'text-danger' => $row->isRejected(),
                                 'text-info' => $row->isPending(),
+                                'text-warning' => $row->isProgress(),
                                 ]) ></i>
                             {{ $row->status }}
                         </span>
@@ -88,7 +89,7 @@
                 </td>
                 <td>{{ $row->created_at }}</td>
                 <td>
-                    <button wire:click="show_detail({{ $row->id }})" class="btn btn-success">
+                    <button wire:click="show_detail({{ $row->id }})" class="btn rounded-pill btn-icon btn-primary">
                         <i class="bx bx-check-circle"></i>
                     </button>
                     <x-button-edit href="{{ route('material.edit', ['material' => $row]) }}" />
@@ -141,21 +142,62 @@
                                             <x-textarea wire:model="hod_comment" :required="false"
                                                 label="Head of Department (HOD) comments"
                                                 place="add a comment (optionnel)" />
+                                            @error('hod_comment')
+                                            <small class="text-danger">{{ $message }}</small>
+                                            @enderror
                                             <button type="submit" class="btn btn-success mt-2">
-                                                Validate as HOD
+                                                Validate
+                                            </button>
+                                            <button type="button" class="btn btn-danger mt-2"
+                                                wire:click="rejectByHod({{ $material->id }})">
+                                                Reject
                                             </button>
                                         </form>
+
                                         @else
-                                        <p>HOD a validé le {{ $material->hod_approval_date_format }}</p>
-                                        <p>Comment : {{ $material->hod_comment }}</p>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered review-table mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>HOD User</th>
+                                                        <th>Department</th>
+                                                        <th>Approv date</th>
+                                                        <th>Comment</th>
+                                                        <th>Signature</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                    <tr>
+                                                        <td>{{ $material->hod_approval_view() }}</td>
+                                                        <td>{{ $material->hodApproval ?
+                                                            $material->hodApproval->department->name : ''
+                                                            }}
+                                                        </td>
+                                                        <td>{{ $material->hodApproval ?
+                                                            $material->hod_approval_date_format : '' }}
+                                                        </td>
+                                                        <td>
+                                                            <p class="text-wrap">{{ $material->hod_comment }}</p>
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+
+                                                </tbody>
+                                            </table>
+                                        </div>
                                         @endif
                                         <h4 class="review-subtitle text-md-left">GM Validation infos</h4>
-                                        @if(!$material->isGmApproved())
+                                        @if(!$material->isGmApproved() and Auth::user()->isGm())
                                         <form wire:submit.prevent="approveByGm({{ $material->id }})">
                                             <x-textarea wire:model="gm_comment" label="General Manager (GM) comments"
                                                 place="Add a comment (optionnel)" :required="false" />
                                             <button type="submit" class="btn btn-success mt-2">
-                                                Validate as HOD
+                                                Validate as GM
+                                            </button>
+                                            <button class="btn btn-danger mt-2"
+                                                wire:click="rejectByGm({{ $material->id }})">
+                                                Reject
                                             </button>
                                         </form>
                                         @else
@@ -173,10 +215,14 @@
                                                 <tbody>
 
                                                     <tr>
-                                                        <td>{{ $material->user->email }}<br>{{ $material->user->name }}
+                                                        <td>{{ $material->gm_approval_view() }}</td>
+                                                        <td>{{ $material->gmApproval ?
+                                                            $material->gmApproval->department->name : ''
+                                                            }}
                                                         </td>
-                                                        <td>{{ $material->user->department->name }}</td>
-                                                        <td>{{ $material->gm_approval_date_format }}</td>
+                                                        <td>{{ $material->gmApproval ?
+                                                            $material->gm_approval_date_format : '' }}
+                                                        </td>
                                                         <td>
                                                             <p class="text-wrap">{{ $material->gm_comment }}</p>
                                                         </td>
@@ -193,7 +239,7 @@
                             </div>
                         </section>
                         <div class="modal-footer mt-2 justify-content-center">
-                            <button type="button" class="btn btn-outline-danger" data-dismiss="modal">
+                            <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">
                                 Close
                             </button>
                         </div>

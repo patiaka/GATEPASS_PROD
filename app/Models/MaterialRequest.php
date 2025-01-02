@@ -31,15 +31,7 @@ class MaterialRequest extends Model
         return Carbon::parse($this->hod_approval_date)->format('d/m/Y H:i');
     }
 
-    public function gm_approval_view(): string
-    {
-        return $this->gmApproval ? $this->user->name : 'no exist';
-    }
 
-    public function hod_approval_view(): string
-    {
-        return $this->hodApproval ? $this->user->name : 'no exist';
-    }
 
 
     /**
@@ -48,6 +40,7 @@ class MaterialRequest extends Model
      * @var array
      */
     protected $fillable = [
+        'reference',
         'user_id',
         'status',
         'gm_approval_id',
@@ -84,6 +77,33 @@ class MaterialRequest extends Model
         return $this->status === MaterialRequestStatus::Pending;
     }
 
+    public function isProgress(): bool
+    {
+        return $this->status === MaterialRequestStatus::Progress;
+    }
+
+    public function gm_approval_view(): string
+    {
+        return $this->gmApproval ? $this->gmApproval->name : 'no exist';
+    }
+
+    public function hod_approval_view(): string
+    {
+        return $this->hodApproval ? $this->hodApproval->name : 'no exist';
+    }
+
+    // Vérifier si GM a validé
+    public function isGmApproved()
+    {
+        return !is_null($this->gm_approval_date);
+    }
+
+    // Vérifier si HOD a validé
+    public function isHodApproved()
+    {
+        return !is_null($this->hod_approval_date);
+    }
+
     /**
      * Get the user that owns the MaterialRequest
      *
@@ -114,17 +134,6 @@ class MaterialRequest extends Model
         return $this->belongsTo(User::class, 'gm_approval_id');
     }
 
-    // Vérifier si GM a validé
-    public function isGmApproved()
-    {
-        return !is_null($this->gm_approval_date);
-    }
-
-    // Vérifier si HOD a validé
-    public function isHodApproved()
-    {
-        return !is_null($this->hod_approval_date);
-    }
 
     /**
      * Get all of the documents for the MaterialRequest
