@@ -7,7 +7,7 @@ namespace App\Enum;
 enum MaterialRequestStatus: string
 {
     case Pending = 'Pending';
-    case Progress = 'Progressing';
+    case Progress = 'Progress';
     case Approved = 'Approved';
     case Rejected = 'Rejected';
 }

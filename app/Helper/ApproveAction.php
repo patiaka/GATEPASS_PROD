@@ -4,80 +4,51 @@ declare(strict_types=1);
 
 namespace App\Helper;
 
-use App\Enum\MaterialRequestStatus;
-use App\Models\MaterialRequest;
 use Auth;
-use Illuminate\Http\RedirectResponse;
+use App\Models\MaterialRequest;
+use Illuminate\Validation\Rule;
+use App\Enum\MaterialRequestStatus;
 
 trait ApproveAction
 {
 
     public string $hod_comment = "";
     public string $gm_comment = "";
-    public function approveByGm(int $id)
+    public string $status = "";
+
+    public function approveByHod(int $id)
     {
-        $request =  MaterialRequest::findOrFail($id);
-        $request->update([
-            'gm_comment' => $this->gm_comment,
-            'gm_approval_date' => now(),
-            'gm_approval_id' => Auth::user()->id,
-            'status' => MaterialRequestStatus::Approved
+        $this->validate([
+            'hod_comment' => 'required|string|min:3',
+            'status' => ['required', Rule::in(['Approved', 'Rejected'])],
         ]);
-        flash('Material request approved successfully');
-        return to_route('material.index');
-    }
 
-
-    public function approveByHod(int $id): RedirectResponse
-    {
         $request =  MaterialRequest::findOrFail($id);
         $request->update([
-            'hod_comment' => $this->hod_comment,
             'hod_approval_date' => now(),
+            'hod_comment' => $this->hod_comment,
             'hod_approval_id' => Auth::user()->id,
-            'status' => MaterialRequestStatus::Progress
+            'status' => $this->status === 'Approved' ?  MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value
         ]);
 
         flash('Material request approved successfully');
         return to_route('material.index');
     }
 
-    public function rejectByHod(int $id)
-    {
-
-        if ($this->hod_comment == "") {
-            flash('Please add a comment', 'error');
-            $this->dispatch('show-modal');
-            return \back();
-        }
-        // $this->validate([
-        //     'hod_comment' => 'required|string|min:3',
-        // ]);
-
-        // $request =  MaterialRequest::findOrFail($id);
-        // $request->update([
-        //     'hod_comment' => $this->hod_comment,
-        //     'hod_approval_date' => now(),
-        //     'hod_approval_id' => Auth::user()->id,
-        //     'status' => MaterialRequestStatus::Rejected
-        // ]);
-        // flash('Material request reject successfully');
-        return to_route('material.index');
-    }
-
-    public function rejectByGm(int $id): RedirectResponse
+    public function approveByGm(int $id)
     {
         $this->validate([
             'gm_comment' => 'required|string|min:3',
+            'status' => ['required', Rule::in(['Approved', 'Rejected'])],
         ]);
         $request =  MaterialRequest::findOrFail($id);
         $request->update([
             'gm_comment' => $this->gm_comment,
             'gm_approval_date' => now(),
             'gm_approval_id' => Auth::user()->id,
-            'status' => MaterialRequestStatus::Rejected
+            'status' => $this->status
         ]);
-        flash('Material request reject successfully');
+        flash('Material request approved successfully');
         return to_route('material.index');
     }
 }

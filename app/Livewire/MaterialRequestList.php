@@ -19,7 +19,6 @@ class MaterialRequestList extends Component
     use ApproveAction;
     public string $search = "";
     public string $status = "";
-    public string $user = "";
     public string $department = "";
     public $material;
 
@@ -69,10 +68,9 @@ class MaterialRequestList extends Component
 
 
 
-
     public function ResetFilter(): void
     {
-        $this->reset('department', 'status', 'search', 'user');
+        $this->reset('department', 'status', 'search');
     }
 
     #[Computed]
@@ -95,8 +93,6 @@ class MaterialRequestList extends Component
                 $query->where('user_id', $auth->id);
             })->when($this->search, function ($query) {
                 $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
-            })->when($this->user, function ($query) {
-                $query->where('user_id', $this->user);
             })->when($this->department, function ($query) {
                 $query->where('department_id', $this->department);
             })->when($this->status, function ($query) {
@@ -108,11 +104,6 @@ class MaterialRequestList extends Component
     {
         $auth = Auth::user();
         $departments = !$auth->isAdmin() ? Department::all() : [];
-        $users = User::when($auth->isHod(), function ($query) use ($auth) {
-            $query->whereIn('department_id', $auth->department_id);
-        })->when($auth->isUser(), function ($query) {
-            $query = [];
-        });
-        return view('livewire.material-request-list', \compact('departments', 'users'));
+        return view('livewire.material-request-list', \compact('departments'));
     }
 }

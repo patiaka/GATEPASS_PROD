@@ -1,21 +1,20 @@
 <div>
     <div class="card p-3">
         <section class="review-section">
-            <div class="review-header text-center">
-                <h3 class="review-title">Material request infos</h3>
+            <div class="review-header text-star">
+                <h3 class="review-title">Material request</h3>
                 <h4 class="review-subtitle text-md-left">
                     <span class="review-subtitle-text">Reference: {{ $material->reference }}</span> <br>
                     <span class="review-subtitle-text">Status: {{ $material->status }}</span> <br>
-                    <span class="review-subtitle-text">User Created: {{ $material->user->email }}</span>
-                    <br>
-                    <span class="review-subtitle-text">User Department: {{
+                    <span class="review-subtitle-text">Department: {{
                         $material->user->department->name }}</span>
                     <br>
+                    <span class="review-subtitle-text">Requestor: {{ $material->user->name }}</span>
+                    <br>
+
                     <span class="review-subtitle-text">Created Date: {{ $material->created_at }}</span>
                 </h4>
-
             </div>
-
 
             <div class="row">
                 <div class="col-md-12">
@@ -51,23 +50,27 @@
 
                     </div>
                     <div class="mt-3">
-                        <h4 class="review-subtitle text-md-left">HOD Validation infos</h4>
+                        <h4 class="review-subtitle text-md-left">HOD Approval</h4>
                         @if(!$material->isHodApproved())
                         <form wire:submit.prevent="approveByHod({{ $material->id }})">
-                            <x-textarea wire:model="hod_comment" :required="false"
-                                label="Head of Department (HOD) comments" place="add a comment (optionnel)" />
+                            <x-select label="Status" wire:model.live='status'>
+                                @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
+                                @continue($row->value === "Progress" || $row->value === "Pending")
+                                <option value="{{ $row }}">{{ $row }}</option>
+                                @endforeach
+                            </x-select>
+                            @error('status')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                            <x-textarea wire:model="hod_comment" label="Head of Department (HOD) comments"
+                                place="add a comment (optionnel)" />
                             <div>
-
                                 @error('hod_comment')
                                 <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
                             <button type="submit" class="btn btn-success mt-2">
-                                Validate as HOD
-                            </button>
-                            <button type="button" class="btn btn-danger mt-2"
-                                wire:click="rejectByHod({{ $material->id }})">
-                                Reject
+                                Approve as HOD
                             </button>
                         </form>
                         @else
@@ -103,13 +106,19 @@
                         </div>
 
                         @endif
-                        <h4 class="review-subtitle text-md-left my-3">GM Validation infos</h4>
-                        @if(!$material->isGmApproved() and Auth::user()->isGm())
+                        <h4 class="review-subtitle text-md-left my-3">GM Approval</h4>
+                        @if(!$material->isGmApproved())
                         <form wire:submit.prevent="approveByGm({{ $material->id }})">
+                            <x-select label="Status" wire:model.live='status'>
+                                @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
+                                @continue($row->value === "Progress" || $row->value === "Pending")
+                                <option value="{{ $row }}">{{ $row }}</option>
+                                @endforeach
+                            </x-select>
                             <x-textarea wire:model="gm_comment" label="General Manager (GM) comments"
-                                place="Add a comment (optionnel)" :required="false" />
+                                place="Add a comment" />
                             <button type="submit" class="btn btn-success mt-2">
-                                Validate as GM
+                                Approve as GM
                             </button>
                         </form>
                         @else
@@ -149,3 +158,25 @@
         </section>
     </div>
 </div>
+<script>
+    $(".select2").each(function () {
+            var current = $(this);
+            current.wrap('<div class="position-relative"></div>').select2({
+                placeholder: "Selectionner",
+                dropdownParent: current.parent(),
+            });
+            // Get the Livewire property name from the wire:model attribute
+            var propertyName = current.attr('wire:model.live');
+            // Listen for change event and update Livewire property
+            current.on('change', function (e) {
+            // Add opacity to table
+            $('.table-responsive').addClass('opacity-50');
+
+            @this.set(propertyName, $(this).val()).then(() => {
+                // Remove opacity after Livewire updates
+                $('.table-responsive').removeClass('opacity-50');
+            });
+            });
+        });
+</script>
+</script>
