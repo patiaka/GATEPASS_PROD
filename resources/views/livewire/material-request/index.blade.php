@@ -9,10 +9,12 @@
             @if(!empty($selectedRows))
             <div class="col-md-4">
                 <div class="mb-3">
-                    <button class="btn btn-danger" wire:click="bulkDelete" @if(empty($selectedRows)) disabled @endif>
+                    <button class="btn btn-danger" wire:click="bulkAction('reject')" @if(empty($selectedRows)) disabled
+                        @endif>
                         Reject
                     </button>
-                    <button class="btn btn-success" wire:click="bulkDelete" @if(empty($selectedRows)) disabled @endif>
+                    <button class="btn btn-success" wire:click="bulkAction('approve')" @if(empty($selectedRows))
+                        disabled @endif>
                         Approved
                     </button>
                 </div>

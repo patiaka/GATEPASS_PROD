@@ -66,6 +66,9 @@
         <x-nav-link url='material.index' name="Matériel Request">
             <i class="menu-icon tf-icons bx bx-box"></i>
         </x-nav-link>
+        <x-nav-link url='car.index' name="Car Request">
+            <i class="menu-icon tf-icons bx bx-car"></i>
+        </x-nav-link>
         <x-nav-link url='user.index' name="User">
             <i class="menu-icon tf-icons bx bx-user"></i>
         </x-nav-link>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\MaterialRequest;
 
 use App\Enum\MaterialRequestStatus;
 use App\Models\User;
@@ -14,21 +14,14 @@ use Livewire\Attributes\Computed;
 use Illuminate\Database\Eloquent\Model;
 use Request;
 
-class MaterialRequestList extends Component
+class Index extends Component
 {
-    use ApproveAction;
     public string $search = "";
     public string $status = "";
     public string $department = "";
+    public array $selectedRows = [];
     public $material;
 
-    public array $selectedRows = [];
-
-    public function updatedSelectedRows($value)
-    {
-
-        // This method updates the selected rows state dynamically
-    }
 
     public function selectAll(): void
     {
@@ -40,11 +33,16 @@ class MaterialRequestList extends Component
         $this->selectedRows = [];
     }
 
-    public function bulkDelete(): void
+    public function bulkAction(string $action): void
     {
-        MaterialRequest::whereIn('id', $this->selectedRows)->delete();
+        if ($action === 'reject') {
+            MaterialRequest::whereIn('id', $this->selectedRows)->update(['status' => MaterialRequestStatus::Rejected]);
+        } elseif ($action === 'approve') {
+            Auth::user()->isHod() ?
+                MaterialRequest::whereIn('id', $this->selectedRows)->update(['status' => MaterialRequestStatus::Progress]) : MaterialRequest::whereIn('id', $this->selectedRows)->update(['status' => MaterialRequestStatus::Approved]);
+        }
         $this->reset('selectedRows');
-        session()->flash('message', 'Selected rows deleted successfully.');
+        flash($action . ' applied rows successfully.');
     }
 
 
@@ -56,16 +54,6 @@ class MaterialRequestList extends Component
             $this->selectAll();
         }
     }
-
-    public function show_detail(int $id): void
-    {
-        $this->material = MaterialRequest::find($id);
-
-        $this->material->loadMissing('user:id,name,email,department_id', 'user.department:id,name', 'gmApproval', 'hodApproval');
-        // Dispatch an event to show the modal
-        $this->dispatch('show-modal');
-    }
-
 
 
     public function ResetFilter(): void
@@ -104,6 +92,6 @@ class MaterialRequestList extends Component
     {
         $auth = Auth::user();
         $departments = !$auth->isAdmin() ? Department::all() : [];
-        return view('livewire.material-request-list', \compact('departments'));
+        return view('livewire.material-request.index', \compact('departments'));
     }
 }

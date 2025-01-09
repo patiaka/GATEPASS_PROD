@@ -115,8 +115,14 @@
                                 <option value="{{ $row }}">{{ $row }}</option>
                                 @endforeach
                             </x-select>
+                            @error('status')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
                             <x-textarea wire:model="gm_comment" label="General Manager (GM) comments"
                                 place="Add a comment" />
+                            @error('gm_comment')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
                             <button type="submit" class="btn btn-success mt-2">
                                 Approve as GM
                             </button>

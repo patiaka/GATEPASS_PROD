@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\MaterialRequest;
 
 use Livewire\Component;
 use App\Helper\DeleteAction;
@@ -8,7 +8,7 @@ use Livewire\WithFileUploads;
 use App\Models\MaterialRequest;
 use Illuminate\Support\Facades\DB;
 
-class MaterialRequestUpdate extends Component
+class Update extends Component
 {
     use DeleteAction, WithFileUploads;
     public array $materials = []; // Tableau pour stocker les matériels
@@ -83,6 +83,6 @@ class MaterialRequestUpdate extends Component
 
     public function render()
     {
-        return view('livewire.material-request-update');
+        return view('livewire.material-request.update');
     }
 }

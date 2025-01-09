@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\MaterialRequest;
 
 use Livewire\Component;
 use App\Helper\ApproveAction;
 use App\Models\MaterialRequest;
 
-class MaterialRequestShow extends Component
+class Show extends Component
 {
     use ApproveAction;
     public $material;
@@ -21,6 +21,6 @@ class MaterialRequestShow extends Component
 
     public function render()
     {
-        return view('livewire.material-request-show');
+        return view('livewire.material-request.show');
     }
 }
