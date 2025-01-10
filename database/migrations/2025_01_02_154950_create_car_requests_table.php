@@ -24,12 +24,21 @@ return new class extends Migration
             $table->text('hod_comment')->nullable();
             $table->timestamp('hod_approval_date')->nullable();
 
-            $table->string('resident');
-            $table->string('expatriate');
-            $table->string('car_type');
+            $table->enum('somisy_car', ['Yes', 'No']);
+            $table->enum('resident', ['Yes', 'No']);
+            $table->enum('expatriate', ['Yes', 'No']);
+            $table->enum('licence', ['Mali DL', 'Foreign DL', 'Intl Permit']);
+            $table->enum('car_type', ['Lv', 'Bus', 'Truck']);
+            $table->string('car_number');
+            $table->foreignId('department_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->date('start');
+            $table->date('end');
+            $table->time('depart_at');
+            $table->time('arrive_at');
             $table->string('destination');
-            $table->dateTime('depart_at');
-            $table->dateTime('arrive_at');
+            $table->string('justification');
+
+
             $table->enum('status', [
                 'Pending',
                 'Progress',

@@ -60,6 +60,9 @@
         <x-nav-link url='dashboard' name="Dashboard">
             <i class="menu-icon tf-icons bx bx-home"></i>
         </x-nav-link>
+        <x-nav-link url='compagnie.index' name="Compagnie">
+            <i class="menu-icon tf-icons bx bx-building"></i>
+        </x-nav-link>
         <x-nav-link url='department.index' name="Department">
             <i class="menu-icon tf-icons bx bx-building"></i>
         </x-nav-link>

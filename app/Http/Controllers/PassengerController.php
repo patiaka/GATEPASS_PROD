@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MaterialRequestItem;
-use App\Http\Requests\StoreMaterialRequestItemRequest;
-use App\Http\Requests\UpdateMaterialRequestItemRequest;
+use App\Models\Passenger;
+use Illuminate\Http\Request;
 
-class MaterialRequestItemController extends Controller
+class PassengerController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +26,7 @@ class MaterialRequestItemController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store()
+    public function store(Request $request)
     {
         //
     }
@@ -35,7 +34,7 @@ class MaterialRequestItemController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(MaterialRequestItem $materialRequestItem)
+    public function show(Passenger $passenger)
     {
         //
     }
@@ -43,7 +42,7 @@ class MaterialRequestItemController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(MaterialRequestItem $materialRequestItem)
+    public function edit(Passenger $passenger)
     {
         //
     }
@@ -51,7 +50,7 @@ class MaterialRequestItemController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMaterialRequestItemRequest $request, MaterialRequestItem $materialRequestItem)
+    public function update(Request $request, Passenger $passenger)
     {
         //
     }
@@ -59,7 +58,7 @@ class MaterialRequestItemController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MaterialRequestItem $materialRequestItem)
+    public function destroy(Passenger $passenger)
     {
         //
     }

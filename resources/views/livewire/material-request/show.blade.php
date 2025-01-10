@@ -80,6 +80,7 @@
                                 <thead>
                                     <tr>
                                         <th>Hod User</th>
+                                        <th>Position</th>
                                         <th>Department</th>
                                         <th>Approv date</th>
                                         <th>Status</th>
@@ -90,8 +91,11 @@
                                 <tbody>
                                     <tr>
                                         <td>{{ $material->hod_approval_view() }}</td>
-                                        <td>{{ $material->hodApproval ? $material->hodApproval->department->name : ''
-                                            }}
+                                        <td>
+                                            {{ $material->hodApproval ? $material->hodApproval->department->name : '' }}
+                                        </td>
+                                        <td>
+                                            {{ $material->hodApproval ? $material->hodApproval->poste : '' }}
                                         </td>
                                         <td>{{ $material->hodApproval ? $material->hod_approval_date_format : '' }}
                                         </td>
@@ -133,6 +137,7 @@
                                 <thead>
                                     <tr>
                                         <th>Gm User</th>
+                                        <th>Position</th>
                                         <th>Department</th>
                                         <th>Approv date</th>
                                         <th>status</th>
@@ -143,8 +148,11 @@
                                 <tbody>
                                     <tr>
                                         <td>{{ $material->gm_approval_view() }}</td>
-                                        <td>{{ $material->gmApproval ? $material->gmApproval->department->name : ''
-                                            }}
+                                        <td>
+                                            {{ $material->gmApproval ? $material->gmApproval->department->name : '' }}
+                                        </td>
+                                        <td>
+                                            {{ $material->gmApproval ? $material->gmApproval->poste : '' }}
                                         </td>
                                         <td>{{ $material->gmApproval ? $material->gm_approval_date_format : '' }}
                                         </td>

@@ -10,9 +10,28 @@ trait WithFilter
 {
     use WithPagination;
 
-    public string $search = '';
+    public string $search = "";
+    public string $status = "";
+    public string $department = "";
+    public array $selectedRows = [];
 
-    public string $etat = '';
+    public function selectAll(): void
+    {
+        $this->selectedRows = $this->rows->pluck('id')->toArray();
+    }
 
-    public string $date = '';
+    public function deselectAll(): void
+    {
+        $this->selectedRows = [];
+    }
+
+
+    public function toggleSelectAll(): void
+    {
+        if (count($this->selectedRows) === $this->rows->count()) {
+            $this->deselectAll();
+        } else {
+            $this->selectAll();
+        }
+    }
 }

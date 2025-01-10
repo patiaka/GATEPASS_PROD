@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class CarDriver extends Model
+class Passenger extends Model
 {
-    /** @use HasFactory<\Database\Factories\CarDriverFactory> */
+    /** @use HasFactory<\Database\Factories\PassengerFactory> */
     use DateFormat;
 
     /**
-     * Get the carRequest that owns the CarDriver
+     * Get the carRequest that owns the Passenger
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

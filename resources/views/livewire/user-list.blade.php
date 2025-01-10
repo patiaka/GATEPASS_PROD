@@ -3,14 +3,21 @@
 
         <x-slot:filter>
             <div class="col-sm-6 col-md-3">
-                <x-select label="Department">
+                <x-select label="Department" wire:model.live='department'>
                     @foreach ($departments as $row)
                     <option value="{{ $row->id }}">{{ $row->name }}</option>
                     @endforeach
                 </x-select>
             </div>
             <div class="col-sm-6 col-md-3">
-                <x-select label="Role">
+                <x-select label="compagnie" wire:model.live='compagnie'>
+                    @foreach ($compagnies as $row)
+                    <option value="{{ $row->id }}">{{ $row->name }}</option>
+                    @endforeach
+                </x-select>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <x-select label="Role" wire:model.live='role'>
                     @foreach (App\Enum\RoleEnum::cases() as $row)
                     <option value="{{ $row }}">{{ $row }}</option>
                     @endforeach
@@ -21,10 +28,12 @@
             <tr>
                 <th>ID</th>
                 <th>Department</th>
+                <th>Compagny</th>
                 <th>Email/nom</th>
+                <th>Poste</th>
                 <th>role</th>
                 <th>change MDP</th>
-                <th>Date creation</th>
+                <th>Date</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -33,7 +42,9 @@
             <tr wire:key='{{ $row->id }}'>
                 <td>{{ $row->id }}</td>
                 <td>{{ $row->department->name }}</td>
+                <td>{{ $row->compagnie->name }}</td>
                 <td>{{ $row->email }}<br>{{ $row->name }}</td>
+                <td>{{ $row->poste }}</td>
                 <td>{{ $row->role }}</td>
                 <td>{{ $row->change_password ? 'OUI':'NON' }}</td>
 
@@ -54,8 +65,14 @@
             <div class="col-12">
                 <x-input type="text" name="name" place="name" />
                 <x-input type="email" name="email" place="email" />
+                <x-input type="text" name="poste" place="poste" />
                 <x-select name="department_id" label="department">
                     @foreach ($departments as $row)
+                    <option value="{{ $row->id }}">{{ $row->name }}</option>
+                    @endforeach
+                </x-select>
+                <x-select name="compagnie_id" label="compagnie">
+                    @foreach ($compagnies as $row)
                     <option value="{{ $row->id }}">{{ $row->name }}</option>
                     @endforeach
                 </x-select>

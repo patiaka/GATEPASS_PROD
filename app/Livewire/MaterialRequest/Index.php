@@ -3,57 +3,45 @@
 namespace App\Livewire\MaterialRequest;
 
 use App\Enum\MaterialRequestStatus;
+use App\Helper\WithFilter;
 use App\Models\User;
 use Livewire\Component;
 use App\Models\Department;
-use Livewire\Attributes\On;
-use App\Helper\ApproveAction;
 use App\Models\MaterialRequest;
 use Auth;
 use Livewire\Attributes\Computed;
-use Illuminate\Database\Eloquent\Model;
-use Request;
 
 class Index extends Component
 {
-    public string $search = "";
-    public string $status = "";
-    public string $department = "";
-    public array $selectedRows = [];
+    use WithFilter;
     public $material;
-
-
-    public function selectAll(): void
-    {
-        $this->selectedRows = $this->rows->pluck('id')->toArray();
-    }
-
-    public function deselectAll(): void
-    {
-        $this->selectedRows = [];
-    }
 
     public function bulkAction(string $action): void
     {
         if ($action === 'reject') {
-            MaterialRequest::whereIn('id', $this->selectedRows)->update(['status' => MaterialRequestStatus::Rejected]);
+            Auth::user()->isHod() ?
+                MaterialRequest::whereIn('id', $this->selectedRows)->update([
+                    'status' => MaterialRequestStatus::Rejected,
+                    'hod_approval_id' => Auth::user()->id,
+                ]) : MaterialRequest::whereIn('id', $this->selectedRows)->update([
+                    'status' => MaterialRequestStatus::Rejected,
+                    'gm_approval_id' => Auth::user()->id,
+                ]);
         } elseif ($action === 'approve') {
             Auth::user()->isHod() ?
-                MaterialRequest::whereIn('id', $this->selectedRows)->update(['status' => MaterialRequestStatus::Progress]) : MaterialRequest::whereIn('id', $this->selectedRows)->update(['status' => MaterialRequestStatus::Approved]);
+                MaterialRequest::whereIn('id', $this->selectedRows)->update([
+                    'status' => MaterialRequestStatus::Progress,
+                    'hod_approval_id' => Auth::user()->id,
+                ]) : MaterialRequest::whereIn('id', $this->selectedRows)->update([
+                    'status' => MaterialRequestStatus::Approved,
+                    'gm_approval_id' => Auth::user()->id,
+                ]);
         }
         $this->reset('selectedRows');
-        flash($action . ' applied rows successfully.');
+        flash($action . ' applied items successfully.');
     }
 
 
-    public function toggleSelectAll(): void
-    {
-        if (count($this->selectedRows) === $this->rows->count()) {
-            $this->deselectAll();
-        } else {
-            $this->selectAll();
-        }
-    }
 
 
     public function ResetFilter(): void

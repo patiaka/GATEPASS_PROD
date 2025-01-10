@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Enum\RoleEnum;
+use App\Helper\DateFormat;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +15,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use DateFormat, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,9 @@ class User extends Authenticatable
         'password',
         'change_password',
         'role',
-        'department_id'
+        'poste',
+        'department_id',
+        'compagnie_id'
     ];
 
     /**
@@ -85,6 +88,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the compagnie that owns the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function compagnie(): BelongsTo
+    {
+        return $this->belongsTo(Compagnie::class);
+    }
+
+    /**
      * Get all of the material_requests for the User
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -92,6 +105,16 @@ class User extends Authenticatable
     public function material_requests(): HasMany
     {
         return $this->hasMany(MaterialRequest::class);
+    }
+
+    /**
+     * Get all of the car_requests for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function car_requests(): HasMany
+    {
+        return $this->hasMany(CarRequest::class);
     }
 
     /**
@@ -108,5 +131,21 @@ class User extends Authenticatable
     public function gm_approvals(): HasMany
     {
         return $this->hasMany(MaterialRequest::class, 'gm_approval_id');
+    }
+
+    /**
+     * Get all of the hod_approvals for the User
+     */
+    public function hod_car_approvals(): HasMany
+    {
+        return $this->hasMany(CarRequest::class, 'hod_approval_id');
+    }
+
+    /**
+     * Get all of the gm_approvals for the User
+     */
+    public function gm_car_approvals(): HasMany
+    {
+        return $this->hasMany(CarRequest::class, 'gm_approval_id');
     }
 }

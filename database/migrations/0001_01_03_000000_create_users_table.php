@@ -16,7 +16,9 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->foreignId('department_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('compagnie_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('name');
+            $table->string('poste');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->enum('role', array_map(fn($role) => $role->value, RoleEnum::cases()));

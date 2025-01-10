@@ -25,7 +25,6 @@ return new class extends Migration
             $table->foreignId('hod_approval_id')->nullable()->constrained('users')->onDelete('set null');
             $table->text('hod_comment')->nullable();
             $table->timestamp('hod_approval_date')->nullable();
-
             $table->enum('status', [
                 'Pending',
                 'Progress',
