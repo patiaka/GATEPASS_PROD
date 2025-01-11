@@ -27,7 +27,7 @@ class Document extends Model
      */
     public function material_request(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(MaterialRequest::class);
     }
 
     public function DocLink(): string

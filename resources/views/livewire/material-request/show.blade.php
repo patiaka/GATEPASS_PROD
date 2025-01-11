@@ -38,7 +38,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="mt-3">
+                    <div class="my-5">
                         <h4>Material request images</h4>
                         @foreach ($material->documents as $row)
                         <div class="col-md-3">
@@ -47,8 +47,8 @@
                             </div>
                         </div>
                         @endforeach
-
                     </div>
+                    <hr>
                     <div class="mt-3">
                         <h4 class="review-subtitle text-md-left">HOD Approval</h4>
                         @if(!$material->isHodApproved())
@@ -192,5 +192,4 @@
             });
             });
         });
-</script>
 </script>

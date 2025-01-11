@@ -30,7 +30,7 @@
                 <th>Department</th>
                 <th>Compagny</th>
                 <th>Email/nom</th>
-                <th>Poste</th>
+                <th>Position</th>
                 <th>role</th>
                 <th>change MDP</th>
                 <th>Date</th>

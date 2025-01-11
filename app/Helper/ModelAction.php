@@ -64,12 +64,12 @@ trait ModelAction
 
     public function gm_approval_view(): string
     {
-        return $this->gmApproval ? $this->gmApproval->name : 'no exist';
+        return $this->gmApproval ? $this->gmApproval->name : 'waiting';
     }
 
     public function hod_approval_view(): string
     {
-        return $this->hodApproval ? $this->hodApproval->name : 'no exist';
+        return $this->hodApproval ? $this->hodApproval->name : 'waiting';
     }
 
     // Vérifier si GM a validé

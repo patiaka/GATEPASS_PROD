@@ -13,6 +13,12 @@ class CarDriver extends Model
     use DateFormat;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['car_request_id', 'name', 'contact'];
+    /**
      * Get the carRequest that owns the CarDriver
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

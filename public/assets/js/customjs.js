@@ -7,7 +7,6 @@ $(function () {
         });
     });
     var elements = document.querySelectorAll(".flatpickr-date");
-
     if (elements.length > 0) {
         elements.forEach(function (element) {
             element.flatpickr({
@@ -16,14 +15,13 @@ $(function () {
         });
     }
 
-    var elemts = document.querySelectorAll(".flatpickr-date-time");
+    var elemts = document.querySelectorAll(".flatpickr-time");
 
     if (elemts.length > 0) {
         elemts.forEach(function (element) {
             element.flatpickr({
-                monthSelectorType: "static",
                 enableTime: true,
-                dateFormat: "Y-m-d H:i",
+                noCalendar: true,
             });
         });
     }

@@ -46,6 +46,8 @@
                 </th>
                 <th>ID</th>
                 <th>Reference</th>
+                <th>Compagny</th>
+                <th>Department</th>
                 <th>Name</th>
                 <th>HOD Approval</th>
                 <th>GM Approval</th>
@@ -63,6 +65,8 @@
                 </td>
                 <td>{{ $row->id }}</td>
                 <td>{{ $row->reference }}</td>
+                <td>{{ $row->user->compagnie->name }}</td>
+                <td>{{ $row->user->department->name }}</td>
                 <td>{{ $row->user->name }}</td>
                 <td>{{ $row->hod_approval_view() }}</td>
                 <td>{{ $row->gm_approval_view() }}</td>

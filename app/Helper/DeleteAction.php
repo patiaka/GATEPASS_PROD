@@ -50,8 +50,9 @@ trait DeleteAction
 
     public function file_uplode($request, MaterialRequest $model): void
     {
+
         try {
-            foreach ($request->file('files') as $key => $file) {
+            foreach ($request as $key => $file) {
                 $filename = $file->hashName();
                 $chemin = $file->storeAs('material/document', $filename, 'public');
                 Document::create([

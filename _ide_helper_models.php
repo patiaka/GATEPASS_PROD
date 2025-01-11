@@ -55,7 +55,6 @@ namespace App\Models{
  * @property string $licence
  * @property string $car_type
  * @property string $car_number
- * @property int $department_id
  * @property string $start
  * @property string $end
  * @property string $depart_at
@@ -87,7 +86,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereCarType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereDepartAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereDepartmentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereDestination($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereEnd($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereExpatriate($value)
@@ -164,7 +162,7 @@ namespace App\Models{
  * @property string $chemin
  * @property string $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\User $material_request
+ * @property-read \App\Models\MaterialRequest $material_request
  * @method static \Database\Factories\DocumentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Document newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Document newQuery()

@@ -22,12 +22,20 @@
             @endif
             @if (Auth::user()->isGm() || Auth::user()->isAdmin())
             <div class="col-sm-6 col-md-3">
+                <x-select label="Compagny" wire:model.live='compagny'>
+                    @foreach ($departments as $row)
+                    <option value="{{ $row->id }}">{{ $row->name }}</option>
+                    @endforeach
+                </x-select>
+            </div>
+            <div class="col-sm-6 col-md-3">
                 <x-select label="Department" wire:model.live='department'>
                     @foreach ($departments as $row)
                     <option value="{{ $row->id }}">{{ $row->name }}</option>
                     @endforeach
                 </x-select>
             </div>
+
             @endif
             <div class="col-sm-6 col-md-3">
                 <x-select label="Filter by Status" wire:model.live='status'>
@@ -46,6 +54,8 @@
                 </th>
                 <th>ID</th>
                 <th>Reference</th>
+                <th>Compagny</th>
+                <th>Department</th>
                 <th>Name</th>
                 <th>HOD Approval</th>
                 <th>GM Approval</th>
@@ -63,6 +73,8 @@
                 </td>
                 <td>{{ $row->id }}</td>
                 <td>{{ $row->reference }}</td>
+                <td>{{ $row->user->compagnie->name }}</td>
+                <td>{{ $row->user->department->name }}</td>
                 <td>{{ $row->user->name }}</td>
                 <td>{{ $row->hod_approval_view() }}</td>
                 <td>{{ $row->gm_approval_view() }}</td>

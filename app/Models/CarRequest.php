@@ -19,7 +19,7 @@ class CarRequest extends Model
      *
      * @var array
      */
-    protected $fillable = ['reference', 'user_id', 'gm_approval_id', 'gm_comment', 'gm_approval_date', 'hod_approval_id', 'hod_comment', 'hod_approval_date', 'somisy_car', 'resident', 'expatriate', 'licence', 'car_type', 'car_number', 'department_id', 'start', 'end', 'depart_at', 'arrive_at', 'destination', 'justification', 'passenger_id', 'car_driver_id', 'status'];
+    protected $fillable = ['reference', 'user_id', 'gm_approval_id', 'gm_comment', 'gm_approval_date', 'hod_approval_id', 'hod_comment', 'hod_approval_date', 'somisy_car', 'resident', 'expatriate', 'licence', 'car_type', 'car_number', 'start', 'end', 'depart_at', 'arrive_at', 'destination', 'justification', 'passenger_id', 'car_driver_id', 'status'];
 
     public function getStartFormatAttribute(): string
     {

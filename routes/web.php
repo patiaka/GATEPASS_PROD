@@ -35,5 +35,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('department', DepartmentController::class)->except('show');
     Route::resource('compagnie', CompagnieController::class)->except('show');
     Route::resource('request/material/item', MaterialRequestItemController::class)->except('index', 'create');
+    Route::resource('request/material', MaterialRequestController::class)->only('destroy');
 });
 require __DIR__ . '/auth.php';

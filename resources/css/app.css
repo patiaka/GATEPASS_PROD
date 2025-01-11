@@ -18,7 +18,7 @@
 @import "/public/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css";
 @import "/public/assets/vendor/css/pages/page-profile.css";
 @import "/public/assets/vendor/css/pages/page-auth.css";
-/* @import "/public/assets/vendor/libs/flatpickr/flatpickr.css"; */
+@import "/public/assets/vendor/libs/flatpickr/flatpickr.css";
 @import "/public/assets/vendor/libs/apex-charts/apex-charts.css";
 .light-style .select2-container--default .select2-results__group {
     color: #696cff;

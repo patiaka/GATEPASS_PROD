@@ -30,15 +30,12 @@ return new class extends Migration
             $table->enum('licence', ['Mali DL', 'Foreign DL', 'Intl Permit']);
             $table->enum('car_type', ['Lv', 'Bus', 'Truck']);
             $table->string('car_number');
-            $table->foreignId('department_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->date('start');
             $table->date('end');
             $table->time('depart_at');
             $table->time('arrive_at');
             $table->string('destination');
             $table->string('justification');
-
-
             $table->enum('status', [
                 'Pending',
                 'Progress',
