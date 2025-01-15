@@ -35,6 +35,7 @@ trait ApproveAction
             flash('Material request approved successfully');
             return to_route('material.index');
         } elseif ($type === 'car') {
+
             $request =  CarRequest::findOrFail($id);
             $request->update([
                 'hod_approval_date' => now(),

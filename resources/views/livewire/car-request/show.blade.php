@@ -155,7 +155,9 @@
                 <td>{{ $carRequest->time_in ?? 'N/A' }}</td>
             </tr>
         </table>
+
         <x-form-request-validate :model="$carRequest" type="car" />
+
     </div>
 </div>
 <script>

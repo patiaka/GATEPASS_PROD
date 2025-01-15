@@ -2,7 +2,7 @@
     <div class="card">
         <h2 class="p-4 text-center">Form of new car request</h2>
         <div class="card-body">
-            <form wire:submit.prevent="save" method="post">
+            <form wire:submit="save" method="post">
                 @csrf
                 <div class="row">
                     <div class="col-md-4">
@@ -152,9 +152,9 @@
                         <div wire:ignore>
                             <!-- Licence -->
                             <x-select wire:model.live="licence" label="Licence">
-                                <option value="Mali DL">Mali DL</option>
-                                <option value="Foreign DL">Foreign DL</option>
-                                <option value="Intl Permit">Intl Permit</option>
+                                @foreach (App\Enum\CarRequestLicenceStatus::cases() as $row)
+                                <option value="{{ $row }}">{{ $row }}</option>
+                                @endforeach
                             </x-select>
                             @error('licence') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
@@ -212,7 +212,12 @@
                 <!-- Buttons -->
                 <div class="text-center mt-4">
                     <a href="{{ route('car.index') }}" class="btn btn-outline-danger">Cancel</a>
-                    <button type="submit" class="btn btn-success mx-2">Validate</button>
+                    <button type="submit" class="btn btn-success" wire:loading.attr="disabled" wire:target="save">
+                        <span wire:loading.remove wire:target="save">Validate</span>
+                        <span wire:loading wire:target="save">
+                            <i class="bx bx-loader-alt fa-spin"></i> Traitement...
+                        </span>
+                    </button>
                 </div>
             </form>
 

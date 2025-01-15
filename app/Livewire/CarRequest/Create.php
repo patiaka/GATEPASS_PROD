@@ -2,15 +2,15 @@
 
 namespace App\Livewire\CarRequest;
 
-use App\Models\CarRequest;
 use Auth;
 use Livewire\Component;
+use App\Models\CarRequest;
+use App\Helper\RepeatInputAction;
 use Illuminate\Support\Facades\DB;
 
 class Create extends Component
 {
-    public array $drivers = []; // Tableau pour stocker les drivers
-    public array $passengers = []; // Tableau pour stocker les passengers
+    use RepeatInputAction;
     public string $expatriate = "";
     public string $resident = "";
     public string $somisy_car = "";
@@ -23,6 +23,17 @@ class Create extends Component
     public string $depart_at = "";
     public string $arrive_at = "";
     public string $justification = "";
+
+    public function mount()
+    {
+        $this->drivers = [
+            ['name' => '', 'contact' => ''], // Un élément initial
+        ];
+
+        $this->passengers = [
+            ['name' => '', 'contact' => ''], // Un élément initial
+        ];
+    }
 
     public function save()
     {
@@ -75,40 +86,5 @@ class Create extends Component
             flash('Car request created successfully');
         });
         return to_route('car.index');
-    }
-    public function mount()
-    {
-        $this->drivers = [
-            ['name' => '', 'contact' => ''], // Un élément initial
-        ];
-
-        $this->passengers = [
-            ['name' => '', 'contact' => ''], // Un élément initial
-        ];
-    }
-
-    public function add(string $type): void
-    {
-        if ($type === 'driver') {
-            $this->drivers[] = ['name' => '', 'contact' => ''];
-        } elseif ($type === 'passenger') {
-            $this->passengers[] = ['name' => '', 'contact' => ''];
-        }
-    }
-
-    public function remove(string $type, int $index): void
-    {
-        if ($type === 'driver') {
-            unset($this->drivers[$index]);
-            $this->drivers = array_values($this->drivers); // Réindexer le tableau
-        } elseif ($type === 'passenger') {
-            unset($this->passengers[$index]);
-            $this->passengers = array_values($this->passengers); // Réindexer le tableau
-        }
-    }
-
-    public function render()
-    {
-        return view('livewire.car-request.create');
     }
 }

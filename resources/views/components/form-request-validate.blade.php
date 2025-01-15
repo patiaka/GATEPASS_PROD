@@ -4,24 +4,32 @@
         <div class="mt-3">
             <h4 class="review-subtitle text-md-left">HOD Approval</h4>
             @if(!$model->isHodApproved())
-            <form wire:submit.prevent="approveByHod({{ $model->id }}, {{ $type }})">
-                <x-select label="Status" wire:model.live='status'>
-                    @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
-                    @continue($row->value === "Progress" || $row->value === "Pending")
-                    <option value="{{ $row }}">{{ $row }}</option>
-                    @endforeach
-                </x-select>
+            <form wire:submit="approveByHod({{ $model->id }},'{{ $type }}')">
+                <div wire:ignore>
+                    <x-select label="Status" wire:model.live='status'>
+                        @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
+                        @continue($row->value === "Progress" || $row->value === "Pending")
+                        <option value="{{ $row }}">{{ $row }}</option>
+                        @endforeach
+                    </x-select>
+                </div>
                 @error('status')
                 <small class="text-danger">{{ $message }}</small>
                 @enderror
-                <x-textarea wire:model="hod_comment" label="Head of Department (HOD) comments" place="add a comment" />
+                <x-textarea wire:model.defer="hod_comment" label="Head of Department (HOD) comments"
+                    place="add a comment" />
                 <div>
                     @error('hod_comment')
                     <small class="text-danger">{{ $message }}</small>
                     @enderror
                 </div>
-                <button type="submit" class="btn btn-success mt-2">
-                    Approve as HOD
+
+                <button type="submit" class="mt-2 btn btn-success" wire:loading.attr="disabled"
+                    wire:target="approveByHod">
+                    <span wire:loading.remove wire:target="approveByHod">Approve as HOD</span>
+                    <span wire:loading wire:target="approveByHod">
+                        <i class="bx bx-loader-alt fa-spin"></i> Traitement...
+                    </span>
                 </button>
             </form>
             @else
@@ -64,22 +72,29 @@
             @endif
             <h4 class="review-subtitle text-md-left my-3">GM Approval</h4>
             @if(!$model->isGmApproved())
-            <form wire:submit.prevent="approveByGm({{ $model->id }}, {{ $type }})">
-                <x-select label="Status" wire:model.live='status'>
-                    @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
-                    @continue($row->value === "Progress" || $row->value === "Pending")
-                    <option value="{{ $row }}">{{ $row }}</option>
-                    @endforeach
-                </x-select>
+            <form wire:submit="approveByGm({{ $model->id }},'{{ $type }}')">
+                <div wire:ignore>
+                    <x-select label="Status" wire:model.live='status'>
+                        @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
+                        @continue($row->value === "Progress" || $row->value === "Pending")
+                        <option value="{{ $row }}">{{ $row }}</option>
+                        @endforeach
+                    </x-select>
+                </div>
                 @error('status')
                 <small class="text-danger">{{ $message }}</small>
                 @enderror
-                <x-textarea wire:model="gm_comment" label="General Manager (GM) comments" place="Add a comment" />
+                <x-textarea wire:model.defer="gm_comment" label="General Manager (GM) comments" place="Add a comment" />
                 @error('gm_comment')
                 <small class="text-danger">{{ $message }}</small>
                 @enderror
-                <button type="submit" class="btn btn-success mt-2">
-                    Approve as GM
+
+                <button type="submit" class="mt-2 btn btn-success" wire:loading.attr="disabled"
+                    wire:target="approveByGm">
+                    <span wire:loading.remove wire:target="approveByGm">Approve as GM</span>
+                    <span wire:loading wire:target="approveByGm">
+                        <i class="bx bx-loader-alt fa-spin"></i> Traitement...
+                    </span>
                 </button>
             </form>
             @else

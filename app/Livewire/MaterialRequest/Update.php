@@ -6,12 +6,12 @@ use Livewire\Component;
 use App\Helper\DeleteAction;
 use Livewire\WithFileUploads;
 use App\Models\MaterialRequest;
+use App\Helper\RepeatInputAction;
 use Illuminate\Support\Facades\DB;
 
 class Update extends Component
 {
-    use DeleteAction, WithFileUploads;
-    public array $materials = []; // Tableau pour stocker les matériels
+    use DeleteAction, WithFileUploads, RepeatInputAction;
     public $photos = []; // Tableau pour stocker les fichiers
     public $material;
 
@@ -22,17 +22,6 @@ class Update extends Component
         $material->material_request_items->pluck('quantity', 'designation')->each(function ($quantity, $designation) {
             $this->materials[] = ['designation' => $designation, 'quantity' => $quantity];
         });
-    }
-
-    public function addMaterial(): void
-    {
-        $this->materials[] = ['designation' => '', 'quantity' => 1];
-    }
-
-    public function removeMaterial($index): void
-    {
-        unset($this->materials[$index]);
-        $this->materials = array_values($this->materials); // Réindexer le tableau
     }
 
     public function save()
@@ -57,6 +46,7 @@ class Update extends Component
 
     private function updateMaterialRequestItems(): void
     {
+        $this->material->loadMissing('material_request_items');
         // Get the existing items as an associative array
         $existingItems = $this->material->material_request_items->keyBy('id');
 
@@ -79,10 +69,5 @@ class Update extends Component
         // Delete items that were removed
         $toDelete = $existingItems->keys()->diff(collect($this->materials)->pluck('id'));
         $this->material->material_request_items()->whereIn('id', $toDelete)->delete();
-    }
-
-    public function render()
-    {
-        return view('livewire.material-request.update');
     }
 }

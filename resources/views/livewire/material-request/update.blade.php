@@ -2,7 +2,7 @@
     <div class="card">
         <h2 class="p-4 text-center">Form of update material request</h2>
         <div class="card-body">
-            <form wire:submit.prevent="save" enctype="multipart/form-data" method="post">
+            <form wire:submit="save" enctype="multipart/form-data" method="post">
                 @csrf
                 <div class="col-md-12">
                     <!-- Liste des matériels -->
@@ -60,7 +60,12 @@
                     <a href="{{ route('material.index') }}" role="button" class="btn btn-outline-danger">
                         Cancel
                     </a>
-                    <button class="mx-2 btn btn-success" type="submit">Validate</button>
+                    <button type="submit" class="btn btn-success" wire:loading.attr="disabled" wire:target="save">
+                        <span wire:loading.remove wire:target="save">Validate</span>
+                        <span wire:loading wire:target="save">
+                            <i class="bx bx-loader-alt fa-spin"></i> Traitement...
+                        </span>
+                    </button>
                 </div>
             </form>
         </div>

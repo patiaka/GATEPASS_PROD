@@ -4,6 +4,7 @@ namespace App\Livewire\MaterialRequest;
 
 use Livewire\Component;
 use App\Helper\DeleteAction;
+use App\Helper\RepeatInputAction;
 use Livewire\WithFileUploads;
 use App\Models\MaterialRequest;
 use Auth;
@@ -11,8 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class Create extends Component
 {
-    use DeleteAction, WithFileUploads;
-    public array $materials = []; // Tableau pour stocker les matériels
+    use DeleteAction, WithFileUploads, RepeatInputAction;
     public $photos = []; // Tableau pour stocker les fichiers
 
     public function mount()
@@ -20,17 +20,6 @@ class Create extends Component
         $this->materials = [
             ['designation' => '', 'quantity' => 1], // Un élément initial
         ];
-    }
-
-    public function addMaterial(): void
-    {
-        $this->materials[] = ['designation' => '', 'quantity' => 1];
-    }
-
-    public function removeMaterial($index): void
-    {
-        unset($this->materials[$index]);
-        $this->materials = array_values($this->materials); // Réindexer le tableau
     }
 
     public function save()
@@ -53,10 +42,5 @@ class Create extends Component
             flash('Material request created successfully');
         });
         return redirect()->route('material.index');
-    }
-
-    public function render()
-    {
-        return view('livewire.material-request.create');
     }
 }
