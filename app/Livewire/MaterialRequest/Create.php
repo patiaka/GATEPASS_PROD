@@ -2,12 +2,13 @@
 
 namespace App\Livewire\MaterialRequest;
 
+use Auth;
 use Livewire\Component;
 use App\Helper\DeleteAction;
-use App\Helper\RepeatInputAction;
+use App\Jobs\MailRequestJob;
 use Livewire\WithFileUploads;
 use App\Models\MaterialRequest;
-use Auth;
+use App\Helper\RepeatInputAction;
 use Illuminate\Support\Facades\DB;
 
 class Create extends Component
@@ -39,6 +40,7 @@ class Create extends Component
             $this->file_uplode($this->photos, $materialRequest);
             $materialRequest->material_request_items()->createMany($this->materials);
             $materialRequest->generateId('R');
+            MailRequestJob::dispatch($materialRequest, 'vous avez un nouveau request reference' . $materialRequest->reference);
             flash('Material request created successfully');
         });
         return redirect()->route('material.index');

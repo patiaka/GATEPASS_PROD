@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CarRequestController;
 use App\Models\User;
 use App\Livewire\UserList;
 use App\Livewire\CarRequest\Create;
@@ -11,6 +12,7 @@ use App\Livewire\MaterialRequest\Update;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CompagnieController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\MaterialRequestController;
 use App\Http\Controllers\MaterialRequestItemController;
 
@@ -35,6 +37,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('department', DepartmentController::class)->except('show');
     Route::resource('compagnie', CompagnieController::class)->except('show');
     Route::resource('request/material/item', MaterialRequestItemController::class)->except('index', 'create');
-    Route::resource('request/material', MaterialRequestController::class)->only('destroy');
+
+    Route::resource('material', MaterialRequestController::class)->only('destroy');
+    Route::resource('car', CarRequestController::class)->only('destroy');
+    Route::resource('document', DocumentController::class)->only('edit', 'update', 'destroy');
 });
 require __DIR__ . '/auth.php';

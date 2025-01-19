@@ -6,6 +6,7 @@ use Auth;
 use Livewire\Component;
 use App\Models\CarRequest;
 use App\Helper\RepeatInputAction;
+use App\Jobs\MailRequestJob;
 use Illuminate\Support\Facades\DB;
 
 class Create extends Component
@@ -83,6 +84,7 @@ class Create extends Component
             }
 
             $CarRequest->generateId('CR');
+            MailRequestJob::dispatch($CarRequest, 'vous avez un nouveau request reference' . $CarRequest->reference);
             flash('Car request created successfully');
         });
         return to_route('car.index');

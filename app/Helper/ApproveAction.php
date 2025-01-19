@@ -6,6 +6,7 @@ namespace App\Helper;
 
 use Auth;
 use App\Models\CarRequest;
+use App\Jobs\MailRequestJob;
 use App\Models\MaterialRequest;
 use Illuminate\Validation\Rule;
 use App\Enum\MaterialRequestStatus;
@@ -16,6 +17,13 @@ trait ApproveAction
     public string $hod_comment = "";
     public string $gm_comment = "";
     public string $status = "";
+
+    private function dispatchApprovalMail($request, string $role)
+    {
+        $action = $this->status === 'Approved' ? 'validé' : 'rejeté';
+        $message = "le $role a $action votre request reference " . $request->reference;
+        MailRequestJob::dispatch($request, $message);
+    }
 
     public function approveByHod(int $id, string $type)
     {
@@ -31,7 +39,7 @@ trait ApproveAction
                 'hod_approval_id' => Auth::user()->id,
                 'status' => $this->status === 'Approved' ?  MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value
             ]);
-
+            $this->dispatchApprovalMail($request, 'hod');
             flash('Material request approved successfully');
             return to_route('material.index');
         } elseif ($type === 'car') {
@@ -43,7 +51,7 @@ trait ApproveAction
                 'hod_approval_id' => Auth::user()->id,
                 'status' => $this->status === 'Approved' ?  MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value
             ]);
-
+            $this->dispatchApprovalMail($request, 'hod');
             flash('Car request approved successfully');
             return to_route('car.index');
         }
@@ -63,6 +71,7 @@ trait ApproveAction
                 'gm_approval_id' => Auth::user()->id,
                 'status' => $this->status
             ]);
+            $this->dispatchApprovalMail($request, 'gm');
             flash('Material request approved successfully');
             return to_route('material.index');
         } elseif ($type === 'car') {
@@ -73,6 +82,7 @@ trait ApproveAction
                 'gm_approval_id' => Auth::user()->id,
                 'status' => $this->status
             ]);
+            $this->dispatchApprovalMail($request, 'gm');
             flash('Car request approved successfully');
             return to_route('car.index');
         }

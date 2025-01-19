@@ -3,64 +3,49 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
+use App\Helper\DeleteAction;
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreDocumentRequest;
 use App\Http\Requests\UpdateDocumentRequest;
 
 class DocumentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreDocumentRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Document $document)
-    {
-        //
-    }
+    use DeleteAction;
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Document $document)
     {
-        //
+        return \view('document.update', \compact('document'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateDocumentRequest $request, Document $document)
+    public function update(Request $request, Document $document)
     {
-        //
+        $request->validate(['image' => 'required|file|mimes:png,jpg']);
+        if ($request->hasFile('image')) {
+            $file = $request->image;
+            $filename = $file->hashName();
+            $chemin = $file->storeAs('material/document', $filename, 'public');
+            $document->update(['chemin' => $chemin]);
+        }
+
+        flash('document updated with success!');
+
+        return back();
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Document $document)
+    public function destroy(int $document)
     {
-        //
+        $delete = Document::findOrFail($document);
+        $this->file_delete($delete);
+        return $this->supp($delete);
     }
 }

@@ -40,13 +40,21 @@
                     </div>
                     <div class="my-5">
                         <h4>Material request images</h4>
-                        @foreach ($material->documents as $row)
-                        <div class="col-md-3">
-                            <div class="card flex-fill">
-                                <img alt="" src="{{ $row->DocLink() }}" class="card-img-top">
+                        <div class="row">
+                            @foreach ($material->loadMissing('documents')->documents as $row)
+                            <div class="col-md-3">
+                                <div class="card flex-fill">
+                                    <img alt="image" src="{{ $row->DocLink() }}" class="card-img-top">
+                                    @if (Auth::user()->isAdmin())
+                                    <div class="card-img-overlay">
+                                        <x-button-edit href="{{ route('document.edit', ['document' => $row]) }}" />
+                                        <x-button-delete url="{{ url('document/' . $row->id) }}" />
+                                    </div>
+                                    @endif
+                                </div>
                             </div>
+                            @endforeach
                         </div>
-                        @endforeach
                     </div>
                     <hr>
 

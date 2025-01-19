@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Helper\DeleteAction;
-use App\Models\MaterialRequestItem;
-use App\Http\Requests\StoreMaterialRequestItemRequest;
-use App\Http\Requests\UpdateMaterialRequestItemRequest;
 use App\Models\MaterialRequest;
 
 class MaterialRequestController extends Controller
@@ -16,8 +13,14 @@ class MaterialRequestController extends Controller
      */
     public function destroy(int $materialRequest)
     {
-        $delete = MaterialRequestItem::findOrFail($materialRequest);
-
+        $delete = MaterialRequest::findOrFail($materialRequest);
+        $delete->loadMissing('documents');
+        if ($delete->documents) {
+            foreach ($delete->loadMissing('documents')->documents as $row) {
+                $this->file_delete($row);
+            }
+            $delete->documents->delete();
+        }
         return $this->supp($delete);
     }
 }
