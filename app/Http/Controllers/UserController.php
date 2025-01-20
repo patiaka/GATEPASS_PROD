@@ -56,8 +56,11 @@ class UserController extends Controller
      */
     public function destroy(int $user)
     {
-        $delete = User::findOrFail($user);
+        $delete = User::where('id', $user)->update(['status' => false]);
 
-        return $this->supp($delete);
+        return response()->json([
+            'success' => true,
+            'message' => $delete ? 'user desactivated with success' : 'user not found',
+        ]);
     }
 }

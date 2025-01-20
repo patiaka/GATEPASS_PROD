@@ -91,8 +91,12 @@
                 <td>{{ $row->created_at }}</td>
                 <td>
 
-                    <x-button-show href="{{ route('car.show', ['car' => $row]) }}" />
+                    @can('update-material-request', $row)
                     <x-button-edit href="{{ route('car.edit', ['car' => $row]) }}" />
+                    @endcan
+                    @can('show-material-request', $row)
+                    <x-button-show href="{{ route('car.show', ['car' => $row]) }}" />
+                    @endcan
                     <x-button-delete url="{{ url('car/' . $row->id) }}" />
                 </td>
             </tr>

@@ -8,6 +8,7 @@ use Livewire\WithFileUploads;
 use App\Models\MaterialRequest;
 use App\Helper\RepeatInputAction;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class Update extends Component
 {
@@ -26,6 +27,7 @@ class Update extends Component
 
     public function save()
     {
+        Gate::authorize('update-material-request', $this->material);
         $this->validate([
             'materials' => 'required|array|min:1',
             'materials.*.designation' => 'required|string|min:3',

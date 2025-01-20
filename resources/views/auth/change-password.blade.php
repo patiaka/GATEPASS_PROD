@@ -4,6 +4,7 @@
     <!-- /Logo -->
     <h4 class="mb-2">Changement de Mot de Passe Requis 🔒</h4>
     <p>
+
         Lors de votre première connexion, veuillez changer votre mot de passe pour des raisons de
         sécurité. Suivez les critères ci-dessus et soumettez le formulaire. Votre compte sera
         accessible avec le nouveau mot de passe.

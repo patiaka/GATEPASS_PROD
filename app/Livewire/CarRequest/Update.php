@@ -5,6 +5,7 @@ namespace App\Livewire\CarRequest;
 use App\Helper\RepeatInputAction;
 use Livewire\Component;
 use App\Models\CarRequest;
+use Gate;
 use Illuminate\Support\Facades\DB;
 
 class Update extends Component
@@ -26,6 +27,7 @@ class Update extends Component
 
     public function mount(CarRequest $car)
     {
+        Gate::authorize('update-car-request', $this->carRequest);
         $this->carRequest = $car;
         $this->licence = $car->licence;
         $this->car_type = $car->car_type;
@@ -81,6 +83,7 @@ class Update extends Component
 
     public function save()
     {
+        Gate::authorize('update-car-request', $this->carRequest);
         $this->validate([
             'drivers' => 'required|array|min:1',
             'drivers.*.name' => 'required|string|min:3',

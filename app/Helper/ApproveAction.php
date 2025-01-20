@@ -10,6 +10,7 @@ use App\Jobs\MailRequestJob;
 use App\Models\MaterialRequest;
 use Illuminate\Validation\Rule;
 use App\Enum\MaterialRequestStatus;
+use Gate;
 
 trait ApproveAction
 {
@@ -27,6 +28,7 @@ trait ApproveAction
 
     public function approveByHod(int $id, string $type)
     {
+        Gate::authorize('action-approved-request', Auth::user());
         $this->validate([
             'hod_comment' => 'required|string|min:3',
             'status' => ['required', Rule::in(['Approved', 'Rejected'])],
@@ -59,6 +61,7 @@ trait ApproveAction
 
     public function approveByGm(int $id, string $type)
     {
+        Gate::authorize('action-approved-request', Auth::user());
         $this->validate([
             'gm_comment' => 'required|string|min:3',
             'status' => ['required', Rule::in(['Approved', 'Rejected'])],

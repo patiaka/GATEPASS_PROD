@@ -78,10 +78,10 @@
                                         <div class="dropdown-divider"></div>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="{{ route('user.show',Auth::user()) }}">
+                                        {{-- <a class="dropdown-item" href="{{ route('user.show',Auth::user()) }}">
                                             <i class="bx bx-user me-2"></i>
                                             <span class="align-middle">Profil</span>
-                                        </a>
+                                        </a> --}}
                                     </li>
                                     <li>
                                         <div class="dropdown-divider"></div>

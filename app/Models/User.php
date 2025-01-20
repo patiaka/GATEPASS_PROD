@@ -30,7 +30,8 @@ class User extends Authenticatable
         'role',
         'poste',
         'department_id',
-        'compagnie_id'
+        'compagnie_id',
+        'status'
     ];
 
     /**
