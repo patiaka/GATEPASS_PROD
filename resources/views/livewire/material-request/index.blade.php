@@ -9,15 +9,15 @@
             @if(!empty($selectedRows))
             <div class="col-md-4">
                 <div class="mb-3">
-                    <button class="btn btn-danger" wire:click="bulkAction('reject')" @if(empty($selectedRows)) disabled
-                        @endif wire:loading.attr="disabled" wire:target="bulkAction">
+                    <button class="btn btn-danger" wire:click="bulkAction('reject', 'material')"
+                        @if(empty($selectedRows)) disabled @endif wire:loading.attr="disabled" wire:target="bulkAction">
                         <span wire:loading.remove wire:target="bulkAction">Reject</span>
                         <span wire:loading wire:target="bulkAction">
                             <i class="bx bx-loader-alt fa-spin"></i> Traitement...
                         </span>
                     </button>
-                    <button class="btn btn-success" wire:click="bulkAction('approve')" @if(empty($selectedRows))
-                        disabled @endif wire:loading.attr="disabled" wire:target="bulkAction">
+                    <button class="btn btn-success" wire:click="bulkAction('approve','material')"
+                        @if(empty($selectedRows)) disabled @endif wire:loading.attr="disabled" wire:target="bulkAction">
                         <span wire:loading.remove wire:target="bulkAction">Approved</span>
                         <span wire:loading wire:target="bulkAction">
                             <i class="bx bx-loader-alt fa-spin"></i> Traitement...
@@ -42,14 +42,14 @@
                     @endforeach
                 </x-select>
             </div>
-
-
         </x-slot:filter>
         <thead>
             <tr>
+                @if (Auth::user()->isHod() || Auth::user()->isGm())
                 <th>
                     <input type="checkbox" wire:click="selectAll" wire:model="selectedRows" id="select-all">
                 </th>
+                @endif
                 <th>ID</th>
                 <th>Reference</th>
                 <th>Compagny</th>
@@ -65,10 +65,13 @@
         <tbody class="table-border-bottom-0">
             @forelse ($this->rows as $row)
             <tr wire:key="row-{{ $row->id }}" @class(['table-primary'=> in_array($row->id, $selectedRows)
-                ])>
+                ]) >
+                @if (Auth::user()->isHod() || Auth::user()->isGm())
                 <td>
-                    <input type="checkbox" wire:model.live="selectedRows" value="{{ $row->id }}">
+                    <input type="checkbox" wire:model.live="selectedRows" value="{{ $row->id }}"
+                        @disabled(when($row->isApproved(), true))>
                 </td>
+                @endif
                 <td>{{ $row->id }}</td>
                 <td>{{ $row->reference }}</td>
                 <td>{{ $row->user->compagnie->name }}</td>

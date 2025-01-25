@@ -8,7 +8,6 @@ use App\Models\Compagnie;
 use App\Models\User;
 use App\Models\Department;
 use App\Models\MaterialRequest;
-use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {

@@ -3,17 +3,19 @@
 namespace App\Livewire\CarRequest;
 
 use Livewire\Component;
+use App\Helper\WithFilter;
 use App\Models\CarRequest;
 use App\Models\Department;
+use App\Helper\ApproveAction;
 use Livewire\Attributes\Computed;
 use App\Enum\MaterialRequestStatus;
-use App\Helper\WithFilter;
 use Illuminate\Support\Facades\Auth;
 
 class Index extends Component
 {
-    use WithFilter;
+    use WithFilter, ApproveAction;
     public $car;
+
 
     public function ResetFilter(): void
     {

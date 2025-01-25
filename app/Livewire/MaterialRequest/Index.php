@@ -7,65 +7,15 @@ use App\Models\User;
 use Livewire\Component;
 use App\Helper\WithFilter;
 use App\Models\Department;
-use App\Jobs\MailRequestJob;
 use App\Helper\ApproveAction;
 use App\Models\MaterialRequest;
 use Livewire\Attributes\Computed;
 use App\Enum\MaterialRequestStatus;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Database\Eloquent\Collection;
 
 class Index extends Component
 {
-    use WithFilter;
+    use WithFilter, ApproveAction;
     public $material;
-
-    private function dispatchApprovalMail(Collection $items, string $role, string  $action): void
-    {
-        $items->each(function ($item) use ($role, $action) {
-            $message = "le $role a $action votre request reference " . $item->reference;
-            MailRequestJob::dispatch($item, $message);
-        });
-    }
-
-    public function bulkAction(string $action): void
-    {
-        Gate::authorize('action-approved-request', Auth::user());
-        $query = MaterialRequest::query()->whereIn('id', $this->selectedRows);
-        if ($action === 'reject') {
-            if (Auth::user()->isHod()) {
-                $query->where('status', MaterialRequestStatus::Pending)->update([
-                    'status' => MaterialRequestStatus::Rejected,
-                    'hod_approval_id' => Auth::user()->id,
-                ]);
-                $this->dispatchApprovalMail($query->get(), 'hod', 'rejeté');
-            } elseif (Auth::user()->isGm()) {
-                $query->where('status', MaterialRequestStatus::Progress)->update([
-                    'status' => MaterialRequestStatus::Rejected,
-                    'gm_approval_id' => Auth::user()->id,
-                ]);
-                $this->dispatchApprovalMail($query->get(), 'gm', 'rejeté');
-            }
-        } elseif ($action === 'approve') {
-            if (Auth::user()->isHod()) {
-                $query->where('status', MaterialRequestStatus::Pending)->update([
-                    'status' => MaterialRequestStatus::Progress,
-                    'hod_approval_id' => Auth::user()->id,
-                ]);
-                $this->dispatchApprovalMail($query->get(), 'hod', 'validé');
-            } elseif (Auth::user()->isGm()) {
-                $query->where('status', MaterialRequestStatus::Progress)->update([
-                    'status' => MaterialRequestStatus::Approved,
-                    'gm_approval_id' => Auth::user()->id,
-                    'expire_at' =>  Carbon::now()->addDays(7),
-                ]);
-                $this->dispatchApprovalMail($query->get(), 'gm', 'validé');
-            }
-        }
-        $this->reset('selectedRows');
-        flash($action . ' applied items successfully.');
-    }
 
     public function ResetFilter(): void
     {

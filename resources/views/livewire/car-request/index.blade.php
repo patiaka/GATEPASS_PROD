@@ -9,13 +9,19 @@
             @if(!empty($selectedRows))
             <div class="col-md-4">
                 <div class="mb-3">
-                    <button class="btn btn-danger" wire:click="bulkAction('reject')" @if(empty($selectedRows)) disabled
-                        @endif>
-                        Reject
+                    <button class="btn btn-danger" wire:click="bulkAction('reject','car')" @if(empty($selectedRows))
+                        disabled @endif wire:loading.attr="disabled" wire:target="bulkAction">
+                        <span wire:loading.remove wire:target="bulkAction">Reject</span>
+                        <span wire:loading wire:target="bulkAction">
+                            <i class="bx bx-loader-alt fa-spin"></i> Traitement...
+                        </span>
                     </button>
-                    <button class="btn btn-success" wire:click="bulkAction('approve')" @if(empty($selectedRows))
-                        disabled @endif>
-                        Approved
+                    <button class="btn btn-success" wire:click="bulkAction('approve','car')" @if(empty($selectedRows))
+                        disabled @endif wire:loading.attr="disabled" wire:target="bulkAction">
+                        <span wire:loading.remove wire:target="bulkAction">Approved</span>
+                        <span wire:loading wire:target="bulkAction">
+                            <i class="bx bx-loader-alt fa-spin"></i> Traitement...
+                        </span>
                     </button>
                 </div>
             </div>

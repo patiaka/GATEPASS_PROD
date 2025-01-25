@@ -50,6 +50,19 @@
                         </button>
                     </div>
                     <x-input label="Request document" wire:model="photos" type="file" multiple />
+                    <div class="my-3">
+                        @if ($photos)
+                        @foreach ($photos as $photo)
+                        <img class="img-fluid" height="auto" width="300" src="{{ $photo->temporaryUrl() }}" alt="Image">
+                        @endforeach
+                        @endif
+
+                        <div wire:loading wire:target="photos">
+                            <h3 class="text-center text-danger"><i class="bx bx-loader-alt fa-spin"></i> Uploading...
+                            </h3>
+                        </div>
+                    </div>
+
                     @error('photos.*')
                     <small class="text-danger">{{ $message }}</small>
                     @enderror

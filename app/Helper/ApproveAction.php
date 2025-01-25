@@ -10,14 +10,19 @@ use App\Models\CarRequest;
 use App\Jobs\MailRequestJob;
 use Illuminate\Support\Carbon;
 use App\Models\MaterialRequest;
-use Illuminate\Validation\Rule;
+use Livewire\Attributes\Validate;
 use App\Enum\MaterialRequestStatus;
+use Illuminate\Database\Eloquent\Collection;
+use Route;
 
 trait ApproveAction
 {
 
+    #[Validate('required|string|min:3')]
     public string $hod_comment = "";
+    #[Validate('required|string|min:3')]
     public string $gm_comment = "";
+    #[Validate('required|string|in:Approved,Rejected')]
     public string $status = "";
 
     private function dispatchApprovalMail($request, string $role)
@@ -30,10 +35,7 @@ trait ApproveAction
     public function approveByHod(int $id, string $type)
     {
         Gate::authorize('action-approved-request', Auth::user());
-        $this->validate([
-            'hod_comment' => 'required|string|min:3',
-            'status' => ['required', Rule::in(['Approved', 'Rejected'])],
-        ]);
+        $this->validate();
         if ($type === 'material') {
             $request =  MaterialRequest::findOrFail($id);
             $request->update([
@@ -63,10 +65,7 @@ trait ApproveAction
     public function approveByGm(int $id, string $type)
     {
         Gate::authorize('action-approved-request', Auth::user());
-        $this->validate([
-            'gm_comment' => 'required|string|min:3',
-            'status' => ['required', Rule::in(['Approved', 'Rejected'])],
-        ]);
+        $this->validate();
         if ($type === 'material') {
             $request =  MaterialRequest::findOrFail($id);
             $request->update([
@@ -92,5 +91,56 @@ trait ApproveAction
             flash('Car request approved successfully');
             return to_route('car.index');
         }
+    }
+
+    private function dispatchApprovalMails(Collection $items, string $role, string  $action): void
+    {
+        $items->each(function ($item) use ($role, $action) {
+            $message = "le $role a $action votre request reference " . $item->reference;
+            MailRequestJob::dispatch($item, $message);
+        });
+    }
+
+    public function bulkAction(string $action, string $type): void
+    {
+        Gate::authorize('action-approved-request', Auth::user());
+
+        if ($type === 'material') {
+            $query = MaterialRequest::query()->whereIn('id', $this->selectedRows);
+        } elseif ($type === 'car') {
+            $query = CarRequest::query()->whereIn('id', $this->selectedRows);
+        }
+        if ($action === 'reject') {
+            if (Auth::user()->isHod()) {
+                $query->where('status', MaterialRequestStatus::Pending)->update([
+                    'status' => MaterialRequestStatus::Rejected,
+                    'hod_approval_id' => Auth::user()->id,
+                ]);
+                $this->dispatchApprovalMails($query->get(), 'hod', 'rejeté');
+            } elseif (Auth::user()->isGm()) {
+                $query->where('status', MaterialRequestStatus::Progress)->update([
+                    'status' => MaterialRequestStatus::Rejected,
+                    'gm_approval_id' => Auth::user()->id,
+                ]);
+                $this->dispatchApprovalMails($query->get(), 'gm', 'rejeté');
+            }
+        } elseif ($action === 'approve') {
+            if (Auth::user()->isHod()) {
+                $query->where('status', MaterialRequestStatus::Pending)->update([
+                    'status' => MaterialRequestStatus::Progress,
+                    'hod_approval_id' => Auth::user()->id,
+                ]);
+                $this->dispatchApprovalMails($query->get(), 'hod', 'validé');
+            } elseif (Auth::user()->isGm()) {
+                $query->where('status', MaterialRequestStatus::Progress)->update([
+                    'status' => MaterialRequestStatus::Approved,
+                    'gm_approval_id' => Auth::user()->id,
+                    'expire_at' =>  Carbon::now()->addDays(7),
+                ]);
+                $this->dispatchApprovalMails($query->get(), 'gm', 'validé');
+            }
+        }
+        $this->reset('selectedRows');
+        flash($action . ' applied items successfully.');
     }
 }

@@ -39,9 +39,9 @@ class Create extends Component
                 'user_id' => Auth::user()->id,
             ]);
 
-            foreach ($this->photos as $key => $file) {
-                $filename = $file->hashName();
-                $chemin = $file->storeAs('material/document', $filename, 'public');
+            foreach ($this->photos as $key => $row) {
+                $filename = $row->hashName();
+                $chemin = $row->storeAs('material/document', $filename, 'public');
                 Document::create([
                     'material_request_id' => $materialRequest->id,
                     'chemin' => $chemin,
