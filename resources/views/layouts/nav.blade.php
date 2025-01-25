@@ -60,21 +60,24 @@
         <x-nav-link url='dashboard' name="Dashboard">
             <i class="menu-icon tf-icons bx bx-home"></i>
         </x-nav-link>
+        @if (Auth::user()->isAdmin())
         <x-nav-link url='compagnie.index' name="Compagnie">
             <i class="menu-icon tf-icons bx bx-building"></i>
         </x-nav-link>
         <x-nav-link url='department.index' name="Department">
             <i class="menu-icon tf-icons bx bx-building"></i>
         </x-nav-link>
+        <x-nav-link url='user.index' name="User">
+            <i class="menu-icon tf-icons bx bx-user"></i>
+        </x-nav-link>
+        @endif
         <x-nav-link url='material.index' name="Matériel Request">
             <i class="menu-icon tf-icons bx bx-box"></i>
         </x-nav-link>
         <x-nav-link url='car.index' name="Car Request">
             <i class="menu-icon tf-icons bx bx-car"></i>
         </x-nav-link>
-        <x-nav-link url='user.index' name="User">
-            <i class="menu-icon tf-icons bx bx-user"></i>
-        </x-nav-link>
+
         {{-- @php
         function isActiveRoute(array $allowedRoutes): bool {
         return in_array(Route::currentRouteName(), $allowedRoutes);

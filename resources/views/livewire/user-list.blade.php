@@ -32,6 +32,7 @@
                 <th>Email/nom</th>
                 <th>Position</th>
                 <th>role</th>
+                <th>status</th>
                 <th>change MDP</th>
                 <th>Date</th>
                 <th>Action</th>
@@ -39,19 +40,26 @@
         </thead>
         <tbody class="table-border-bottom-0">
             @forelse ($this->rows as $row)
-            <tr wire:key='{{ $row->id }}'>
+            <tr wire:key='user-{{ $row->id }}'>
                 <td>{{ $row->id }}</td>
                 <td>{{ $row->department->name }}</td>
                 <td>{{ $row->compagnie->name }}</td>
                 <td>{{ $row->email }}<br>{{ $row->name }}</td>
                 <td>{{ $row->poste }}</td>
                 <td>{{ $row->role }}</td>
+                <td>
+
+                    <span @class(['btn badge rounded-pill btn-sm' ,'bg-primary'=> $row->status == 1,
+                        'bg-danger' => $row->status == 0,
+                        ])>
+                        {{ $row->status ? 'Active':'Inactive' }}
+                    </span>
+                </td>
                 <td>{{ $row->change_password ? 'OUI':'NON' }}</td>
 
                 <td>{{ $row->created_at }}</td>
                 <td>
                     <x-button-edit href="{{ route('user.edit', ['user' => $row]) }}" />
-
                     <x-button-delete url="{{ url('user/'.$row->id) }}" />
                 </td>
             </tr>

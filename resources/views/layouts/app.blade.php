@@ -11,9 +11,6 @@
     <title>{{ config('app.name', 'GatePass') }}</title>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="{{ asset('assets/vendor/libs/select2/select2.js') }}"></script>
-    <!-- CSS pour DataTables -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.1.2/css/buttons.dataTables.min.css">
     @vite(['resources/css/app.css'])
     {{--
     <link rel="stylesheet" href="{{ asset('build/assets/app-c4e93290.css') }}"> --}}
@@ -78,10 +75,10 @@
                                         <div class="dropdown-divider"></div>
                                     </li>
                                     <li>
-                                        {{-- <a class="dropdown-item" href="{{ route('user.show',Auth::user()) }}">
+                                        <a class="dropdown-item" href="{{ route('user.show',Auth::user()) }}">
                                             <i class="bx bx-user me-2"></i>
                                             <span class="align-middle">Profil</span>
-                                        </a> --}}
+                                        </a>
                                     </li>
                                     <li>
                                         <div class="dropdown-divider"></div>
@@ -140,7 +137,6 @@
     <script src="{{ asset('assets/vendor/libs/moment/moment.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <!-- Vendors CSS -->
     {{ $js ?? '' }}

@@ -4,6 +4,7 @@ namespace App\Livewire\MaterialRequest;
 
 use Auth;
 use Livewire\Component;
+use App\Models\Document;
 use App\Helper\DeleteAction;
 use App\Jobs\MailRequestJob;
 use Livewire\WithFileUploads;
@@ -25,7 +26,6 @@ class Create extends Component
 
     public function save()
     {
-
         $this->validate([
             'materials' => 'required|array|min:1',
             'materials.*.designation' => 'required|string|min:3',
@@ -33,11 +33,20 @@ class Create extends Component
             'photos.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
+
         DB::transaction(function () {
             $materialRequest = MaterialRequest::create([
                 'user_id' => Auth::user()->id,
             ]);
-            $this->file_uplode($this->photos, $materialRequest);
+
+            foreach ($this->photos as $key => $file) {
+                $filename = $file->hashName();
+                $chemin = $file->storeAs('material/document', $filename, 'public');
+                Document::create([
+                    'material_request_id' => $materialRequest->id,
+                    'chemin' => $chemin,
+                ]);
+            }
             $materialRequest->material_request_items()->createMany($this->materials);
             $materialRequest->generateId('R');
             MailRequestJob::dispatch($materialRequest, 'vous avez un nouveau request reference' . $materialRequest->reference);

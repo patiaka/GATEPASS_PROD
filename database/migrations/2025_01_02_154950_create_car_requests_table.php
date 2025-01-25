@@ -36,6 +36,7 @@ return new class extends Migration
             $table->time('arrive_at');
             $table->string('destination');
             $table->string('justification');
+            $table->date('expire_at')->nullable();
             $table->enum('status', [
                 'Pending',
                 'Progress',

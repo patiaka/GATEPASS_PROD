@@ -34,7 +34,7 @@ class Index extends Component
             ->when($auth->isHod(), function ($query) use ($auth) {
                 $auth->loadMissing('department');
                 $users = $auth->department->loadMissing('users');
-                $query->whereIn('user_id', $users->pluck('id'))->orWhere('user_id', $auth->id)
+                $query->whereIn('user_id', $users->users->pluck('id'))->orWhere('user_id', $auth->id)
                     ->orWhere('hod_approval_id', $auth->id);
             })->when($auth->isUser(), function ($query) use ($auth) {
                 $query->where('user_id', $auth->id);

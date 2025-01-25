@@ -5,7 +5,7 @@
 
 
 @if ($row)
-@can('delete', $row)
+@can('delete-request', $row)
 <button type="button" {{ $attributes->merge(['class' => 'btn btn-danger btn-icon']) }}
     onclick="deleteConfirmation('{{ $url }}')"><i class="bx bx-trash-alt"></i></button>
 @endcan

@@ -31,6 +31,7 @@ class MaterialRequest extends Model
         'hod_approval_id',
         'hod_comment',
         'hod_approval_date',
+        'expire_at',
     ];
 
 

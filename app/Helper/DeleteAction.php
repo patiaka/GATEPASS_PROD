@@ -51,6 +51,7 @@ trait DeleteAction
     public function file_uplode($request, MaterialRequest $model): void
     {
 
+
         try {
             foreach ($request as $key => $file) {
                 $filename = $file->hashName();

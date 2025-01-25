@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Helper;
 
 use Auth;
+use Gate;
 use App\Models\CarRequest;
 use App\Jobs\MailRequestJob;
+use Illuminate\Support\Carbon;
 use App\Models\MaterialRequest;
 use Illuminate\Validation\Rule;
 use App\Enum\MaterialRequestStatus;
-use Gate;
 
 trait ApproveAction
 {
@@ -72,7 +73,8 @@ trait ApproveAction
                 'gm_comment' => $this->gm_comment,
                 'gm_approval_date' => now(),
                 'gm_approval_id' => Auth::user()->id,
-                'status' => $this->status
+                'status' => $this->status,
+                'expire_at' =>  Carbon::now()->addDays(7),
             ]);
             $this->dispatchApprovalMail($request, 'gm');
             flash('Material request approved successfully');
@@ -83,7 +85,8 @@ trait ApproveAction
                 'gm_comment' => $this->gm_comment,
                 'gm_approval_date' => now(),
                 'gm_approval_id' => Auth::user()->id,
-                'status' => $this->status
+                'status' => $this->status,
+                'expire_at' =>  Carbon::now()->addDays(7),
             ]);
             $this->dispatchApprovalMail($request, 'gm');
             flash('Car request approved successfully');

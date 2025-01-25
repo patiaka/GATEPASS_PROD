@@ -24,27 +24,25 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::define('update-material-request', function (User $user, MaterialRequest $materialRequest) {
-            return ($user->id === $materialRequest->user_id and $materialRequest->isPending()) || $user->isAdmin();
-        });
-
-        Gate::define('show-material-request', function (User $user, MaterialRequest $materialRequest) {
-            if ($user->isGm() || $user->isHod() || $user->isAdmin()) {
-                return  true;
-            } elseif ($user->isUser() and $user->id === $materialRequest->user_id) {
-                return true;
+        Gate::define('update-request', function (User $user, MaterialRequest|CarRequest $Request) {
+            if ($Request instanceof CarRequest || $Request instanceof MaterialRequest) {
+                return ($user->id === $Request->user_id and $Request->isPending()) || $user->isAdmin();
             }
         });
 
-        Gate::define('update-car-request', function (User $user, CarRequest $carRequest) {
-            return ($user->id === $carRequest->user_id and $carRequest->isPending()) || $user->isAdmin();
+        Gate::define('show-request', function (User $user, MaterialRequest|CarRequest $Request) {
+            if ($Request instanceof CarRequest || $Request instanceof MaterialRequest) {
+                if ($user->isGm() || $user->isHod() || $user->isAdmin()) {
+                    return  true;
+                } elseif ($user->isUser() and $user->id === $Request->user_id) {
+                    return true;
+                }
+            }
         });
 
-        Gate::define('show-car-request', function (User $user, CarRequest $carRequest) {
-            if ($user->isGm() || $user->isHod() || $user->isAdmin()) {
-                return  true;
-            } elseif ($user->isUser() and $user->id === $carRequest->user_id) {
-                return true;
+        Gate::define('delete-request', function (User $user, MaterialRequest|CarRequest $Request) {
+            if ($Request instanceof CarRequest || $Request instanceof MaterialRequest) {
+                return ($user->id === $Request->user_id and $Request->isPending()) || $user->isAdmin();
             }
         });
 

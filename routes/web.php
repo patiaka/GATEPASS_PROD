@@ -26,8 +26,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('department', DepartmentController::class)->except('show');
         Route::resource('compagnie', CompagnieController::class)->except('show');
         Route::get('user', UserList::class)->name('user.index');
-        Route::resource('material', MaterialRequestController::class)->only('destroy');
-        Route::resource('car', CarRequestController::class)->only('destroy');
+        Route::resource('user', UserController::class)->except('index');
     });
     Route::get('material/request', App\Livewire\MaterialRequest\Index::class)->name('material.index');
     Route::get('material/request/create', App\Livewire\MaterialRequest\Create::class)->name('material.create');
@@ -38,7 +37,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('car/request/create', App\Livewire\CarRequest\Create::class)->name('car.create');
     Route::get('car/request/{car}/edit', App\Livewire\CarRequest\Update::class)->name('car.edit');
     Route::get('car/request/{car}/show', App\Livewire\CarRequest\Show::class)->name('car.show');
-
+    Route::resource('material', MaterialRequestController::class)->only('destroy');
+    Route::resource('car', CarRequestController::class)->only('destroy');
 
     Route::resource('request/material/item', MaterialRequestItemController::class)->except('index', 'create');
     Route::resource('document', DocumentController::class)->only('edit', 'update', 'destroy');

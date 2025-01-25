@@ -3,7 +3,7 @@
     <div class="col-md-12">
         <div class="mt-3">
             <h4 class="review-subtitle text-md-left">HOD Approval</h4>
-            @if(!$model->isHodApproved())
+            @if(!$model->isHodApproved() and Auth::user()->isHod())
             <form wire:submit="approveByHod({{ $model->id }},'{{ $type }}')">
                 <div wire:ignore>
                     <x-select label="Status" wire:model.live='status'>
@@ -71,7 +71,7 @@
 
             @endif
             <h4 class="review-subtitle text-md-left my-3">GM Approval</h4>
-            @if(!$model->isGmApproved())
+            @if(!$model->isGmApproved() and Auth::user()->isGm())
             <form wire:submit="approveByGm({{ $model->id }},'{{ $type }}')">
                 <div wire:ignore>
                     <x-select label="Status" wire:model.live='status'>

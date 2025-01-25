@@ -10,12 +10,18 @@
             <div class="col-md-4">
                 <div class="mb-3">
                     <button class="btn btn-danger" wire:click="bulkAction('reject')" @if(empty($selectedRows)) disabled
-                        @endif>
-                        Reject
+                        @endif wire:loading.attr="disabled" wire:target="bulkAction">
+                        <span wire:loading.remove wire:target="bulkAction">Reject</span>
+                        <span wire:loading wire:target="bulkAction">
+                            <i class="bx bx-loader-alt fa-spin"></i> Traitement...
+                        </span>
                     </button>
                     <button class="btn btn-success" wire:click="bulkAction('approve')" @if(empty($selectedRows))
-                        disabled @endif>
-                        Approved
+                        disabled @endif wire:loading.attr="disabled" wire:target="bulkAction">
+                        <span wire:loading.remove wire:target="bulkAction">Approved</span>
+                        <span wire:loading wire:target="bulkAction">
+                            <i class="bx bx-loader-alt fa-spin"></i> Traitement...
+                        </span>
                     </button>
                 </div>
             </div>
@@ -82,14 +88,9 @@
                 </td>
                 <td>{{ $row->created_at }}</td>
                 <td>
-
-                    @can('update-material-request', $row)
-                    <x-button-edit href="{{ route('material.edit', ['material' => $row]) }}" />
-                    @endcan
-                    @can('show-material-request', $row)
-                    <x-button-show href="{{ route('material.show', ['material' => $row]) }}" />
-                    @endcan
-                    <x-button-delete url="{{ url('material/' . $row->id) }}" />
+                    <x-button-edit href="{{ route('material.edit', ['material' => $row]) }}" :row="$row" />
+                    <x-button-show href="{{ route('material.show', ['material' => $row]) }}" :row="$row" />
+                    <x-button-delete url="{{ url('material/' . $row->id) }}" :row="$row" />
                 </td>
             </tr>
             @empty

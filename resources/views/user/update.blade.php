@@ -5,6 +5,7 @@
                 <div class="col-md-12">
                     <x-input type="text" name="name" place="name" :value="$user->name" />
                     <x-input type="email" name="email" place="email" :value="$user->email" />
+                    <x-input type="text" name="poste" place="poste" :value="$user->poste" />
                     <x-select name="department_id" label="Department">
                         @foreach ($department as $row)
                         <option @selected($row->id === $user->department_id) value="{{ $row->id }}">{{ $row->name }}

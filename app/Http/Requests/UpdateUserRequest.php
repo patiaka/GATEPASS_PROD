@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -13,13 +14,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-
-        // Utilisez la méthode can() pour vérifier l'autorisation en fonction de la politique (Policy) et de l'action
-        // if ($this->route()->getName() === 'user.update') {
-        //     return $this->user()->can('update', $this->route('user'));
-        // }
-
-        return true;
+        return Auth::user()->isAdmin();
     }
 
     /**

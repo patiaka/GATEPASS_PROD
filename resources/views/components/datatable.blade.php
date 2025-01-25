@@ -28,6 +28,8 @@
     </div>
 </div>
 <x-slot:js>
+    <!-- CSS pour DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.css">
     <script src="{{ asset('assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
 
     <script>

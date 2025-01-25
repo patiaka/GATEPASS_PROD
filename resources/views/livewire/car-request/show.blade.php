@@ -138,10 +138,7 @@
                 <th>GPS</th>
                 <td>{{ $carRequest->gps ?? 'N/A' }}</td>
             </tr>
-            <tr>
-                <th>Vehicle #</th>
-                <td>{{ $carRequest->car_number }}</td>
-            </tr>
+
             <tr>
                 <th>Date</th>
                 <td>{{ $carRequest->security_date ?? 'N/A' }}</td>
