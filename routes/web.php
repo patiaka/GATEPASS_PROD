@@ -9,6 +9,7 @@ use App\Livewire\MaterialRequest\Show;
 use App\Livewire\MaterialRequest\Index;
 use App\Http\Controllers\UserController;
 use App\Livewire\MaterialRequest\Update;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\CompagnieController;
@@ -18,9 +19,7 @@ use App\Http\Controllers\MaterialRequestController;
 use App\Http\Controllers\MaterialRequestItemController;
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/', AdminController::class)->name('dashboard');
 
     Route::middleware('role:' . RoleEnum::ADMIN->value)->group(function () {
         Route::resource('department', DepartmentController::class)->except('show');
