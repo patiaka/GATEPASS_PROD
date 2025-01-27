@@ -6,23 +6,21 @@ namespace App\Helper;
 
 use Auth;
 use Gate;
+use Route;
 use App\Models\CarRequest;
 use App\Jobs\MailRequestJob;
 use Illuminate\Support\Carbon;
 use App\Models\MaterialRequest;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Validate;
 use App\Enum\MaterialRequestStatus;
 use Illuminate\Database\Eloquent\Collection;
-use Route;
 
 trait ApproveAction
 {
 
-    #[Validate('required|string|min:3')]
     public string $hod_comment = "";
-    #[Validate('required|string|min:3')]
     public string $gm_comment = "";
-    #[Validate('required|string|in:Approved,Rejected')]
     public string $status = "";
 
     private function dispatchApprovalMail($request, string $role)
@@ -35,7 +33,10 @@ trait ApproveAction
     public function approveByHod(int $id, string $type)
     {
         Gate::authorize('action-approved-request', Auth::user());
-        $this->validate();
+        $this->validate([
+            'hod_comment' => 'required|string|min:3',
+            'status' => ['required', Rule::in(['Approved', 'Rejected'])],
+        ]);
         if ($type === 'material') {
             $request =  MaterialRequest::findOrFail($id);
             $request->update([
@@ -65,7 +66,10 @@ trait ApproveAction
     public function approveByGm(int $id, string $type)
     {
         Gate::authorize('action-approved-request', Auth::user());
-        $this->validate();
+        $this->validate([
+            'gm_comment' => 'required|string|min:3',
+            'status' => ['required', Rule::in(['Approved', 'Rejected'])],
+        ]);
         if ($type === 'material') {
             $request =  MaterialRequest::findOrFail($id);
             $request->update([

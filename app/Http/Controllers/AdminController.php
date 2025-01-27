@@ -20,15 +20,15 @@ class AdminController extends Controller
         $CountDepartment = Department::count();
         $CountCompagnie = Compagnie::count();
         $queryMaterial = MaterialRequest::query();
-        $MaterialPending = $queryMaterial->where('status', MaterialRequestStatus::Pending)->count();
-        $MaterialApproved = $queryMaterial->where('status', MaterialRequestStatus::Approved)->count();
-        $MaterialRejected = $queryMaterial->where('status', MaterialRequestStatus::Rejected)->count();
-        $MaterialProgress = $queryMaterial->where('status', MaterialRequestStatus::Progress)->count();
+        $MaterialPending = $queryMaterial->where('status', MaterialRequestStatus::Pending->value)->count();
+        $MaterialApproved = $queryMaterial->where('status', MaterialRequestStatus::Approved->value)->count();
+        $MaterialRejected = $queryMaterial->where('status', MaterialRequestStatus::Rejected->value)->count();
+        $MaterialProgress = $queryMaterial->where('status', MaterialRequestStatus::Progress->value)->count();
         $queryCar = CarRequest::query();
-        $CarPending = $queryCar->where('status', MaterialRequestStatus::Pending)->count();
-        $CarApproved = $queryCar->where('status', MaterialRequestStatus::Approved)->count();
-        $CarRejected = $queryCar->where('status', MaterialRequestStatus::Rejected)->count();
-        $CarProgress = $queryCar->where('status', MaterialRequestStatus::Progress)->count();
+        $CarPending = $queryCar->where('status', MaterialRequestStatus::Pending->value)->count();
+        $CarApproved = $queryCar->where('status', MaterialRequestStatus::Approved->value)->count();
+        $CarRejected = $queryCar->where('status', MaterialRequestStatus::Rejected->value)->count();
+        $CarProgress = $queryCar->where('status', MaterialRequestStatus::Progress->value)->count();
         return view('dashboard', compact('CountUser', 'CountDepartment', 'CountCompagnie', 'MaterialPending', 'MaterialApproved', 'MaterialRejected', 'MaterialProgress', 'CarPending', 'CarApproved', 'CarRejected', 'CarProgress'));
     }
 }

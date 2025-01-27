@@ -3,13 +3,13 @@
     <div class="col-md-12">
         <div class="mt-3">
             <h4 class="review-subtitle text-md-left">HOD Approval</h4>
-            @if($model->isHodApproved() and Auth::user()->isHod())
+            @if(!$model->isHodApproved() and Auth::user()->isHod())
             <form wire:submit="approveByHod({{ $model->id }},'{{ $type }}')">
                 @csrf
                 <div wire:ignore>
                     <x-select label="Status" wire:model.live='status'>
                         @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
-                        @continue($row->value === "Progress" || $row->value === "Pending")
+                        @continue($row->value === "Progress" || $row->value === "Pending" || $row->value === "Expired")
                         <option value="{{ $row }}">{{ $row }}</option>
                         @endforeach
                     </x-select>
@@ -39,8 +39,8 @@
                 <table class="table table-bordered review-table mb-0">
                     <thead>
                         <tr>
-                            <th>Hod User</th>
-                            <th>Position</th>
+                            <th>Hod</th>
+                            <th>Company</th>
                             <th>Department</th>
                             <th>Approv date</th>
                             <th>Status</th>
@@ -52,15 +52,17 @@
                         <tr>
                             <td>{{ $model->hod_approval_view() }}</td>
                             <td>
-                                {{ $model->hodApproval ? $model->hodApproval->department->name :
+                                {{ $model->hodApproval ? $model->hodApproval->compagnie->name :
                                 '' }}
                             </td>
                             <td>
-                                {{ $model->hodApproval ? $model->hodApproval->poste : '' }}
+                                {{ $model->hodApproval ? $model->hodApproval->department->name :
+                                '' }}
                             </td>
+
                             <td>{{ $model->hodApproval ? $model->hod_approval_date_format : '' }}
                             </td>
-                            <td>{{ $model->status }}</td>
+                            <td>{{ $model->isProgress() ? 'Approved' : $model->status }}</td>
                             <td>
                                 <p class="text-wrap">{{ $model->hod_comment }}</p>
                             </td>
@@ -72,12 +74,12 @@
 
             @endif
             <h4 class="review-subtitle text-md-left my-3">GM Approval</h4>
-            @if($model->isGmApproved() and Auth::user()->isGm())
+            @if(!$model->isGmApproved() and Auth::user()->isGm())
             <form wire:submit="approveByGm({{ $model->id }},'{{ $type }}')">
                 <div wire:ignore>
                     <x-select label="Status" wire:model.live='status'>
                         @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
-                        @continue($row->value === "Progress" || $row->value === "Pending")
+                        @continue($row->value === "Progress" || $row->value === "Pending" || $row->value === "Expired")
                         <option value="{{ $row }}">{{ $row }}</option>
                         @endforeach
                     </x-select>
@@ -103,8 +105,8 @@
                 <table class="table table-bordered review-table mb-0">
                     <thead>
                         <tr>
-                            <th>Gm User</th>
-                            <th>Position</th>
+                            <th>Gm</th>
+                            <th>Company</th>
                             <th>Department</th>
                             <th>Approv date</th>
                             <th>status</th>
@@ -116,12 +118,14 @@
                         <tr>
                             <td>{{ $model->gm_approval_view() }}</td>
                             <td>
+                                {{ $model->hodApproval ? $model->hodApproval->compagnie->name :
+                                '' }}
+                            </td>
+                            <td>
                                 {{ $model->gmApproval ? $model->gmApproval->department->name : ''
                                 }}
                             </td>
-                            <td>
-                                {{ $model->gmApproval ? $model->gmApproval->poste : '' }}
-                            </td>
+
                             <td>{{ $model->gmApproval ? $model->gm_approval_date_format : '' }}
                             </td>
                             <td>{{ $model->status }}</td>

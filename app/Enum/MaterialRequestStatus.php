@@ -10,4 +10,5 @@ enum MaterialRequestStatus: string
     case Progress = 'Progress';
     case Approved = 'Approved';
     case Rejected = 'Rejected';
+    case Expired = 'Expired';
 }

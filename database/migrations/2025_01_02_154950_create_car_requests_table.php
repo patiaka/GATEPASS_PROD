@@ -41,7 +41,8 @@ return new class extends Migration
                 'Pending',
                 'Progress',
                 'Rejected',
-                'Approved'
+                'Approved',
+                'Expired'
             ])->default(MaterialRequestStatus::Pending);
             $table->index('reference');
             $table->timestamps();

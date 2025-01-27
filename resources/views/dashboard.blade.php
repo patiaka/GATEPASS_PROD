@@ -1,8 +1,7 @@
 <x-app-layout>
     <div class="row">
         <x-card :count="$CountUser" :title="'Total User'" :icon="'bx bx-user'" :color="'info'" />
-        <x-card :count="$CountDepartment" :title="'Total Department'" :icon="'bx bx-building'" :color="'info'" />
-        <x-card :count="$CountCompagnie" :title="'Total Compagny'" :icon="'bx bx-building'" :color="'info'" />
+
         <x-card :count="$MaterialPending" :title="'Pending Material Request'" :icon="'bx bx-file-blank'"
             :color="'info'" />
         <x-card :count="$MaterialApproved" :title="'Approved Material Request'" :icon="'bx bx-file-blank'"
