@@ -1,8 +1,8 @@
 <div>
     <div class="card p-3">
         <section class="review-section">
-            <div class="review-header text-star">
-                <h3 class="review-title">Material request</h3>
+            <h3 class="review-title">Material request</h3>
+            <div class="review-header text-star d-flex justify-content-between">
                 <h4 class="review-subtitle text-md-left">
                     <span class="review-subtitle-text">Reference: {{ $material->reference }}</span> <br>
                     <span class="review-subtitle-text">Status: {{ $material->status }}</span> <br>
@@ -14,6 +14,9 @@
 
                     <span class="review-subtitle-text">Created Date: {{ $material->created_at }}</span>
                 </h4>
+                <div>
+                    <x-button-print href="{{ route('material.print', ['material' => $material]) }}" :row="$material" />
+                </div>
             </div>
 
             <div class="row">

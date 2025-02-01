@@ -13,6 +13,7 @@ trait WithFilter
     public string $search = "";
     public string $status = "";
     public string $department = "";
+    public string $compagny = "";
     public array $selectedRows = [];
 
     public function selectAll(): void

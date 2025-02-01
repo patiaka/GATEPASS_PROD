@@ -31,11 +31,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('material/request/create', App\Livewire\MaterialRequest\Create::class)->name('material.create');
     Route::get('material/request/{material}/edit', App\Livewire\MaterialRequest\Update::class)->name('material.edit');
     Route::get('material/request/{material}/show', App\Livewire\MaterialRequest\Show::class)->name('material.show');
+    Route::get('material/request/{material}/print', [MaterialRequestController::class, 'print'])->name('material.print');
 
     Route::get('car/request', App\Livewire\CarRequest\Index::class)->name('car.index');
     Route::get('car/request/create', App\Livewire\CarRequest\Create::class)->name('car.create');
     Route::get('car/request/{car}/edit', App\Livewire\CarRequest\Update::class)->name('car.edit');
     Route::get('car/request/{car}/show', App\Livewire\CarRequest\Show::class)->name('car.show');
+    Route::get('car/request/{car}/print', [CarRequestController::class, 'print'])->name('car.print');
     Route::resource('material', MaterialRequestController::class)->only('destroy');
     Route::resource('car', CarRequestController::class)->only('destroy');
 

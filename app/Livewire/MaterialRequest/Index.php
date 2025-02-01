@@ -5,6 +5,7 @@ namespace App\Livewire\MaterialRequest;
 use Auth;
 use App\Models\User;
 use Livewire\Component;
+use App\Models\Compagnie;
 use App\Helper\WithFilter;
 use App\Models\Department;
 use App\Helper\ApproveAction;
@@ -19,7 +20,7 @@ class Index extends Component
 
     public function ResetFilter(): void
     {
-        $this->reset('department', 'status', 'search');
+        $this->reset('department', 'status', 'search', 'compagny');
     }
 
     #[Computed]
@@ -41,19 +42,24 @@ class Index extends Component
                     ->orWhere('hod_approval_id', $auth->id);
             })->when($auth->isUser(), function ($query) use ($auth) {
                 $query->where('user_id', $auth->id);
-            })->when($this->search, function ($query) {
-                $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
             })->when($this->department, function ($query) {
-                $query->where('department_id', $this->department);
+                $users = Department::with('users')->find($this->department)->users;
+                $query->whereIn('user_id', $users->pluck('id'));
+            })->when($this->compagny, function ($query) {
+                $users = Compagnie::with('users')->find($this->compagny)->users;
+                $query->whereIn('user_id', $users->pluck('id'));
             })->when($this->status, function ($query) {
                 $query->where('status', $this->status);
+            })->when($this->search, function ($query) {
+                $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
             })->latest('id')->paginate(10);
     }
 
     public function render()
     {
         $auth = Auth::user();
-        $departments = !$auth->isAdmin() ? Department::all() : [];
-        return view('livewire.material-request.index', \compact('departments'));
+        $departments = $auth->isAdmin() ? Department::select('id', 'name')->get() : [];
+        $compagnies = $auth->isAdmin() ? Compagnie::select('id', 'name')->get() : [];
+        return view('livewire.material-request.index', \compact('departments', 'compagnies'));
     }
 }

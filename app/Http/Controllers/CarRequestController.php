@@ -11,6 +11,13 @@ class CarRequestController extends Controller
 {
     use DeleteAction;
 
+    public function print(int $carRequest)
+    {
+        $carRequest = CarRequest::with('user', 'user.department', 'hodApproval', 'gmApproval')->findOrFail($carRequest);
+        $carRequest->loadMissing('car_drivers', 'passengers');
+        return view('print_car', compact('carRequest'));
+    }
+
     /**
      * Remove the specified resource from storage.
      */

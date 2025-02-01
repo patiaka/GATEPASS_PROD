@@ -5,11 +5,16 @@
         <h2 class="text-center mb-4">Car Request Details</h2>
 
         <!-- Document Details -->
-        <div class="mb-4">
-            <p><strong>Document No:</strong> {{ $carRequest->reference }}</p>
-            <p><strong>Title:</strong> Resident & Vehicle Off-Site Travel Approval</p>
-            <p><strong>Revision:</strong> 2.0</p>
-            <p><strong>Date:</strong> {{ $carRequest->created_at }}</p>
+        <div class="mb-4 d-flex justify-content-between">
+            <div>
+                <p><strong>Document No:</strong> {{ $carRequest->reference }}</p>
+                <p><strong>Title:</strong> Resident & Vehicle Off-Site Travel Approval</p>
+                <p><strong>Revision:</strong> 2.0</p>
+                <p><strong>Date:</strong> {{ $carRequest->created_at }}</p>
+            </div>
+            <div>
+                <x-button-print href="{{ route('car.print', ['car' => $carRequest]) }}" :row="$carRequest" />
+            </div>
         </div>
 
         <!-- Vehicle and Resident Details -->

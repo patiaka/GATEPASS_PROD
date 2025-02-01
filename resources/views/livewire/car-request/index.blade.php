@@ -28,30 +28,33 @@
             @endif
             @if (Auth::user()->isGm() || Auth::user()->isAdmin())
             <div class="col-sm-6 col-md-3">
-                <x-select label="Compagny" wire:model.live='compagny'>
-                    @foreach ($departments as $row)
-                    <option value="{{ $row->id }}">{{ $row->name }}</option>
-                    @endforeach
-                </x-select>
+                <div wire:ignore>
+                    <x-select label="Filter by Compagny" wire:model.live='compagny'>
+                        @foreach ($compagnies as $row)
+                        <option value="{{ $row->id }}">{{ $row->name }}</option>
+                        @endforeach
+                    </x-select>
+                </div>
             </div>
             <div class="col-sm-6 col-md-3">
-                <x-select label="Department" wire:model.live='department'>
-                    @foreach ($departments as $row)
-                    <option value="{{ $row->id }}">{{ $row->name }}</option>
-                    @endforeach
-                </x-select>
+                <div wire:ignore>
+                    <x-select label="Filter by Department" wire:model.live='department'>
+                        @foreach ($departments as $row)
+                        <option value="{{ $row->id }}">{{ $row->name }}</option>
+                        @endforeach
+                    </x-select>
+                </div>
             </div>
-
             @endif
             <div class="col-sm-6 col-md-3">
-                <x-select label="Filter by Status" wire:model.live='status'>
-                    @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
-                    <option value="{{ $row }}">{{ $row }}</option>
-                    @endforeach
-                </x-select>
+                <div wire:ignore>
+                    <x-select label="Filter by Status" wire:model.live='status'>
+                        @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
+                        <option value="{{ $row }}">{{ $row }}</option>
+                        @endforeach
+                    </x-select>
+                </div>
             </div>
-
-
         </x-slot:filter>
         <thead>
             <tr>
@@ -87,6 +90,7 @@
                 <td>
                     <span @class(['btn badge rounded-pill btn-sm' ,'bg-primary'=> $row->isApproved(),
                         'bg-danger' => $row->isRejected(),
+                        'bg-danger' => $row->isExpired(),
                         'bg-info' => $row->isPending(),
                         'bg-warning' => $row->isProgress()
                         ])>

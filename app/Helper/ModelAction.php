@@ -62,6 +62,12 @@ trait ModelAction
         return $this->status === MaterialRequestStatus::Progress;
     }
 
+    public function isExpired(): bool
+    {
+        return $this->status === MaterialRequestStatus::Expired;
+    }
+
+
     public function gm_approval_view(): string
     {
         return $this->gmApproval ? $this->gmApproval->name : 'waiting';
@@ -75,13 +81,13 @@ trait ModelAction
     // Vérifier si GM a validé
     public function isGmApproved()
     {
-        return !is_null($this->gm_approval_date);
+        return !is_null($this->gmApproval);
     }
 
     // Vérifier si HOD a validé
     public function isHodApproved()
     {
-        return !is_null($this->hod_approval_date);
+        return !is_null($this->hodApproval);
     }
 
 
