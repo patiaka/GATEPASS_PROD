@@ -60,17 +60,6 @@
         <x-nav-link url='dashboard' name="Dashboard">
             <i class="menu-icon tf-icons bx bx-home"></i>
         </x-nav-link>
-        @if (Auth::user()->isAdmin())
-        <x-nav-link url='compagnie.index' name="Compagnie">
-            <i class="menu-icon tf-icons bx bx-building"></i>
-        </x-nav-link>
-        <x-nav-link url='department.index' name="Department">
-            <i class="menu-icon tf-icons bx bx-building"></i>
-        </x-nav-link>
-        <x-nav-link url='user.index' name="User">
-            <i class="menu-icon tf-icons bx bx-user"></i>
-        </x-nav-link>
-        @endif
         <x-nav-link url='material.index' name="Matériel Request">
             <i class="menu-icon tf-icons bx bx-box"></i>
         </x-nav-link>
@@ -78,23 +67,21 @@
             <i class="menu-icon tf-icons bx bx-car"></i>
         </x-nav-link>
 
-        {{-- @php
+        @php
         function isActiveRoute(array $allowedRoutes): bool {
         return in_array(Route::currentRouteName(), $allowedRoutes);
         }
-        $isActiveGestion = isActiveRoute(['personnel']);
+        $isActiveSettings = isActiveRoute(['personnel']);
         @endphp
-        <x-dropdown name="Administration Cours" :active="$isActiveAdministration">
+        @if (Auth::user()->isAdmin())
+        <x-dropdown name="Settings" :active="$isActiveSettings">
             <x-slot:icon>
                 <i class="menu-icon tf-icons bx bx-cog"></i>
             </x-slot:icon>
-            <x-nav-link url='filiere' name="Filière" />
-            <x-nav-link url='matiere' name="Matière" />
-            <x-nav-link url='classe' name="Classe" />
-            <x-nav-link url='periode' name="Periode" />
-            <x-nav-link url='type' name="Type de cours" />
-            <x-nav-link url='ue' name="UE" />
-        </x-dropdown> --}}
-
+            <x-nav-link url='compagnie.index' name="Compagny" />
+            <x-nav-link url='department.index' name="Department" />
+            <x-nav-link url='user.index' name="User" />
+        </x-dropdown>
+        @endif
     </ul>
 </aside>
