@@ -75,7 +75,12 @@ class NewPasswordController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'string', 'confirmed', Password::min(8)
+                ->mixedCase()    // Must contain both uppercase and lowercase letters.
+                ->letters()      // Must contain at least one letter.
+                ->numbers()      // Must contain at least one number.
+                ->symbols()      // Must contain at least one symbol.
+                ->uncompromised()],
         ]);
         DB::transaction(function () use ($request) {
             $user = User::where('email', $request->email)->first();
