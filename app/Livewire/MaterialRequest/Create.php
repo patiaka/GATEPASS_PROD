@@ -49,7 +49,7 @@ class Create extends Component
             }
             $materialRequest->material_request_items()->createMany($this->materials);
             $materialRequest->generateId('R');
-            MailRequestJob::dispatch($materialRequest, 'vous avez un nouveau request reference' . $materialRequest->reference);
+            MailRequestJob::dispatch($materialRequest, 'Awaiting a material gate pass request to approve reference' . $materialRequest->reference);
             flash('Material request created successfully');
         });
         return redirect()->route('material.index');

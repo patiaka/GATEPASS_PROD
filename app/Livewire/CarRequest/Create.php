@@ -84,7 +84,7 @@ class Create extends Component
             }
 
             $CarRequest->generateId('CR');
-            MailRequestJob::dispatch($CarRequest, 'vous avez un nouveau request reference' . $CarRequest->reference);
+            MailRequestJob::dispatch($CarRequest, 'Awaiting a vehicle gate pass request to approve reference ' . $CarRequest->reference);
             flash('Car request created successfully');
         });
         return to_route('car.index');

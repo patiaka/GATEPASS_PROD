@@ -38,6 +38,7 @@ class UserRequestNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
+            ->from('barrett@example.com', 'Barrett Blair')
             ->line('The introduction to the notification.')
             ->line($this->message)
             ->action('voir', url($this->link))

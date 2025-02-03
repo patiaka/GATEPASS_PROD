@@ -25,8 +25,8 @@ trait ApproveAction
 
     private function dispatchApprovalMail($request, string $role)
     {
-        $action = $this->status === 'Approved' ? 'validé' : 'rejeté';
-        $message = "le $role a $action votre request reference " . $request->reference;
+        $action = $this->status === 'Approved' ? 'valided' : 'rejected';
+        $message = "The $role request reference $request->reference has been $action";
         MailRequestJob::dispatch($request, $message);
     }
 
@@ -46,6 +46,7 @@ trait ApproveAction
                 'status' => $this->status === 'Approved' ?  MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value
             ]);
             $this->dispatchApprovalMail($request, 'hod');
+            MailRequestJob::dispatch($request, 'Awaiting a material gate pass request to approve reference ' . $request->reference);
             flash('Material request approved successfully');
             return to_route('material.index');
         } elseif ($type === 'car') {
@@ -58,6 +59,7 @@ trait ApproveAction
                 'status' => $this->status === 'Approved' ?  MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value
             ]);
             $this->dispatchApprovalMail($request, 'hod');
+            MailRequestJob::dispatch($request, 'Awaiting a vehicle gate pass request to approve reference ' . $request->reference);
             flash('Car request approved successfully');
             return to_route('car.index');
         }
