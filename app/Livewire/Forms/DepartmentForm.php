@@ -11,7 +11,7 @@ class DepartmentForm extends Form
     public ?Department $department;
 
     #[Validate('required|string')]
-    public $name = '';
+    public string $name = '';
 
     public function setDepartment(Department $department): void
     {
@@ -23,11 +23,9 @@ class DepartmentForm extends Form
     public function store(): void
     {
         $this->validate();
-
-        dd("jj");
         Department::create($this->only(['name']));
         $this->reset();
-        flash()->success('Department ajouté avec succès');
+        flash()->success('Department added successfully');
     }
 
     public function update(): void
@@ -37,6 +35,6 @@ class DepartmentForm extends Form
         $this->department->update($this->only(['name']));
 
         $this->reset();
-        flash()->success('Department ajouté avec succès');
+        flash()->success('Department updated successfully');
     }
 }

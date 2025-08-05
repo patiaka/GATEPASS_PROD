@@ -2,7 +2,6 @@
 
 namespace App\Livewire\MaterialRequest;
 
-use Auth;
 use App\Models\User;
 use Livewire\Component;
 use App\Models\Compagnie;
@@ -12,6 +11,7 @@ use App\Helper\ApproveAction;
 use App\Models\MaterialRequest;
 use Livewire\Attributes\Computed;
 use App\Enum\MaterialRequestStatus;
+use Illuminate\Support\Facades\Auth;
 
 class Index extends Component
 {
@@ -45,9 +45,6 @@ class Index extends Component
             })->when($this->department, function ($query) {
                 $users = Department::with('users')->find($this->department)->users;
                 $query->whereIn('user_id', $users->pluck('id'));
-            })->when($this->compagny, function ($query) {
-                $users = Compagnie::with('users')->find($this->compagny)->users;
-                $query->whereIn('user_id', $users->pluck('id'));
             })->when($this->status, function ($query) {
                 $query->where('status', $this->status);
             })->when($this->search, function ($query) {
@@ -59,7 +56,6 @@ class Index extends Component
     {
         $auth = Auth::user();
         $departments = $auth->isAdmin() ? Department::select('id', 'name')->get() : [];
-        $compagnies = $auth->isAdmin() ? Compagnie::select('id', 'name')->get() : [];
-        return view('livewire.material-request.index', \compact('departments', 'compagnies'));
+        return view('livewire.material-request.index', \compact('departments'));
     }
 }

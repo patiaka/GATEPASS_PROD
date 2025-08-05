@@ -67,9 +67,9 @@
                 <x-input type="text" name="name" place="name" />
                 <x-input type="email" name="email" place="email" />
                 <x-input type="text" name="poste" place="poste" />
-                <x-select label="Filter by Department" :options="$departments" wire:model.live='department' />
+                <x-select label="Filter by Department" :options="$departments" wire:model.live='form.department' />
 
-                <x-select label="Filter by Role" wire:model.live='role' :options="App\Enum\RoleEnum::all()" />
+                <x-select label="Filter by Role" wire:model.live='form.role' :options="App\Enum\RoleEnum::all()" />
             </div>
         </x-form>
     </x-modal>

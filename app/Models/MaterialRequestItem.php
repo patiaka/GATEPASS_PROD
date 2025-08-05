@@ -17,7 +17,7 @@ class MaterialRequestItem extends Model
      *
      * @var array
      */
-    protected $fillable = ['material_request_id', 'quantity', 'designation'];
+    protected $fillable = ['material_request_id', 'quantity', 'designation', 'serial_number'];
     /**
      * Get the material_request that owns the MaterialRequestItem
      *

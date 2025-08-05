@@ -17,6 +17,7 @@ return new class extends Migration
         Schema::create('material_requests', function (Blueprint $table) {
             $table->id();
             $table->string('reference')->nullable()->unique();
+            $table->string('company');
             $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('gm_approval_id')->nullable()->constrained('users')->onDelete('set null');
             $table->text('gm_comment')->nullable();

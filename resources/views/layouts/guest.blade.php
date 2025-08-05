@@ -2,28 +2,25 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
 
 <head>
-    @vite(['resources/js/app.js','resources/css/app.css'])
+    @vite(['resources/css/app.css'])
 </head>
 
-<body class="min-h-screen bg-neutral-100 antialiased dark:bg-linear-to-b dark:from-neutral-950 dark:to-neutral-900">
-    <div class="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-        <div class="flex w-full max-w-md flex-col gap-6">
-            <a href="" class="flex flex-col items-center gap-2 font-medium" wire:navigate>
-                <span class="flex h-9 w-9 items-center justify-center rounded-md">
+<body class="min-h-screen flex flex-col gap-10 items-center justify-center bg-gray-100">
 
-                </span>
-
-                <span class="sr-only">{{ config('app.name', 'Laravel') }}</span>
-            </a>
-
-            <div class="flex flex-col gap-6">
-                <div
-                    class="rounded-xl border bg-white dark:bg-stone-950 dark:border-stone-800 text-stone-800 shadow-xs">
-                    <div class="px-10 py-8">{{ $slot }}</div>
-                </div>
-            </div>
+    <div class="bg-white shadow-2xl rounded-2xl border p-8 max-w-2xl w-96">
+        <div class="flex flex-col gap-4 mb-8">
+            <img src="images/logo2.png" alt="Logo" class="w-36 mx-auto">
+            <span class="flex h-0.5 w-28 bg-slate-100 mx-auto"></span>
+            <h1 class="text-base font-bold text-center text-[#134169]">
+                Gatepass Request<br>Management
+            </h1>
         </div>
+
+
+        {{ $slot }}
     </div>
+
+    <p class="text-center text-xs text-slate-500 mt-4">&copy; 2025 Somisy - GPR Management App</p>
 
 </body>
 

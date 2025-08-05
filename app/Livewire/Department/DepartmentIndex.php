@@ -25,10 +25,7 @@ class DepartmentIndex extends Component
 
     public function save()
     {
-        dd($this->form->name);
-        // $this->form_type ? $this->form->update() : $this->form->store();
-        $this->form->store();
-        // $this->dispatch('close-modal');
+        $this->form_type ? $this->form->update() : $this->form->store();
     }
 
     public function delete(int $id): void

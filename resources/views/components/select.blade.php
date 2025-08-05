@@ -31,16 +31,16 @@
     <div class="relative">
         <!-- Select Button -->
         <div @click="toggleDropdown()"
-            @class([ 'flex items-center justify-between w-full px-4 py-2 mb-3 text-left bg-white border cursor-pointer input'
-            , 'input-sm'=> $sm,
-            'border-error' => $errors->has($attributes->wire('model')->value())
+            @class([ 'flex items-center justify-between w-full px-4 py-2 mb-3 text-left bg-white border cursor-default rounded-lg input'
+            , 'h-8 text-sm'=> $sm,
+            'border-red-500' => $errors->has($attributes->wire('model')->value())
             ])
             :class="{
             'border-blue-500 ring-2 ring-blue-100': isOpen,
             'border-gray-300 hover:border-gray-400': !isOpen
             }">
 
-            <div class="flex items-center flex-1 min-h-[1.5rem]">
+            <div class="flex items-center flex-1 min-h-6">
                 <template x-if="!selectedOption">
                     <span class="text-gray-500" x-text="placeholderText"></span>
                 </template>
@@ -49,7 +49,7 @@
                 </template>
             </div>
 
-            <svg class="h-5 w-5 text-gray-400 transition-transform duration-200" :class="{ 'rotate-180': isOpen }"
+            <svg class="size-5 text-gray-400 transition-transform duration-200" :class="{ 'rotate-180': isOpen }"
                 viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
                     d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
@@ -59,11 +59,11 @@
 
         <!-- Dropdown Menu -->
         <div x-show="isOpen" x-transition @click.outside="isOpen = false"
-            class="absolute z-10 w-full mt-1 bg-white border border-gray-200 shadow-lg rounded-md">
+            class="absolute z-10 w-full mt-1 bg-white border border-gray-200 shadow-lg rounded-lg overflow-hidden">
             <!-- Search Input -->
-            <div class="p-2 border-b">
+            <div class="p-2 border-b border-gray-200">
                 <input x-ref="searchInput" x-model="searchTerm" @keydown.enter.prevent="selectHighlighted()" type="text"
-                    class="w-full px-3 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Rechercher...">
             </div>
 
@@ -75,14 +75,14 @@
 
                 <template x-for="(option, index) in filteredOptions" :key="option[optionValue]">
                     <div @click="selectOption(option)" @mouseenter="highlightedIndex = index"
-                        class="px-4 py-2 text-sm cursor-pointer flex items-center justify-between rounded-md transition"
+                        class="px-4 py-2 text-sm cursor-default flex items-center justify-between rounded-md transition-colors"
                         :class="{
-                             'bg-blue-100 text-blue-800 font-medium': isSelected(option[optionValue]),
-                             'bg-base-200': highlightedIndex === index && !isSelected(option[optionValue])
-                         }">
+                            'bg-blue-100 text-blue-800 font-medium': isSelected(option[optionValue]),
+                            'bg-gray-100': highlightedIndex === index && !isSelected(option[optionValue])
+                        }">
                         <span x-text="option[optionLabel]"></span>
                         <template x-if="isSelected(option[optionValue])">
-                            <svg class="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+                            <svg class="size-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd"
                                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                     clip-rule="evenodd" />
@@ -94,7 +94,7 @@
         </div>
 
         @error($attributes->wire('model')->value())
-        <span class="text-error text-sm">{{ $message }}</span>
+        <span class="text-red-500 text-sm">{{ $message }}</span>
         @enderror
     </div>
 </div>

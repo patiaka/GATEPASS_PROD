@@ -34,7 +34,6 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'role' => \fake()->randomElement(RoleEnum::cases()),
             'department_id' => rand(1, 5),
-            'compagnie_id' => rand(1, 5),
         ];
     }
 

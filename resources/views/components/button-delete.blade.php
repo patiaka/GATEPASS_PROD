@@ -45,7 +45,7 @@
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                             <h3 id="dialog-title" class="text-base font-semibold text-gray-900">Delete items</h3>
                             <div class="mt-2">
-                                <p class="text-sm text-gray-500">Es-tu sûr de vouloir supprimer cet element</p>
+                                <p class="text-sm text-gray-500">Are you sure you want to delete this item?</p>
                             </div>
                         </div>
                     </div>

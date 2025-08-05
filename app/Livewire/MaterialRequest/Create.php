@@ -2,7 +2,6 @@
 
 namespace App\Livewire\MaterialRequest;
 
-use Auth;
 use Livewire\Component;
 use App\Models\Document;
 use App\Helper\DeleteAction;
@@ -10,17 +9,21 @@ use App\Jobs\MailRequestJob;
 use Livewire\WithFileUploads;
 use App\Models\MaterialRequest;
 use App\Helper\RepeatInputAction;
+use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class Create extends Component
 {
     use DeleteAction, WithFileUploads, RepeatInputAction;
     public $photos = []; // Tableau pour stocker les fichiers
+    #[Validate('required|string|min:3')]
+    public $company = '';
 
     public function mount()
     {
         $this->materials = [
-            ['designation' => '', 'quantity' => 1], // Un élément initial
+            ['designation' => '', 'quantity' => 1, 'serial_number' => ''],
         ];
     }
 
@@ -28,17 +31,18 @@ class Create extends Component
     {
         $this->validate([
             'materials' => 'required|array|min:1',
+            'materials.*.serial_number' => 'nullable|string|min:3',
             'materials.*.designation' => 'required|string|min:3',
             'materials.*.quantity' => 'required|integer|min:1',
-            'photos.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photos.*' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
 
         DB::transaction(function () {
-            $materialRequest = MaterialRequest::create([
-                'user_id' => Auth::user()->id,
-            ]);
-
+            // $materialRequest = MaterialRequest::create([
+            //     'user_id' => Auth::user()->id,
+            // ]);
+            $materialRequest = Auth::user()->material_requests()->create(['company' => $this->company]);
             foreach ($this->photos as $key => $row) {
                 $filename = $row->hashName();
                 $chemin = $row->storeAs('material/document', $filename, 'public');

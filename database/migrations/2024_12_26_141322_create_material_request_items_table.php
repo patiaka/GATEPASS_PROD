@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('material_request_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('material_request_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string('serial_number')->nullable();
             $table->string('designation');
             $table->integer('quantity');
             $table->timestamps();

@@ -15,5 +15,6 @@
     @endif
 </label>
 <input type="{{ $type }}" id="{{ $name }}" name="{{ $name }}" placeholder="Enter {{ $place }}" @if($disabled) disabled
-    @endif @if($required) required @endif value="{{ old($name, $value) }}"
-    class="w-full border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    @endif @if($required) required @endif value="{{ old($name, $value) }}" {{ $attributes->merge(['class' => 'w-full
+border border-[#0e3a61] bg-gray-50 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#0e3a61]']) }}
+>
