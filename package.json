@@ -6,18 +6,16 @@
         "dev": "vite"
     },
     "devDependencies": {
-        "@fortawesome/fontawesome-free": "^6.5.1",
-        "alpinejs": "^3.4.2",
+        "alpinejs": "^3.14.9",
         "autoprefixer": "^10.4.2",
         "axios": "^1.7.4",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^1.0",
-        "bootstrap": "^5.3.2",
-        "boxicons": "^2.1.4",
-        "datatables.net-dt": "^1.13.8",
-        "flatpickr": "^4.6.13",
-        "jquery": "^3.7.1",
-        "perfect-scrollbar": "^1.5.5",
         "vite": "^6.0"
+    },
+    "dependencies": {
+        "@tailwindcss/vite": "^4.1.11",
+        "lucide": "^0.536.0",
+        "tailwindcss": "^4.1.11"
     }
 }

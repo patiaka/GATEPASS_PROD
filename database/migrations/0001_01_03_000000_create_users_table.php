@@ -24,7 +24,7 @@ return new class extends Migration
             $table->enum('role', array_map(fn($role) => $role->value, RoleEnum::cases()));
             $table->boolean('change_password')->default(false);
             $table->boolean('status')->default(true);
-            $table->string('password')->default('$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');;
+            $table->string('password')->default('$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
             $table->rememberToken();
             $table->timestamps();
         });

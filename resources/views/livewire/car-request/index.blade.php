@@ -56,38 +56,38 @@
                 </div>
             </div>
         </x-slot:filter>
-        <thead>
+        <thead class="text-xs uppercase bg-gray-200 text-gray-600">
             <tr>
-                <th>
+                <th class="px-4 py-3">
                     <input type="checkbox" wire:click="selectAll" wire:model="selectedRows" id="select-all">
                 </th>
-                <th>ID</th>
-                <th>Reference</th>
-                <th>Compagny</th>
-                <th>Department</th>
-                <th>Name</th>
-                <th>HOD Approval</th>
-                <th>GM Approval</th>
-                <th>Status</th>
-                <th>Created Date</th>
-                <th>Action</th>
+                <th class="px-4 py-3">ID</th>
+                <th class="px-4 py-3">Reference</th>
+                <th class="px-4 py-3">Compagny</th>
+                <th class="px-4 py-3">Department</th>
+                <th class="px-4 py-3">Name</th>
+                <th class="px-4 py-3">HOD Approval</th>
+                <th class="px-4 py-3">GM Approval</th>
+                <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3">Created Date</th>
+                <th class="px-4 py-3">Action</th>
             </tr>
         </thead>
         <tbody class="table-border-bottom-0">
             @forelse ($this->rows as $row)
             <tr wire:key="row-{{ $row->id }}" @class(['table-primary'=> in_array($row->id, $selectedRows)
                 ])>
-                <td>
+                <td class="px-4 py-3">
                     <input type="checkbox" wire:model.live="selectedRows" value="{{ $row->id }}">
                 </td>
-                <td>{{ $row->id }}</td>
-                <td>{{ $row->reference }}</td>
-                <td>{{ $row->user->compagnie->name }}</td>
-                <td>{{ $row->user->department->name }}</td>
-                <td>{{ $row->user->name }}</td>
-                <td>{{ $row->hod_approval_view() }}</td>
-                <td>{{ $row->gm_approval_view() }}</td>
-                <td>
+                <td class="px-4 py-3">{{ $row->id }}</td>
+                <td class="px-4 py-3">{{ $row->reference }}</td>
+                <td class="px-4 py-3">{{ $row->user->compagnie->name }}</td>
+                <td class="px-4 py-3">{{ $row->user->department->name }}</td>
+                <td class="px-4 py-3">{{ $row->user->name }}</td>
+                <td class="px-4 py-3">{{ $row->hod_approval_view() }}</td>
+                <td class="px-4 py-3">{{ $row->gm_approval_view() }}</td>
+                <td class="px-4 py-3">
                     <span @class(['btn badge rounded-pill btn-sm' ,'bg-primary'=> $row->isApproved(),
                         'bg-danger' => $row->isRejected(),
                         'bg-danger' => $row->isExpired(),
@@ -98,8 +98,8 @@
                     </span>
 
                 </td>
-                <td>{{ $row->created_at }}</td>
-                <td>
+                <td class="px-4 py-3">{{ $row->created_at }}</td>
+                <td class="px-4 py-3">
                     <x-button-edit href="{{ route('car.edit', ['car' => $row]) }}" :row="$row" />
                     <x-button-show href="{{ route('car.show', ['car' => $row]) }}" :row="$row" />
                     <x-button-delete url="{{ url('car/' . $row->id) }}" :row="$row" />
@@ -115,24 +115,3 @@
     </x-table>
 
 </div>
-<script>
-    $(".select2").each(function () {
-            var current = $(this);
-            current.wrap('<div class="position-relative"></div>').select2({
-                placeholder: "Selectionner",
-                dropdownParent: current.parent(),
-            });
-            // Get the Livewire property name from the wire:model attribute
-            var propertyName = current.attr('wire:model.live');
-            // Listen for change event and update Livewire property
-            current.on('change', function (e) {
-            // Add opacity to table
-            $('.table-responsive').addClass('opacity-50');
-
-            @this.set(propertyName, $(this).val()).then(() => {
-                // Remove opacity after Livewire updates
-                $('.table-responsive').removeClass('opacity-50');
-            });
-            });
-        });
-</script>

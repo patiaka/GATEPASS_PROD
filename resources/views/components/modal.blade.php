@@ -1,20 +1,33 @@
-@props(['title'])
-<div wire:ignore>
-    <div class="modal fade" id="modalCenter" tabindex="-1" data-bs-backdrop="static" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalCenterTitle">{{ $title }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+@props(['title', 'size' => 'lg'])
+
+@php
+$sizeClass = match($size) {
+'sm' => 'max-w-sm',
+'md' => 'max-w-lg',
+'lg' => 'max-w-3xl',
+'xl' => 'max-w-5xl',
+default => 'max-w-lg',
+};
+@endphp
+
+
+<el-dialog>
+    <dialog id="dialog" aria-labelledby="dialog-title"
+        class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+        <el-dialog-backdrop
+            class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in">
+        </el-dialog-backdrop>
+
+        <div tabindex="0"
+            class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+            <el-dialog-panel
+                class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+
+                    {{ $slot }}
                 </div>
-                <div class="card">
-                    <div class="modal-body py-0">
-                        <div class="row">
-                            {{ $slot }}
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+            </el-dialog-panel>
         </div>
-    </div>
-</div>
+    </dialog>
+</el-dialog>

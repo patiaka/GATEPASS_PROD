@@ -13,8 +13,6 @@
 
 namespace App\Models{
 /**
- * 
- *
  * @property int $id
  * @property string $name
  * @property string|null $contact
@@ -38,8 +36,6 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
- *
  * @property int $id
  * @property string|null $reference
  * @property int $user_id
@@ -111,30 +107,6 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
- *
- * @property int $id
- * @property string $name
- * @property string $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
- * @property-read int|null $users_count
- * @method static \Database\Factories\CompagnieFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Compagnie newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Compagnie newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Compagnie query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Compagnie whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Compagnie whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Compagnie whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Compagnie whereUpdatedAt($value)
- */
-	class Compagnie extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
- * 
- *
  * @property int $id
  * @property string $name
  * @property string $created_at
@@ -155,8 +127,6 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
- *
  * @property int $id
  * @property int $material_request_id
  * @property string $chemin
@@ -178,8 +148,6 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
- *
  * @property int $id
  * @property string|null $reference
  * @property int $user_id
@@ -223,8 +191,6 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
- *
  * @property int $id
  * @property int $material_request_id
  * @property string $designation
@@ -248,8 +214,6 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
- *
  * @property int $id
  * @property string $name
  * @property string|null $contact
@@ -273,8 +237,6 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * 
- *
  * @property int $id
  * @property int $department_id
  * @property int $compagnie_id
@@ -291,7 +253,6 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CarRequest> $car_requests
  * @property-read int|null $car_requests_count
- * @property-read \App\Models\Compagnie $compagnie
  * @property-read \App\Models\Department $department
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MaterialRequest> $gm_approvals
  * @property-read int|null $gm_approvals_count

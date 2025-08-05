@@ -30,7 +30,6 @@ class User extends Authenticatable
         'role',
         'poste',
         'department_id',
-        'compagnie_id',
         'status'
     ];
 
@@ -88,15 +87,6 @@ class User extends Authenticatable
         return $this->belongsTo(Department::class);
     }
 
-    /**
-     * Get the compagnie that owns the User
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function compagnie(): BelongsTo
-    {
-        return $this->belongsTo(Compagnie::class);
-    }
 
     /**
      * Get all of the material_requests for the User

@@ -3,30 +3,27 @@
 use App\Models\User;
 use App\Enum\RoleEnum;
 use App\Livewire\UserList;
-use App\Livewire\CarRequest\Create;
+use App\Livewire\Dashboard;
 use Illuminate\Support\Facades\Route;
-use App\Livewire\MaterialRequest\Show;
-use App\Livewire\MaterialRequest\Index;
 use App\Http\Controllers\UserController;
-use App\Livewire\MaterialRequest\Update;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\CompagnieController;
 use App\Http\Controllers\CarRequestController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\MaterialRequestController;
 use App\Http\Controllers\MaterialRequestItemController;
+use App\Livewire\Department\DepartmentIndex;
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/', AdminController::class)->name('dashboard');
+    Route::get('/', Dashboard::class)->name('dashboard');
 
     Route::middleware('role:' . RoleEnum::ADMIN->value)->group(function () {
-        Route::resource('department', DepartmentController::class)->except('show');
+        // Route::resource('department', DepartmentController::class)->except('show');
         Route::resource('compagnie', CompagnieController::class)->except('show');
         Route::get('user', UserList::class)->name('user.index');
         Route::resource('user', UserController::class)->except('index');
     });
+    Route::get('department', DepartmentIndex::class)->name('department.index');
     Route::get('material/request', App\Livewire\MaterialRequest\Index::class)->name('material.index');
     Route::get('material/request/create', App\Livewire\MaterialRequest\Create::class)->name('material.create');
     Route::get('material/request/{material}/edit', App\Livewire\MaterialRequest\Update::class)->name('material.edit');

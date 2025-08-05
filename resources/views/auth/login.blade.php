@@ -17,7 +17,7 @@
             <div class="d-flex justify-content-between">
                 @if (Route::has('password.request'))
                 <label class="form-label" for="password">Password</label>
-                <a wire:navigate href="{{ route('password.request') }}">
+                <a href="{{ route('password.request') }}">
                     <small>Forgot your password?</small>
                 </a>
                 @endif

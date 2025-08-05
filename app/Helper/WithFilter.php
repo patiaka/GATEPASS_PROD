@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Helper;
 
+use Livewire\Attributes\Locked;
 use Livewire\WithPagination;
 
 trait WithFilter
@@ -13,9 +14,11 @@ trait WithFilter
     public string $search = "";
     public string $status = "";
     public string $department = "";
-    public string $compagny = "";
-    public array $selectedRows = [];
 
+    public string $compagny = "";
+    public bool $form_type = false;
+
+    public array $selectedRows = [];
     public function selectAll(): void
     {
         $this->selectedRows = $this->rows->pluck('id')->toArray();

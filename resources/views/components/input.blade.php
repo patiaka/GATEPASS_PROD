@@ -1,26 +1,19 @@
-@props(['disabled' => false,'required'=>true, 'name' => '','type' => '', 'place' => '', 'label' => '', 'value' =>
-false,'messages'])
-
-<label {{ $attributes->merge(['class' => 'text-uppercase form-label']) }}>
-    @empty($label)
-    {{ $name }}
-    @else
-    {{ $label }}
-    @endempty
+@props([
+'disabled' => false,
+'required' => true,
+'name' => '',
+'type' => 'text',
+'place' => '',
+'label' => '',
+'value' => '',
+'sm' => false,
+])
+<label for="{{ $name }}" class="block text-sm font-medium text-gray-700 mb-1">
+    {{ $label ?: $name }}
+    @if($required)
+    <span class="text-red-500">*</span>
+    @endif
 </label>
-<input {{ $attributes->merge(['class' => 'form-control mb-3']) }} type="{{ $type }}" value="{{
-$value }}"
-placeholder="Entrer {{ $place }}" name="{{ $name }}" id="{{ $name }}" value="{{ $value ? $value : @old($name) }}" {{
-$disabled ? 'disabled' : '' }}
-@required($required)
->
-<div {{ $attributes->merge(['class' => 'valid-feedback']) }} ></div>
-<div {{ $attributes->merge(['class' => 'invalid-feedback']) }}>This field is required.</div>
-@if ($errors->get($name))
-<ul {{ $attributes->merge(['class' => 'text-sm text-danger space-y-1']) }}>
-    @foreach ((array) $errors->get($name) as $message)
-    <li>{{ $message }}</li>
-    @endforeach
-</ul>
-@endif
-{{ $slot }}
+<input type="{{ $type }}" id="{{ $name }}" name="{{ $name }}" placeholder="Enter {{ $place }}" @if($disabled) disabled
+    @endif @if($required) required @endif value="{{ old($name, $value) }}"
+    class="w-full border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">

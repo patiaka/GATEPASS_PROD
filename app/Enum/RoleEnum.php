@@ -10,4 +10,24 @@ enum RoleEnum: string
     case HOD = 'Head of Department';
     case GM = 'General Manager';
     case USER = 'User';
+
+    public static function getValue($value): string
+    {
+        return match ($value) {
+            self::ADMIN => 'Administrator',
+            self::HOD => 'Head of Department',
+            self::GM => 'General Manager',
+            self::USER => 'User',
+        };
+    }
+
+    public static function all(): array
+    {
+        return array_map(function (self $role) {
+            return [
+                'id' => $role->value,
+                'name' => $role->value
+            ];
+        }, self::cases());
+    }
 }
