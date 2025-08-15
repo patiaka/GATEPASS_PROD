@@ -3,31 +3,20 @@
 namespace App\Livewire\CarRequest;
 
 use Livewire\Component;
-use App\Helper\WithFilter;
 use App\Models\CarRequest;
 use App\Models\Department;
-use App\Helper\ApproveAction;
 use Livewire\Attributes\Computed;
 use App\Enum\MaterialRequestStatus;
-use App\Models\Compagnie;
 use Illuminate\Support\Facades\Auth;
 
-class Index extends Component
+class CarRequestPending extends Component
 {
-    use WithFilter, ApproveAction;
-    public $car;
-
-
-    public function ResetFilter(): void
-    {
-        $this->reset('department', 'status', 'search');
-    }
-
     #[Computed]
     public function rows()
     {
         $auth = Auth::user();
         return CarRequest::with('user', 'user.department', 'hodApproval', 'gmApproval')
+            ->where('status', MaterialRequestStatus::Pending)
             ->when($auth->isGm(), function ($query) use ($auth) {
                 $query->where('status', MaterialRequestStatus::Progress)
                     ->whereNotNull('hod_approval_id')
@@ -50,25 +39,8 @@ class Index extends Component
                 $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
             })->latest('id')->paginate(10);
     }
-
-    public function delete(int $id): void
-    {
-        $row = CarRequest::find($id);
-
-        if (!$row) {
-            flash()->error('Car request not found.');
-            return;
-        }
-
-        $row->delete();
-        flash()->success('Car request deleted with success');
-    }
-
-
     public function render()
     {
-        $auth = Auth::user();
-        $departments = $auth->isAdmin() ? Department::select('id', 'name')->get() : [];
-        return view('livewire.car-request.index', \compact('departments'));
+        return view('livewire.car-request.car-request-pending');
     }
 }

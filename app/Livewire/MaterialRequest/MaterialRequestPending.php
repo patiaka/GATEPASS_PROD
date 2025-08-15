@@ -1,33 +1,22 @@
 <?php
 
-namespace App\Livewire\CarRequest;
+namespace App\Livewire\MaterialRequest;
 
 use Livewire\Component;
-use App\Helper\WithFilter;
-use App\Models\CarRequest;
 use App\Models\Department;
-use App\Helper\ApproveAction;
+use App\Models\MaterialRequest;
 use Livewire\Attributes\Computed;
 use App\Enum\MaterialRequestStatus;
-use App\Models\Compagnie;
 use Illuminate\Support\Facades\Auth;
 
-class Index extends Component
+class MaterialRequestPending extends Component
 {
-    use WithFilter, ApproveAction;
-    public $car;
-
-
-    public function ResetFilter(): void
-    {
-        $this->reset('department', 'status', 'search');
-    }
-
     #[Computed]
     public function rows()
     {
         $auth = Auth::user();
-        return CarRequest::with('user', 'user.department', 'hodApproval', 'gmApproval')
+        return MaterialRequest::with('user', 'user.department', 'hodApproval', 'gmApproval')
+            ->where('status', MaterialRequestStatus::Pending)
             ->when($auth->isGm(), function ($query) use ($auth) {
                 $query->where('status', MaterialRequestStatus::Progress)
                     ->whereNotNull('hod_approval_id')
@@ -37,7 +26,8 @@ class Index extends Component
             ->when($auth->isHod(), function ($query) use ($auth) {
                 $auth->loadMissing('department');
                 $users = $auth->department->loadMissing('users');
-                $query->whereIn('user_id', $users->users->pluck('id'))->orWhere('user_id', $auth->id)
+                $query->whereIn('user_id', $users->users->pluck('id'))
+                    ->orWhere('user_id', $auth->id)
                     ->orWhere('hod_approval_id', $auth->id);
             })->when($auth->isUser(), function ($query) use ($auth) {
                 $query->where('user_id', $auth->id);
@@ -50,25 +40,8 @@ class Index extends Component
                 $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
             })->latest('id')->paginate(10);
     }
-
-    public function delete(int $id): void
-    {
-        $row = CarRequest::find($id);
-
-        if (!$row) {
-            flash()->error('Car request not found.');
-            return;
-        }
-
-        $row->delete();
-        flash()->success('Car request deleted with success');
-    }
-
-
     public function render()
     {
-        $auth = Auth::user();
-        $departments = $auth->isAdmin() ? Department::select('id', 'name')->get() : [];
-        return view('livewire.car-request.index', \compact('departments'));
+        return view('livewire.material-request.material-request-pending');
     }
 }

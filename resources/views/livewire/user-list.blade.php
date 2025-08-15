@@ -2,11 +2,27 @@
     <x-table title="List of users">
 
         <x-slot:filter>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-2 mb-6">
-                <x-select label="Filter by Department" :options="$departments" wire:model.live='department' />
+            <div class="flex flex-wrap gap-4 items-end">
+                {{-- Department Filter --}}
 
-                <x-select label="Filter by Role" wire:model.live='role' :options="App\Enum\RoleEnum::all()" />
+                <div class="w-full sm:w-48">
+                    <x-select label="Filter by Department" name="department" wire:model.live="department">
+                        <option value="">All Departments</option>
+                        @foreach ($departments as $row)
+                        <option value="{{ $row->id }}">{{ $row->name }}</option>
+                        @endforeach
+                    </x-select>
+                </div>
 
+                {{-- Status Filter --}}
+                <div class="w-full sm:w-48">
+                    <x-select label="Filter by Status" wire:model.live="status">
+                        <option value="">All Roles</option>
+                        @foreach (App\Enum\RoleEnum::cases() as $row)
+                        <option value="{{ $row }}">{{ $row }}</option>
+                        @endforeach
+                    </x-select>
+                </div>
             </div>
         </x-slot:filter>
         <thead class="text-xs uppercase bg-gray-200 text-gray-600">
@@ -53,11 +69,11 @@
     </x-table>
     <x-modal title="Form of new user">
         <x-form route="save">
-            <div class="col-12">
+            <div class="">
                 <x-input type="text" name="name" place="name" wire:model='form.name' />
                 <x-input type="email" name="email" place="email" wire:model='form.email' />
                 <x-input type="text" name="poste" place="poste" wire:model='form.poste' />
-                <x-select label="Department" name="department" wire:model='form.department'>
+                <x-select label="Department" name="department" wire:model='form.department_id'>
                     @foreach ($departments as $row)
                     <option value="{{ $row->id }}">{{ $row->name }}</option>
                     @endforeach

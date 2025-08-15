@@ -182,14 +182,24 @@
                     </summary>
                     <ul class="submenu mt-1">
                         <li class="mb-1">
-                            <a href=""
+                            <a wire:navigate href="{{ route('material.pending') }}"
                                 class="flex items-center gap-3 px-4 py-2 rounded hover:bg-[#0e3a615d] hover:text-white text-sm">
                                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3" />
                                     <circle cx="12" cy="12" r="10" />
                                 </svg>
-                                Pending Requests
+                                Material Pending Requests
+                            </a>
+
+                            <a wire:navigate href="{{ route('car.pending') }}"
+                                class="flex items-center gap-3 px-4 py-2 rounded hover:bg-[#0e3a615d] hover:text-white text-sm">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3" />
+                                    <circle cx="12" cy="12" r="10" />
+                                </svg>
+                                Gate Pass Pending Requests
                             </a>
                         </li>
                     </ul>

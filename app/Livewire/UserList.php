@@ -10,6 +10,7 @@ use App\Imports\UsersImport;
 use Livewire\WithPagination;
 use Livewire\Attributes\Computed;
 use App\Exports\UsersTemplateExport;
+use App\Livewire\Forms\UserForm;
 use Livewire\Attributes\Locked;
 use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
@@ -23,10 +24,16 @@ class UserList extends Component
     public string $search = "";
     public string $department = "";
     public $import_file;
+    public UserForm $form;
 
     public function ResetFilter(): void
     {
         $this->reset('department', 'role', 'search');
+    }
+
+    public function save()
+    {
+        $this->form->store();
     }
 
     public function import()
@@ -55,20 +62,14 @@ class UserList extends Component
         $row = User::find($id);
 
         if (!$row) {
-            flash()->error('User introuvable.');
+            flash()->error('User not found.');
             return;
         }
 
         $row->delete();
-        flash()->success('User supprimé avec succès');
+        flash()->success('User deleted with success');
     }
 
-    public function save()
-    {
-        dd('kk');
-        $this->validate();
-        // Code here
-    }
     #[Computed]
     public function rows()
     {

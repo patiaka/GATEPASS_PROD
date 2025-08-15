@@ -15,9 +15,6 @@ trait WithFilter
     public string $status = "";
     public string $department = "";
 
-    public string $compagny = "";
-    public bool $form_type = false;
-
     public array $selectedRows = [];
     public function selectAll(): void
     {
