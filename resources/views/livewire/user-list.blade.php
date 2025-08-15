@@ -8,16 +8,6 @@
                 <x-select label="Filter by Role" wire:model.live='role' :options="App\Enum\RoleEnum::all()" />
 
             </div>
-            @if ($errors->any())
-            <div class="alert alert-danger">
-                <strong>Erreurs lors de l’importation :</strong>
-                <ul>
-                    @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
         </x-slot:filter>
         <thead class="text-xs uppercase bg-gray-200 text-gray-600">
             <tr>
@@ -64,13 +54,23 @@
     <x-modal title="Form of new user">
         <x-form route="save">
             <div class="col-12">
-                <x-input type="text" name="name" place="name" />
-                <x-input type="email" name="email" place="email" />
-                <x-input type="text" name="poste" place="poste" />
-                <x-select label="Filter by Department" :options="$departments" wire:model.live='form.department' />
+                <x-input type="text" name="name" place="name" wire:model='form.name' />
+                <x-input type="email" name="email" place="email" wire:model='form.email' />
+                <x-input type="text" name="poste" place="poste" wire:model='form.poste' />
+                <x-select label="Department" name="department" wire:model='form.department'>
+                    @foreach ($departments as $row)
+                    <option value="{{ $row->id }}">{{ $row->name }}</option>
+                    @endforeach
+                </x-select>
 
-                <x-select label="Filter by Role" wire:model.live='form.role' :options="App\Enum\RoleEnum::all()" />
+                <x-select label="Role" wire:model='form.role'>
+                    @foreach (App\Enum\RoleEnum::cases() as $row)
+                    <option value="{{ $row }}">{{ $row }}</option>
+                    @endforeach
+                </x-select>
             </div>
         </x-form>
     </x-modal>
+
+
 </div>

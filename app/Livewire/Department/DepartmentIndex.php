@@ -15,17 +15,9 @@ class DepartmentIndex extends Component
 
     public DepartmentForm $form;
 
-
-    public function edit(int $id): void
-    {
-        $this->form_type = true;
-        $this->form->setDepartment(Department::findOrFail($id));
-        $this->dispatch('open-edit-modal', id: $id);
-    }
-
     public function save()
     {
-        $this->form_type ? $this->form->update() : $this->form->store();
+        $this->form->store();
     }
 
     public function delete(int $id): void
@@ -33,12 +25,12 @@ class DepartmentIndex extends Component
         $row = Department::find($id);
 
         if (!$row) {
-            flash()->error('Department introuvable.');
+            flash()->error('Department not found.');
             return;
         }
 
         $row->delete();
-        flash()->success('Department supprimé avec succès');
+        flash()->success('Department deleted with success');
     }
 
     #[Computed]
@@ -46,7 +38,7 @@ class DepartmentIndex extends Component
     {
         return Department::select('id', 'name', 'created_at')
             ->when($this->search, function (Builder $query): void {
-                $query->whereLike('nom', "%{$this->search}%");
+                $query->whereLike('name', "%{$this->search}%");
             })->latest()->paginate();
     }
 }

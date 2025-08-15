@@ -15,8 +15,8 @@
                 <td class="px-4 py-3">{{ $row->name }}</td>
                 <td class="px-4 py-3">{{ $row->created_at }}</td>
                 <td class="px-4 py-3">
-                    {{--
-                    <x-button-edit href="{{ route('department.edit', ['department' => $row]) }}" /> --}}
+
+                    <x-button-edit href="{{ route('department.edit', ['department' => $row]) }}" />
                     <x-button-delete rowId="{{ $row->id }}" />
                 </td>
             </tr>
@@ -25,9 +25,9 @@
             @endforelse
         </tbody>
     </x-table>
-    <x-modal title="Formulaire de nouveau periode">
+    <x-modal title="Form of new department">
         <x-form route='save'>
-            <x-input type="text" wire:model="form.name" name="form.name" label="Nom" place="le nom de la periode" />
+            <x-input type="text" wire:model="form.name" name="form.name" label="Nom" place="name of department" />
         </x-form>
     </x-modal>
 </div>

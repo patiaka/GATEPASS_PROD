@@ -44,9 +44,6 @@ class Index extends Component
             })->when($this->department, function ($query) {
                 $users = Department::with('users')->find($this->department)->users;
                 $query->whereIn('user_id', $users->pluck('id'));
-            })->when($this->compagny, function ($query) {
-                $users = Compagnie::with('users')->find($this->compagny)->users;
-                $query->whereIn('user_id', $users->pluck('id'));
             })->when($this->status, function ($query) {
                 $query->where('status', $this->status);
             })->when($this->search, function ($query) {
@@ -54,11 +51,24 @@ class Index extends Component
             })->latest('id')->paginate(10);
     }
 
+    public function delete(int $id): void
+    {
+        $row = CarRequest::find($id);
+
+        if (!$row) {
+            flash()->error('Car request not found.');
+            return;
+        }
+
+        $row->delete();
+        flash()->success('Car request deleted with success');
+    }
+
+
     public function render()
     {
         $auth = Auth::user();
         $departments = $auth->isAdmin() ? Department::select('id', 'name')->get() : [];
-        $compagnies = $auth->isAdmin() ? Compagnie::select('id', 'name')->get() : [];
-        return view('livewire.car-request.index', \compact('departments', 'compagnies'));
+        return view('livewire.car-request.index', \compact('departments'));
     }
 }

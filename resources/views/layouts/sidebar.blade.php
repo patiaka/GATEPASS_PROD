@@ -31,7 +31,7 @@
 
         <ul class="flex flex-col gap-3">
             <li>
-                <a href="/"
+                <a wire:navigate href="/"
                     class="active flex items-center gap-3 py-2 px-4 menu-item hover:bg-[#0e3a6192] hover:text-slate-100 rounded-md">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2"
                         viewBox="0 0 24 24">
@@ -103,7 +103,7 @@
                     </summary>
                     <ul class="submenu mt-1">
                         <li class="mb-1">
-                            <a href="{{ route('car.create') }}"
+                            <a wire:navigate href="{{ route('car.create') }}"
                                 class="flex items-center gap-3 px-4 py-2 rounded hover:bg-[#0e3a615d] hover:text-white text-sm">
                                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2"
                                     viewBox="0 0 24 24">
@@ -116,7 +116,7 @@
                             </a>
                         </li>
                         <li class="mb-1">
-                            <a href="{{ route('material.create') }}"
+                            <a wire:navigate href="{{ route('material.create') }}"
                                 class="flex items-center gap-3 px-4 py-2 rounded hover:bg-[#0e3a615d] hover:text-white text-sm">
                                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2"
                                     viewBox="0 0 24 24">
@@ -129,7 +129,7 @@
                             </a>
                         </li>
                         <li class="mb-1">
-                            <a href="#"
+                            <a wire:navigate href="{{ route('car.index') }}"
                                 class="flex items-center gap-3 px-4 py-2 rounded hover:bg-[#0e3a615d] hover:text-white text-sm">
                                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2"
                                     viewBox="0 0 24 24">
@@ -137,6 +137,17 @@
                                         d="M3 4h18M3 8h18M3 12h18M3 16h18M3 20h18" />
                                 </svg>
                                 All Gatepass Requests
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a wire:navigate href="{{ route('material.index') }}"
+                                class="flex items-center gap-3 px-4 py-2 rounded hover:bg-[#0e3a615d] hover:text-white text-sm">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M3 4h18M3 8h18M3 12h18M3 16h18M3 20h18" />
+                                </svg>
+                                All Material Requests
                             </a>
                         </li>
                         <li class="mb-1">
@@ -226,8 +237,8 @@
                         class="flex items-center justify-center w-10 h-10 bg-gray-200 rounded-full border text-[#0E3A61] font-semibold">
                         O</div>
                     <div class="flex flex-col max-w-[160px] truncate">
-                        <span class="font-medium text-sm truncate">Oumar Oureiba</span>
-                        <span class="text-xs text-slate-400 truncate">oumar@email.com</span>
+                        <span class="font-medium text-sm truncate">{{ Auth::user()->name }}</span>
+                        <span class="text-xs text-slate-400 truncate">{{ Auth::user()->email }}</span>
                     </div>
                     <svg class="ml-auto w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2"
                         viewBox="0 0 24 24">
@@ -246,13 +257,20 @@
                         </a>
                     </li>
                     <li class="mb-1">
-                        <a href="#" class="block px-4 py-2 hover:bg-[#ffffff53] text-sm flex items-center gap-3">
+
+                        <a onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                            class="block px-4 py-2 hover:bg-[#ffffff53] text-sm flex items-center gap-3"
+                            href="{{ route('logout') }}">
                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
                             </svg>
                             Logout
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                @csrf
+                                <input type="hidden" name="id" value="{{ Auth::user()->id }}">
+                            </form>
                         </a>
                     </li>
                 </ul>

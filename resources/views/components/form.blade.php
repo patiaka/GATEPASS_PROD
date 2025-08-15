@@ -14,7 +14,9 @@
             Valider
         </button>
         @if($type === "update" || $type === "create")
-        <a wire:navigate href="{{ $url }}" class="btn btn-error">
+        <a wire:navigate href="{{ $url }}" class="bg-red-600 hover:bg-red-700
+                text-white
+                px-4 py-2 rounded-md">
             Annuler
         </a>
         @else

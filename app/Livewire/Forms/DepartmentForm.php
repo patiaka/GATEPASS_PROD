@@ -33,8 +33,6 @@ class DepartmentForm extends Form
         $this->validate();
 
         $this->department->update($this->only(['name']));
-
-        $this->reset();
         flash()->success('Department updated successfully');
     }
 }

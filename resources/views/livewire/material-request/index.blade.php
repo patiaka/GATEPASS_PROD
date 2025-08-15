@@ -1,89 +1,91 @@
 <div>
     <x-table title="List of material request" :addbtn="false">
-        <x-slot:addcreate>
-            <a href="{{ route('material.create') }}" role="button" class="btn btn-primary">
-                <i class='me-1 bx bx-plus-circle'></i> New
-            </a>
-        </x-slot:addcreate>
         <x-slot:filter>
-            @if(!empty($selectedRows))
-            <div class="col-md-4">
-                <div class="mb-3">
-                    <button class="btn btn-danger" wire:click="bulkAction('reject', 'material')"
-                        @if(empty($selectedRows)) disabled @endif wire:loading.attr="disabled" wire:target="bulkAction">
+            <div class="flex flex-wrap gap-4 items-end">
+
+                {{-- Bulk Actions --}}
+                @if(!empty($selectedRows))
+                <div class="flex gap-2">
+                    <button class="btn btn-danger" wire:click="bulkAction('reject','material')"
+                        wire:loading.attr="disabled" wire:target="bulkAction">
                         <span wire:loading.remove wire:target="bulkAction">Reject</span>
                         <span wire:loading wire:target="bulkAction">
-                            <i class="bx bx-loader-alt fa-spin"></i> Traitement...
+                            <i class="bx bx-loader-alt fa-spin"></i> Processing...
                         </span>
                     </button>
+
                     <button class="btn btn-success" wire:click="bulkAction('approve','material')"
-                        @if(empty($selectedRows)) disabled @endif wire:loading.attr="disabled" wire:target="bulkAction">
-                        <span wire:loading.remove wire:target="bulkAction">Approved</span>
+                        wire:loading.attr="disabled" wire:target="bulkAction">
+                        <span wire:loading.remove wire:target="bulkAction">Approve</span>
                         <span wire:loading wire:target="bulkAction">
-                            <i class="bx bx-loader-alt fa-spin"></i> Traitement...
+                            <i class="bx bx-loader-alt fa-spin"></i> Processing...
                         </span>
                     </button>
                 </div>
-            </div>
-            @endif
-            @if (Auth::user()->isGm() || Auth::user()->isAdmin())
+                @endif
 
-            <div class="col-sm-6 col-md-3">
-                <div wire:ignore>
-                    <x-select label="Filter by Department" wire:model.live='department'>
+                {{-- Department Filter --}}
+                @if (Auth::user()->isGm() || Auth::user()->isAdmin())
+                <div class="w-full sm:w-48">
+                    <x-select label="Filter by Department" name="department" wire:model.live="department">
+                        <option value="">All Departments</option>
                         @foreach ($departments as $row)
                         <option value="{{ $row->id }}">{{ $row->name }}</option>
                         @endforeach
                     </x-select>
                 </div>
-            </div>
-            @endif
-            <div class="col-sm-6 col-md-3">
-                <div wire:ignore>
-                    <x-select label="Filter by Status" wire:model.live='status'>
+                @endif
+
+                {{-- Status Filter --}}
+                <div class="w-full sm:w-48">
+                    <x-select label="Filter by Status" wire:model.live="status">
+                        <option value="">All Statuses</option>
                         @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
                         <option value="{{ $row }}">{{ $row }}</option>
                         @endforeach
                     </x-select>
                 </div>
+
+
+
             </div>
         </x-slot:filter>
-        <thead class="text-xs uppercase bg-gray-200 text-gray-600">
+
+        <thead class="bg-gray-200 uppercase">
             <tr>
-                @if (Auth::user()->isHod() || Auth::user()->isGm())
-                <th class="px-4 py-3">
+                {{-- <th class="px-4 py-3">
                     <input type="checkbox" wire:click="selectAll" wire:model="selectedRows" id="select-all">
-                </th>
-                @endif
-                <th class="px-4 py-3">ID</th>
-                <th class="px-4 py-3">Reference</th>
-                <th class="px-4 py-3">Compagny</th>
-                <th class="px-4 py-3">Department</th>
-                <th class="px-4 py-3">Name</th>
-                <th class="px-4 py-3">HOD Approval</th>
-                <th class="px-4 py-3">GM Approval</th>
-                <th class="px-4 py-3">Status</th>
-                <th class="px-4 py-3">Created Date</th>
-                <th class="px-4 py-3">Action</th>
+                </th> --}}
+                <th class="px-4 py-3 text-left text-sm font-medium">ID</th>
+                <th class="px-4 py-3 text-left text-sm font-medium">reference</th>
+                <th class="px-4 py-3 text-left text-sm font-medium">Date</th>
+                <th class="px-4 py-3 text-left text-sm font-medium">Company</th>
+                <th class="px-4 py-3 text-left text-sm font-medium">Department</th>
+                <th class="px-4 py-3 text-left text-sm font-medium">Requestor</th>
+                <th class="px-4 py-3 text-left text-sm font-medium">stat</th>
+                <th class="px-4 py-3 text-left text-sm font-medium">Actions</th>
             </tr>
         </thead>
-        <tbody class="table-border-bottom-0">
+        <tbody class="divide-y divide-gray-100 bg-white">
             @forelse ($this->rows as $row)
-            <tr wire:key="row-{{ $row->id }}" @class(['table-primary'=> in_array($row->id, $selectedRows)
-                ]) >
-                @if (Auth::user()->isHod() || Auth::user()->isGm())
+            <tr wire:key="row-{{ $row->id }}">
+
+                {{-- @if (Auth::user()->isHod() || Auth::user()->isGm())
                 <td class="px-4 py-3">
                     <input type="checkbox" wire:model.live="selectedRows" value="{{ $row->id }}"
                         @disabled(when($row->isApproved(), true))>
                 </td>
-                @endif
+                @endif --}}
                 <td class="px-4 py-3">{{ $row->id }}</td>
                 <td class="px-4 py-3">{{ $row->reference }}</td>
-                <td class="px-4 py-3">{{ $row->user->company }}</td>
+                <td class="px-4 py-3">{{ $row->created_at }}</td>
+                <td class="px-4 py-3">{{ $row->company }}</td>
                 <td class="px-4 py-3">{{ $row->user->department->name }}</td>
-                <td class="px-4 py-3">{{ $row->user->name }}</td>
-                <td class="px-4 py-3">{{ $row->hod_approval_view() }}</td>
-                <td class="px-4 py-3">{{ $row->gm_approval_view() }}</td>
+
+                <td class="px-4 py-3 text-sm">
+                    <x-form-request wire:key="request-{{ $row->id }}" :model="$row" type="car" />
+
+                </td>
                 <td class="px-4 py-3">
                     <span @class(['btn badge rounded-pill btn-sm' ,'bg-primary'=> $row->isApproved(),
                         'bg-danger' => $row->isRejected(),
@@ -95,10 +97,9 @@
                     </span>
 
                 </td>
-                <td class="px-4 py-3">{{ $row->created_at }}</td>
                 <td class="px-4 py-3">
-                    <x-button-edit href="{{ route('material.edit', ['material' => $row]) }}" :row="$row" />
-                    <x-button-show href="{{ route('material.show', ['material' => $row]) }}" :row="$row" />
+                    <x-button-edit href="{{ route('material.edit', ['MaterialRequest' => $row]) }}" :row="$row" />
+                    <x-button-show href="{{ route('material.show', ['MaterialRequest' => $row]) }}" :row="$row" />
                     <x-button-delete url="{{ url('material/' . $row->id) }}" :row="$row" />
                 </td>
             </tr>
@@ -110,5 +111,4 @@
         </tbody>
 
     </x-table>
-
 </div>

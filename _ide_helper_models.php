@@ -57,6 +57,7 @@ namespace App\Models{
  * @property string $arrive_at
  * @property string $destination
  * @property string $justification
+ * @property string|null $expire_at
  * @property \App\Enum\MaterialRequestStatus $status
  * @property string $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -85,6 +86,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereDestination($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereEnd($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereExpatriate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereExpireAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereGmApprovalDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereGmApprovalId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereGmComment($value)
@@ -150,6 +152,7 @@ namespace App\Models{
 /**
  * @property int $id
  * @property string|null $reference
+ * @property string $company
  * @property int $user_id
  * @property int|null $gm_approval_id
  * @property string|null $gm_comment
@@ -157,6 +160,7 @@ namespace App\Models{
  * @property int|null $hod_approval_id
  * @property string|null $hod_comment
  * @property string|null $hod_approval_date
+ * @property string|null $expire_at
  * @property \App\Enum\MaterialRequestStatus $status
  * @property string $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -173,7 +177,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereCompany($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereExpireAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereGmApprovalDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereGmApprovalId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereGmComment($value)
@@ -193,6 +199,7 @@ namespace App\Models{
 /**
  * @property int $id
  * @property int $material_request_id
+ * @property string|null $serial_number
  * @property string $designation
  * @property int $quantity
  * @property string $created_at
@@ -207,6 +214,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereMaterialRequestId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereSerialNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereUpdatedAt($value)
  */
 	class MaterialRequestItem extends \Eloquent {}
@@ -239,7 +247,6 @@ namespace App\Models{
 /**
  * @property int $id
  * @property int $department_id
- * @property int $compagnie_id
  * @property string $name
  * @property string $poste
  * @property string $email
@@ -271,7 +278,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereChangePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCompagnieId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDepartmentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)

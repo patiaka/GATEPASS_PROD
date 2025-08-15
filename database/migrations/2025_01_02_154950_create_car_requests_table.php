@@ -26,7 +26,7 @@ return new class extends Migration
 
             $table->enum('somisy_car', ['Yes', 'No']);
             $table->enum('resident', ['Yes', 'No']);
-            $table->enum('expatriate', ['Yes', 'No']);
+            $table->enum('expatriate', ['Yes', 'No', 'Escort']);
             $table->enum('licence', ['Mali DL', 'Foreign DL', 'Intl Permit']);
             $table->enum('car_type', ['Lv', 'Bus', 'Truck']);
             $table->string('car_number');
@@ -34,8 +34,10 @@ return new class extends Migration
             $table->date('end');
             $table->time('depart_at');
             $table->time('arrive_at');
+            $table->string('route');
             $table->string('destination');
-            $table->string('justification');
+            $table->string('company');
+            $table->string('reason');
             $table->date('expire_at')->nullable();
             $table->enum('status', [
                 'Pending',

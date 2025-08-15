@@ -52,6 +52,19 @@ class Index extends Component
             })->latest('id')->paginate(10);
     }
 
+    public function delete(int $id): void
+    {
+        $row = MaterialRequest::find($id);
+
+        if (!$row) {
+            flash()->error('Material request not found.');
+            return;
+        }
+
+        $row->delete();
+        flash()->success('Material request deleted with success');
+    }
+
     public function render()
     {
         $auth = Auth::user();

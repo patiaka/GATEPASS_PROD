@@ -39,7 +39,7 @@
             display: none;
         }
     </style>
-    @vite(['resources/css/app.css'])
+    @vite(['resources/css/app.css','resources/js/app.js'])
 
 </head>
 
@@ -62,6 +62,7 @@
     <!-- Content -->
     <!-- Development version -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script> --}}
 
     <!-- Production version -->
     {{-- <script src="https://unpkg.com/lucide@latest"></script> --}}

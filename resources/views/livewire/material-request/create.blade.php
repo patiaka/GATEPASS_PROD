@@ -9,22 +9,23 @@
         </div>
         <div class="p-6">
             <form wire:submit="save" enctype="multipart/form-data" method="post" class="space-y-6">
-                @csrf
+
                 <div class="w-full">
-                    <x-input type="text" wire:model="company" name="company" label="company" place="company" />
+                    <x-input type="text" wire:model="form.company" name="company" label="company" place="company" />
+                    @error('form.company') <small class="text-red-500 text-sm">{{ $message }}</small> @enderror
                     <!-- Liste des matériels -->
                     <div class="my-6">
                         <h5 class="mb-4 text-lg font-medium">Matérial infos</h5>
-                        @foreach ($materials as $index => $material)
+                        @foreach ($form->materials as $index => $material)
                         <div class="grid grid-cols-12 gap-4 mb-3 items-end">
                             <!-- Désignation -->
                             <div class="col-span-3">
                                 <label for="designation"
                                     class="block text-sm font-medium text-gray-700 mb-1">Designation</label>
-                                <input type="text" wire:model="materials.{{ $index }}.designation"
+                                <input type="text" wire:model="form.materials.{{ $index }}.designation"
                                     placeholder="Designation"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                                @error("materials.$index.designation")
+                                @error("form.materials.$index.designation")
                                 <small class="text-red-500 text-sm">{{ $message }}</small>
                                 @enderror
                             </div>
@@ -33,20 +34,21 @@
                             <div class="col-span-3">
                                 <label for="quantity"
                                     class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-                                <input type="number" wire:model="materials.{{ $index }}.quantity" placeholder="Quantity"
+                                <input type="number" wire:model="form.materials.{{ $index }}.quantity"
+                                    placeholder="Quantity"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                     min="1">
-                                @error("materials.$index.quantity")
+                                @error("form.materials.$index.quantity")
                                 <small class="text-red-500 text-sm">{{ $message }}</small>
                                 @enderror
                             </div>
                             <div class="col-span-3">
                                 <label for="serial_number" class="block text-sm font-medium text-gray-700 mb-1">Serial
                                     Number</label>
-                                <input type="text" wire:model="materials.{{ $index }}.serial_number"
+                                <input type="text" wire:model="form.materials.{{ $index }}.serial_number"
                                     placeholder="serial_number"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                                @error("materials.$index.serial_number")
+                                @error("form.materials.$index.serial_number")
                                 <small class="text-red-500 text-sm">{{ $message }}</small>
                                 @enderror
                             </div>
@@ -83,7 +85,7 @@
                     <!-- File upload -->
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Request document (Image)</label>
-                        <input type="file" wire:model.live="photos" multiple class="block w-full text-sm text-gray-500
+                        <input type="file" wire:model.live="form.photos" multiple class="block w-full text-sm text-gray-500
                                 file:mr-4 file:py-2 file:px-4
                                 file:rounded-md file:border-0
                                 file:text-sm file:font-semibold
@@ -92,16 +94,16 @@
                     </div>
 
                     <div class="my-4">
-                        @if ($photos)
+                        @if ($form->photos)
                         <div class="flex flex-wrap gap-4">
-                            @foreach ($photos as $photo)
+                            @foreach ($form->photos as $photo)
                             <img class="max-w-[300px] h-auto rounded-md border border-gray-200"
                                 src="{{ $photo->temporaryUrl() }}" alt="Image">
                             @endforeach
                         </div>
                         @endif
 
-                        <div wire:loading wire:target="photos" class="text-center mt-4">
+                        <div wire:loading wire:target="form.photos" class="text-center mt-4">
                             <span class="inline-flex items-center text-red-500">
                                 <svg class="animate-spin -ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg"
                                     fill="none" viewBox="0 0 24 24">
@@ -116,7 +118,7 @@
                         </div>
                     </div>
 
-                    @error('photos.*')
+                    @error('form.photos.*')
                     <small class="text-red-500 text-sm">{{ $message }}</small>
                     @enderror
                 </div>

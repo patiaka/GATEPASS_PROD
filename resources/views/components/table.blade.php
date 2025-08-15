@@ -12,8 +12,6 @@
             @if ($addcreate)
             {{ $addcreate }}
             @endif
-
-
         </div>
     </div>
 
@@ -25,7 +23,7 @@
         <div class="w-1/3">
             <div class="relative flex items-center">
                 <span class="absolute left-3 text-gray-400">
-                    <i class="bx bx-search"></i>
+                    <i data-lucide="search"></i>
                 </span>
                 <input wire:model.live.debounce.100ms='search' type="text"
                     class="w-full pl-10 pr-4 py-2 border rounded-md" placeholder="Search...">
@@ -33,10 +31,11 @@
         </div>
 
         <div class="flex-1 text-right">
-            <button wire:click='ResetFilter' {{ $attributes->merge(['class' => 'bg-red-600 hover:bg-red-700 text-white
+            <button wire:click='ResetFilter' {{ $attributes->merge(['class' => 'ml-3 bg-red-600 hover:bg-red-700
+                text-white
                 px-4 py-2 rounded-md flex items-center']) }}
                 type="button">
-                <i class='bx bx-reset mr-1'></i>
+                <i class='mr-1' data-lucide="x"></i>
                 Reset Filters
             </button>
         </div>
