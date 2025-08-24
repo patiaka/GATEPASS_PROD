@@ -1,6 +1,9 @@
 <div>
-    <x-table title="List of users">
+    <x-table title="List of users" :addbtn="false">
 
+        <x-slot:addcreate>
+            <x-button-add link="{{ route('user.create') }}" />
+        </x-slot:addcreate>
         <x-slot:filter>
             <div class="flex flex-wrap gap-4 items-end">
                 {{-- Department Filter --}}
@@ -67,26 +70,7 @@
             @endforelse
         </tbody>
     </x-table>
-    <x-modal title="Form of new user">
-        <x-form route="save">
-            <div class="">
-                <x-input type="text" name="name" place="name" wire:model='form.name' />
-                <x-input type="email" name="email" place="email" wire:model='form.email' />
-                <x-input type="text" name="poste" place="poste" wire:model='form.poste' />
-                <x-select label="Department" name="department" wire:model='form.department_id'>
-                    @foreach ($departments as $row)
-                    <option value="{{ $row->id }}">{{ $row->name }}</option>
-                    @endforeach
-                </x-select>
 
-                <x-select label="Role" wire:model='form.role'>
-                    @foreach (App\Enum\RoleEnum::cases() as $row)
-                    <option value="{{ $row }}">{{ $row }}</option>
-                    @endforeach
-                </x-select>
-            </div>
-        </x-form>
-    </x-modal>
 
 
 </div>

@@ -13,11 +13,10 @@ class DepartmentIndex extends Component
 {
     use WithFilter;
 
-    public DepartmentForm $form;
 
-    public function save()
+    public function ResetFilter(): void
     {
-        $this->form->store();
+        $this->reset('search');
     }
 
     public function delete(int $id): void

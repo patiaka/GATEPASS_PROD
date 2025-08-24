@@ -10,6 +10,7 @@ enum RoleEnum: string
     case HOD = 'Head of Department';
     case GM = 'General Manager';
     case USER = 'User';
+    case Security = 'Security';
 
     public static function getValue($value): string
     {
@@ -17,6 +18,7 @@ enum RoleEnum: string
             self::ADMIN => 'Administrator',
             self::HOD => 'Head of Department',
             self::GM => 'General Manager',
+            self::Security => 'Security',
             self::USER => 'User',
         };
     }

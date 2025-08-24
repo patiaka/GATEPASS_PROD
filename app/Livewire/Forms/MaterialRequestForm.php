@@ -34,7 +34,7 @@ class MaterialRequestForm extends Form
         $this->materials = array_values($this->materials); // Réindexer le tableau
     }
 
-    public function setmaterialRequest(MaterialRequest $materialRequest): void
+    public function setMaterialRequest(MaterialRequest $materialRequest): void
     {
         $this->materialRequest = $materialRequest;
         $this->fill($materialRequest);
@@ -56,6 +56,7 @@ class MaterialRequestForm extends Form
             $materialRequest = Auth::user()->material_requests()->create($this->only([
                 'company'
             ]));
+            $materialRequest->updateQuietly(['expire_at' => now()->addDay(7)]);
             foreach ($this->photos as $key => $row) {
                 $filename = $row->hashName();
                 $chemin = $row->storeAs('material/document', $filename, 'public');

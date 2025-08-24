@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\User;
 
 use App\Models\User;
 use Livewire\Component;
@@ -16,7 +16,7 @@ use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class UserList extends Component
+class UserIndex extends Component
 {
     use WithPagination, WithFileUploads;
 
@@ -24,17 +24,14 @@ class UserList extends Component
     public string $search = "";
     public string $department = "";
     public $import_file;
-    public UserForm $form;
+
 
     public function ResetFilter(): void
     {
         $this->reset('department', 'role', 'search');
     }
 
-    public function save()
-    {
-        $this->form->store();
-    }
+
 
     public function import()
     {
@@ -84,6 +81,6 @@ class UserList extends Component
     public function render()
     {
         $departments = Department::select('name', 'id')->get();
-        return view('livewire.user-list', compact('departments'));
+        return view('livewire.user.user-index', compact('departments'));
     }
 }

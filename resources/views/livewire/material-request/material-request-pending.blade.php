@@ -25,7 +25,7 @@
                 @endif
 
                 {{-- Department Filter --}}
-                @if (Auth::user()->isGm() || Auth::user()->isAdmin())
+                {{-- @if (Auth::user()->isGm() || Auth::user()->isAdmin())
                 <div class="w-full sm:w-48">
                     <x-select label="Filter by Department" name="department" wire:model.live="department">
                         <option value="">All Departments</option>
@@ -34,20 +34,17 @@
                         @endforeach
                     </x-select>
                 </div>
-                @endif
+                @endif --}}
 
                 {{-- Status Filter --}}
-                <div class="w-full sm:w-48">
+                {{-- <div class="w-full sm:w-48">
                     <x-select label="Filter by Status" wire:model.live="status">
                         <option value="">All Statuses</option>
                         @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
                         <option value="{{ $row }}">{{ $row }}</option>
                         @endforeach
                     </x-select>
-                </div>
-
-
-
+                </div> --}}
             </div>
         </x-slot:filter>
 
@@ -79,7 +76,7 @@
                 <td class="px-4 py-3">{{ $row->user->department->name }}</td>
 
                 <td class="px-4 py-3 text-sm">
-                    <x-form-request wire:key="request-{{ $row->id }}" :model="$row" type="car" />
+                    <x-form-request wire:key="request-{{ $row->id }}" :model="$row" type="material" />
 
                 </td>
                 <td class="px-4 py-3">

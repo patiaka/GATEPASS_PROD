@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Helper;
 
-use Auth;
 use Gate;
 use Route;
 use App\Models\CarRequest;
@@ -14,6 +13,7 @@ use App\Models\MaterialRequest;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Validate;
 use App\Enum\MaterialRequestStatus;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Collection;
 
 trait ApproveAction
@@ -47,8 +47,7 @@ trait ApproveAction
             ]);
             $this->dispatchApprovalMail($request, 'hod');
             MailRequestJob::dispatch($request, 'Awaiting a material gate pass request to approve reference ' . $request->reference);
-            flash('Material request approved successfully');
-            return to_route('material.index');
+            flash()->success('Material request approved successfully');
         } elseif ($type === 'car') {
 
             $request =  CarRequest::findOrFail($id);
@@ -60,8 +59,7 @@ trait ApproveAction
             ]);
             $this->dispatchApprovalMail($request, 'hod');
             MailRequestJob::dispatch($request, 'Awaiting a vehicle gate pass request to approve reference ' . $request->reference);
-            flash('Car request approved successfully');
-            return to_route('car.index');
+            flash()->success('Car request approved successfully');
         }
     }
 
@@ -82,8 +80,8 @@ trait ApproveAction
                 'expire_at' =>  Carbon::now()->addDays(7),
             ]);
             $this->dispatchApprovalMail($request, 'gm');
-            flash('Material request approved successfully');
-            return to_route('material.index');
+            flash()->success('Material request approved successfully');
+            return to_route('material.pending');
         } elseif ($type === 'car') {
             $request =  CarRequest::findOrFail($id);
             $request->update([
@@ -94,8 +92,7 @@ trait ApproveAction
                 'expire_at' =>  Carbon::now()->addDays(7),
             ]);
             $this->dispatchApprovalMail($request, 'gm');
-            flash('Car request approved successfully');
-            return to_route('car.index');
+            flash()->success('Car request approved successfully');
         }
     }
 
@@ -147,6 +144,6 @@ trait ApproveAction
             }
         }
         $this->reset('selectedRows');
-        flash($action . ' applied items successfully.');
+        flash()->success($action . ' applied items successfully.');
     }
 }

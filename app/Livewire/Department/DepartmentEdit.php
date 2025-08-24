@@ -22,8 +22,4 @@ class DepartmentEdit extends Component
     {
         $this->form->update();
     }
-    public function render()
-    {
-        return view('livewire.department.department-edit');
-    }
 }

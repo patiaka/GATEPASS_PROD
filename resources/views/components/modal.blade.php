@@ -1,16 +1,4 @@
-@props(['title', 'size' => 'lg'])
-
-@php
-$sizeClass = match($size) {
-'sm' => 'max-w-sm',
-'md' => 'max-w-lg',
-'lg' => 'max-w-3xl',
-'xl' => 'max-w-5xl',
-default => 'max-w-lg',
-};
-@endphp
-
-
+@props(['title'])
 <el-dialog>
     <dialog id="dialog" aria-labelledby="dialog-title"
         class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">

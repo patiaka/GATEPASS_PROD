@@ -1,6 +1,6 @@
 @props(['type'=> '','url' => '','route' => ''])
 @if($type === "update")
-<h2 class="p-4 text-center">Formulaire de mise à jour</h2>
+<h2 class="p-4 text-center">Update form</h2>
 @endif
 <form wire:submit='{{ $route }}'>
 
@@ -9,15 +9,15 @@
         <button type="submit" wire:target="{{ $route }}"
             class="inline-flex w-full justify-center rounded-md bg-[#0e3a61] px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 sm:ml-3 sm:w-auto">
             <span wire:loading wire:target="{{ $route }}">
-                <span class="iconify lucide--loader size-4"></span> Traitement...
+                <span class="iconify lucide--loader size-4"></span> Processing...
             </span>
             Valider
         </button>
-        @if($type === "update" || $type === "create")
+        @if($url)
         <a wire:navigate href="{{ $url }}" class="bg-red-600 hover:bg-red-700
                 text-white
                 px-4 py-2 rounded-md">
-            Annuler
+            Cancel
         </a>
         @else
 

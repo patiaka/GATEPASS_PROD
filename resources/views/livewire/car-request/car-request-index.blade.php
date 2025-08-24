@@ -1,20 +1,20 @@
 <div>
-    <x-table title="List of material request" :addbtn="false">
+    <x-table title="List of car request" :addbtn="false">
         <x-slot:filter>
             <div class="flex flex-wrap gap-4 items-end">
 
                 {{-- Bulk Actions --}}
                 @if(!empty($selectedRows))
                 <div class="flex gap-2">
-                    <button class="btn btn-danger" wire:click="bulkAction('reject','material')"
-                        wire:loading.attr="disabled" wire:target="bulkAction">
+                    <button class="btn btn-danger" wire:click="bulkAction('reject','car')" wire:loading.attr="disabled"
+                        wire:target="bulkAction">
                         <span wire:loading.remove wire:target="bulkAction">Reject</span>
                         <span wire:loading wire:target="bulkAction">
                             <i class="bx bx-loader-alt fa-spin"></i> Processing...
                         </span>
                     </button>
 
-                    <button class="btn btn-success" wire:click="bulkAction('approve','material')"
+                    <button class="btn btn-success" wire:click="bulkAction('approve','car')"
                         wire:loading.attr="disabled" wire:target="bulkAction">
                         <span wire:loading.remove wire:target="bulkAction">Approve</span>
                         <span wire:loading wire:target="bulkAction">
@@ -69,13 +69,9 @@
         <tbody class="divide-y divide-gray-100 bg-white">
             @forelse ($this->rows as $row)
             <tr wire:key="row-{{ $row->id }}">
-
-                {{-- @if (Auth::user()->isHod() || Auth::user()->isGm())
-                <td class="px-4 py-3">
-                    <input type="checkbox" wire:model.live="selectedRows" value="{{ $row->id }}"
-                        @disabled(when($row->isApproved(), true))>
-                </td>
-                @endif --}}
+                {{-- <td class="px-4 py-3">
+                    <input type="checkbox" wire:model.live="selectedRows" value="{{ $row->id }}">
+                </td> --}}
                 <td class="px-4 py-3">{{ $row->id }}</td>
                 <td class="px-4 py-3">{{ $row->reference }}</td>
                 <td class="px-4 py-3">{{ $row->created_at }}</td>
@@ -83,8 +79,7 @@
                 <td class="px-4 py-3">{{ $row->user->department->name }}</td>
 
                 <td class="px-4 py-3 text-sm">
-                    <x-form-request wire:key="request-{{ $row->id }}" :model="$row" type="car" />
-
+                    {{ $row->user->name }}
                 </td>
                 <td class="px-4 py-3">
                     <span @class(['btn badge rounded-pill btn-sm' ,'bg-primary'=> $row->isApproved(),
@@ -98,9 +93,9 @@
 
                 </td>
                 <td class="px-4 py-3">
-                    <x-button-edit href="{{ route('material.edit', ['MaterialRequest' => $row]) }}" :row="$row" />
-                    <x-button-show href="{{ route('material.show', ['MaterialRequest' => $row]) }}" :row="$row" />
-                    <x-button-delete url="{{ url('material/' . $row->id) }}" :row="$row" />
+                    <x-button-edit href="{{ route('car.edit', ['CarRequest' => $row]) }}" :row="$row" />
+                    <x-button-show href="{{ route('car.show', ['CarRequest' => $row]) }}" :row="$row" />
+                    <x-button-delete url="{{ url('car/' . $row->id) }}" :row="$row" />
                 </td>
             </tr>
             @empty

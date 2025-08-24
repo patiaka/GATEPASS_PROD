@@ -18,3 +18,7 @@
     @endif @if($required) required @endif value="{{ old($name, $value) }}" {{ $attributes->merge(['class' => 'w-full
 border border-[#0e3a61] bg-gray-50 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#0e3a61]']) }}
 >
+
+@error($name)
+<span class="text-red-600 text-sm">{{ $message }}</span>
+@enderror

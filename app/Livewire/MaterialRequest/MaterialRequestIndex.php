@@ -13,7 +13,7 @@ use Livewire\Attributes\Computed;
 use App\Enum\MaterialRequestStatus;
 use Illuminate\Support\Facades\Auth;
 
-class Index extends Component
+class MaterialRequestIndex extends Component
 {
     use WithFilter, ApproveAction;
     public $material;
@@ -69,6 +69,6 @@ class Index extends Component
     {
         $auth = Auth::user();
         $departments = $auth->isAdmin() ? Department::select('id', 'name')->get() : [];
-        return view('livewire.material-request.index', \compact('departments'));
+        return view('livewire.material-request.material-request-index', \compact('departments'));
     }
 }

@@ -1,5 +1,9 @@
 <div>
-    <x-table title="List of department">
+    <x-table title="List of department" :addbtn="false">
+
+        <x-slot:addcreate>
+            <x-button-add link="{{ route('department.create') }}" />
+        </x-slot:addcreate>
         <thead class="text-xs uppercase bg-gray-200 text-gray-600">
             <tr>
                 <th class="px-4 py-3">ID</th>
@@ -15,7 +19,6 @@
                 <td class="px-4 py-3">{{ $row->name }}</td>
                 <td class="px-4 py-3">{{ $row->created_at }}</td>
                 <td class="px-4 py-3">
-
                     <x-button-edit href="{{ route('department.edit', ['department' => $row]) }}" />
                     <x-button-delete rowId="{{ $row->id }}" />
                 </td>
@@ -25,9 +28,5 @@
             @endforelse
         </tbody>
     </x-table>
-    <x-modal title="Form of new department">
-        <x-form route='save'>
-            <x-input type="text" wire:model="form.name" name="form.name" label="Nom" place="name of department" />
-        </x-form>
-    </x-modal>
+
 </div>

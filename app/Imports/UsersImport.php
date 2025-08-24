@@ -26,14 +26,13 @@ class UsersImport implements ToModel, WithHeadingRow, SkipsOnFailure
             dd($row['role']);
             $role = RoleEnum::getValue($row['role']);
             $department = Department::where('name', $row['department'])->firstOrFail();
-            $compagnie = Compagnie::where('name', $row['compagny'])->firstOrFail();
             return new User([
                 'name'  => $row['name'],
                 'email' => $row['email'],
                 'poste'    => $row['position'],
                 'role'    => $role,
                 'department_id' => $department->id,
-                'compagnie_id' => $compagnie->id,
+                'compagnie' => $row['compagny'],
             ]);
         } catch (\Exception $e) {
             Log::alert($e);
@@ -51,7 +50,7 @@ class UsersImport implements ToModel, WithHeadingRow, SkipsOnFailure
             'position' => 'required|string|max:255',
             'role' => 'required|in:' . implode(',', RoleEnum::cases()),
             'department' => 'required|exists:departments,name',
-            'compagny' => 'required|exists:compagnies,name',
+            'compagny' => 'required|string',
         ];
     }
 

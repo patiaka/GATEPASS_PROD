@@ -10,7 +10,7 @@ use App\Livewire\Forms\CarRequestForm;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
-class Create extends Component
+class CarRequestCreate extends Component
 {
 
     use RepeatInputAction;

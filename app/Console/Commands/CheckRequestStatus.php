@@ -7,6 +7,7 @@ use App\Models\MaterialRequest;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use App\Enum\MaterialRequestStatus;
+use App\Models\CarRequest;
 use Illuminate\Support\Facades\Log;
 
 class CheckRequestStatus extends Command
@@ -38,6 +39,30 @@ class CheckRequestStatus extends Command
                         $row = MaterialRequest::where('id', $row->id)->lockForUpdate()->first();
                         // Vérifier si la date de fin est dépassée
                         if ($row->expire_at < Carbon::now()) {
+                            $row->update([
+                                'status' => MaterialRequestStatus::Expired,
+                            ]);
+                        }
+                        try {
+                        } catch (\Exception $e) {
+                            Log::error('Failed to update row', [
+                                'row' => $row->trans_ref,
+                                'error' => $e->getMessage(),
+                            ]);
+                            throw $e; // Annuler la transaction en cas d'erreur
+                        }
+                    });
+                }
+            });
+
+        CarRequest::where('status', MaterialRequestStatus::Approved)
+            ->chunk(100, function ($requests) {
+                foreach ($requests as $row) {
+                    DB::transaction(function () use ($row) {
+                        // Verrouiller la ligne pour éviter les modifications concurrentes
+                        $row = CarRequest::where('id', $row->id)->lockForUpdate()->first();
+                        // Vérifier si la date de fin est dépassée
+                        if ($row->end < Carbon::now()) {
                             $row->update([
                                 'status' => MaterialRequestStatus::Expired,
                             ]);

@@ -6,7 +6,7 @@ use Livewire\Component;
 use App\Helper\ApproveAction;
 use App\Models\MaterialRequest;
 
-class Show extends Component
+class MaterialRequestShow extends Component
 {
     use ApproveAction;
     public $material;

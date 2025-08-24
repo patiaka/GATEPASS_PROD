@@ -147,6 +147,7 @@ class CarRequestForm extends Form
 
             $this->reset();
             flash()->success('Car request submitted successfully');
+            \to_route('car.index');
         });
     }
 

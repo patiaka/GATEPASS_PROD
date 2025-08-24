@@ -8,7 +8,7 @@ use Livewire\WithFileUploads;
 use App\Helper\RepeatInputAction;
 use App\Livewire\Forms\MaterialRequestForm;
 
-class Create extends Component
+class MaterialRequestCreate extends Component
 {
     use DeleteAction, WithFileUploads, RepeatInputAction;
 

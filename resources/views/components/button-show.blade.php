@@ -2,9 +2,12 @@
 @if ($row)
 @can('show-request', $row)
 <a aria-label="Button" {{ $attributes->merge(['class' => 'btn btn-success btn-icon']) }}>
-    <i class="bx bx-show"></i></a>
+    <i data-lucide="eye"></i>
+    jhh
+</a>
 @endcan
 @else
 <a aria-label="Button" {{ $attributes->merge(['class' => 'btn btn-success btn-icon']) }}>
-    <i class="bx bx-show"></i></a>
+    <i class="EyeIcon"></i>
+</a>
 @endif

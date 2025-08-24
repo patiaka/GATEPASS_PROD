@@ -3,7 +3,7 @@
     <div class="flex gap-4">
         <div class="flex flex-col">
             <span class="text-xs">Welcome,</span>
-            <span class="font-medium text-md">Oumar Oureiba</span>
+            <span class="font-medium text-md">{{ Auth::user()->name }}</span>
         </div>
     </div>
 
@@ -29,7 +29,7 @@
             <ul
                 class="absolute top-full right-0 p-4 grid gap-2 bg-white mt-2 shadow-lg w-56 rounded z-50 text-sm text-slate-800 opacity-0 scale-95 peer-checked:opacity-100 peer-checked:scale-100 peer-checked:visible invisible transition-all duration-200">
                 <li class="hover:bg-[#0e3a615d] hover:text-slate-50 rounded-lg">
-                    <a href="" class="py-2 px-4 flex items-center gap-2">
+                    <a href="{{ route('car.create') }}" class="py-2 px-4 flex items-center gap-2">
                         <!-- Icône écriture / formulaire -->
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 20h9" />
@@ -40,7 +40,7 @@
                     </a>
                 </li>
                 <li class="hover:bg-[#0e3a615d] hover:text-slate-50 rounded-lg">
-                    <a href="" class="py-2 px-4 flex items-center gap-2">
+                    <a href="{{ route('material.create') }}" class="py-2 px-4 flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 20h9" />
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -50,7 +50,7 @@
                     </a>
                 </li>
                 <li class="hover:bg-[#0e3a615d] hover:text-slate-50 rounded-lg">
-                    <a href="" class="py-2 px-4 flex items-center gap-2">
+                    <a href="{{ route('user.create') }}" class="py-2 px-4 flex items-center gap-2">
                         <!-- Icône utilisateur -->
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -60,7 +60,7 @@
                     </a>
                 </li>
                 <li class="hover:bg-[#0e3a615d] hover:text-slate-50 rounded-lg">
-                    <a href="" class="py-2 px-4 flex items-center gap-2">
+                    <a href="{{ route('department.create') }}" class="py-2 px-4 flex items-center gap-2">
                         <!-- Icône bâtiment / département -->
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"

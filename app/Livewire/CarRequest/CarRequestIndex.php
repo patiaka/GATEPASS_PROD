@@ -12,7 +12,7 @@ use App\Enum\MaterialRequestStatus;
 use App\Models\Compagnie;
 use Illuminate\Support\Facades\Auth;
 
-class Index extends Component
+class CarRequestIndex extends Component
 {
     use WithFilter, ApproveAction;
     public $car;
@@ -69,6 +69,6 @@ class Index extends Component
     {
         $auth = Auth::user();
         $departments = $auth->isAdmin() ? Department::select('id', 'name')->get() : [];
-        return view('livewire.car-request.index', \compact('departments'));
+        return view('livewire.car-request.car-request-index', \compact('departments'));
     }
 }

@@ -8,7 +8,7 @@ use App\Models\CarRequest;
 use App\Helper\RepeatInputAction;
 use App\Livewire\Forms\CarRequestForm;
 
-class Update extends Component
+class CarRequestUpdate extends Component
 {
 
     use RepeatInputAction;
@@ -21,7 +21,7 @@ class Update extends Component
     public function mount(CarRequest $CarRequest)
     {
         $this->carRequest = $CarRequest;
-        Gate::authorize('update-car-request', $this->carRequest);
+        Gate::authorize('update-request', $this->carRequest);
         $this->form->setCarRequest($CarRequest);
 
         $CarRequest->loadMissing('car_drivers', 'passengers');
@@ -39,7 +39,7 @@ class Update extends Component
 
     public function save()
     {
-        Gate::authorize('update-car-request', $this->carRequest);
+        Gate::authorize('update-request', $this->carRequest);
         $this->form->update();
     }
 }

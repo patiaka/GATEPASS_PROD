@@ -10,7 +10,7 @@ class DepartmentForm extends Form
 {
     public ?Department $department;
 
-    #[Validate('required|string')]
+    #[Validate('required|string|unique:departments,name')]
     public string $name = '';
 
     public function setDepartment(Department $department): void
