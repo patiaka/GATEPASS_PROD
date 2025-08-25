@@ -4,12 +4,13 @@
             <h1 class="font-medium text-xl">Resident & Vehicle Off Site Details</h1>
             <div class="flex mt-1 items-center">
                 <span class="text-sm mr-2">#Request ID | Status:</span>
-                <span @class(['flex w-4 h-4 rounded-full shadow -mt-0.5 border', 'bg-danger'=>
-                    $carRequest->isRejected(),
-                    'bg-danger' => $carRequest->isExpired(),
+                <span @class([ 'flex w-4 h-4 rounded-full shadow -mt-0.5' , 'bg-red-500 border-red-500'=>
+                    $carRequest->isRejected() || $carRequest->isExpired(),
                     'bg-orange-200 border-orange-200' => $carRequest->isPending(),
-                    'bg-warning' => $carRequest->isProgress()])
-                    ></span>
+                    'bg-yellow-400 border-yellow-400' => $carRequest->isProgress(), // adjust if you mean "bg-warning"
+                    ])>
+                </span>
+
                 <span class="text-sm font-semibold ml-1">{{ $carRequest->status }}</span>
             </div>
         </div>
@@ -17,7 +18,7 @@
         <div class="flex gap-2">
             <a href="{{ route('car.index') }}" class="btn-secondary">← Back</a>
             <a href="{{ route('car.edit', ['CarRequest' => $carRequest]) }}" class="btn-secondary">✏️ Edit</a>
-            <a href="#" class="btn-secondary">⬇️ Download</a>
+            <a href="#" role="button" wire:click="download_pdf({{ $carRequest }})" class="btn-secondary">⬇️ Download</a>
         </div>
     </div>
 
@@ -126,14 +127,18 @@
                 <tr>
                     <td class="px-4 py-2">1</td>
                     <td class="px-4 py-2">HOD</td>
-                    <td class="px-4 py-2">Pending</td>
-                    <td class="px-4 py-2"></td>
+                    <td class="px-4 py-2">
+                        <x-request-status :model="$carRequest" type="hod" />
+                    </td>
+                    <td class="px-4 py-2"> {{ $carRequest->hod_comment }}</td>
                 </tr>
                 <tr>
                     <td class="px-4 py-2">2</td>
                     <td class="px-4 py-2">GM</td>
-                    <td class="px-4 py-2">Pending</td>
-                    <td class="px-4 py-2"></td>
+                    <td class="px-4 py-2">
+                        <x-request-status :model="$carRequest" type="gm" />
+                    </td>
+                    <td class="px-4 py-2">{{ $carRequest->gm_comment }}</td>
                 </tr>
                 {{-- <tr>
                     <td class="px-4 py-2">3</td>

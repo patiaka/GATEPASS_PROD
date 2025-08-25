@@ -5,10 +5,10 @@ namespace App\Livewire\CarRequest;
 use Livewire\Component;
 use App\Models\CarRequest;
 use App\Helper\ApproveAction;
+use Spatie\Browsershot\Browsershot;
 
 class CarRequestShow extends Component
 {
-    use ApproveAction;
     public CarRequest $carRequest;
 
     public function mount(CarRequest $CarRequest)
@@ -18,8 +18,18 @@ class CarRequestShow extends Component
         $this->carRequest->loadMissing('user:id,name,email,department_id', 'user.department:id,name', 'gmApproval.department:id,name', 'hodApproval.department:id,name', 'car_drivers', 'passengers');
     }
 
-    public function render()
+    public function download_pdf(CarRequest $carRequest)
     {
-        return view('livewire.car-request.car-request-show');
+        $html = view('car-request-download', compact('carRequest'))->render();
+
+        $path = storage_path("app/request-{$carRequest->reference}.pdf");
+
+        Browsershot::html($html)
+            ->margins(10, 10, 10, 10)
+            ->format('A4')
+            ->showBackground()
+            ->save($path);
+
+        return response()->download($path)->deleteFileAfterSend(true);
     }
 }

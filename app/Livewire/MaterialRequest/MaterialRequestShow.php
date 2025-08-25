@@ -9,18 +9,18 @@ use App\Models\MaterialRequest;
 class MaterialRequestShow extends Component
 {
     use ApproveAction;
-    public $material;
+    public $MaterialRequest;
 
-    public function mount(MaterialRequest $material)
+    public function mount(MaterialRequest $MaterialRequest)
     {
-        $this->material = $material;
+        $this->MaterialRequest = $MaterialRequest;
 
-        $this->material->loadMissing('user:id,name,email,department_id', 'user.department:id,name', 'gmApproval.department:id,name', 'hodApproval.department:id,name', 'documents');
+        $this->MaterialRequest->loadMissing('user:id,name,email,department_id', 'user.department:id,name', 'gmApproval.department:id,name', 'hodApproval.department:id,name', 'documents');
     }
 
 
     public function render()
     {
-        return view('livewire.material-request.show');
+        return view('livewire.material-request.material-request-show');
     }
 }

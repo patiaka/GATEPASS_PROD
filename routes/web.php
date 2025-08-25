@@ -21,6 +21,7 @@ use App\Http\Controllers\MaterialRequestController;
 use App\Livewire\MaterialRequest\MaterialRequestShow;
 use App\Livewire\MaterialRequest\MaterialRequestIndex;
 use App\Http\Controllers\MaterialRequestItemController;
+use App\Livewire\CarRequest\CarRequestDownload;
 use App\Livewire\Department\DepartmentCreate;
 use App\Livewire\MaterialRequest\MaterialRequestCreate;
 use App\Livewire\MaterialRequest\MaterialRequestUpdate;
@@ -47,6 +48,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('material/request/{Material}/print', [MaterialRequestController::class, 'print'])->name('material.print');
     Route::get('material/request/pending', MaterialRequestPending::class)->name('material.pending');
 
+    Route::get('car/request/{CarRequest}/download', CarRequestDownload::class)->name('car.download');
     Route::get('car/request/pending', CarRequestPending::class)->name('car.pending');
     Route::get('car/request', CarRequestIndex::class)->name('car.index');
     Route::get('car/request/create', CarRequestCreate::class)->name('car.create');

@@ -1,5 +1,5 @@
 <div>
-    <div class="card p-3">
+    {{-- <div class="card p-3">
         <section class="review-section">
             <h3 class="review-title">Material request</h3>
             <div class="review-header text-star d-flex justify-content-between">
@@ -68,26 +68,133 @@
                 </div>
             </div>
         </section>
-    </div>
-</div>
-<script>
-    $(".select2").each(function () {
-            var current = $(this);
-            current.wrap('<div class="position-relative"></div>').select2({
-                placeholder: "Selectionner",
-                dropdownParent: current.parent(),
-            });
-            // Get the Livewire property name from the wire:model attribute
-            var propertyName = current.attr('wire:model.live');
-            // Listen for change event and update Livewire property
-            current.on('change', function (e) {
-            // Add opacity to table
-            $('.table-responsive').addClass('opacity-50');
+    </div> --}}
+    <main class="p-4 md:p-6 space-y-6">
+        <!-- Header -->
+        <header class="relative h-20 bg-[#0F3369] text-white overflow-hidden flex items-center">
+            <!-- Logo left -->
+            <div class="h-full w-44 flex items-center justify-start pl-3">
+                <img src="assets/images/logo.jpg" alt="Company Logo" class="h-full w-auto object-contain" />
+            </div>
+            <!-- Centered title -->
+            <div class="absolute inset-0 flex items-center justify-center">
+                <h1 class="text-xl font-bold tracking-wide text-center">GATE PASS / BON DE SORTIE</h1>
+            </div>
+        </header>
+        <!-- Request Info -->
+        <section class="break-inside-avoid">
+            <h2 class="sr-only">Request Information</h2>
+            <table class="w-full border-2 border-black border-collapse">
+                <tbody>
+                    <tr>
+                        <th class="w-1/5 border-2 border-black bg-gray-100 p-2 text-left">Date</th>
+                        <td class="border-2 border-black p-2">{{ $MaterialRequest->created_at }}</td>
+                    </tr>
+                    <tr>
+                        <th class="w-1/5 border-2 border-black bg-gray-100 p-2 text-left">Name</th>
+                        <td class="border-2 border-black p-2">{{ $MaterialRequest->user->name }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
 
-            @this.set(propertyName, $(this).val()).then(() => {
-                // Remove opacity after Livewire updates
-                $('.table-responsive').removeClass('opacity-50');
-            });
-            });
-        });
-</script>
+        <!-- Material Items -->
+        <section class="break-inside-avoid">
+            <h2 class="sr-only">Material Items</h2>
+            <table class="w-full border-2 border-black border-collapse">
+                <thead>
+                    <tr class="[&>th]:border-2 [&>th]:border-black [&>th]:bg-gray-100 [&>th]:p-2 text-left">
+                        <th class="w-12">#</th>
+                        <th>DESCRIPTION / DESIGNATION</th>
+                        <th class="w-24">QUANTITY</th>
+                        <th class="w-40">Serial Number</th>
+                        <th class="w-32">PHOTO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Example row (duplicate/remove as needed) -->
+                    @foreach ($MaterialRequest->loadMissing('material_request_items')->material_request_items as $row)
+                    <tr class="[&>td]:border-2 [&>td]:border-black [&>td]:p-2 align-top">
+                        <td>{{ $row->id }}</td>
+                        <td>{{ $row->designation }}</td>
+                        <td>{{ $row->quantity }}</td>
+                        <td>{{ $row->serial_number }}</td>
+                        <td class="text-center">
+                            <!-- Replace with actual path -->
+                            <img src="storage/materials/example-1.jpg" alt="Item photo"
+                                class="inline-block max-w-[90px] max-h-20 object-contain" />
+                        </td>
+                    </tr>
+                    @endforeach
+
+                    <!-- /Example rows -->
+                </tbody>
+            </table>
+        </section>
+        <!-- Signature Approvals -->
+        <section class="break-inside-avoid">
+            <h3 class="text-center font-semibold text-[#0F3369] text-base">AUTHORISED SIGNATURE APPROVALS</h3>
+            <table class="w-full border-2 border-black border-collapse">
+                <thead>
+                    <tr class="[&>th]:border-2 [&>th]:border-black [&>th]:bg-gray-100 [&>th]:p-2 text-center">
+                        <th>Company / Dept</th>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Signature</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Applicant -->
+                    <tr class="[&>td]:border-2 [&>td]:border-black [&>td]:p-2 text-center">
+                        <td>{{ $MaterialRequest->user->department->name }}</td>
+                        <td>{{ $MaterialRequest->user->name }}</td>
+                        <td>{{ $MaterialRequest->user->poste }}</td>
+                        <td class="h-14"></td>
+                    </tr>
+                    <!-- HOD -->
+                    <tr class="[&>td]:border-2 [&>td]:border-black [&>td]:p-2 text-center">
+                        <td>{{ $MaterialRequest->user->department->name }}</td>
+                        <td>{{ $MaterialRequest->hodApproval ? $MaterialRequest->hodApproval->department->name : '—' }}
+                        </td>
+                        <td>Head of Department</td>
+                        <td class="h-14">
+                            <x-request-status :model="$MaterialRequest" type="hod" />
+                            <!-- Replace with actual signature path or leave empty -->
+                            {{-- <img src="storage/signatures/hod-sign.png" alt="HOD Signature"
+                                class="mx-auto h-12 object-contain" /> --}}
+                        </td>
+                    </tr>
+                    <!-- GM -->
+                    <tr class="[&>td]:border-2 [&>td]:border-black [&>td]:p-2 text-center">
+                        <td>{{ $MaterialRequest->user->department->name }}</td>
+                        <td>{{ $MaterialRequest->gmApproval ? $MaterialRequest->gmApproval->department->name : '—' }}
+                        </td>
+                        <td>General Manager</td>
+                        <td>{{ $MaterialRequest->gm_approval_view() }}</td>
+                        <td class="h-14">
+                            <x-request-status :model="$MaterialRequest" type="gm" />
+                            {{-- <img src="storage/signatures/gm-sign.png" alt="GM Signature"
+                                class="mx-auto h-12 object-contain" /> --}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Notes -->
+        <section class="text-[11px] space-y-1">
+            <p class="font-semibold">Notes:</p>
+            <ol class="list-decimal pl-5 space-y-1">
+                <li>
+                    The date items will be removed from site. Up to seven days can be nominated for where multiple
+                    exit and
+                    re-entry required.
+                </li>
+                <li>
+                    General Manager - Somisy, General Manager – Operations, or General Manager – Sustainability.
+                </li>
+            </ol>
+        </section>
+
+    </main>
+</div>
