@@ -10,7 +10,6 @@
                     'bg-yellow-400 border-yellow-400' => $carRequest->isProgress(), // adjust if you mean "bg-warning"
                     ])>
                 </span>
-
                 <span class="text-sm font-semibold ml-1">{{ $carRequest->status }}</span>
             </div>
         </div>

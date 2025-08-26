@@ -45,7 +45,7 @@
     <header class="relative h-20 bg-[#0F3369] text-white overflow-hidden flex items-center">
         <!-- Logo left -->
         <div class="h-full w-44 flex items-center justify-start pl-3">
-            <img src="assets/images/logo.jpg" alt="Company Logo" class="h-full w-auto object-contain" />
+            <img src="{{ asset('assets/img/logo.jpg') }}" alt="Company Logo" class="h-full w-auto object-contain" />
         </div>
         <!-- Centered title -->
         <div class="absolute inset-0 flex items-center justify-center">

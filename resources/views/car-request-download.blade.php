@@ -84,9 +84,9 @@
     {{-- Header with Logo and Title --}}
     <div class="flex justify-between items-start mb-4">
         <div class="flex items-center gap-3">
-            {{-- @if(!empty($logoUrl))
-            <img src="{{ $logoUrl }}" alt="Logo" style="height: 48px; width: auto;" />
-            @endif --}}
+
+            <img src="{{ asset('assets/img/logo.jpg') }}" alt="Logo" style="height: 48px; width: auto;" />
+
             <div>
                 <div class="text-xl font-bold brand-text">Resident and Vehicle Off Site Form</div>
             </div>

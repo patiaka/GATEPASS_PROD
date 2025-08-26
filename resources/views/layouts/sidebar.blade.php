@@ -2,7 +2,7 @@
     class="sidebar fixed md:static inset-y-0 left-0 z-40 flex flex-col w-64 p-4 bg-[#0e3a61] text-white border-r transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out">
 
     <a href="/" class="mb-2 px-2 pb-2 flex rounded-md">
-        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-32">
+        <img src="{{ asset('assets/img/logo.jpg') }}" alt="Logo" class="w-32">
     </a>
 
     <a href="/" class="logo-wrapper p-2 flex items-center gap-2 bg-slate-100 text-slate-600 border-2 rounded-md">
