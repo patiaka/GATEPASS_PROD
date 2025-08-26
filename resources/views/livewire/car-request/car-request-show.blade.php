@@ -18,7 +18,14 @@
         <div class="flex gap-2">
             <a href="{{ route('car.index') }}" class="btn-secondary">← Back</a>
             <a href="{{ route('car.edit', ['CarRequest' => $carRequest]) }}" class="btn-secondary">✏️ Edit</a>
-            <a href="#" role="button" wire:click="download_pdf({{ $carRequest }})" class="btn-secondary">⬇️ Download</a>
+
+            <button wire:click="download_pdf({{ $carRequest }})" wire:loading.attr="disabled" wire:target="download_pdf"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm flex items-center gap-2">
+                <span wire:loading.remove wire:target="download_pdf">⬇️ Download</span>
+                <span wire:loading wire:target="download_pdf">
+                    <span class="iconify lucide--loader size-4"></span> Processing...
+                </span>
+            </button>
         </div>
     </div>
 
@@ -138,6 +145,7 @@
                     <td class="px-4 py-2">GM</td>
                     <td class="px-4 py-2">
                         <x-request-status :model="$carRequest" type="gm" />
+                        <x-form-request :model="$carRequest" type="car" />
                     </td>
                     <td class="px-4 py-2">{{ $carRequest->gm_comment }}</td>
                 </tr>

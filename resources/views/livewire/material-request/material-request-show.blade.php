@@ -1,75 +1,16 @@
 <div>
-    {{-- <div class="card p-3">
-        <section class="review-section">
-            <h3 class="review-title">Material request</h3>
-            <div class="review-header text-star d-flex justify-content-between">
-                <h4 class="review-subtitle text-md-left">
-                    <span class="review-subtitle-text">Reference: {{ $material->reference }}</span> <br>
-                    <span class="review-subtitle-text">Status: {{ $material->status }}</span> <br>
-                    <span class="review-subtitle-text">Department: {{
-                        $material->user->department->name }}</span>
-                    <br>
-                    <span class="review-subtitle-text">Requestor: {{ $material->user->name }}</span>
-                    <br>
 
-                    <span class="review-subtitle-text">Created Date: {{ $material->created_at }}</span>
-                </h4>
-                <div>
-                    <x-button-print href="{{ route('material.print', ['material' => $material]) }}" :row="$material" />
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="table-responsive">
-                        <table class="table table-bordered review-table mb-0">
-                            <thead>
-                                <tr>
-                                    <th style="width:40px;">#</th>
-                                    <th>Designation</th>
-                                    <th>Quantity</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($material->material_request_items as $row)
-                                <tr>
-                                    <td>{{ $row->id }}</td>
-                                    <td>{{ $row->designation }}</td>
-                                    <td>{{ $row->quantity }}</td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="my-5">
-                        <h4>Material request images</h4>
-
-                        <div class="row">
-                            @foreach ($material->loadMissing('documents')->documents as $row)
-                            <div class="col-md-3">
-                                <div class="card flex-fill">
-                                    <img alt="image" src="{{ $row->DocLink() }}" class="card-img-top">
-                                    @if ($material->user_id === Auth::user()->id and $material->isPending())
-                                    <div class="card-img-overlay">
-                                        <x-button-edit href="{{ route('document.edit', ['document' => $row]) }}" />
-                                        <x-button-delete url="{{ url('document/' . $row->id) }}" />
-                                    </div>
-                                    @endif
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    <hr>
-
-                    <div class="mt-3">
-                        <x-form-request-validate :model="$material" type="material" />
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div> --}}
     <main class="p-4 md:p-6 space-y-6">
+
+        <button wire:click="download_pdf({{ $MaterialRequest->id }})" wire:loading.attr="disabled"
+            wire:target="download_pdf"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm flex items-center gap-2">
+            <span wire:loading.remove wire:target="download_pdf">Download</span>
+            <span wire:loading wire:target="download_pdf">
+                <span class="iconify lucide--loader size-4"></span> Processing...
+            </span>
+        </button>
+
         <!-- Header -->
         <header class="relative h-20 bg-[#0F3369] text-white overflow-hidden flex items-center">
             <!-- Logo left -->
@@ -80,6 +21,7 @@
             <div class="absolute inset-0 flex items-center justify-center">
                 <h1 class="text-xl font-bold tracking-wide text-center">GATE PASS / BON DE SORTIE</h1>
             </div>
+
         </header>
         <!-- Request Info -->
         <section class="break-inside-avoid">
@@ -108,7 +50,7 @@
                         <th>DESCRIPTION / DESIGNATION</th>
                         <th class="w-24">QUANTITY</th>
                         <th class="w-40">Serial Number</th>
-                        <th class="w-32">PHOTO</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -119,13 +61,6 @@
                         <td>{{ $row->designation }}</td>
                         <td>{{ $row->quantity }}</td>
                         <td>{{ $row->serial_number }}</td>
-                        <td class="text-center">
-                            @foreach ($MaterialRequest->loadMissing('documents')->documents as $row)
-                            <!-- Replace with actual path -->
-                            <img src="{{ $row->DocLink() }}" alt="Item photo"
-                                class="inline-block max-w-[90px] max-h-20 object-contain" />
-                            @endforeach
-                        </td>
                     </tr>
                     @endforeach
 
@@ -133,6 +68,22 @@
                 </tbody>
             </table>
         </section>
+        <div class="flex">
+            @foreach ($MaterialRequest->loadMissing('documents')->documents as $row)
+            <div class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2">
+                <div class="card bg-white rounded-lg shadow-md overflow-hidden relative">
+                    <img alt="Document image" src="{{ $row->DocLink() }}" class="w-full h-48 object-cover">
+
+                    @if ($MaterialRequest->user_id === Auth::user()->id and $MaterialRequest->isPending())
+                    <div class="absolute inset-0 flex justify-end items-start p-2 gap-2">
+                        <x-button-edit href="{{ route('document.edit', ['document' => $row]) }}" />
+                        <x-button-delete url="{{ url('document/' . $row->id) }}" />
+                    </div>
+                    @endif
+                </div>
+            </div>
+            @endforeach
+        </div>
         <!-- Signature Approvals -->
         <section class="break-inside-avoid">
             <h3 class="text-center font-semibold text-[#0F3369] text-base">AUTHORISED SIGNATURE APPROVALS</h3>
@@ -161,6 +112,9 @@
                         <td>Head of Department</td>
                         <td class="h-14">
                             <x-request-status :model="$MaterialRequest" type="hod" />
+                            @if (Auth::user()->isHod())
+                            <x-form-request :model="$MaterialRequest" type="material" />
+                            @endif
                             <!-- Replace with actual signature path or leave empty -->
                             {{-- <img src="storage/signatures/hod-sign.png" alt="HOD Signature"
                                 class="mx-auto h-12 object-contain" /> --}}
@@ -172,9 +126,11 @@
                         <td>{{ $MaterialRequest->gmApproval ? $MaterialRequest->gmApproval->department->name : '—' }}
                         </td>
                         <td>General Manager</td>
-                        <td>{{ $MaterialRequest->gm_approval_view() }}</td>
                         <td class="h-14">
                             <x-request-status :model="$MaterialRequest" type="gm" />
+                            @if (Auth::user()->isGm())
+                            <x-form-request :model="$MaterialRequest" type="material" />
+                            @endif
                             {{-- <img src="storage/signatures/gm-sign.png" alt="GM Signature"
                                 class="mx-auto h-12 object-contain" /> --}}
                         </td>

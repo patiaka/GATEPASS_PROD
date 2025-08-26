@@ -3,306 +3,172 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Resident & Vehicle Off Site Form</title>
+    <title>Gate Pass / Bon de Sortie</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Optional: Poppins font to match your style -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
-        :root {
-            --brand: #0E3A61;
-        }
-
-        @page {
-            size: A4;
-            margin: 18mm 14mm;
-        }
-
         body {
-            font-size: 12px;
-            color: #0b0f19;
+            font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
         }
 
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
+        @media print {
+            @page {
+                size: A4;
+                margin: 14mm;
+            }
 
-        th,
-        td {
-            border: 1px solid #cbd5e1;
-            padding: 6px 8px;
-            vertical-align: top;
-        }
+            .no-print {
+                display: none !important;
+            }
 
-        thead th {
-            background: #f1f5f9;
-        }
+            img {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
 
-        .section-title {
-            background: var(--brand);
-            color: #fff;
-            font-weight: 700;
-            padding: 6px 8px;
-        }
-
-        .brand-border {
-            border-color: var(--brand);
-        }
-
-        .brand-text {
-            color: var(--brand);
-        }
-
-        .brand-bg-light {
-            background: #eef5fb;
-        }
-
-        .kv td:first-child {
-            width: 25%;
-            font-weight: 600;
-        }
-
-        .kv td:nth-child(3) {
-            width: 22%;
-            font-weight: 600;
-        }
-
-        .no-border td,
-        .no-border th {
-            border: 0;
-        }
-
-        .small {
-            font-size: 11px;
+            .break-inside-avoid {
+                break-inside: avoid;
+            }
         }
     </style>
 </head>
 
-<body class="leading-relaxed">
-    {{-- @php
-    $logoUrl = $logoUrl ?? (function_exists('asset') ? asset('images/logo.png') : '');
-    @endphp --}}
+<body class="text-[12px] leading-relaxed text-gray-900">
 
-    {{-- Header with Logo and Title --}}
-    <div class="flex justify-between items-start mb-4">
-        <div class="flex items-center gap-3">
-            {{-- @if(!empty($logoUrl))
-            <img src="{{ $logoUrl }}" alt="Logo" style="height: 48px; width: auto;" />
-            @endif --}}
-            <div>
-                <div class="text-xl font-bold brand-text">Resident and Vehicle Off Site Form</div>
-            </div>
+    <!-- Header -->
+    <header class="relative h-20 bg-[#0F3369] text-white overflow-hidden flex items-center">
+        <!-- Logo left -->
+        <div class="h-full w-44 flex items-center justify-start pl-3">
+            <img src="assets/images/logo.jpg" alt="Company Logo" class="h-full w-auto object-contain" />
         </div>
-        <div class="text-right text-xs">
-            <p>Page 1 of 1</p>
+        <!-- Centered title -->
+        <div class="absolute inset-0 flex items-center justify-center">
+            <h1 class="text-xl font-bold tracking-wide text-center">GATE PASS / BON DE SORTIE</h1>
         </div>
-    </div>
+    </header>
 
-    {{-- Restriction Note --}}
-    <div class="p-3 border brand-border brand-bg-light small mb-4">
-        Syama Camp Residents are <strong>not permitted off site between 7pm and 6am</strong> without express
-        permission of the General Manager.
-    </div>
+    <main class="p-4 md:p-6 space-y-6">
 
-    {{-- Resident / Vehicle Info --}}
-    <h2 class="section-title">Resident / Vehicle Info</h2>
-    <table class="mb-4 text-xs">
-        <tbody>
-            <tr>
-                <td>Somisy Vehicle</td>
-                <td>{{ $carRequest->somisy_car }}</td>
-                <td>Camp Resident</td>
-                <td>{{ $carRequest->resident }}</td>
-            </tr>
-            <tr>
-                <td>Expatriate</td>
-                <td>{{ $carRequest->expatriate }}</td>
-                <td>Escort Level</td>
-                <td>{{ $carRequest->escort_level ?? '—' }}</td>
-            </tr>
-        </tbody>
-    </table>
+        <!-- Request Info -->
+        <section class="break-inside-avoid">
+            <h2 class="sr-only">Request Information</h2>
+            <table class="w-full border-2 border-black border-collapse">
+                <tbody>
+                    <tr>
+                        <th class="w-1/5 border-2 border-black bg-gray-100 p-2 text-left">Date</th>
+                        <td class="border-2 border-black p-2">{{ $MaterialRequest->created_at }}</td>
+                    </tr>
+                    <tr>
+                        <th class="w-1/5 border-2 border-black bg-gray-100 p-2 text-left">Name</th>
+                        <td class="border-2 border-black p-2">{{ $MaterialRequest->user->name }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
 
-    {{-- Vehicle and Driver --}}
-    <h2 class="section-title">Vehicle and Driver</h2>
-    <div class="">
-        <table class="kv mb-2">
-            <tbody>
-                <tr>
-                    <td>Vehicle Type</td>
-                    <td>{{ $carRequest->car_type ?? '—' }}</td>
-                </tr>
-                <tr>
-                    <td>Vehicle #</td>
-                    <td>{{ $carRequest->car_number ?? '—' }}</td>
-                    <td>Route</td>
-                    <td>{{ $carRequest->route ?? '—' }}</td>
-                </tr>
-                <tr>
-                    <td>Driver Name</td>
-                    @foreach($carRequest->loadMissing('car_drivers')->car_drivers as $row)
-                    <td>{{ $carRequest->name ?? '—' }}</td>
-                    <td>Phone</td>
-                    <td>{{ $carRequest->contact ?? '—' }}</td>
+        <!-- Material Items -->
+        <section class="break-inside-avoid">
+            <h2 class="sr-only">Material Items</h2>
+            <table class="w-full border-2 border-black border-collapse">
+                <thead>
+                    <tr class="[&>th]:border-2 [&>th]:border-black [&>th]:bg-gray-100 [&>th]:p-2 text-left">
+                        <th class="w-12">#</th>
+                        <th>DESCRIPTION / DESIGNATION</th>
+                        <th class="w-24">QUANTITY</th>
+                        <th class="w-40">Serial Number</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Example row (duplicate/remove as needed) -->
+                    @foreach ($MaterialRequest->loadMissing('material_request_items')->material_request_items as $row)
+                    <tr class="[&>td]:border-2 [&>td]:border-black [&>td]:p-2 align-top">
+                        <td>{{ $row->id }}</td>
+                        <td>{{ $row->designation }}</td>
+                        <td>{{ $row->quantity }}</td>
+                        <td>{{ $row->serial_number }}</td>
+                    </tr>
                     @endforeach
-                </tr>
-                <tr>
-                    <td>Licence(s)</td>
-                    <td colspan="3">{{ $carRequest->licence }}</td>
-                </tr>
 
-            </tbody>
-        </table>
-        <h2 class="">Conditions</h2>
-        <div class="p-3 border brand-border small mb-4">
-            I understand that as the driver of the above vehicle, I am fully responsible for the safety of the
-            passengers and vehicle whilst driving. Should any details provided change, I will notify site as
-            soon as
-            possible. I agree to abide by all relevant laws applicable to driving in Mali and all relevant
-            policies
-            and
-            procedures as issued by SOMISY in respect of driving company vehicles. I understand that should I
-            not
-            comply
-            with the above conditions relating to off-site use of a company vehicle, then I may jeopardise
-            future
-            off-site use of a company vehicle for others and myself, and disciplinary action may be taken as a
-            result of
-            my actions.
-            <div class="mt-4 text-sm">
-                <p>Driver’s Signature ______________________________________</p>
-                <p>Date: {{ $carRequest->created_at }}</p>
-            </div>
-        </div>
-    </div>
+                    <!-- /Example rows -->
+                </tbody>
+            </table>
+        </section>
+        <!-- Signature Approvals -->
+        <section class="break-inside-avoid">
+            <h3 class="text-center font-semibold text-[#0F3369] text-base">AUTHORISED SIGNATURE APPROVALS</h3>
+            <table class="w-full border-2 border-black border-collapse">
+                <thead>
+                    <tr class="[&>th]:border-2 [&>th]:border-black [&>th]:bg-gray-100 [&>th]:p-2 text-center">
+                        <th>Company / Dept</th>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Signature</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Applicant -->
+                    <tr class="[&>td]:border-2 [&>td]:border-black [&>td]:p-2 text-center">
+                        <td>{{ $MaterialRequest->user->department->name }}</td>
+                        <td>{{ $MaterialRequest->user->name }}</td>
+                        <td>{{ $MaterialRequest->user->poste }}</td>
+                        <td class="h-14"></td>
+                    </tr>
+                    <!-- HOD -->
+                    <tr class="[&>td]:border-2 [&>td]:border-black [&>td]:p-2 text-center">
+                        <td>{{ $MaterialRequest->user->department->name }}</td>
+                        <td>{{ $MaterialRequest->hodApproval ? $MaterialRequest->hodApproval->department->name : '—' }}
+                        </td>
+                        <td>Head of Department</td>
+                        <td class="h-14">
+                            <x-request-status :model="$MaterialRequest" type="hod" />
 
-    {{-- Conditions (not colored) with Driver Signature --}}
+                            <!-- Replace with actual signature path or leave empty -->
+                            {{-- <img src="storage/signatures/hod-sign.png" alt="HOD Signature"
+                                class="mx-auto h-12 object-contain" /> --}}
+                        </td>
+                    </tr>
+                    <!-- GM -->
+                    <tr class="[&>td]:border-2 [&>td]:border-black [&>td]:p-2 text-center">
+                        <td>{{ $MaterialRequest->user->department->name }}</td>
+                        <td>{{ $MaterialRequest->gmApproval ? $MaterialRequest->gmApproval->department->name : '—' }}
+                        </td>
+                        <td>General Manager</td>
+                        <td class="h-14">
+                            <x-request-status :model="$MaterialRequest" type="gm" />
 
+                            {{-- <img src="storage/signatures/gm-sign.png" alt="GM Signature"
+                                class="mx-auto h-12 object-contain" /> --}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
 
-    {{-- Journey --}}
-    <h2 class="section-title">Journey</h2>
-    <table class="kv mb-4">
-        <tbody>
-            <tr>
-                <td>Date valid from</td>
-                <td>{{ $carRequest->start }}</td>
-                <td>Date Until</td>
-                <td>{{ $carRequest->end }}</td>
-            </tr>
-            <tr>
-                <td>Departure Time</td>
-                <td>{{ $carRequest->depart_at ?? '—' }}</td>
-                <td>Arrival Time</td>
-                <td>{{ $carRequest->arrive_at ?? '—' }}</td>
-            </tr>
-            <tr>
-                <td>Destination(s)</td>
-                <td colspan="3">{{ $carRequest->destination ?? '—' }}</td>
-            </tr>
-            <tr>
-                <td>Reason</td>
-                <td colspan="3">{{ $carRequest->reason ?? '—' }}</td>
-            </tr>
-        </tbody>
-    </table>
+        <!-- Notes -->
+        <section class="text-[11px] space-y-1">
+            <p class="font-semibold">Notes:</p>
+            <ol class="list-decimal pl-5 space-y-1">
+                <li>
+                    The date items will be removed from site. Up to seven days can be nominated for where multiple exit
+                    and
+                    re-entry required.
+                </li>
+                <li>
+                    General Manager - Somisy, General Manager – Operations, or General Manager – Sustainability.
+                </li>
+            </ol>
+        </section>
 
-    {{-- Resident Details --}}
-    <h2 class="section-title">Resident Details</h2>
-    <table class="mb-4">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Phone</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach(($carRequest->passengers ?? collect()) as $p)
-            <tr>
-                <td>{{ $p->name }}</td>
-                <td>{{ $p->contact }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-
-    <div class="mt-4 p-3 border brand-border small">
-        Approval to be obtained from General Manager and relevant Department Manager or Contract Manager. If more
-        than one resident, then the department head who owns the vehicle signs off. If no vehicle is used, then each
-        resident completes their own form. Notify Security via <span class="mono">SecurityDutyOfficer@rml.com.au</span>
-        48 hours prior to departure for an escort. The
-        Security Duty Officer will determine the level of escort required. Late notice may result in delays. Ref
-        <span class="mono">SEC-SEC-PRO-0011</span> Vehicle and Resident Off Site Procedure and <span
-            class="mono">PRO-E-467</span> Security Escort Procedure.
-        <div class="mt-4 text-sm">
-            <p>Resident Signature ______________________________________</p>
-            <p>Date: {{ $carRequest->created_at }}</p>
-        </div>
-    </div>
-    {{-- Approval --}}
-    <h2 class="section-title">Approval</h2>
-    <table class="mb-4">
-        <thead>
-            <tr>
-                <th>Department Manager</th>
-                <th>General Manager</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>{{ $carRequest->hod_comment ?? '—' }}</td>
-                <td>{{ $carRequest->gm_comment ?? '—' }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    {{-- Security Use Only --}}
-    <h2 class="section-title">Security Use Only - Duty Officer and Control Room Notification</h2>
-    <table class="mb-4">
-        <tbody>
-            <tr>
-                <td>Security Supervisor Name</td>
-                <td>{{ $carRequest->security_supervisor_name ?? '' }}</td>
-                <td>Escort</td>
-                <td>{{ $carRequest->security_escort ?? '' }}</td>
-            </tr>
-            <tr>
-                <td>DO</td>
-                <td>{{ $carRequest->security_do ?? '' }}</td>
-                <td>CR</td>
-                <td>{{ $carRequest->security_cr ?? '' }}</td>
-            </tr>
-            <tr>
-                <td>Phone</td>
-                <td>{{ $carRequest->security_phone ?? '' }}</td>
-                <td>GPS</td>
-                <td>{{ $carRequest->security_gps ?? '' }}</td>
-            </tr>
-            <tr>
-                <td>LV</td>
-                <td>{{ $carRequest->security_lv ?? ($carRequest->car_type ?? '') }}</td>
-                <td>Date</td>
-                <td>{{ $carRequest->security_date ?? '' }}</td>
-            </tr>
-            <tr>
-                <td>Time Out</td>
-                <td>{{ $carRequest->security_time_out ?? '' }}</td>
-                <td>Time In</td>
-                <td>{{ $carRequest->security_time_in ?? '' }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    {{-- Footer Note / Procedures --}}
+    </main>
 
 
-    {{-- Footer Meta --}}
-    <div class="border-t pt-2 text-xs flex justify-between mt-2">
-        <div>
-            Document Owner: Security Manager (SMY)
-        </div>
-        <div class="text-right">
-            Document Number: SEC-SEC-FRM-0001 &nbsp; | &nbsp; Revision 1.02 &nbsp; | &nbsp; Date Published:
-            23/11/2017 &nbsp; | &nbsp; Next Review: 24 months
-        </div>
-    </div>
 </body>
 
 </html>
