@@ -80,7 +80,6 @@
 
                 <td class="px-4 py-3 text-sm">
                     <x-form-request wire:key="request-{{ $row->id }}" :model="$row" type="car" />
-
                 </td>
                 <td class="px-4 py-3">
                     <span @class(['btn badge rounded-pill btn-sm' ,'bg-primary'=> $row->isApproved(),

@@ -8,12 +8,13 @@ use App\Models\Compagnie;
 use App\Models\Department;
 use App\Imports\UsersImport;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
+use Livewire\Attributes\Locked;
+use App\Livewire\Forms\UserForm;
 use Livewire\Attributes\Computed;
 use App\Exports\UsersTemplateExport;
-use App\Livewire\Forms\UserForm;
-use Livewire\Attributes\Locked;
-use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Notifications\UserNotification;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class UserIndex extends Component
@@ -47,6 +48,13 @@ class UserIndex extends Component
         }
 
         flash('User exported successfuly');
+    }
+
+    public function invite_user(User $user)
+    {
+        $user->notify(new UserNotification($user));
+
+        flash('User invited successfuly');
     }
 
     public function downloadTemplate(): BinaryFileResponse

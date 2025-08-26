@@ -120,9 +120,11 @@
                         <td>{{ $row->quantity }}</td>
                         <td>{{ $row->serial_number }}</td>
                         <td class="text-center">
+                            @foreach ($MaterialRequest->loadMissing('documents')->documents as $row)
                             <!-- Replace with actual path -->
-                            <img src="storage/materials/example-1.jpg" alt="Item photo"
+                            <img src="{{ $row->DocLink() }}" alt="Item photo"
                                 class="inline-block max-w-[90px] max-h-20 object-contain" />
+                            @endforeach
                         </td>
                     </tr>
                     @endforeach

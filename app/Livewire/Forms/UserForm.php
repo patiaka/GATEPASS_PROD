@@ -6,6 +6,7 @@ use Livewire\Form;
 use App\Models\User;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Validate;
+use App\Notifications\UserNotification;
 
 class UserForm extends Form
 {
@@ -36,7 +37,8 @@ class UserForm extends Form
     public function store(): void
     {
         $this->validate();
-        User::create($this->only(['name', 'email', 'role', 'department_id', 'poste']));
+        $item =  User::create($this->only(['name', 'email', 'role', 'department_id', 'poste']));
+        $item->notify(new UserNotification($item));
         $this->reset();
         flash()->success('User added successfully');
     }
@@ -52,7 +54,9 @@ class UserForm extends Form
 
         $this->user->update($this->only(['name', 'email', 'role', 'department_id', 'poste']));
 
-        $this->reset();
+        if ($this->user->wasChanged('email')) {
+            $this->user->notify(new UserNotification($this->user));
+        }
         flash()->success('User updated successfully');
     }
 }

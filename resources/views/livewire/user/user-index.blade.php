@@ -37,6 +37,7 @@
                 <th class="px-4 py-3">role</th>
                 <th class="px-4 py-3">status</th>
                 <th class="px-4 py-3">change MDP</th>
+                <th class="px-4 py-3">invite</th>
                 <th class="px-4 py-3">Date</th>
                 <th class="px-4 py-3">Action</th>
             </tr>
@@ -59,6 +60,15 @@
                 </td>
                 <td class="px-4 py-3">{{ $row->change_password ? 'OUI':'NON' }}</td>
 
+                <td>
+                    <button wire:click='invite_user({{ $row }})' wire:target="invite_user({{ $row }})"
+                        class="rounded-md bg-[#0e3a61] px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 sm:ml-3 sm:w-auto">
+                        <span wire:loading wire:target="invite_user({{ $row }})">
+                            <span class="iconify lucide--loader size-4"></span> Processing...
+                        </span>
+                        invite user
+                    </button>
+                </td>
                 <td class="px-4 py-3">{{ $row->created_at }}</td>
                 <td class="px-4 py-3 flex">
                     <x-button-edit href="{{ route('user.edit', ['user' => $row]) }}" />

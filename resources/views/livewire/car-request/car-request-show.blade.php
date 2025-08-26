@@ -129,6 +129,7 @@
                     <td class="px-4 py-2">HOD</td>
                     <td class="px-4 py-2">
                         <x-request-status :model="$carRequest" type="hod" />
+                        <x-form-request :model="$carRequest" type="car" />
                     </td>
                     <td class="px-4 py-2"> {{ $carRequest->hod_comment }}</td>
                 </tr>

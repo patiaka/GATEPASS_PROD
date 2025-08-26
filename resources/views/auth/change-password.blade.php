@@ -2,21 +2,17 @@
     <!-- Logo -->
     <x-logo />
     <!-- /Logo -->
-    <h4 class="mb-2">Changement de Mot de Passe Requis 🔒</h4>
-    <p>
-
-        Lors de votre première connexion, veuillez changer votre mot de passe pour des raisons de
-        sécurité. Suivez les critères ci-dessus et soumettez le formulaire. Votre compte sera
-        accessible avec le nouveau mot de passe.
+    <h4 class=" mb-2">Password Change Required 🔒</h4>
+    <p class="text-sm mb-2">
+        On your first login, please change your password for security reasons.
+        Follow the criteria below and submit the form. Your account will then be accessible with the new password.
     </p>
-    <h6>
-        NB: Utilisez au moins huit (8) caractères, mélangez majuscules, minuscules, chiffres et
-        caractères spéciaux.
+    <h6 class="text-sm mb-2">
+        Note: Use at least eight (8) characters, mixing uppercase, lowercase, numbers, and special characters.
     </h6>
+
     @error('email')
     <div class="alert alert-danger d-flex" role="alert">
-        <span class="badge badge-center rounded-pill bg-danger border-label-danger p-3 me-2"><i
-                class="bx bx-store fs-6"></i></span>
         <div class="d-flex flex-column ps-1">
             <h6 class="alert-heading d-flex align-items-center mb-1">Error!!</h6>
             <span>{{ $message }}</span>
@@ -24,31 +20,37 @@
     </div>
     @enderror
     <x-auth-session-status class="mb-4" :status="session('status')" />
-    <form id="formAuthentication" class="mb-3" action="{{ route('change_password') }}" method="post">
+    <form class="mb-3" action="{{ route('change_password') }}" method="post">
         @csrf
         <input type="hidden" name="email" value="{{ $email }}">
         <div class="mb-3 form-password-toggle">
-            <label class="form-label" for="password">Nouveau mot de passe</label>
+            <label class="form-label" for="password">New password</label>
             <div class="input-group input-group-merge">
-                <input type="password" id="password" class="form-control" name="password"
-                    placeholder="Entrez votre mot de passe" aria-describedby="password" required />
-                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                <input type="password" id="password"
+                    class="text-gray-900 bg-gray-50 rounded-lg text-sm block w-full p-2.5 border border-gray-300 focus:z-10 focus:ring-blue-500 focus:border-blue-500"
+                    name="password" placeholder="Enter your password" aria-describedby="password" required />
+
             </div>
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
         <div class="mb-3 form-password-toggle">
-            <label class="form-label" for="password_confirmation">Confirmé le mot de passe</label>
+            <label class="form-label" for="password_confirmation">Confirm new password</label>
             <div class="input-group input-group-merge">
-                <input type="password" id="password_confirmation" class="form-control" name="password_confirmation"
-                    placeholder="Confirmé le mot de passe" aria-describedby="password" required />
-                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                <input type="password" id="password_confirmation"
+                    class="text-gray-900 bg-gray-50 rounded-lg text-sm block w-full p-2.5 border border-gray-300 focus:z-10 focus:ring-blue-500 focus:border-blue-500"
+                    name="password_confirmation" placeholder="Confirm new password" aria-describedby="password"
+                    required />
+
             </div>
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
-        <button type="submit" class="btn btn-primary d-grid w-100 mb-3">Valider</button>
-        <div class="text-center">
+        <button
+            class="w-full bg-[#134169] text-white font-semibold py-2 px-4 mt-8 rounded-lg hover:bg-[#0e3354] transition duration-300"
+            type="submit">
+            valide
+        </button>
+        <div class="text-center mt-2">
             <a wire:navigate href="{{ route('login') }}">
-                <i class="bx bx-chevron-left scaleX-n1-rtl bx-sm"></i>
                 Back to login
             </a>
         </div>

@@ -151,14 +151,26 @@
                             </a>
                         </li>
                         <li class="mb-1">
-                            <a href=""
+                            <a wire:navigate href="{{ route('car.check') }}"
                                 class="flex items-center gap-3 px-4 py-2 rounded hover:bg-[#0e3a615d] hover:text-white text-sm">
                                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                Check In / Out
+                                Car Check In / Out
+                            </a>
+                        </li>
+
+                        <li class="mb-1">
+                            <a wire:navigate href="{{ route('material.check') }}"
+                                class="flex items-center gap-3 px-4 py-2 rounded hover:bg-[#0e3a615d] hover:text-white text-sm">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Material Check In / Out
                             </a>
                         </li>
                     </ul>

@@ -24,61 +24,46 @@ class CheckRequestStatus extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Expire approved requests when their end date has passed';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        MaterialRequest::where('status', MaterialRequestStatus::Approved)
-            ->chunk(100, function ($requests) {
+        $this->expireRequests(MaterialRequest::class, 'expire_at');
+        $this->expireRequests(CarRequest::class, 'end');
+
+        $this->info('Expired requests have been updated successfully.');
+    }
+
+    /**
+     * Expire approved requests for a given model.
+     */
+    protected function expireRequests(string $modelClass, string $dateField): void
+    {
+        $modelClass::where('status', MaterialRequestStatus::Approved)
+            ->chunk(100, function ($requests) use ($modelClass, $dateField) {
                 foreach ($requests as $row) {
-                    DB::transaction(function () use ($row) {
-                        // Verrouiller la ligne pour éviter les modifications concurrentes
-                        $row = MaterialRequest::where('id', $row->id)->lockForUpdate()->first();
-                        // Vérifier si la date de fin est dépassée
-                        if ($row->expire_at < Carbon::now()) {
-                            $row->update([
-                                'status' => MaterialRequestStatus::Expired,
-                            ]);
-                        }
+                    DB::transaction(function () use ($row, $modelClass, $dateField) {
                         try {
+                            // Lock row to avoid race conditions
+                            $row = $modelClass::where('id', $row->id)->lockForUpdate()->first();
+
+                            // Expire if past date
+                            if ($row->{$dateField} < Carbon::now()) {
+                                $row->update(['status' => MaterialRequestStatus::Expired]);
+                            }
                         } catch (\Exception $e) {
-                            Log::error('Failed to update row', [
-                                'row' => $row->trans_ref,
+                            Log::error('Failed to expire request', [
+                                'model' => $modelClass,
+                                'row'   => $row->trans_ref ?? $row->id,
                                 'error' => $e->getMessage(),
                             ]);
-                            throw $e; // Annuler la transaction en cas d'erreur
+                            throw $e; // rollback transaction
                         }
                     });
                 }
             });
-
-        CarRequest::where('status', MaterialRequestStatus::Approved)
-            ->chunk(100, function ($requests) {
-                foreach ($requests as $row) {
-                    DB::transaction(function () use ($row) {
-                        // Verrouiller la ligne pour éviter les modifications concurrentes
-                        $row = CarRequest::where('id', $row->id)->lockForUpdate()->first();
-                        // Vérifier si la date de fin est dépassée
-                        if ($row->end < Carbon::now()) {
-                            $row->update([
-                                'status' => MaterialRequestStatus::Expired,
-                            ]);
-                        }
-                        try {
-                        } catch (\Exception $e) {
-                            Log::error('Failed to update row', [
-                                'row' => $row->trans_ref,
-                                'error' => $e->getMessage(),
-                            ]);
-                            throw $e; // Annuler la transaction en cas d'erreur
-                        }
-                    });
-                }
-            });
-
-        $this->info('Check-pay-by-link process completed.');
     }
 }
