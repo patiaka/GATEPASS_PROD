@@ -9,8 +9,6 @@ use App\Enum\RoleEnum;
 use App\Models\CarRequest;
 use App\Models\MaterialRequest;
 use App\Enum\MaterialRequestStatus;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;

@@ -36,10 +36,11 @@ final class UserRequestNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->from('barrett@example.com', 'Barrett Blair')
-            ->line('The introduction to the notification.')
+            ->from(config('mail.from.address'), config('mail.from.name'))
+            ->subject('Request Update Notification')
+            ->greeting('Hello ' . $notifiable->name . ',')
             ->line($this->message)
-            ->action('voir', url($this->link))
+            ->action('View Request', url($this->link))
             ->line('Thank you for using our application!');
     }
 
@@ -51,7 +52,8 @@ final class UserRequestNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'message' => $this->message,
+            'link' => $this->link,
         ];
     }
 }
