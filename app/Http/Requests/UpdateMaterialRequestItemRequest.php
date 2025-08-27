@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateMaterialRequestItemRequest extends FormRequest
+final class UpdateMaterialRequestItemRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

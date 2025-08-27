@@ -1,36 +1,47 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\User;
 
-use App\Models\User;
-use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
+use Livewire\Component;
 
-class UserPassChange extends Component
+final class UserPassChange extends Component
 {
-    public User $user;
-
     public string $current_password = '';
+
     public string $password = '';
-    // public string $current_password = '';
 
-
-    public function mount(User $user)
-    {
-        $this->user = $user;
-        $this->form->setUser($user);
-    }
+    public string $password_confirmation = '';
 
     public function save()
     {
-        $validated = $this->validate([
-            'current_password' => ['required', 'current_password'],
-            'password' => ['required', Password::defaults(), 'confirmed'],
-        ]);
+        try {
+            $validated = $this->validate([
+                'current_password' => ['required', 'string', 'current_password'],
+                'password' => ['required', 'string',     Password::min(8)
+                    ->mixedCase()    // Must contain both uppercase and lowercase letters.
+                    ->letters()      // Must contain at least one letter.
+                    ->numbers()      // Must contain at least one number.
+                    ->symbols()      // Must contain at least one symbol.
+                    ->uncompromised(), 'confirmed'],
+            ]);
+        } catch (ValidationException $e) {
+            $this->reset('current_password', 'password', 'password_confirmation');
 
-        $this->user()->update([
+            throw $e;
+        }
+
+        Auth::user()->update([
             'password' => Hash::make($validated['password']),
         ]);
+
+        $this->reset('current_password', 'password', 'password_confirmation');
+
+        flash()->success('Password changed successfully');
     }
 }

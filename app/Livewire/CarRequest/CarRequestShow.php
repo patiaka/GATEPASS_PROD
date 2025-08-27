@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\CarRequest;
 
-use Livewire\Component;
-use App\Models\CarRequest;
 use App\Helper\ApproveAction;
+use App\Models\CarRequest;
+use Livewire\Component;
 use Spatie\Browsershot\Browsershot;
 
-class CarRequestShow extends Component
+final class CarRequestShow extends Component
 {
     use ApproveAction;
+
     public CarRequest $carRequest;
 
     public function mount(CarRequest $CarRequest)

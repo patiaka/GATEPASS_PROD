@@ -1,7 +1,7 @@
 <aside id="sidebar"
     class="sidebar fixed md:static inset-y-0 left-0 z-40 flex flex-col w-64 p-4 bg-[#0e3a61] text-white border-r transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out">
 
-    <a href="/" class="mb-2 px-2 pb-2 flex rounded-md">
+    <a href="/" wire:navigate class="mb-2 px-2 pb-2 flex rounded-md">
         <img src="{{ asset('assets/img/logo.jpg') }}" alt="Logo" class="w-32">
     </a>
 
@@ -269,7 +269,8 @@
                 </summary>
                 <ul class="submenu border-t border-gray-600 mt-2 pt-2">
                     <li class="mb-1">
-                        <a href="#" class="block px-4 py-2 hover:bg-[#ffffff53] text-sm flex items-center gap-3">
+                        <a wire:navigate href="{{ route('user.pass') }}"
+                            class="block px-4 py-2 hover:bg-[#ffffff53] text-sm flex items-center gap-3">
                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2"
                                 viewBox="0 0 24 24">
                                 <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />

@@ -28,7 +28,7 @@ enum RoleEnum: string
         return array_map(function (self $role) {
             return [
                 'id' => $role->value,
-                'name' => $role->value
+                'name' => $role->value,
             ];
         }, self::cases());
     }

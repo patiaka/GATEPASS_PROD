@@ -1,15 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use App\Helper\DateFormat;
 use App\Helper\ModelAction;
-use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Carbon;
 
-class CarRequest extends Model
+final class CarRequest extends Model
 {
     /** @use HasFactory<\Database\Factories\CarRequestFactory> */
     use ModelAction;
@@ -41,11 +42,8 @@ class CarRequest extends Model
         return Carbon::parse($this->arrive_at)->format('H:i');
     }
 
-
     /**
      * Get all of the passengers for the MaterialRequest
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function passengers(): HasMany
     {
@@ -54,8 +52,6 @@ class CarRequest extends Model
 
     /**
      * Get all of the car_drivers for the MaterialRequest
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function car_drivers(): HasMany
     {

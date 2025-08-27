@@ -1,20 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\Forms;
 
-use Livewire\Form;
-use App\Models\CarRequest;
 use App\Jobs\MailRequestJob;
-use Livewire\Attributes\Validate;
-use Illuminate\Support\Facades\DB;
+use App\Models\CarRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Validate;
+use Livewire\Form;
 
-class CarRequestForm extends Form
+use function to_route;
+
+final class CarRequestForm extends Form
 {
     public ?CarRequest $carRequest = null;
 
     #[Validate('required|array|min:1')]
     public array $drivers = [];
+
     #[Validate('required|array|min:1')]
     public ?array $passengers = [];
 
@@ -133,7 +138,7 @@ class CarRequestForm extends Form
                 'arrive_at',
                 'reason',
                 'route',
-                'company'
+                'company',
             ]));
             if ($this->drivers) {
                 $CarRequest->car_drivers()->createMany($this->drivers);
@@ -143,41 +148,13 @@ class CarRequestForm extends Form
             }
 
             $CarRequest->generateId('CR');
-            MailRequestJob::dispatch($CarRequest, 'Awaiting a vehicle gate pass request to approve reference ' . $CarRequest->reference);
+            MailRequestJob::dispatch($CarRequest, 'Awaiting a vehicle gate pass request to approve reference '.$CarRequest->reference);
 
             $this->reset();
             flash()->success('Car request submitted successfully');
-            \to_route('car.index');
+            to_route('car.index');
         });
     }
-
-    private function updateRelation(string $relation, string $relationMethod, array $items): void
-    {
-        $this->carRequest->loadMissing('car_drivers', 'passengers');
-        $existingItems = $this->carRequest->$relation->keyBy('id');
-
-        foreach ($items as $row) {
-            if (isset($row['id'])) {
-                // Update existing item
-                $existingItems[$row['id']]->update([
-                    'name' => $row['name'],
-                    'contact' => $row['contact'],
-                ]);
-            } else {
-                // Create new item
-                $this->carRequest->$relationMethod()->create([
-                    'name' => $row['name'],
-                    'contact' => $row['contact'],
-                ]);
-            }
-        }
-
-        // Delete items that were removed
-        $itemIds = collect($items)->pluck('id');
-        $toDelete = $existingItems->keys()->diff($itemIds);
-        $this->carRequest->$relationMethod()->whereIn('id', $toDelete)->delete();
-    }
-
 
     public function update(): void
     {
@@ -219,7 +196,7 @@ class CarRequestForm extends Form
                 'arrive_at',
                 'reason',
                 'route',
-                'company'
+                'company',
             ]));
 
             if ($this->drivers) {
@@ -230,5 +207,32 @@ class CarRequestForm extends Form
             }
             flash()->success('Car request updated successfully');
         });
+    }
+
+    private function updateRelation(string $relation, string $relationMethod, array $items): void
+    {
+        $this->carRequest->loadMissing('car_drivers', 'passengers');
+        $existingItems = $this->carRequest->$relation->keyBy('id');
+
+        foreach ($items as $row) {
+            if (isset($row['id'])) {
+                // Update existing item
+                $existingItems[$row['id']]->update([
+                    'name' => $row['name'],
+                    'contact' => $row['contact'],
+                ]);
+            } else {
+                // Create new item
+                $this->carRequest->$relationMethod()->create([
+                    'name' => $row['name'],
+                    'contact' => $row['contact'],
+                ]);
+            }
+        }
+
+        // Delete items that were removed
+        $itemIds = collect($items)->pluck('id');
+        $toDelete = $existingItems->keys()->diff($itemIds);
+        $this->carRequest->$relationMethod()->whereIn('id', $toDelete)->delete();
     }
 }

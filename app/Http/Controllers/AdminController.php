@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Enum\MaterialRequestStatus;
 use App\Models\CarRequest;
 use App\Models\Compagnie;
-use App\Models\User;
 use App\Models\Department;
 use App\Models\MaterialRequest;
+use App\Models\User;
 
-class AdminController extends Controller
+final class AdminController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -29,6 +31,7 @@ class AdminController extends Controller
         $CarApproved = $queryCar->where('status', MaterialRequestStatus::Approved->value)->count();
         $CarRejected = $queryCar->where('status', MaterialRequestStatus::Rejected->value)->count();
         $CarProgress = $queryCar->where('status', MaterialRequestStatus::Progress->value)->count();
+
         return view('dashboard', compact('CountUser', 'CountDepartment', 'CountCompagnie', 'MaterialPending', 'MaterialApproved', 'MaterialRejected', 'MaterialProgress', 'CarPending', 'CarApproved', 'CarRejected', 'CarProgress'));
     }
 }

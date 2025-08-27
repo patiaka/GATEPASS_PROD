@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Models\Document;
 use App\Helper\DeleteAction;
+use App\Models\Document;
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreDocumentRequest;
-use App\Http\Requests\UpdateDocumentRequest;
 
-class DocumentController extends Controller
+use function compact;
+use function view;
+
+final class DocumentController extends Controller
 {
     use DeleteAction;
 
@@ -17,7 +20,7 @@ class DocumentController extends Controller
      */
     public function edit(Document $document)
     {
-        return \view('document.update', \compact('document'));
+        return view('document.update', compact('document'));
     }
 
     /**
@@ -38,7 +41,6 @@ class DocumentController extends Controller
         return back();
     }
 
-
     /**
      * Remove the specified resource from storage.
      */
@@ -46,6 +48,7 @@ class DocumentController extends Controller
     {
         $delete = Document::findOrFail($document);
         $this->file_delete($delete);
+
         return $this->supp($delete);
     }
 }

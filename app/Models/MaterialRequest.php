@@ -1,18 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use App\Helper\DateFormat;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
-use App\Enum\MaterialRequestStatus;
 use App\Helper\ModelAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class MaterialRequest extends Model
+final class MaterialRequest extends Model
 {
     use ModelAction;
 
@@ -32,14 +28,11 @@ class MaterialRequest extends Model
         'hod_comment',
         'hod_approval_date',
         'expire_at',
-        'company'
+        'company',
     ];
-
 
     /**
      * Get all of the documents for the MaterialRequest
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function documents(): HasMany
     {
@@ -48,8 +41,6 @@ class MaterialRequest extends Model
 
     /**
      * Get all of the material_request_items for the MaterialRequest
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function material_request_items(): HasMany
     {

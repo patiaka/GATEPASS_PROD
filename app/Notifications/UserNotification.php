@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
-class UserNotification extends Notification
+final class UserNotification extends Notification
 {
     use Queueable;
 
@@ -36,10 +37,10 @@ class UserNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->greeting('Hello ' . $this->user->name)
+            ->greeting('Hello '.$this->user->name)
             ->line('Your account has been created successfully.')
             ->line('Here are your account details:')
-            ->line('Email: ' . $this->user->email)
+            ->line('Email: '.$this->user->email)
             ->line('Password: password')
             ->line('⚠️ You will be required to change this password on your first login.')
             ->action('Login Now', route('login'))

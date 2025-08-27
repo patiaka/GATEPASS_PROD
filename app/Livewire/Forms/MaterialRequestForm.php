@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\Forms;
 
-use Livewire\Form;
-use App\Models\Document;
 use App\Jobs\MailRequestJob;
+use App\Models\Document;
 use App\Models\MaterialRequest;
-use Livewire\Attributes\Validate;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Validate;
+use Livewire\Form;
 
-class MaterialRequestForm extends Form
+final class MaterialRequestForm extends Form
 {
     public ?MaterialRequest $materialRequest = null;
 
@@ -20,7 +22,7 @@ class MaterialRequestForm extends Form
     #[Validate('required|string')]
     public string $company = '';
 
-    #[Validate(['photos.*' => 'required|image|mimes:jpeg,png,jpg|max:2048',])]
+    #[Validate(['photos.*' => 'required|image|mimes:jpeg,png,jpg|max:2048'])]
     public $photos = []; // Tableau pour stocker les fichiers
 
     public function addMaterial(): void
@@ -54,7 +56,7 @@ class MaterialRequestForm extends Form
         DB::transaction(function () {
 
             $materialRequest = Auth::user()->material_requests()->create($this->only([
-                'company'
+                'company',
             ]));
             $materialRequest->updateQuietly(['expire_at' => now()->addDay(7)]);
             foreach ($this->photos as $key => $row) {
@@ -67,9 +69,42 @@ class MaterialRequestForm extends Form
             }
             $materialRequest->material_request_items()->createMany($this->materials);
             $materialRequest->generateId('R');
-            MailRequestJob::dispatch($materialRequest, 'Awaiting a material gate pass request to approve reference' . $materialRequest->reference);
+            MailRequestJob::dispatch($materialRequest, 'Awaiting a material gate pass request to approve reference'.$materialRequest->reference);
             $this->reset();
             flash('Material request created successfully');
+        });
+    }
+
+    public function update(): void
+    {
+        $this->validate([
+            'materials' => 'required|array|min:1',
+            'materials.*.designation' => 'required|string|min:3',
+            'materials.*.quantity' => 'required|numeric|min:1',
+            'materials.*.serial_number' => 'nullable|string|min:1',
+            'photos.*' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'company' => 'required|string',
+        ]);
+
+        DB::transaction(function () {
+            $this->materialRequest->update($this->only([
+                'company',
+            ]));
+
+            if (! empty($this->photos)) {
+                foreach ($this->photos as $key => $row) {
+                    $filename = $row->hashName();
+                    $chemin = $row->storeAs('material/document', $filename, 'public');
+                    Document::create([
+                        'material_request_id' => $this->materialRequest->id,
+                        'chemin' => $chemin,
+                    ]);
+                }
+            }
+            if ($this->materials) {
+                $this->updateMaterialRequestItems();
+            }
+            flash()->success('material request updated successfully');
         });
     }
 
@@ -98,39 +133,5 @@ class MaterialRequestForm extends Form
         // Delete items that were removed
         $toDelete = $existingItems->keys()->diff(collect($this->materials)->pluck('id'));
         $this->materialRequest->material_request_items()->whereIn('id', $toDelete)->delete();
-    }
-
-
-    public function update(): void
-    {
-        $this->validate([
-            'materials' => 'required|array|min:1',
-            'materials.*.designation' => 'required|string|min:3',
-            'materials.*.quantity' => 'required|numeric|min:1',
-            'materials.*.serial_number' => 'nullable|string|min:1',
-            'photos.*' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'company' => 'required|string',
-        ]);
-
-        DB::transaction(function () {
-            $this->materialRequest->update($this->only([
-                'company'
-            ]));
-
-            if (!empty($this->photos)) {
-                foreach ($this->photos as $key => $row) {
-                    $filename = $row->hashName();
-                    $chemin = $row->storeAs('material/document', $filename, 'public');
-                    Document::create([
-                        'material_request_id' =>   $this->materialRequest->id,
-                        'chemin' => $chemin,
-                    ]);
-                }
-            }
-            if ($this->materials) {
-                $this->updateMaterialRequestItems();
-            }
-            flash()->success('material request updated successfully');
-        });
     }
 }

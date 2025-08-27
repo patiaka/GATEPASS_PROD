@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire;
 
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
-class Dashboard extends Component
+final class Dashboard extends Component
 {
     #[Layout('layouts.app')]
     public function render()

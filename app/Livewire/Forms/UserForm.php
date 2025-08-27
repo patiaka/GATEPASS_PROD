@@ -1,25 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\Forms;
 
-use Livewire\Form;
 use App\Models\User;
+use App\Notifications\UserNotification;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Validate;
-use App\Notifications\UserNotification;
+use Livewire\Form;
 
-class UserForm extends Form
+final class UserForm extends Form
 {
     public ?User $user;
 
     #[Validate('required|string')]
     public string $name = '';
+
     #[Validate('required|string')]
     public string $poste = '';
+
     #[Validate('required|string|email|max:255|unique:users')]
     public string $email = '';
+
     #[Validate('required|integer|exists:departments,id')]
     public string $department_id = '';
+
     #[Validate('required|in:User,General Manager,Head of Department,Administrator')]
     public string $role = '';
 
@@ -37,7 +43,7 @@ class UserForm extends Form
     public function store(): void
     {
         $this->validate();
-        $item =  User::create($this->only(['name', 'email', 'role', 'department_id', 'poste']));
+        $item = User::create($this->only(['name', 'email', 'role', 'department_id', 'poste']));
         $item->notify(new UserNotification($item));
         $this->reset();
         flash()->success('User added successfully');

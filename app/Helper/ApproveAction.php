@@ -4,31 +4,23 @@ declare(strict_types=1);
 
 namespace App\Helper;
 
-use Gate;
-use Route;
-use App\Models\CarRequest;
-use App\Jobs\MailRequestJob;
-use Illuminate\Support\Carbon;
-use App\Models\MaterialRequest;
-use Illuminate\Validation\Rule;
-use Livewire\Attributes\Validate;
 use App\Enum\MaterialRequestStatus;
-use Illuminate\Support\Facades\Auth;
+use App\Jobs\MailRequestJob;
+use App\Models\CarRequest;
+use App\Models\MaterialRequest;
+use Gate;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 trait ApproveAction
 {
+    public string $hod_comment = '';
 
-    public string $hod_comment = "";
-    public string $gm_comment = "";
-    public string $status = "";
+    public string $gm_comment = '';
 
-    private function dispatchApprovalMail($request, string $role)
-    {
-        $action = $this->status === 'Approved' ? 'valided' : 'rejected';
-        $message = "The $role request reference $request->reference has been $action";
-        MailRequestJob::dispatch($request, $message);
-    }
+    public string $status = '';
 
     public function approveByHod(int $id, string $type)
     {
@@ -38,27 +30,27 @@ trait ApproveAction
             'status' => ['required', Rule::in(['Approved', 'Rejected'])],
         ]);
         if ($type === 'material') {
-            $request =  MaterialRequest::findOrFail($id);
+            $request = MaterialRequest::findOrFail($id);
             $request->update([
                 'hod_approval_date' => now(),
                 'hod_comment' => $this->hod_comment,
                 'hod_approval_id' => Auth::user()->id,
-                'status' => $this->status === 'Approved' ?  MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value
+                'status' => $this->status === 'Approved' ? MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value,
             ]);
             $this->dispatchApprovalMail($request, 'hod');
-            MailRequestJob::dispatch($request, 'Awaiting a material gate pass request to approve reference ' . $request->reference);
+            MailRequestJob::dispatch($request, 'Awaiting a material gate pass request to approve reference '.$request->reference);
             flash()->success('Material request approved successfully');
         } elseif ($type === 'car') {
 
-            $request =  CarRequest::findOrFail($id);
+            $request = CarRequest::findOrFail($id);
             $request->update([
                 'hod_approval_date' => now(),
                 'hod_comment' => $this->hod_comment,
                 'hod_approval_id' => Auth::user()->id,
-                'status' => $this->status === 'Approved' ?  MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value
+                'status' => $this->status === 'Approved' ? MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value,
             ]);
             $this->dispatchApprovalMail($request, 'hod');
-            MailRequestJob::dispatch($request, 'Awaiting a vehicle gate pass request to approve reference ' . $request->reference);
+            MailRequestJob::dispatch($request, 'Awaiting a vehicle gate pass request to approve reference '.$request->reference);
             flash()->success('Car request approved successfully');
         }
     }
@@ -71,37 +63,28 @@ trait ApproveAction
             'status' => ['required', Rule::in(['Approved', 'Rejected'])],
         ]);
         if ($type === 'material') {
-            $request =  MaterialRequest::findOrFail($id);
+            $request = MaterialRequest::findOrFail($id);
             $request->update([
                 'gm_comment' => $this->gm_comment,
                 'gm_approval_date' => now(),
                 'gm_approval_id' => Auth::user()->id,
                 'status' => $this->status,
-                'expire_at' =>  Carbon::now()->addDays(7),
+                'expire_at' => Carbon::now()->addDays(7),
             ]);
             $this->dispatchApprovalMail($request, 'gm');
             flash()->success('Material request approved successfully');
-            return to_route('material.pending');
         } elseif ($type === 'car') {
-            $request =  CarRequest::findOrFail($id);
+            $request = CarRequest::findOrFail($id);
             $request->update([
                 'gm_comment' => $this->gm_comment,
                 'gm_approval_date' => now(),
                 'gm_approval_id' => Auth::user()->id,
                 'status' => $this->status,
-                'expire_at' =>  Carbon::now()->addDays(7),
+                'expire_at' => Carbon::now()->addDays(7),
             ]);
             $this->dispatchApprovalMail($request, 'gm');
             flash()->success('Car request approved successfully');
         }
-    }
-
-    private function dispatchApprovalMails(Collection $items, string $role, string  $action): void
-    {
-        $items->each(function ($item) use ($role, $action) {
-            $message = "le $role a $action votre request reference " . $item->reference;
-            MailRequestJob::dispatch($item, $message);
-        });
     }
 
     public function bulkAction(string $action, string $type): void
@@ -138,12 +121,27 @@ trait ApproveAction
                 $query->where('status', MaterialRequestStatus::Progress)->update([
                     'status' => MaterialRequestStatus::Approved,
                     'gm_approval_id' => Auth::user()->id,
-                    'expire_at' =>  Carbon::now()->addDays(7),
+                    'expire_at' => Carbon::now()->addDays(7),
                 ]);
                 $this->dispatchApprovalMails($query->get(), 'gm', 'validé');
             }
         }
         $this->reset('selectedRows');
-        flash()->success($action . ' applied items successfully.');
+        flash()->success($action.' applied items successfully.');
+    }
+
+    private function dispatchApprovalMail($request, string $role)
+    {
+        $action = $this->status === 'Approved' ? 'valided' : 'rejected';
+        $message = "The $role request reference $request->reference has been $action";
+        MailRequestJob::dispatch($request, $message);
+    }
+
+    private function dispatchApprovalMails(Collection $items, string $role, string $action): void
+    {
+        $items->each(function ($item) use ($role, $action) {
+            $message = "le $role a $action votre request reference ".$item->reference;
+            MailRequestJob::dispatch($item, $message);
+        });
     }
 }

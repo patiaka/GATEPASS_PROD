@@ -1,22 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\CarRequest;
 
-use Gate;
-use Livewire\Component;
-use App\Models\CarRequest;
 use App\Helper\RepeatInputAction;
 use App\Livewire\Forms\CarRequestForm;
+use App\Models\CarRequest;
+use Gate;
+use Livewire\Component;
 
-class CarRequestUpdate extends Component
+final class CarRequestUpdate extends Component
 {
-
     use RepeatInputAction;
 
     public CarRequest $carRequest;
 
     public CarRequestForm $form;
-
 
     public function mount(CarRequest $CarRequest)
     {
@@ -34,8 +34,6 @@ class CarRequestUpdate extends Component
             $this->form->passengers[] = ['name' => $name, 'contact' => $contact];
         });
     }
-
-
 
     public function save()
     {

@@ -1,19 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\MaterialRequest;
 
-use Livewire\Component;
+use App\Enum\MaterialRequestStatus;
+use App\Helper\ApproveAction;
 use App\Helper\WithFilter;
 use App\Models\Department;
-use App\Helper\ApproveAction;
 use App\Models\MaterialRequest;
-use Livewire\Attributes\Computed;
-use App\Enum\MaterialRequestStatus;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
 
-class MaterialRequestPending extends Component
+use function compact;
+
+final class MaterialRequestPending extends Component
 {
-    use WithFilter, ApproveAction;
+    use ApproveAction, WithFilter;
+
     public $material;
 
     // public function ResetFilter(): void
@@ -24,6 +29,7 @@ class MaterialRequestPending extends Component
     public function rows()
     {
         $auth = Auth::user();
+
         return MaterialRequest::with('user', 'user.department', 'hodApproval', 'gmApproval')
 
             ->when($auth->isGm(), function ($query) use ($auth) {
@@ -49,10 +55,12 @@ class MaterialRequestPending extends Component
             // })
             ->latest('id')->paginate(10);
     }
+
     public function render()
     {
         $auth = Auth::user();
         $departments = $auth->isAdmin() ? Department::select('id', 'name')->get() : [];
-        return view('livewire.material-request.material-request-pending', \compact('departments'));
+
+        return view('livewire.material-request.material-request-pending', compact('departments'));
     }
 }

@@ -1,18 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\Department;
 
-use Livewire\Component;
 use App\Helper\WithFilter;
 use App\Models\Department;
-use Livewire\Attributes\Computed;
-use App\Livewire\Forms\DepartmentForm;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
 
-class DepartmentIndex extends Component
+final class DepartmentIndex extends Component
 {
     use WithFilter;
-
 
     public function ResetFilter(): void
     {
@@ -23,8 +23,9 @@ class DepartmentIndex extends Component
     {
         $row = Department::find($id);
 
-        if (!$row) {
+        if (! $row) {
             flash()->error('Department not found.');
+
             return;
         }
 

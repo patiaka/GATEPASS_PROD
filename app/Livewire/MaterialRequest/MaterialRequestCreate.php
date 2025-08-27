@@ -1,19 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\MaterialRequest;
 
-use Livewire\Component;
 use App\Helper\DeleteAction;
-use Livewire\WithFileUploads;
 use App\Helper\RepeatInputAction;
 use App\Livewire\Forms\MaterialRequestForm;
+use Livewire\Component;
+use Livewire\WithFileUploads;
 
-class MaterialRequestCreate extends Component
+final class MaterialRequestCreate extends Component
 {
-    use DeleteAction, WithFileUploads, RepeatInputAction;
+    use DeleteAction, RepeatInputAction, WithFileUploads;
 
     public MaterialRequestForm $form;
-
 
     public function mount()
     {

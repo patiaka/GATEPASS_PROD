@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Enum\RoleEnum;
 use App\Helper\DateFormat;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+final class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use DateFormat, Notifiable;
@@ -30,7 +32,7 @@ class User extends Authenticatable
         'role',
         'poste',
         'department_id',
-        'status'
+        'status',
     ];
 
     /**
@@ -42,20 +44,6 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'role' => RoleEnum::class,
-        ];
-    }
 
     public function isAdmin(): bool
     {
@@ -79,19 +67,14 @@ class User extends Authenticatable
 
     /**
      * Get the department that owns the User
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
     }
 
-
     /**
      * Get all of the material_requests for the User
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function material_requests(): HasMany
     {
@@ -100,8 +83,6 @@ class User extends Authenticatable
 
     /**
      * Get all of the car_requests for the User
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function car_requests(): HasMany
     {
@@ -138,5 +119,19 @@ class User extends Authenticatable
     public function gm_car_approvals(): HasMany
     {
         return $this->hasMany(CarRequest::class, 'gm_approval_id');
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'role' => RoleEnum::class,
+        ];
     }
 }

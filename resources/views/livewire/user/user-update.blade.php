@@ -1,7 +1,7 @@
 <div>
     <div class="card bg-white shadow-sm p-5">
         <div class="card-header">
-            <h2 class="card-title text-center">User update</h2>
+            <h2 class="card-title text-center">User update pass</h2>
         </div>
         <x-form route='save' type="update" url="{{ route('user.index') }}">
             <div class="">

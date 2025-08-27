@@ -4,21 +4,16 @@ declare(strict_types=1);
 
 namespace App\Helper;
 
+use App\Enum\MaterialRequestStatus;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use App\Enum\MaterialRequestStatus;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 trait ModelAction
 {
     use HasFactory;
-
-    protected function getCreatedAtAttribute(string $date): string
-    {
-        return Carbon::parse($date)->format('d/m/Y H:i');
-    }
 
     public function getGmApprovalDateFormatAttribute(): string
     {
@@ -28,18 +23,6 @@ trait ModelAction
     public function getHodApprovalDateFormatAttribute(): string
     {
         return Carbon::parse($this->hod_approval_date)->format('d/m/Y H:i');
-    }
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'status' => MaterialRequestStatus::class,
-        ];
     }
 
     public function isApproved(): bool
@@ -67,7 +50,6 @@ trait ModelAction
         return $this->status === MaterialRequestStatus::Expired;
     }
 
-
     public function gm_approval_view(): string
     {
         return $this->gmApproval ? $this->gmApproval->name : 'waiting';
@@ -81,20 +63,17 @@ trait ModelAction
     // Vérifier si GM a validé
     public function isGmApproved()
     {
-        return !is_null($this->gmApproval);
+        return ! is_null($this->gmApproval);
     }
 
     // Vérifier si HOD a validé
     public function isHodApproved()
     {
-        return !is_null($this->hodApproval);
+        return ! is_null($this->hodApproval);
     }
-
 
     /**
      * Get the user that owns the MaterialRequest
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user(): BelongsTo
     {
@@ -103,8 +82,6 @@ trait ModelAction
 
     /**
      * Get the hod_approval that owns the MaterialRequest
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function hodApproval(): BelongsTo
     {
@@ -113,8 +90,6 @@ trait ModelAction
 
     /**
      * Get the gm_approval that owns the MaterialRequest
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function gmApproval(): BelongsTo
     {
@@ -124,11 +99,11 @@ trait ModelAction
     public function generateId(string $prefix_type)
     {
         $currentYear = Carbon::today()->format('Y');
-        $prefix = $prefix_type . $currentYear . '-';
+        $prefix = $prefix_type.$currentYear.'-';
 
         return DB::transaction(function () use ($prefix) {
             // Verrouille le dernier identifiant de courrier enregistré dans la base de données pour la mise à jour
-            $lastCourrier = self::where('reference', 'like', $prefix . '%')->whereNotNull('reference')
+            $lastCourrier = self::where('reference', 'like', $prefix.'%')->whereNotNull('reference')
                 ->latest('id')
                 ->lockForUpdate()
                 ->first(['reference']);
@@ -136,16 +111,33 @@ trait ModelAction
             $sequence = 0;
             if ($lastCourrier) {
                 // Récupère le numéro de séquence de l'identifiant de courrier précédent
-                $sequence = (int) substr($lastCourrier->reference, strlen($prefix));
+                $sequence = (int) mb_substr($lastCourrier->reference, mb_strlen($prefix));
             }
             // Incrémente le numéro de séquence et génère le nouvel identifiant de courrier
             $sequence++;
-            $newCourrierNumber = $prefix . $sequence;
+            $newCourrierNumber = $prefix.$sequence;
             // Met à jour le numéro de courrier de l'instance courante
             $this->reference = $newCourrierNumber;
             $this->save();
 
             return $this;
         });
+    }
+
+    protected function getCreatedAtAttribute(string $date): string
+    {
+        return Carbon::parse($date)->format('d/m/Y H:i');
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'status' => MaterialRequestStatus::class,
+        ];
     }
 }

@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\Department;
 
 use App\Livewire\Forms\DepartmentForm;
 use App\Models\Department;
 use Livewire\Component;
 
-class DepartmentEdit extends Component
+final class DepartmentEdit extends Component
 {
     public Department $department;
-    public DepartmentForm $form;
 
+    public DepartmentForm $form;
 
     public function mount(Department $department)
     {

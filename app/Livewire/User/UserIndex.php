@@ -1,49 +1,48 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\User;
 
-use App\Models\User;
-use Livewire\Component;
-use App\Models\Compagnie;
-use App\Models\Department;
-use App\Imports\UsersImport;
-use Livewire\WithPagination;
-use Livewire\WithFileUploads;
-use Livewire\Attributes\Locked;
-use App\Livewire\Forms\UserForm;
-use Livewire\Attributes\Computed;
 use App\Exports\UsersTemplateExport;
-use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\UsersImport;
+use App\Models\Department;
+use App\Models\User;
 use App\Notifications\UserNotification;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
+use Livewire\WithFileUploads;
+use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class UserIndex extends Component
+final class UserIndex extends Component
 {
-    use WithPagination, WithFileUploads;
+    use WithFileUploads, WithPagination;
 
-    public string $role = "";
-    public string $search = "";
-    public string $department = "";
+    public string $role = '';
+
+    public string $search = '';
+
+    public string $department = '';
+
     public $import_file;
-
 
     public function ResetFilter(): void
     {
         $this->reset('department', 'role', 'search');
     }
 
-
-
     public function import()
     {
         $this->validate([
-            'import_file' => 'required|mimes:xlsx,xls'
+            'import_file' => 'required|mimes:xlsx,xls',
         ]);
 
         $import = new UsersImport();
         Excel::import($import, $this->import_file);
 
-        if (!empty($import->errors)) {
+        if (! empty($import->errors)) {
             return back()->withErrors($import->errors);
         }
 
@@ -66,8 +65,9 @@ class UserIndex extends Component
     {
         $row = User::find($id);
 
-        if (!$row) {
+        if (! $row) {
             flash()->error('User not found.');
+
             return;
         }
 
@@ -79,16 +79,18 @@ class UserIndex extends Component
     public function rows()
     {
         return User::with('department:id,name')->when($this->search, function ($query) {
-            $query->whereAny(['name', 'email'], 'like', '%' . $this->search . '%');
+            $query->whereAny(['name', 'email'], 'like', '%'.$this->search.'%');
         })->when($this->department, function ($query) {
             $query->where('department_id', $this->department);
         })->when($this->role, function ($query) {
             $query->where('role', $this->role);
         })->latest('id')->paginate(10);
     }
+
     public function render()
     {
         $departments = Department::select('name', 'id')->get();
+
         return view('livewire.user.user-index', compact('departments'));
     }
 }

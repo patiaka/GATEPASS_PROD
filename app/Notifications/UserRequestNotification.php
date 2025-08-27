@@ -1,16 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications;
 
-use App\Models\CarRequest;
 use Illuminate\Bus\Queueable;
-use App\Models\MaterialRequest;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
-class UserRequestNotification extends Notification
+final class UserRequestNotification extends Notification
 {
     use Queueable;
 

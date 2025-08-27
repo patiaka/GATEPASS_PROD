@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enum\MaterialRequestStatus;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -44,7 +46,7 @@ return new class extends Migration
                 'Progress',
                 'Rejected',
                 'Approved',
-                'Expired'
+                'Expired',
             ])->default(MaterialRequestStatus::Pending);
             $table->index('reference');
             $table->timestamps();

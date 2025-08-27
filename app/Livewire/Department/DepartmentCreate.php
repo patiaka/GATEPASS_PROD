@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\Department;
 
-use Livewire\Component;
 use App\Livewire\Forms\DepartmentForm;
+use Livewire\Component;
 
-class DepartmentCreate extends Component
+final class DepartmentCreate extends Component
 {
     public DepartmentForm $form;
 

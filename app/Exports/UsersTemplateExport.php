@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Exports;
 
-use App\Models\User;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\FromCollection;
 
-class UsersTemplateExport implements FromArray, WithHeadings
+final class UsersTemplateExport implements FromArray, WithHeadings
 {
     public function headings(): array
     {

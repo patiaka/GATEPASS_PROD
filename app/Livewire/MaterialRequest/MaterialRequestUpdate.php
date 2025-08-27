@@ -1,21 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\MaterialRequest;
 
-use Livewire\Component;
 use App\Helper\DeleteAction;
-use Livewire\WithFileUploads;
-use App\Models\MaterialRequest;
 use App\Helper\RepeatInputAction;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use App\Livewire\Forms\MaterialRequestForm;
+use App\Models\MaterialRequest;
+use Illuminate\Support\Facades\Gate;
+use Livewire\Component;
+use Livewire\WithFileUploads;
 
-class MaterialRequestUpdate extends Component
+final class MaterialRequestUpdate extends Component
 {
-    use DeleteAction, WithFileUploads, RepeatInputAction;
+    use DeleteAction, RepeatInputAction, WithFileUploads;
 
     public MaterialRequest $materialRequest;
+
     public MaterialRequestForm $form;
 
     public function mount(MaterialRequest $MaterialRequest)
@@ -26,9 +28,9 @@ class MaterialRequestUpdate extends Component
 
         $MaterialRequest->loadMissing('material_request_items', 'documents');
         $this->form->materials = $MaterialRequest->material_request_items
-            ->map(fn($item) => [
-                'designation'   => $item->designation,
-                'quantity'      => $item->quantity,
+            ->map(fn ($item) => [
+                'designation' => $item->designation,
+                'quantity' => $item->quantity,
                 'serial_number' => $item->serial_number,
             ])
             ->toArray();

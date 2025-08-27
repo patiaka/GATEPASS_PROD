@@ -4,18 +4,14 @@ declare(strict_types=1);
 
 namespace App\Helper;
 
-use App\Models\Cours;
-use App\Models\Devoir;
 use App\Models\Document;
-use App\Models\Folder;
 use App\Models\Journal;
 use App\Models\MaterialRequest;
 use Exception;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Throwable;
 
 trait DeleteAction
 {
@@ -27,16 +23,6 @@ trait DeleteAction
     //         'libelle' => $action,
     //     ]);
     // }
-
-    public function supp(Model $delete): JsonResponse
-    {
-        $delete->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => $delete ? class_basename($delete) . ' deleted with success ' : class_basename($delete) . ' not found',
-        ]);
-    }
 
     public function file_delete(Model $model): bool
     {
@@ -51,7 +37,6 @@ trait DeleteAction
     public function file_uplode($request, MaterialRequest $model): void
     {
 
-
         try {
             foreach ($request as $key => $file) {
                 $filename = $file->hashName();
@@ -61,7 +46,7 @@ trait DeleteAction
                     'chemin' => $chemin,
                 ]);
             }
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             new Exception('file uplode error');
         }
     }

@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Helper;
 
-
 trait RepeatInputAction
 {
-
     public function addDriver()
     {
         $this->form->add('driver');

@@ -1,16 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
-use Illuminate\Support\Carbon;
-use App\Models\MaterialRequest;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use App\Enum\MaterialRequestStatus;
 use App\Models\CarRequest;
+use App\Models\MaterialRequest;
+use Exception;
+use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class CheckRequestStatus extends Command
+final class CheckRequestStatus extends Command
 {
     /**
      * The name and signature of the console command.
@@ -54,10 +57,10 @@ class CheckRequestStatus extends Command
                             if ($row->{$dateField} < Carbon::now()) {
                                 $row->update(['status' => MaterialRequestStatus::Expired]);
                             }
-                        } catch (\Exception $e) {
+                        } catch (Exception $e) {
                             Log::error('Failed to expire request', [
                                 'model' => $modelClass,
-                                'row'   => $row->trans_ref ?? $row->id,
+                                'row' => $row->trans_ref ?? $row->id,
                                 'error' => $e->getMessage(),
                             ]);
                             throw $e; // rollback transaction

@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\MaterialRequest;
 
 use Livewire\Component;
 
-class MaterialRequestCheckIn extends Component
+final class MaterialRequestCheckIn extends Component
 {
     public function render()
     {

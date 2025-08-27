@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Helper\DateFormat;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
-class Document extends Model
+final class Document extends Model
 {
     /** @use HasFactory<\Database\Factories\DocumentFactory> */
     use DateFormat;
@@ -22,8 +24,6 @@ class Document extends Model
 
     /**
      * Get the material_request that owns the Document
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function material_request(): BelongsTo
     {

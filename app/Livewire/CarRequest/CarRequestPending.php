@@ -1,28 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\CarRequest;
 
-use Livewire\Component;
+use App\Enum\MaterialRequestStatus;
+use App\Helper\ApproveAction;
 use App\Helper\WithFilter;
 use App\Models\CarRequest;
 use App\Models\Department;
-use App\Helper\ApproveAction;
-use Livewire\Attributes\Computed;
-use App\Enum\MaterialRequestStatus;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
 
-class CarRequestPending extends Component
+use function compact;
+
+final class CarRequestPending extends Component
 {
-    use WithFilter, ApproveAction;
+    use ApproveAction, WithFilter;
 
     public function ResetFilter(): void
     {
         $this->reset('department', 'status', 'search', 'compagny');
     }
+
     #[Computed]
     public function rows()
     {
         $auth = Auth::user();
+
         return CarRequest::with('user', 'user.department', 'hodApproval', 'gmApproval')
             ->when($auth->isGm(), function ($query) use ($auth) {
                 $query->where('status', MaterialRequestStatus::Progress)
@@ -46,11 +52,13 @@ class CarRequestPending extends Component
             // })
             ->latest('id')->paginate(10);
     }
+
     public function render()
     {
 
         $auth = Auth::user();
         $departments = $auth->isAdmin() ? Department::select('id', 'name')->get() : [];
-        return view('livewire.car-request.car-request-pending', \compact('departments'));
+
+        return view('livewire.car-request.car-request-pending', compact('departments'));
     }
 }

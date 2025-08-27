@@ -1,22 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\CarRequest;
 
-use Livewire\Component;
+use App\Enum\MaterialRequestStatus;
+use App\Helper\ApproveAction;
 use App\Helper\WithFilter;
 use App\Models\CarRequest;
 use App\Models\Department;
-use App\Helper\ApproveAction;
-use Livewire\Attributes\Computed;
-use App\Enum\MaterialRequestStatus;
-use App\Models\Compagnie;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
 
-class CarRequestIndex extends Component
+use function compact;
+
+final class CarRequestIndex extends Component
 {
-    use WithFilter, ApproveAction;
-    public $car;
+    use ApproveAction, WithFilter;
 
+    public $car;
 
     public function ResetFilter(): void
     {
@@ -27,6 +31,7 @@ class CarRequestIndex extends Component
     public function rows()
     {
         $auth = Auth::user();
+
         return CarRequest::with('user', 'user.department', 'hodApproval', 'gmApproval')
             ->when($auth->isGm(), function ($query) use ($auth) {
                 $query->where('status', MaterialRequestStatus::Progress)
@@ -47,16 +52,18 @@ class CarRequestIndex extends Component
             })->when($this->status, function ($query) {
                 $query->where('status', $this->status);
             })->when($this->search, function ($query) {
-                $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
+                $query->whereAny(['reference', 'status'], 'like', '%'.$this->search.'%');
             })->latest('id')->paginate(10);
     }
 
     public function delete(int $id): void
     {
         $row = CarRequest::find($id);
+        Gate::authorize('delete-request', $row);
 
-        if (!$row) {
+        if (! $row) {
             flash()->error('Car request not found.');
+
             return;
         }
 
@@ -64,11 +71,11 @@ class CarRequestIndex extends Component
         flash()->success('Car request deleted with success');
     }
 
-
     public function render()
     {
         $auth = Auth::user();
         $departments = $auth->isAdmin() ? Department::select('id', 'name')->get() : [];
-        return view('livewire.car-request.car-request-index', \compact('departments'));
+
+        return view('livewire.car-request.car-request-index', compact('departments'));
     }
 }

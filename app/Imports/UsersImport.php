@@ -1,23 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Imports;
 
-use App\Models\User;
 use App\Enum\RoleEnum;
-use App\Models\Compagnie;
 use App\Models\Department;
+use App\Models\User;
+use Exception;
 use Log;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Validators\Failure;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
+use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Validators\Failure;
 
-class UsersImport implements ToModel, WithHeadingRow, SkipsOnFailure
+final class UsersImport implements SkipsOnFailure, ToModel, WithHeadingRow
 {
     public $errors = []; // Stockage des erreurs
+
     /**
-     * @param array $row
-     *
      * @return \Illuminate\Database\Eloquent\Model|null
      */
     public function model(array $row)
@@ -26,20 +27,19 @@ class UsersImport implements ToModel, WithHeadingRow, SkipsOnFailure
             dd($row['role']);
             $role = RoleEnum::getValue($row['role']);
             $department = Department::where('name', $row['department'])->firstOrFail();
+
             return new User([
-                'name'  => $row['name'],
+                'name' => $row['name'],
                 'email' => $row['email'],
-                'poste'    => $row['position'],
-                'role'    => $role,
+                'poste' => $row['position'],
+                'role' => $role,
                 'department_id' => $department->id,
                 'compagnie' => $row['compagny'],
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::alert($e);
         }
     }
-
-
 
     // Ajoute les règles de validation
     public function rules(): array
@@ -48,7 +48,7 @@ class UsersImport implements ToModel, WithHeadingRow, SkipsOnFailure
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', 'unique:users,email'],
             'position' => 'required|string|max:255',
-            'role' => 'required|in:' . implode(',', RoleEnum::cases()),
+            'role' => 'required|in:'.implode(',', RoleEnum::cases()),
             'department' => 'required|exists:departments,name',
             'compagny' => 'required|string',
         ];
@@ -61,7 +61,7 @@ class UsersImport implements ToModel, WithHeadingRow, SkipsOnFailure
             $this->errors[] = [
                 'ligne' => $failure['row'],
                 'attribut' => $failure['attribute'],
-                'erreur' => $failure['errors']
+                'erreur' => $failure['errors'],
             ];
         }
     }

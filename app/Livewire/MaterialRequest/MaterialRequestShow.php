@@ -1,15 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\MaterialRequest;
 
-use Livewire\Component;
 use App\Helper\ApproveAction;
+use App\Helper\DeleteAction;
+use App\Models\Document;
 use App\Models\MaterialRequest;
+use Livewire\Component;
 use Spatie\Browsershot\Browsershot;
 
-class MaterialRequestShow extends Component
+final class MaterialRequestShow extends Component
 {
-    use ApproveAction;
+    use ApproveAction, DeleteAction;
+
     public $MaterialRequest;
 
     public function mount(MaterialRequest $MaterialRequest)
@@ -17,6 +22,21 @@ class MaterialRequestShow extends Component
         $this->MaterialRequest = $MaterialRequest;
 
         $this->MaterialRequest->loadMissing('user:id,name,email,department_id', 'user.department:id,name', 'gmApproval.department:id,name', 'hodApproval.department:id,name', 'documents');
+    }
+
+    public function delete(int $id): void
+    {
+        $row = Document::find($id);
+
+        if (! $row) {
+            flash()->error('Document not found.');
+
+            return;
+        }
+
+        $this->file_delete($row);
+        $row->delete();
+        flash()->success('Document deleted with success');
     }
 
     public function download_pdf(MaterialRequest $MaterialRequest)

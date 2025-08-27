@@ -1,21 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\MaterialRequest;
 
-use App\Models\User;
-use Livewire\Component;
-use App\Models\Compagnie;
+use App\Enum\MaterialRequestStatus;
+use App\Helper\ApproveAction;
+use App\Helper\DeleteAction;
 use App\Helper\WithFilter;
 use App\Models\Department;
-use App\Helper\ApproveAction;
 use App\Models\MaterialRequest;
-use Livewire\Attributes\Computed;
-use App\Enum\MaterialRequestStatus;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
 
-class MaterialRequestIndex extends Component
+use function compact;
+
+final class MaterialRequestIndex extends Component
 {
-    use WithFilter, ApproveAction;
+    use ApproveAction, DeleteAction, WithFilter;
+
     public $material;
 
     public function ResetFilter(): void
@@ -27,6 +32,7 @@ class MaterialRequestIndex extends Component
     public function rows()
     {
         $auth = Auth::user();
+
         return MaterialRequest::with('user', 'user.department', 'hodApproval', 'gmApproval')
             ->when($auth->isGm(), function ($query) use ($auth) {
                 $query->where('status', MaterialRequestStatus::Progress)
@@ -48,19 +54,28 @@ class MaterialRequestIndex extends Component
             })->when($this->status, function ($query) {
                 $query->where('status', $this->status);
             })->when($this->search, function ($query) {
-                $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
+                $query->whereAny(['reference', 'status'], 'like', '%'.$this->search.'%');
             })->latest('id')->paginate(10);
     }
 
     public function delete(int $id): void
     {
-        $row = MaterialRequest::find($id);
 
-        if (!$row) {
+        $row = MaterialRequest::find($id);
+        Gate::authorize('delete-request', $row);
+
+        if (! $row) {
             flash()->error('Material request not found.');
+
             return;
         }
-
+        $row->loadMissing('documents');
+        if ($row->documents) {
+            foreach ($row->loadMissing('documents')->documents as $row) {
+                $this->file_delete($row);
+            }
+            $row->documents->delete();
+        }
         $row->delete();
         flash()->success('Material request deleted with success');
     }
@@ -69,6 +84,7 @@ class MaterialRequestIndex extends Component
     {
         $auth = Auth::user();
         $departments = $auth->isAdmin() ? Department::select('id', 'name')->get() : [];
-        return view('livewire.material-request.material-request-index', \compact('departments'));
+
+        return view('livewire.material-request.material-request-index', compact('departments'));
     }
 }

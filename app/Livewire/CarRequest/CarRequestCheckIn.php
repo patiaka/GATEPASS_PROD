@@ -1,26 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\CarRequest;
 
-use Livewire\Component;
+use App\Enum\MaterialRequestStatus;
 use App\Helper\WithFilter;
 use App\Models\CarRequest;
 use App\Models\Department;
-use Livewire\WithPagination;
 use Livewire\Attributes\Computed;
-use App\Enum\MaterialRequestStatus;
-use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
-class CarRequestCheckIn extends Component
+use function compact;
+
+final class CarRequestCheckIn extends Component
 {
     use WithFilter;
 
-    public string $date = "";
+    public string $date = '';
 
     public function ResetFilter(): void
     {
         $this->reset('department', 'date', 'search');
     }
+
     #[Computed]
     public function rows()
     {
@@ -31,7 +34,7 @@ class CarRequestCheckIn extends Component
             })->when($this->date, function ($query) {
                 $query->whereDate('created_at', $this->date);
             })->when($this->search, function ($query) {
-                $query->whereAny(['reference'], 'like', '%' . $this->search . '%');
+                $query->whereAny(['reference'], 'like', '%'.$this->search.'%');
             })
             ->latest('id')->paginate(10);
     }
@@ -39,6 +42,7 @@ class CarRequestCheckIn extends Component
     public function render()
     {
         $departments = Department::select('id', 'name')->get();
-        return view('livewire.car-request.car-request-check-in', \compact('departments'));
+
+        return view('livewire.car-request.car-request-check-in', compact('departments'));
     }
 }
