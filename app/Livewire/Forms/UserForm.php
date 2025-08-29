@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Livewire\Forms;
 
+use Livewire\Form;
 use App\Models\User;
-use App\Notifications\UserNotification;
+use App\Enum\RoleEnum;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Validate;
-use Livewire\Form;
+use Illuminate\Validation\Rules\Enum;
+use App\Notifications\UserNotification;
 
 final class UserForm extends Form
 {
@@ -23,11 +25,14 @@ final class UserForm extends Form
     #[Validate('required|string|email|max:255|unique:users')]
     public string $email = '';
 
-    #[Validate('required|integer|exists:departments,id')]
-    public string $department_id = '';
+    #[Validate('required|string|exists:departments,id')]
+    public $department_id = '';
 
-    #[Validate('required|in:User,General Manager,Head of Department,Administrator')]
+    #[Validate(['required', new Enum(RoleEnum::class)])]
     public string $role = '';
+
+    #[Validate(['nullable', new Enum(RoleEnum::class)])]
+    public $delegated_role = null;
 
     public function setUser(User $user): void
     {
@@ -38,6 +43,7 @@ final class UserForm extends Form
         $this->poste = $user->poste;
         $this->role = $user->role->value;
         $this->department_id = $user->department_id;
+        $this->delegated_role = $user->delegated_role;
     }
 
     public function store(): void
@@ -59,6 +65,12 @@ final class UserForm extends Form
         ]);
 
         $this->user->update($this->only(['name', 'email', 'role', 'department_id', 'poste']));
+
+        if ($this->delegated_role) {
+            $this->user->delegateRole($this->delegated_role);
+        } else {
+            $this->user->revokeDelegatedRole();
+        }
 
         if ($this->user->wasChanged('email')) {
             $this->user->notify(new UserNotification($this->user));

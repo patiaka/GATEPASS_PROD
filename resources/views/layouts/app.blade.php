@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sidebar Somisy Template</title>
+    <title>{{ $title ?? 'Sidebar Somisy Template' }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         /* Pour cacher/afficher les sous-menus */

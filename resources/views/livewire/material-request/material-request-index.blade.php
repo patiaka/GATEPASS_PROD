@@ -59,7 +59,6 @@
                 <th class="px-4 py-3 text-left text-sm font-medium">Company</th>
                 <th class="px-4 py-3 text-left text-sm font-medium">Department</th>
                 <th class="px-4 py-3 text-left text-sm font-medium">Requestor</th>
-                <th class="px-4 py-3 text-left text-sm font-medium">stat</th>
                 <th class="px-4 py-3 text-left text-sm font-medium">Actions</th>
             </tr>
         </thead>
@@ -81,18 +80,6 @@
 
                 <td class="px-4 py-3 text-sm">
                     {{ $row->user->name }}
-
-                </td>
-                <td class="px-4 py-3">
-                    <span @class(['btn badge rounded-pill btn-sm' ,'bg-primary'=> $row->isApproved(),
-                        'bg-danger' => $row->isRejected(),
-                        'bg-danger' => $row->isExpired(),
-                        'bg-info' => $row->isPending(),
-                        'bg-warning' => $row->isProgress()
-                        ])>
-                        {{ $row->status }}
-                    </span>
-
                 </td>
                 <td class="px-4 py-3">
                     <x-button-edit href="{{ route('material.edit', ['MaterialRequest' => $row]) }}" :row="$row" />

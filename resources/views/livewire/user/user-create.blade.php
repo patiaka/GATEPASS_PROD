@@ -25,6 +25,8 @@
                 </div>
                 @error('form.role') <small class="text-red-500 text-sm">{{ $message }}</small> @enderror
             </div>
+
+
         </x-form>
     </div>
 </div>

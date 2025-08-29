@@ -26,7 +26,7 @@ trait ApproveAction
     {
         Gate::authorize('action-approved-request', Auth::user());
         $this->validate([
-            'hod_comment' => 'required|string|min:3',
+            'hod_comment' => 'nullable|string|min:3',
             'status' => ['required', Rule::in(['Approved', 'Rejected'])],
         ]);
         if ($type === 'material') {
@@ -38,7 +38,7 @@ trait ApproveAction
                 'status' => $this->status === 'Approved' ? MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value,
             ]);
             $this->dispatchApprovalMail($request, 'hod');
-            MailRequestJob::dispatch($request, 'Awaiting a material gate pass request to approve reference '.$request->reference);
+            MailRequestJob::dispatch($request, 'Awaiting a material gate pass request to approve reference ' . $request->reference);
             flash()->success('Material request approved successfully');
         } elseif ($type === 'car') {
 
@@ -50,8 +50,8 @@ trait ApproveAction
                 'status' => $this->status === 'Approved' ? MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value,
             ]);
             $this->dispatchApprovalMail($request, 'hod');
-            MailRequestJob::dispatch($request, 'Awaiting a vehicle gate pass request to approve reference '.$request->reference);
-            flash()->success('Car request approved successfully');
+            MailRequestJob::dispatch($request, 'Awaiting a vehicle gate pass request to approve reference ' . $request->reference);
+            flash()->success('Vehicle request approved successfully');
         }
     }
 
@@ -59,7 +59,7 @@ trait ApproveAction
     {
         Gate::authorize('action-approved-request', Auth::user());
         $this->validate([
-            'gm_comment' => 'required|string|min:3',
+            'gm_comment' => 'nullable|string|min:3',
             'status' => ['required', Rule::in(['Approved', 'Rejected'])],
         ]);
         if ($type === 'material') {
@@ -83,7 +83,8 @@ trait ApproveAction
                 'expire_at' => Carbon::now()->addDays(7),
             ]);
             $this->dispatchApprovalMail($request, 'gm');
-            flash()->success('Car request approved successfully');
+            $this->reset();
+            flash()->success('Vehicle request approved successfully');
         }
     }
 
@@ -127,7 +128,7 @@ trait ApproveAction
             }
         }
         $this->reset('selectedRows');
-        flash()->success($action.' applied items successfully.');
+        flash()->success($action . ' applied items successfully.');
     }
 
     private function dispatchApprovalMail($request, string $role)
@@ -140,7 +141,7 @@ trait ApproveAction
     private function dispatchApprovalMails(Collection $items, string $role, string $action): void
     {
         $items->each(function ($item) use ($role, $action) {
-            $message = "le $role a $action votre request reference ".$item->reference;
+            $message = "The $role a $action votre request reference " . $item->reference;
             MailRequestJob::dispatch($item, $message);
         });
     }

@@ -35,6 +35,7 @@
                 <th class="px-4 py-3">Email/nom</th>
                 <th class="px-4 py-3">Position</th>
                 <th class="px-4 py-3">role</th>
+                <th class="px-4 py-3">delegated role</th>
                 <th class="px-4 py-3">status</th>
                 <th class="px-4 py-3">change MDP</th>
                 <th class="px-4 py-3">invite</th>
@@ -50,6 +51,7 @@
                 <td class="px-4 py-3">{{ $row->email }}<br>{{ $row->name }}</td>
                 <td class="px-4 py-3">{{ $row->poste }}</td>
                 <td class="px-4 py-3">{{ $row->role }}</td>
+                <td class="px-4 py-3">{{ $row->delegated_role }}</td>
                 <td class="px-4 py-3">
 
                     <span @class(['btn badge rounded-pill btn-sm' ,'bg-primary'=> $row->status == 1,

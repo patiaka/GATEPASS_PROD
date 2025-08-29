@@ -30,6 +30,7 @@
         <h2 class="font-medium ml-4 mb-4">MENU</h2>
 
         <ul class="flex flex-col gap-3">
+
             <li>
                 <a wire:navigate href="/"
                     class="active flex items-center gap-3 py-2 px-4 menu-item hover:bg-[#0e3a6192] hover:text-slate-100 rounded-md">
@@ -43,6 +44,7 @@
             </li>
 
             <!-- Databases -->
+            @if (Auth::user()->isAdmin())
             <li>
                 <details>
                     <summary
@@ -84,7 +86,7 @@
                     </ul>
                 </details>
             </li>
-
+            @endif
             <!-- Gate Pass Requests -->
             <li>
                 <details>
@@ -150,6 +152,9 @@
                                 All Material Requests
                             </a>
                         </li>
+
+
+                        @if (Auth::user()->isAdmin() || Auth::user()->isSecurity())
                         <li class="mb-1">
                             <a wire:navigate href="{{ route('car.check') }}"
                                 class="flex items-center gap-3 px-4 py-2 rounded hover:bg-[#0e3a615d] hover:text-white text-sm">
@@ -173,10 +178,12 @@
                                 Material Check In / Out
                             </a>
                         </li>
+                        @endif
                     </ul>
                 </details>
             </li>
 
+            @if (Auth::user()->isGm() || Auth::user()->isHod())
             <!-- Approvals -->
             <li>
                 <details>
@@ -217,7 +224,7 @@
                     </ul>
                 </details>
             </li>
-
+            @endif
             <!-- Reports -->
             <li>
                 <details>
@@ -280,7 +287,6 @@
                         </a>
                     </li>
                     <li class="mb-1">
-
                         <a onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                             class="block px-4 py-2 hover:bg-[#ffffff53] text-sm flex items-center gap-3"
                             href="{{ route('logout') }}">

@@ -31,7 +31,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarDriver whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarDriver whereUpdatedAt($value)
  */
-	class CarDriver extends \Eloquent {}
+	final class CarDriver extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -55,8 +55,10 @@ namespace App\Models{
  * @property string $end
  * @property string $depart_at
  * @property string $arrive_at
+ * @property string $route
  * @property string $destination
- * @property string $justification
+ * @property string $company
+ * @property string $reason
  * @property string|null $expire_at
  * @property \App\Enum\MaterialRequestStatus $status
  * @property string $created_at
@@ -81,6 +83,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereArriveAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereCarNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereCarType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereCompany($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereDepartAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereDestination($value)
@@ -94,17 +97,18 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereHodApprovalId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereHodComment($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereJustification($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereLicence($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereReason($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereReference($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereResident($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereRoute($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereSomisyCar($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereStart($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereUserId($value)
  */
-	class CarRequest extends \Eloquent {}
+	final class CarRequest extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -124,7 +128,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Department whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Department whereUpdatedAt($value)
  */
-	class Department extends \Eloquent {}
+	final class Department extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -145,7 +149,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereMaterialRequestId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Document whereUpdatedAt($value)
  */
-	class Document extends \Eloquent {}
+	final class Document extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -192,7 +196,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest whereUserId($value)
  */
-	class MaterialRequest extends \Eloquent {}
+	final class MaterialRequest extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -217,7 +221,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereSerialNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequestItem whereUpdatedAt($value)
  */
-	class MaterialRequestItem extends \Eloquent {}
+	final class MaterialRequestItem extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -240,7 +244,23 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Passenger whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Passenger whereUpdatedAt($value)
  */
-	class Passenger extends \Eloquent {}
+	final class Passenger extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Database\Factories\RecordingFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording whereUpdatedAt($value)
+ */
+	class Recording extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -254,6 +274,7 @@ namespace App\Models{
  * @property \App\Enum\RoleEnum $role
  * @property int $change_password
  * @property int $status
+ * @property string|null $delegated_role
  * @property string $password
  * @property string|null $remember_token
  * @property string $created_at
@@ -279,6 +300,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereChangePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDelegatedRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDepartmentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmailVerifiedAt($value)
@@ -291,6 +313,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  */
-	class User extends \Eloquent {}
+	final class User extends \Eloquent {}
 }
 

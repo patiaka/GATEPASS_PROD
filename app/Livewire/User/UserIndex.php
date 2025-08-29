@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace App\Livewire\User;
 
-use App\Exports\UsersTemplateExport;
-use App\Imports\UsersImport;
-use App\Models\Department;
 use App\Models\User;
-use App\Notifications\UserNotification;
-use Livewire\Attributes\Computed;
 use Livewire\Component;
-use Livewire\WithFileUploads;
+use App\Models\Department;
+use App\Imports\UsersImport;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Computed;
+use App\Exports\UsersTemplateExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Notifications\UserNotification;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
+#[Title('All user')]
 final class UserIndex extends Component
 {
     use WithFileUploads, WithPagination;
@@ -33,21 +35,28 @@ final class UserIndex extends Component
         $this->reset('department', 'role', 'search');
     }
 
-    public function import()
-    {
-        $this->validate([
-            'import_file' => 'required|mimes:xlsx,xls',
-        ]);
+    // public function import()
+    // {
+    //     $this->validate([
+    //         'import_file' => 'required|mimes:xlsx,xls',
+    //     ]);
 
-        $import = new UsersImport();
-        Excel::import($import, $this->import_file);
+    //     $import = new UsersImport();
+    //     Excel::import($import, $this->import_file);
 
-        if (! empty($import->errors)) {
-            return back()->withErrors($import->errors);
-        }
+    //     if (! empty($import->errors)) {
+    //         return back()->withErrors($import->errors);
+    //     }
 
-        flash('User exported successfuly');
-    }
+    //     flash('User exported successfuly');
+    // }
+
+
+
+    // public function downloadTemplate(): BinaryFileResponse
+    // {
+    //     return Excel::download(new UsersTemplateExport, 'template_users.xlsx');
+    // }
 
     public function invite_user(User $user)
     {
@@ -55,12 +64,6 @@ final class UserIndex extends Component
 
         flash('User invited successfuly');
     }
-
-    public function downloadTemplate(): BinaryFileResponse
-    {
-        return Excel::download(new UsersTemplateExport, 'template_users.xlsx');
-    }
-
     public function delete(int $id): void
     {
         $row = User::find($id);
@@ -79,7 +82,7 @@ final class UserIndex extends Component
     public function rows()
     {
         return User::with('department:id,name')->when($this->search, function ($query) {
-            $query->whereAny(['name', 'email'], 'like', '%'.$this->search.'%');
+            $query->whereAny(['name', 'email'], 'like', '%' . $this->search . '%');
         })->when($this->department, function ($query) {
             $query->where('department_id', $this->department);
         })->when($this->role, function ($query) {

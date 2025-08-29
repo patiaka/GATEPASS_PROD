@@ -1,6 +1,6 @@
 @props(['type'=> '','url' => '','route' => ''])
 @if($type === "update")
-<h2 class="p-4 text-center">Update form</h2>
+<h2 class="p-4 text-center text-2xl">Update form</h2>
 @endif
 <form wire:submit='{{ $route }}'>
 

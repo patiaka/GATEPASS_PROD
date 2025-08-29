@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Livewire\MaterialRequest;
 
-use App\Helper\DeleteAction;
-use App\Helper\RepeatInputAction;
-use App\Livewire\Forms\MaterialRequestForm;
-use App\Models\MaterialRequest;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
+use App\Helper\DeleteAction;
 use Livewire\WithFileUploads;
+use Livewire\Attributes\Title;
+use App\Models\MaterialRequest;
+use App\Helper\RepeatInputAction;
+use Illuminate\Support\Facades\Gate;
+use App\Livewire\Forms\MaterialRequestForm;
 
+#[Title('Edit material request')]
 final class MaterialRequestUpdate extends Component
 {
     use DeleteAction, RepeatInputAction, WithFileUploads;
@@ -28,7 +30,7 @@ final class MaterialRequestUpdate extends Component
 
         $MaterialRequest->loadMissing('material_request_items', 'documents');
         $this->form->materials = $MaterialRequest->material_request_items
-            ->map(fn ($item) => [
+            ->map(fn($item) => [
                 'designation' => $item->designation,
                 'quantity' => $item->quantity,
                 'serial_number' => $item->serial_number,

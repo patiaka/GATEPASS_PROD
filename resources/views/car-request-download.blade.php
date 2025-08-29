@@ -77,10 +77,6 @@
 </head>
 
 <body class="leading-relaxed">
-    {{-- @php
-    $logoUrl = $logoUrl ?? (function_exists('asset') ? asset('images/logo.png') : '');
-    @endphp --}}
-
     {{-- Header with Logo and Title --}}
     <div class="flex justify-between items-start mb-4">
         <div class="flex items-center gap-3">

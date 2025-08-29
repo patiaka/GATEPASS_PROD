@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace App\Livewire\MaterialRequest;
 
-use App\Enum\MaterialRequestStatus;
-use App\Helper\ApproveAction;
+use function compact;
+use Livewire\Component;
 use App\Helper\WithFilter;
 use App\Models\Department;
+use App\Helper\ApproveAction;
+use Livewire\Attributes\Title;
 use App\Models\MaterialRequest;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
-use Livewire\Component;
 
-use function compact;
+use App\Enum\MaterialRequestStatus;
+use Illuminate\Support\Facades\Auth;
 
+#[Title('Pending material request')]
 final class MaterialRequestPending extends Component
 {
     use ApproveAction, WithFilter;
@@ -35,7 +37,7 @@ final class MaterialRequestPending extends Component
             ->when($auth->isGm(), function ($query) use ($auth) {
                 $query->where('status', MaterialRequestStatus::Progress)
                     ->whereNotNull('hod_approval_id')
-                    ->orWhere('gm_approval_id', $auth->id)
+                    // ->orWhere('gm_approval_id', $auth->id)
                     ->orWhere('user_id', $auth->id);
             })
             ->when($auth->isHod(), function ($query) use ($auth) {

@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace App\Livewire\CarRequest;
 
-use App\Enum\MaterialRequestStatus;
-use App\Helper\ApproveAction;
+use function compact;
+use Livewire\Component;
 use App\Helper\WithFilter;
 use App\Models\CarRequest;
 use App\Models\Department;
-use Illuminate\Support\Facades\Auth;
+use App\Helper\ApproveAction;
+use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
-use Livewire\Component;
 
-use function compact;
+use App\Enum\MaterialRequestStatus;
+use Illuminate\Support\Facades\Auth;
 
+#[Title('Pending vehicle request')]
 final class CarRequestPending extends Component
 {
     use ApproveAction, WithFilter;
@@ -33,7 +35,7 @@ final class CarRequestPending extends Component
             ->when($auth->isGm(), function ($query) use ($auth) {
                 $query->where('status', MaterialRequestStatus::Progress)
                     ->whereNotNull('hod_approval_id')
-                    ->orWhere('gm_approval_id', $auth->id)
+                    // ->orWhere('gm_approval_id', $auth->id)
                     ->orWhere('user_id', $auth->id)->orwhere('status', MaterialRequestStatus::Progress);
             })
             ->when($auth->isHod(), function ($query) use ($auth) {

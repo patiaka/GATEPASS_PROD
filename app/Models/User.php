@@ -33,6 +33,7 @@ final class User extends Authenticatable
         'poste',
         'department_id',
         'status',
+        'delegated_role',
     ];
 
     /**
@@ -45,9 +46,50 @@ final class User extends Authenticatable
         'remember_token',
     ];
 
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'role' => RoleEnum::class,
+        ];
+    }
+
+    public function getEffectiveRole(): string
+    {
+        if ($this->delegated_role) {
+            return $this->delegated_role;
+        }
+
+        return $this->role->value;
+    }
+
+    public function delegateRole(string $role): void
+    {
+        $this->update([
+            'delegated_role'  => $role,
+        ]);
+    }
+
+    public function revokeDelegatedRole(): void
+    {
+        $this->update(['delegated_role'  => null]);
+    }
+
+
     public function isAdmin(): bool
     {
         return $this->role === RoleEnum::ADMIN;
+    }
+
+    public function isSecurity(): bool
+    {
+        return $this->role === RoleEnum::Security;
     }
 
     public function isUser(): bool
@@ -57,12 +99,12 @@ final class User extends Authenticatable
 
     public function isHod(): bool
     {
-        return $this->role === RoleEnum::HOD;
+        return $this->getEffectiveRole() === RoleEnum::HOD;
     }
 
     public function isGm(): bool
     {
-        return $this->role === RoleEnum::GM;
+        return $this->getEffectiveRole() === RoleEnum::GM;
     }
 
     /**
@@ -119,19 +161,5 @@ final class User extends Authenticatable
     public function gm_car_approvals(): HasMany
     {
         return $this->hasMany(CarRequest::class, 'gm_approval_id');
-    }
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'role' => RoleEnum::class,
-        ];
     }
 }

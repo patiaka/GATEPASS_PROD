@@ -12,10 +12,11 @@ use App\Models\Department;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
-use function compact;
 
+#[Title('All vehicle request')]
 final class CarRequestIndex extends Component
 {
     use ApproveAction, WithFilter;
@@ -52,7 +53,7 @@ final class CarRequestIndex extends Component
             })->when($this->status, function ($query) {
                 $query->where('status', $this->status);
             })->when($this->search, function ($query) {
-                $query->whereAny(['reference', 'status'], 'like', '%'.$this->search.'%');
+                $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
             })->latest('id')->paginate(10);
     }
 
