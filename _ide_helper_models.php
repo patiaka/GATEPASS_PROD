@@ -274,7 +274,7 @@ namespace App\Models{
  * @property \App\Enum\RoleEnum $role
  * @property int $change_password
  * @property int $status
- * @property string|null $delegated_role
+ * @property \App\Enum\RoleEnum|null $delegated_role
  * @property string $password
  * @property string|null $remember_token
  * @property string $created_at

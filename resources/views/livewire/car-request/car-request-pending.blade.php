@@ -64,7 +64,7 @@
                 @if (Auth::user()->isGm() || Auth::user()->isHod())
                 <th class="px-4 py-3 text-left text-sm font-medium">Requestor</th>
                 @endif
-                <th class="px-4 py-3 text-left text-sm font-medium">stat</th>
+                {{-- <th class="px-4 py-3 text-left text-sm font-medium">stat</th> --}}
                 <th class="px-4 py-3 text-left text-sm font-medium">Actions</th>
             </tr>
         </thead>
@@ -84,7 +84,7 @@
                     <x-form-request wire:key="request-{{ $row->id }}" :model="$row" type="car" />
                 </td>
                 @endif
-                <td class="px-4 py-3">
+                {{-- <td class="px-4 py-3">
                     <span @class(['btn badge rounded-pill btn-sm' ,'bg-primary'=> $row->isApproved(),
                         'bg-danger' => $row->isRejected(),
                         'bg-danger' => $row->isExpired(),
@@ -94,7 +94,7 @@
                         {{ $row->status }}
                     </span>
 
-                </td>
+                </td> --}}
                 <td class="px-4 py-3">
                     <x-button-edit href="{{ route('car.edit', ['CarRequest' => $row]) }}" :row="$row" />
                     <x-button-show href="{{ route('car.show', ['CarRequest' => $row]) }}" :row="$row" />

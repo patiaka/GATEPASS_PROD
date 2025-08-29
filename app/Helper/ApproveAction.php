@@ -39,6 +39,7 @@ trait ApproveAction
             ]);
             $this->dispatchApprovalMail($request, 'hod');
             MailRequestJob::dispatch($request, 'Awaiting a material gate pass request to approve reference ' . $request->reference);
+            $this->reset('hod_comment', 'gm_comment');
             flash()->success('Material request approved successfully');
         } elseif ($type === 'car') {
 
@@ -51,8 +52,16 @@ trait ApproveAction
             ]);
             $this->dispatchApprovalMail($request, 'hod');
             MailRequestJob::dispatch($request, 'Awaiting a vehicle gate pass request to approve reference ' . $request->reference);
+
             flash()->success('Vehicle request approved successfully');
         }
+        $this->reset_filled();
+    }
+    protected function reset_filled(): void
+    {
+        $this->gm_comment = '';
+        $this->hod_comment = '';
+        $this->status = '';
     }
 
     public function approveByGm(int $id, string $type)
@@ -83,9 +92,10 @@ trait ApproveAction
                 'expire_at' => Carbon::now()->addDays(7),
             ]);
             $this->dispatchApprovalMail($request, 'gm');
-            $this->reset();
+            $this->reset('hod_comment', 'gm_comment');
             flash()->success('Vehicle request approved successfully');
         }
+        $this->reset_filled();
     }
 
     public function bulkAction(string $action, string $type): void

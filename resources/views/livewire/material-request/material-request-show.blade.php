@@ -110,7 +110,7 @@
                         </td>
                         <td>Head of Department</td>
                         <td class="h-14">
-                            <x-request-status :model="$MaterialRequest" type="hod" />
+                            <x-request-status :status="$MaterialRequest->getStatusFor('hod')" />
                             @if (Auth::user()->isHod())
                             <x-form-request :model="$MaterialRequest" type="material" />
                             @endif
@@ -126,7 +126,7 @@
                         </td>
                         <td>General Manager</td>
                         <td class="h-14">
-                            <x-request-status :model="$MaterialRequest" type="gm" />
+                            <x-request-status :status="$MaterialRequest->getStatusFor('gm')" />
                             @if (Auth::user()->isGm())
                             <x-form-request :model="$MaterialRequest" type="material" />
                             @endif

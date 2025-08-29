@@ -1,19 +1,26 @@
-@props(['model','type'])
+{{-- @props(['model','type'])
+
 @php
 $status = null;
 
+if ($type === 'hod') {
 if ($model->isPending()) {
-$status = ['✅ Pending', 'btn-secondary'];
-} elseif ($model->isProgress() && $model->isHodApproved() && $type === 'hod') {
-$status = ['✅ Approved', 'btn-secondary'];
-} elseif ($model->isRejected() && $model->isHodApproved() && $type === 'hod') {
-$status = ['❌ Rejected', 'btn-secondary'];
-} elseif ($model->isPending()) {
-$status = ['✅ Pending', 'btn-secondary'];
-} elseif ($model->isApproved() && $model->isGmApproved() && $type === 'gm') {
-$status = ['✅ Approved', 'btn-secondary'];
-} elseif ($model->isRejected() && $model->isGmApproved() && $type === 'gm') {
-$status = ['❌ Rejected', 'btn-secondary'];
+$status = ['⏳ Pending', 'btn-secondary'];
+} elseif ($model->isApproved() && $model->isHodApproved()) {
+$status = ['✅ Approved', 'btn-success'];
+} elseif ($model->isRejected() && $model->isHodApproved()) {
+$status = ['❌ Rejected', 'btn-danger'];
+}
+}
+
+if ($type === 'gm') {
+if ($model->isProgress()) {
+$status = ['⏳ Pending', 'btn-secondary'];
+} elseif ($model->isApproved() && $model->isGmApproved()) {
+$status = ['✅ Approved', 'btn-success'];
+} elseif ($model->isRejected() && $model->isGmApproved()) {
+$status = ['❌ Rejected', 'btn-danger'];
+}
 }
 @endphp
 
@@ -21,4 +28,10 @@ $status = ['❌ Rejected', 'btn-secondary'];
 <a href="#" class="{{ $status[1] }}">
     {{ $status[0] }}
 </a>
-@endif
+@endif --}}
+
+@props(['status'])
+
+<a href="#" class="{{ $status[1] }}">
+    {{ $status[0] }}
+</a>

@@ -44,6 +44,7 @@ final class RoleMiddleware
             RoleEnum::GM->value => $user->isGm() || $user->isAdmin(),
             RoleEnum::HOD->value => $user->isHod() || $user->isAdmin() || $user->isGm(),
             RoleEnum::USER->value => $user->isUser() || $user->isHod() || $user->isAdmin() || $user->isGm(),
+            RoleEnum::Security->value => $user->isAdmin() || $user->isSecurity(),
             default => false, // Rôle non pris en charge
         };
     }

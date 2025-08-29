@@ -57,16 +57,17 @@ final class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => RoleEnum::class,
+            'delegated_role' => RoleEnum::class,
         ];
     }
 
-    public function getEffectiveRole(): string
+    public function getEffectiveRole(): RoleEnum
     {
         if ($this->delegated_role) {
             return $this->delegated_role;
         }
 
-        return $this->role->value;
+        return $this->role;
     }
 
     public function delegateRole(string $role): void
