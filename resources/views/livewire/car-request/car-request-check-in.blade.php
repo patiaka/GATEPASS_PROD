@@ -41,6 +41,8 @@
                     <th class="px-4 py-3 text-left text-sm font-medium">Department</th>
                     <th class="px-4 py-3 text-left text-sm font-medium">Requestor Name</th>
                     <th class="px-4 py-3 text-left text-sm font-medium">Requestor Company</th>
+                    <th class="px-4 py-3 text-left text-sm font-medium">Vehicle</th>
+                    {{-- <th class="px-4 py-3 text-left text-sm font-medium">Vehicle type</th> --}}
                     <th class="px-4 py-3 text-left text-sm font-medium">action</th>
                     <th class="px-4 py-3 text-left text-sm font-medium">decision</th>
                     <th class="px-4 py-3 text-left text-sm font-medium">Actions</th>
@@ -55,6 +57,8 @@
                     <td class="px-4 py-3 text-sm">{{ $row->user->department->name }}</td>
                     <td class="px-4 py-3 text-sm">{{ $row->user->name }}</td>
                     <td class="px-4 py-3 text-sm">{{ $row->requestable->company }}</td>
+                    <td class="px-4 py-3 text-sm">#{{ $row->requestable->car_number }}</td>
+                    {{-- <td class="px-4 py-3 text-sm">#{{ $row->requestable->car_type }}</td> --}}
                     <td class="px-4 py-3 text-sm">{{ $row->action }}</td>
                     <td class="px-4 py-3 text-sm">
                         @if ($row->decision === 'Approved')

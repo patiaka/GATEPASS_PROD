@@ -28,11 +28,11 @@ if (e.detail?.name) Alpine.store('modal').close(e.detail.name)
 })
 })
 
-   document.addEventListener('close-modal', (e) => {
-        if (e.detail.name) {
-            Alpine.store('modal').close(e.detail.name)
-        }
-    })
+//    document.addEventListener('close-modal', (e) => {
+//         if (e.detail.name) {
+//             Alpine.store('modal').close(e.detail.name)
+//         }
+//     })
 
 </script>
 

@@ -39,7 +39,7 @@ final class CarRequestCheckIn extends Component
     #[Computed]
     public function rows()
     {
-        return Recording::with('user', 'requestable:id,company,reference')->whereHasMorph(
+        return Recording::with('user', 'requestable:id,company,reference,car_number,car_type')->whereHasMorph(
             'requestable',
             [CarRequest::class]
         )->when($this->date, function ($query) {
@@ -74,7 +74,7 @@ final class CarRequestCheckIn extends Component
     public function render()
     {
         $departments = Department::select('id', 'name')->get();
-        $carRequests = CarRequest::select('id', 'status', 'reference', 'created_at', 'expire_at')
+        $carRequests = CarRequest::select('id', 'status', 'reference', 'created_at', 'expire_at', 'car_number')
             ->where('status', MaterialRequestStatus::Approved)->get();
 
         return view('livewire.car-request.car-request-check-in', compact('departments', 'carRequests'));
