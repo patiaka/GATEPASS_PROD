@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Livewire\CarRequest;
 
-use function compact;
-use Livewire\Component;
+use App\Enum\MaterialRequestStatus;
+use App\Helper\ApproveAction;
 use App\Helper\WithFilter;
 use App\Models\CarRequest;
 use App\Models\Department;
-use App\Helper\ApproveAction;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Computed;
-
-use App\Enum\MaterialRequestStatus;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
+use Livewire\Component;
+
+use function compact;
 
 #[Title('Pending vehicle request')]
 final class CarRequestPending extends Component

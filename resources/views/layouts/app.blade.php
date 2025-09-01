@@ -72,8 +72,19 @@
 });
 
 window.addEventListener("livewire:navigated", () => {
+      lucide.createIcons();
+    // Recharge proprement ton store ou réinitialise le comportement
+    // Alpine.store("modal", {
+    //     isOpen: false,
+    //     open() {
+    //         this.isOpen = true;
+    //     },
+    //     close() {
+    //         this.isOpen = false;
+    //     },
+    // });
 
-  lucide.createIcons();
+    // lucide.createIcons();
 });
     </script>
 </body>

@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use App\Models\User;
+use App\Enum\MaterialRequestStatus;
 use App\Enum\RoleEnum;
 use App\Models\CarRequest;
 use App\Models\MaterialRequest;
-use App\Enum\MaterialRequestStatus;
-use Illuminate\Foundation\Queue\Queueable;
+use App\Models\User;
+use App\Notifications\UserRequestNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Notification;
-use App\Notifications\UserRequestNotification;
 
 final class MailRequestJob implements ShouldQueue
 {
@@ -27,11 +27,9 @@ final class MailRequestJob implements ShouldQueue
         public string $message
     ) {}
 
-
     public function handle(): void
     {
         $this->model->loadMissing('user');
-
 
         $recipients = match ($this->model->status) {
             MaterialRequestStatus::Pending => $this->getHodUsers(),
@@ -39,13 +37,11 @@ final class MailRequestJob implements ShouldQueue
             default => collect([$this->model->user]),
         };
 
-
         Notification::send(
             $recipients,
             new UserRequestNotification($this->getRoute(), $this->message)
         );
     }
-
 
     private function getHodUsers(): Collection
     {
@@ -54,12 +50,10 @@ final class MailRequestJob implements ShouldQueue
             ->get();
     }
 
-
     private function getGmUsers(): Collection
     {
         return User::where('role', RoleEnum::GM)->get();
     }
-
 
     private function getRoute(): string
     {

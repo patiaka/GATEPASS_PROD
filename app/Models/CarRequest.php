@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enum\MaterialRequestStatus;
 use App\Helper\ModelAction;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -42,6 +43,18 @@ final class CarRequest extends Model
         return Carbon::parse($this->arrive_at)->format('H:i');
     }
 
+    public function isExpire(): bool
+    {
+        return $this->expire_at !== null && $this->expire_at->isPast();
+    }
+
+    public function markAsExpiredIfNeeded(): void
+    {
+        if ($this->isExpire() && $this->status !== MaterialRequestStatus::Expired) {
+            $this->update(['status' => MaterialRequestStatus::Expired]);
+        }
+    }
+
     /**
      * Get all of the passengers for the MaterialRequest
      */
@@ -56,5 +69,13 @@ final class CarRequest extends Model
     public function car_drivers(): HasMany
     {
         return $this->hasMany(CarDriver::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'status' => MaterialRequestStatus::class,
+            'expire_at' => 'datetime',
+        ];
     }
 }

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Livewire\User;
 
-use App\Models\User;
-use Livewire\Component;
-use App\Models\Department;
-use Livewire\Attributes\Title;
 use App\Livewire\Forms\UserForm;
+use App\Models\Department;
+use App\Models\User;
+use Livewire\Attributes\Title;
+use Livewire\Component;
 
 #[Title('edit user')]
 final class UserUpdate extends Component

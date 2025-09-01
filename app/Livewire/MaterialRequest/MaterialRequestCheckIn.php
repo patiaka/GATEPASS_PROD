@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Livewire\MaterialRequest;
 
-use Livewire\Component;
 use Livewire\Attributes\Title;
+use Livewire\Component;
 
 #[Title('Check material request')]
 final class MaterialRequestCheckIn extends Component

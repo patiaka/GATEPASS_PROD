@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Livewire\CarRequest;
 
-use Gate;
-use Livewire\Component;
-use App\Models\CarRequest;
-use Livewire\Attributes\Title;
 use App\Helper\RepeatInputAction;
 use App\Livewire\Forms\CarRequestForm;
+use App\Models\CarRequest;
+use Gate;
+use Livewire\Attributes\Title;
+use Livewire\Component;
 
 #[Title('Edit vehicle request')]
 final class CarRequestUpdate extends Component

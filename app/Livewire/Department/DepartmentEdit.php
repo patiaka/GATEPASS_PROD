@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Livewire\Department;
 
-use Livewire\Component;
+use App\Livewire\Forms\DepartmentForm;
 use App\Models\Department;
 use Livewire\Attributes\Title;
-use App\Livewire\Forms\DepartmentForm;
+use Livewire\Component;
 
 #[Title('Edit Department')]
 final class DepartmentEdit extends Component

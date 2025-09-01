@@ -38,7 +38,7 @@ trait ApproveAction
                 'status' => $this->status === 'Approved' ? MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value,
             ]);
             $this->dispatchApprovalMail($request, 'hod');
-            MailRequestJob::dispatch($request, 'Awaiting a material gate pass request to approve reference ' . $request->reference);
+            MailRequestJob::dispatch($request, 'Awaiting a material gate pass request to approve reference '.$request->reference);
             $this->reset('hod_comment', 'gm_comment');
             flash()->success('Material request approved successfully');
         } elseif ($type === 'car') {
@@ -51,17 +51,11 @@ trait ApproveAction
                 'status' => $this->status === 'Approved' ? MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value,
             ]);
             $this->dispatchApprovalMail($request, 'hod');
-            MailRequestJob::dispatch($request, 'Awaiting a vehicle gate pass request to approve reference ' . $request->reference);
+            MailRequestJob::dispatch($request, 'Awaiting a vehicle gate pass request to approve reference '.$request->reference);
 
             flash()->success('Vehicle request approved successfully');
         }
         $this->reset_filled();
-    }
-    protected function reset_filled(): void
-    {
-        $this->gm_comment = '';
-        $this->hod_comment = '';
-        $this->status = '';
     }
 
     public function approveByGm(int $id, string $type)
@@ -138,7 +132,14 @@ trait ApproveAction
             }
         }
         $this->reset('selectedRows');
-        flash()->success($action . ' applied items successfully.');
+        flash()->success($action.' applied items successfully.');
+    }
+
+    protected function reset_filled(): void
+    {
+        $this->gm_comment = '';
+        $this->hod_comment = '';
+        $this->status = '';
     }
 
     private function dispatchApprovalMail($request, string $role)
@@ -151,7 +152,7 @@ trait ApproveAction
     private function dispatchApprovalMails(Collection $items, string $role, string $action): void
     {
         $items->each(function ($item) use ($role, $action) {
-            $message = "The $role a $action votre request reference " . $item->reference;
+            $message = "The $role a $action votre request reference ".$item->reference;
             MailRequestJob::dispatch($item, $message);
         });
     }

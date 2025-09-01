@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Livewire\Department;
 
-use Livewire\Component;
 use App\Helper\WithFilter;
 use App\Models\Department;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Computed;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
+use Livewire\Component;
 
 #[Title('All Department')]
 final class DepartmentIndex extends Component

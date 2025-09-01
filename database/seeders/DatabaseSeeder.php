@@ -18,9 +18,9 @@ final class DatabaseSeeder extends Seeder
     {
         Department::factory(5)->create();
         User::factory(10)->create();
-        User::factory()->create(['email' => 'admin@gmail.com', 'role' => 'Administrator',]);
-        User::factory()->create(['email' => 'gm@gmail.com', 'role' => 'GM',]);
-        User::factory()->create(['email' => 'hod@gmail.com', 'role' => 'HOD',]);
-        User::factory()->create(['email' => 'security@gmail.com', 'role' => 'Security',]);
+        User::factory()->create(['email' => 'admin@gmail.com', 'role' => 'Administrator']);
+        User::factory()->create(['email' => 'gm@gmail.com', 'role' => 'General Manager']);
+        User::factory()->create(['email' => 'hod@gmail.com', 'role' => 'Head of Department']);
+        User::factory()->create(['email' => 'security@gmail.com', 'role' => 'Security']);
     }
 }

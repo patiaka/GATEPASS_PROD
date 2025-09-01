@@ -38,7 +38,7 @@ final class UserRequestNotification extends Notification
         return (new MailMessage)
             ->from(config('mail.from.address'), config('mail.from.name'))
             ->subject('Request Update Notification')
-            ->greeting('Hello ' . $notifiable->name . ',')
+            ->greeting('Hello '.$notifiable->name.',')
             ->line($this->message)
             ->action('View Request', url($this->link))
             ->line('Thank you for using our application!');

@@ -3,10 +3,7 @@
 declare(strict_types=1);
 
 use App\Enum\RoleEnum;
-use App\Http\Controllers\CarRequestController;
 use App\Http\Controllers\DocumentController;
-use App\Http\Controllers\MaterialRequestController;
-use App\Http\Controllers\MaterialRequestItemController;
 use App\Livewire\CarRequest\CarRequestCheckIn;
 use App\Livewire\CarRequest\CarRequestCreate;
 use App\Livewire\CarRequest\CarRequestIndex;
@@ -32,7 +29,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function () {
     Route::get('/', Dashboard::class)->name('dashboard');
 
-    Route::middleware('role:' . RoleEnum::ADMIN->value)->group(function () {
+    Route::middleware('role:'.RoleEnum::ADMIN->value)->group(function () {
         Route::get('user', UserIndex::class)->name('user.index');
         Route::get('user/{user}/edit', UserUpdate::class)->name('user.edit');
         Route::get('user/create', UserCreate::class)->name('user.create');
@@ -42,7 +39,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('department/{department}/edit', DepartmentEdit::class)->name('department.edit');
     });
 
-    Route::middleware('role:' . RoleEnum::HOD->value)->group(function () {
+    Route::middleware('role:'.RoleEnum::HOD->value)->group(function () {
         Route::get('material/request/pending', MaterialRequestPending::class)->name('material.pending');
         Route::get('car/request/pending', CarRequestPending::class)->name('car.pending');
     });
@@ -51,11 +48,11 @@ Route::middleware(['auth'])->group(function () {
     //     Route::get('material/request/pending', MaterialRequestPending::class)->name('material.pending');
     //     Route::get('car/request/pending', CarRequestPending::class)->name('car.pending');
     // });
-    Route::middleware('role:' . RoleEnum::Security->value)->group(function () {
+    Route::middleware('role:'.RoleEnum::Security->value)->group(function () {
         Route::get('material/request/check/in', MaterialRequestCheckIn::class)->name('material.check');
         Route::get('car/request/check/in', CarRequestCheckIn::class)->name('car.check');
     });
-    Route::middleware('role:' . RoleEnum::USER->value)->group(function () {
+    Route::middleware('role:'.RoleEnum::USER->value)->group(function () {
         Route::get('material/request', MaterialRequestIndex::class)->name('material.index');
         Route::get('material/request/create', MaterialRequestCreate::class)->name('material.create');
         Route::get('material/request/{MaterialRequest}/edit', MaterialRequestUpdate::class)->name('material.edit');
@@ -68,4 +65,4 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enum\MaterialRequestStatus;
 use App\Helper\ModelAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -45,5 +46,17 @@ final class MaterialRequest extends Model
     public function material_request_items(): HasMany
     {
         return $this->hasMany(MaterialRequestItem::class);
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'status' => MaterialRequestStatus::class,
+        ];
     }
 }

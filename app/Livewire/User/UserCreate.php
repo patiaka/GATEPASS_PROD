@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Livewire\User;
 
-use Livewire\Component;
+use App\Livewire\Forms\UserForm;
 use App\Models\Department;
 use Livewire\Attributes\Title;
-use App\Livewire\Forms\UserForm;
+use Livewire\Component;
 
 #[Title('User Off Site Form')]
 final class UserCreate extends Component

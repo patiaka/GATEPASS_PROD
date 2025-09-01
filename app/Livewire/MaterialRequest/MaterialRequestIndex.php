@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\Livewire\MaterialRequest;
 
-use function compact;
-use Livewire\Component;
+use App\Enum\MaterialRequestStatus;
+use App\Helper\ApproveAction;
+use App\Helper\DeleteAction;
 use App\Helper\WithFilter;
 use App\Models\Department;
-use App\Helper\DeleteAction;
-use App\Helper\ApproveAction;
-use Livewire\Attributes\Title;
 use App\Models\MaterialRequest;
-use Livewire\Attributes\Computed;
-use App\Enum\MaterialRequestStatus;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
+use Livewire\Component;
+
+use function compact;
 
 #[Title('All material request')]
 final class MaterialRequestIndex extends Component
@@ -56,7 +56,7 @@ final class MaterialRequestIndex extends Component
             })->when($this->status, function ($query) {
                 $query->where('status', $this->status);
             })->when($this->search, function ($query) {
-                $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
+                $query->whereAny(['reference', 'status'], 'like', '%'.$this->search.'%');
             })->latest('id')->paginate(10);
     }
 

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Livewire\CarRequest;
 
-use Livewire\Component;
-use App\Models\CarRequest;
 use App\Helper\ApproveAction;
+use App\Models\CarRequest;
 use Livewire\Attributes\Title;
+use Livewire\Component;
 use Spatie\Browsershot\Browsershot;
 
 #[Title('Show vehicle request')]

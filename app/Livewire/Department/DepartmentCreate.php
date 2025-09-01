@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Livewire\Department;
 
-use Livewire\Component;
-use Livewire\Attributes\Title;
 use App\Livewire\Forms\DepartmentForm;
+use Livewire\Attributes\Title;
+use Livewire\Component;
 
 #[Title('Department Off Site Form')]
 final class DepartmentCreate extends Component

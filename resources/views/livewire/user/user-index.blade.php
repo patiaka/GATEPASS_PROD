@@ -19,7 +19,7 @@
 
                 {{-- Status Filter --}}
                 <div class="w-full sm:w-48">
-                    <x-select label="Filter by Status" wire:model.live="status">
+                    <x-select label="Filter by Status" wire:model.live="role">
                         <option value="">All Roles</option>
                         @foreach (App\Enum\RoleEnum::cases() as $row)
                         <option value="{{ $row }}">{{ $row }}</option>

@@ -1,21 +1,63 @@
-@props(['title'])
-<el-dialog>
-    <dialog id="dialog" aria-labelledby="dialog-title"
-        class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
-        <el-dialog-backdrop
-            class="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in">
-        </el-dialog-backdrop>
+@props([
+'title' => 'Modal Title',
+'name' => 'default', // unique id for this modal
+'maxWidth' => 'max-w-lg',
+'closeOnBackdrop' => true,
+])
 
-        <div tabindex="0"
-            class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
-            <el-dialog-panel
-                class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95">
-                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
 
-                    {{ $slot }}
+<script>
+    document.addEventListener('alpine:init', () => {
+// Initialize once
+if (!Alpine.store('modal')) {
+Alpine.store('modal', {
+modals: {},
+open(name) { this.modals[name] = true },
+close(name) { this.modals[name] = false },
+isOpen(name) { return !!this.modals[name] }
+})
+}
+
+
+// Bridge Livewire events -> Alpine store
+window.addEventListener('open-modal', (e) => {
+if (e.detail?.name) Alpine.store('modal').open(e.detail.name)
+})
+window.addEventListener('close-modal', (e) => {
+if (e.detail?.name) Alpine.store('modal').close(e.detail.name)
+})
+})
+
+   document.addEventListener('close-modal', (e) => {
+        if (e.detail.name) {
+            Alpine.store('modal').close(e.detail.name)
+        }
+    })
+
+</script>
+
+
+<template x-teleport="body">
+    <div x-data x-on:close-modal.window="if ($event.detail.name === {{ $name }}) $store.modal.close({{ $name }})">
+        <div x-data x-show="$store.modal.isOpen('{{ $name }}')" x-cloak
+            @keydown.escape.window="$store.modal.close('{{ $name }}')" @click.self="$store.modal.close('{{ $name }}')"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+
+
+            <div class="bg-white rounded-xl shadow-xl w-full {{ $maxWidth }} p-6 relative"
+                x-show="$store.modal.isOpen('{{ $name }}')" x-transition.opacity x-transition.scale.origin-top>
+
+
+                <div class="mb-4 border-b pb-2 flex justify-between items-center">
+                    <h2 class="text-lg font-semibold">{{ $title }}</h2>
+                    <button type="button" @click="$store.modal.close('{{ $name }}')"
+                        class="text-gray-500 hover:text-gray-700">&times;</button>
                 </div>
 
-            </el-dialog-panel>
+                <div>
+                    {{ $slot }}
+                </div>
+            </div>
         </div>
-    </dialog>
-</el-dialog>
+    </div>
+</template>

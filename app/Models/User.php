@@ -46,21 +46,6 @@ final class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'role' => RoleEnum::class,
-            'delegated_role' => RoleEnum::class,
-        ];
-    }
-
     public function getEffectiveRole(): RoleEnum
     {
         if ($this->delegated_role) {
@@ -73,15 +58,14 @@ final class User extends Authenticatable
     public function delegateRole(string $role): void
     {
         $this->update([
-            'delegated_role'  => $role,
+            'delegated_role' => $role,
         ]);
     }
 
     public function revokeDelegatedRole(): void
     {
-        $this->update(['delegated_role'  => null]);
+        $this->update(['delegated_role' => null]);
     }
-
 
     public function isAdmin(): bool
     {
@@ -162,5 +146,20 @@ final class User extends Authenticatable
     public function gm_car_approvals(): HasMany
     {
         return $this->hasMany(CarRequest::class, 'gm_approval_id');
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'role' => RoleEnum::class,
+            'delegated_role' => RoleEnum::class,
+        ];
     }
 }

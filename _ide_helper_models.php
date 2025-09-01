@@ -59,7 +59,7 @@ namespace App\Models{
  * @property string $destination
  * @property string $company
  * @property string $reason
- * @property string|null $expire_at
+ * @property \Illuminate\Support\Carbon|null $expire_at
  * @property \App\Enum\MaterialRequestStatus $status
  * @property string $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -75,6 +75,8 @@ namespace App\Models{
  * @property-read \App\Models\User|null $hodApproval
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Passenger> $passengers
  * @property-read int|null $passengers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Recording> $recordings
+ * @property-read int|null $recordings_count
  * @property-read \App\Models\User $user
  * @method static \Database\Factories\CarRequestFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest newModelQuery()
@@ -176,6 +178,8 @@ namespace App\Models{
  * @property-read \App\Models\User|null $hodApproval
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MaterialRequestItem> $material_request_items
  * @property-read int|null $material_request_items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Recording> $recordings
+ * @property-read int|null $recordings_count
  * @property-read \App\Models\User $user
  * @method static \Database\Factories\MaterialRequestFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|MaterialRequest newModelQuery()
@@ -252,6 +256,8 @@ namespace App\Models{
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $requestable
+ * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\RecordingFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording newQuery()

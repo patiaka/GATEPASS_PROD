@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Livewire\User;
 
-use App\Models\User;
-use Livewire\Component;
-use App\Models\Department;
-use App\Imports\UsersImport;
-use Livewire\WithPagination;
-use Livewire\WithFileUploads;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Computed;
 use App\Exports\UsersTemplateExport;
-use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\UsersImport;
+use App\Models\Department;
+use App\Models\User;
 use App\Notifications\UserNotification;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
+use Livewire\Component;
+use Livewire\WithFileUploads;
+use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 #[Title('All user')]
@@ -51,8 +51,6 @@ final class UserIndex extends Component
     //     flash('User exported successfuly');
     // }
 
-
-
     // public function downloadTemplate(): BinaryFileResponse
     // {
     //     return Excel::download(new UsersTemplateExport, 'template_users.xlsx');
@@ -64,6 +62,7 @@ final class UserIndex extends Component
 
         flash('User invited successfuly');
     }
+
     public function delete(int $id): void
     {
         $row = User::find($id);
@@ -82,7 +81,7 @@ final class UserIndex extends Component
     public function rows()
     {
         return User::with('department:id,name')->when($this->search, function ($query) {
-            $query->whereAny(['name', 'email'], 'like', '%' . $this->search . '%');
+            $query->whereAny(['name', 'email'], 'like', '%'.$this->search.'%');
         })->when($this->department, function ($query) {
             $query->where('department_id', $this->department);
         })->when($this->role, function ($query) {

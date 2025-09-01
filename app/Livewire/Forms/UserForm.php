@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Livewire\Forms;
 
-use Livewire\Form;
-use App\Models\User;
 use App\Enum\RoleEnum;
-use Illuminate\Validation\Rule;
-use Livewire\Attributes\Validate;
-use Illuminate\Validation\Rules\Enum;
+use App\Models\User;
 use App\Notifications\UserNotification;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
+use Livewire\Attributes\Validate;
+use Livewire\Form;
 
 final class UserForm extends Form
 {

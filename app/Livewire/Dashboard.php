@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use App\Models\CarRequest;
-use Livewire\Attributes\Title;
-use Livewire\Attributes\Layout;
 use App\Enum\MaterialRequestStatus;
+use App\Models\CarRequest;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Component;
 
 #[Title('Dashboard')]
 final class Dashboard extends Component
 {
-
-
     #[Layout('layouts.app')]
     public function render()
     {

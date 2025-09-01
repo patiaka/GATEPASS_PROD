@@ -5,15 +5,22 @@ declare(strict_types=1);
 namespace App\Helper;
 
 use App\Enum\MaterialRequestStatus;
+use App\Models\Recording;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 trait ModelAction
 {
     use HasFactory;
+
+    public function recordings(): MorphMany
+    {
+        return $this->morphMany(Recording::class, 'requestable');
+    }
 
     public function getGmApprovalDateFormatAttribute(): string
     {
@@ -85,7 +92,6 @@ trait ModelAction
         return $status;
     }
 
-
     // Vérifier si GM a validé
     public function isGmApproved()
     {
@@ -125,11 +131,11 @@ trait ModelAction
     public function generateId(string $prefix_type)
     {
         $currentYear = Carbon::today()->format('Y');
-        $prefix = $prefix_type . $currentYear . '-';
+        $prefix = $prefix_type.$currentYear.'-';
 
         return DB::transaction(function () use ($prefix) {
             // Verrouille le dernier identifiant de courrier enregistré dans la base de données pour la mise à jour
-            $lastCourrier = self::where('reference', 'like', $prefix . '%')->whereNotNull('reference')
+            $lastCourrier = self::where('reference', 'like', $prefix.'%')->whereNotNull('reference')
                 ->latest('id')
                 ->lockForUpdate()
                 ->first(['reference']);
@@ -141,7 +147,7 @@ trait ModelAction
             }
             // Incrémente le numéro de séquence et génère le nouvel identifiant de courrier
             $sequence++;
-            $newCourrierNumber = $prefix . $sequence;
+            $newCourrierNumber = $prefix.$sequence;
             // Met à jour le numéro de courrier de l'instance courante
             $this->reference = $newCourrierNumber;
             $this->save();
@@ -153,17 +159,5 @@ trait ModelAction
     protected function getCreatedAtAttribute(string $date): string
     {
         return Carbon::parse($date)->format('d/m/Y H:i');
-    }
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'status' => MaterialRequestStatus::class,
-        ];
     }
 }

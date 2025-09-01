@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Livewire\User;
 
-use Livewire\Component;
-use Livewire\Attributes\Title;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Title;
+use Livewire\Component;
 
 #[Title('edit user password')]
 final class UserPassChange extends Component

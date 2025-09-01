@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Livewire\MaterialRequest;
 
-use Livewire\Component;
-use App\Models\Document;
-use App\Helper\DeleteAction;
 use App\Helper\ApproveAction;
-use Livewire\Attributes\Title;
+use App\Helper\DeleteAction;
+use App\Models\Document;
 use App\Models\MaterialRequest;
+use Livewire\Attributes\Title;
+use Livewire\Component;
 use Spatie\Browsershot\Browsershot;
 
 #[Title('Show material request')]

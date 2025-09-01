@@ -60,7 +60,7 @@ final class CheckRequestStatus extends Command
                         } catch (Exception $e) {
                             Log::error('Failed to expire request', [
                                 'model' => $modelClass,
-                                'row' => $row->trans_ref ?? $row->id,
+                                'row' => $row->reference,
                                 'error' => $e->getMessage(),
                             ]);
                             throw $e; // rollback transaction
