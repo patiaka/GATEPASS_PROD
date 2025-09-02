@@ -3,9 +3,14 @@
 
         <div class="flex justify-between items-center border-b border-gray-200 p-4">
             <h1 class="text-xl font-semibold text-gray-800">Material Off Site Request Form</h1>
-            <a href="" class="text-sm text-blue-600 hover:underline bg-white border rounded px-3 py-1 shadow-sm">
-                ← Back to list
-            </a>
+           <a href="{{ route('material.index') }}"
+            class="text-sm text-gary-600 hover:underline bg-white border rounded px-3 py-1 shadow-sm inline-flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-1" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to list
+        </a>
         </div>
         <div class="p-6">
             <form wire:submit="save" enctype="multipart/form-data" method="post" class="space-y-6">

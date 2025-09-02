@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
-use function to_route;
+
 
 final class CarRequestForm extends Form
 {
@@ -152,7 +152,7 @@ final class CarRequestForm extends Form
 
             $this->reset();
             flash()->success('Car request submitted successfully');
-            to_route('car.index');
+            return redirect()->route('car.index');
         });
     }
 
