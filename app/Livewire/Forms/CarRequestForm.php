@@ -12,7 +12,6 @@ use Livewire\Attributes\Validate;
 use Livewire\Form;
 
 
-
 final class CarRequestForm extends Form
 {
     public ?CarRequest $carRequest = null;
