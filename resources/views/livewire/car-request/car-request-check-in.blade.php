@@ -1,7 +1,7 @@
 <div>
     <!-- Header -->
     <div class="flex justify-between items-center border-b pb-4 mb-4">
-        <h1 class="font-bold text-xl text-[#134169]">Visitor Check In / Out</h1>
+        <h1 class="font-bold text-xl text-[#134169]">Vehicle Check In / Out</h1>
         <button @click="$store.modal.open('security-check')"
             class="text-blue-600 border border-blue-600 px-3 py-1 rounded hover:bg-blue-600 hover:text-white">
             New Check In
