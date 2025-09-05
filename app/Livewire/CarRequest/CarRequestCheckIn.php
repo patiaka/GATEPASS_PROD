@@ -44,10 +44,8 @@ final class CarRequestCheckIn extends Component
             [CarRequest::class]
         )->when($this->date, function ($query) {
             $query->whereDate('created_at', $this->date);
-        })->latest('id')->paginate(10);
+        })->latest('id')->paginate();
     }
-
-
 
     public function recordSecurityCheck()
     {
@@ -57,6 +55,7 @@ final class CarRequestCheckIn extends Component
         // Vérifier expiration
         if ($item->isExpired()) {
             flash()->success('request expired');
+
             return;
         }
 

@@ -96,6 +96,12 @@
                 <!-- More rows as needed... -->
             </tbody>
         </table>
+
+        @if($this->rows)
+        <div class="p-4">
+            {{ $this->rows->links() }}
+        </div>
+        @endif
     </div>
 
     <!-- Modal -->
