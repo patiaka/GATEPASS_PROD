@@ -146,8 +146,8 @@ final class CarRequestForm extends Form
                 $CarRequest->passengers()->createMany($this->passengers);
             }
 
-            $CarRequest->generateId('CR');
-            MailRequestJob::dispatch($CarRequest, 'Awaiting a vehicle gate pass request to approve reference '.$CarRequest->reference);
+            $CarRequest->generateId('VEH');
+            MailRequestJob::dispatch($CarRequest, 'Awaiting a vehicle gate pass request to approve reference ' . $CarRequest->reference);
 
             $this->reset();
             flash()->success('Car request submitted successfully');
@@ -158,9 +158,9 @@ final class CarRequestForm extends Form
     public function update(): void
     {
         $this->validate([
-            'drivers' => 'required|array|min:1',
-            'drivers.*.name' => 'required|string|min:3',
-            'drivers.*.contact' => 'required|string|min:1',
+            'drivers' => 'nullable|array|min:1',
+            'drivers.*.name' => 'nullable|string|min:3',
+            'drivers.*.contact' => 'nullable|string|min:1',
             'passengers' => 'nullable|array|min:1',
             'passengers.*.name' => 'nullable|string|min:3',
             'passengers.*.contact' => 'nullable|string|min:1',

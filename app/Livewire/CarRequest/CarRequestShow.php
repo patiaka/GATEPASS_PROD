@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Livewire\CarRequest;
 
-use App\Helper\ApproveAction;
-use App\Models\CarRequest;
-use Livewire\Attributes\Title;
 use Livewire\Component;
+use App\Models\CarRequest;
+use App\Helper\ApproveAction;
+use Livewire\Attributes\Title;
 use Spatie\Browsershot\Browsershot;
+use Illuminate\Support\Facades\Gate;
 
 #[Title('Show vehicle request')]
 final class CarRequestShow extends Component
@@ -26,6 +27,7 @@ final class CarRequestShow extends Component
 
     public function download_pdf(CarRequest $carRequest)
     {
+        Gate::authorize('download-request', $carRequest);
         $html = view('car-request-download', compact('carRequest'))->render();
 
         $path = storage_path("app/request-{$carRequest->reference}.pdf");

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\CarRequest;
 
 use App\Enum\MaterialRequestStatus;
+use App\Exports\RecordingExport;
 use App\Helper\WithFilter;
 use App\Models\CarRequest;
 use App\Models\Department;
@@ -28,12 +29,17 @@ final class CarRequestCheckIn extends Component
     #[Validate('required|string|in:Exit,Entry')]
     public string $action = '';
 
-    #[Validate('required|string|exists:car_requests,id')]
+    #[Validate('required|exists:car_requests,id')]
     public $car_request_id = '';
 
     public function ResetFilter(): void
     {
         $this->reset('department', 'date', 'search');
+    }
+
+    public function export()
+    {
+        return (new RecordingExport($this->date))->download('recordings.xlsx');
     }
 
     #[Computed]

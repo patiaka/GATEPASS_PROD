@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Livewire\MaterialRequest;
 
-use App\Helper\ApproveAction;
-use App\Helper\DeleteAction;
-use App\Models\Document;
-use App\Models\MaterialRequest;
-use Livewire\Attributes\Title;
 use Livewire\Component;
+use App\Models\Document;
+use App\Helper\DeleteAction;
+use App\Helper\ApproveAction;
+use Livewire\Attributes\Title;
+use App\Models\MaterialRequest;
 use Spatie\Browsershot\Browsershot;
+use Illuminate\Support\Facades\Gate;
 
 #[Title('Show material request')]
 final class MaterialRequestShow extends Component
@@ -43,6 +44,7 @@ final class MaterialRequestShow extends Component
 
     public function download_pdf(MaterialRequest $MaterialRequest)
     {
+        Gate::authorize('download-request', $MaterialRequest);
         $html = view('material-request-download', compact('MaterialRequest'))->render();
 
         $path = storage_path("app/request-{$MaterialRequest->reference}.pdf");

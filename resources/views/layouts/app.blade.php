@@ -86,6 +86,7 @@ window.addEventListener("livewire:navigated", () => {
 
     // lucide.createIcons();
 });
+
     </script>
 </body>
 

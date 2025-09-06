@@ -31,9 +31,15 @@ final class AppServiceProvider extends ServiceProvider
             }
         });
 
+        Gate::define('download-request', function (User $user, MaterialRequest|CarRequest $Request) {
+            if ($Request instanceof CarRequest || $Request instanceof MaterialRequest) {
+                return ($user->id === $Request->user_id and $Request->isApproved()) || $user->isAdmin() || $user->isSecurity();
+            }
+        });
+
         Gate::define('show-request', function (User $user, MaterialRequest|CarRequest $Request) {
             if ($Request instanceof CarRequest || $Request instanceof MaterialRequest) {
-                if ($user->isGm() || $user->isHod() || $user->isAdmin()) {
+                if ($user->isGm() || $user->isHod() || $user->isAdmin() || $user->isSecurity()) {
                     return true;
                 }
                 if ($user->isUser() and $user->id === $Request->user_id) {
