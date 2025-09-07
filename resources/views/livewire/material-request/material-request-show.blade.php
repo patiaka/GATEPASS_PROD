@@ -111,7 +111,7 @@
                         <td>Head of Department</td>
                         <td class="h-14">
                             <x-request-status :status="$MaterialRequest->getStatusFor('hod')" />
-                            @if (Auth::user()->isHod())
+                            @if (Auth::user()->canApprove($MaterialRequest) && Auth::user()->isHod())
                             <x-form-request :model="$MaterialRequest" type="material" />
                             @endif
                             <!-- Replace with actual signature path or leave empty -->
@@ -127,7 +127,7 @@
                         <td>General Manager</td>
                         <td class="h-14">
                             <x-request-status :status="$MaterialRequest->getStatusFor('gm')" />
-                            @if (Auth::user()->isGm())
+                            @if (Auth::user()->canApprove($MaterialRequest) && Auth::user()->isGm())
                             <x-form-request :model="$MaterialRequest" type="material" />
                             @endif
                             {{-- <img src="storage/signatures/gm-sign.png" alt="GM Signature"
