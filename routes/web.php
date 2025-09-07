@@ -51,19 +51,20 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:' . RoleEnum::Security->value)->group(function () {
         Route::get('material/request/check/in', MaterialRequestCheckIn::class)->name('material.check');
         Route::get('car/request/check/in', CarRequestCheckIn::class)->name('car.check');
+
+        Route::get('material/request/create', MaterialRequestCreate::class)->name('material.create');
+        Route::get('car/request/create', CarRequestCreate::class)->name('car.create');
+        Route::get('material/request', MaterialRequestIndex::class)->name('material.index');
+        Route::get('car/request', CarRequestIndex::class)->name('car.index');
     });
     Route::middleware('role:' . RoleEnum::USER->value)->group(function () {
-        Route::get('material/request', MaterialRequestIndex::class)->name('material.index');
         Route::get('material/request/{MaterialRequest}/edit', MaterialRequestUpdate::class)->name('material.edit');
         Route::get('material/request/{MaterialRequest}/show', MaterialRequestShow::class)->name('material.show');
-        Route::get('car/request', CarRequestIndex::class)->name('car.index');
 
         Route::get('car/request/{CarRequest}/edit', CarRequestUpdate::class)->name('car.edit');
         Route::get('car/request/{CarRequest}/show', CarRequestShow::class)->name('car.show');
         Route::resource('document', DocumentController::class)->only('edit', 'update');
     });
-    Route::get('material/request/create', MaterialRequestCreate::class)->name('material.create');
-    Route::get('car/request/create', CarRequestCreate::class)->name('car.create');
 });
 
 require __DIR__ . '/auth.php';
