@@ -143,7 +143,7 @@
                 {{-- action --}}
                 <div>
                     <x-select2 :options="$materialRequests" wire:model="material_request_id" name="material_request_id"
-                        placeholder="Select gate pass" label="gate pass list" />
+                        placeholder="Select gate pass" label="material request list" />
                     @error('material_request_id') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                 </div>
                 {{-- action --}}

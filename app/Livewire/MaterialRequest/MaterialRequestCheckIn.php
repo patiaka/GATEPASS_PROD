@@ -57,7 +57,7 @@ final class MaterialRequestCheckIn extends Component
     {
 
         $this->validate();
-        $item = MaterialRequest::findOrFail($this->car_request_id);
+        $item = MaterialRequest::findOrFail($this->material_request_id);
         // Vérifier expiration
         if ($item->isExpired()) {
             flash()->success('request expired');
