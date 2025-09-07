@@ -72,9 +72,10 @@ trait ModelAction
         $status = ['⏳ Pending', 'btn-secondary'];
 
         if ($actor === 'hod') {
-            if ($this->isApproved() && $this->isHodApproved()) {
+            if ($this->isHodApproved()) {
                 $status = ['✅ Approved', 'btn-success'];
-            } elseif ($this->isRejected() && $this->isHodApproved()) {
+            }
+            if ($this->isHodApproved() && $this->isRejected()) {
                 $status = ['❌ Rejected', 'btn-danger'];
             }
         }
@@ -82,9 +83,11 @@ trait ModelAction
         if ($actor === 'gm') {
             if ($this->isApproved() && $this->isGmApproved()) {
                 $status = ['✅ Approved', 'btn-success'];
-            } elseif ($this->isRejected() && $this->isGmApproved()) {
+            }
+            if ($this->isRejected() && $this->isGmApproved()) {
                 $status = ['❌ Rejected', 'btn-danger'];
-            } elseif ($this->isProgress()) {
+            }
+            if ($this->isProgress()) {
                 $status = ['⏳ Pending', 'btn-secondary'];
             }
         }
@@ -131,11 +134,11 @@ trait ModelAction
     public function generateId(string $prefix_type)
     {
         $currentYear = Carbon::today()->format('Y');
-        $prefix = $prefix_type.$currentYear.'-';
+        $prefix = $prefix_type . $currentYear . '-';
 
         return DB::transaction(function () use ($prefix) {
             // Verrouille le dernier identifiant de courrier enregistré dans la base de données pour la mise à jour
-            $lastCourrier = self::where('reference', 'like', $prefix.'%')->whereNotNull('reference')
+            $lastCourrier = self::where('reference', 'like', $prefix . '%')->whereNotNull('reference')
                 ->latest('id')
                 ->lockForUpdate()
                 ->first(['reference']);
@@ -147,7 +150,7 @@ trait ModelAction
             }
             // Incrémente le numéro de séquence et génère le nouvel identifiant de courrier
             $sequence++;
-            $newCourrierNumber = $prefix.$sequence;
+            $newCourrierNumber = $prefix . $sequence;
             // Met à jour le numéro de courrier de l'instance courante
             $this->reference = $newCourrierNumber;
             $this->save();

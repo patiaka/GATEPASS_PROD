@@ -57,6 +57,20 @@ final class MaterialRequest extends Model
     {
         return [
             'status' => MaterialRequestStatus::class,
+            'expire_at' => 'datetime',
         ];
+    }
+
+    public function isExpire(): bool
+    {
+        return $this->expire_at !== null && $this->expire_at->isPast();
+    }
+
+
+    public function markAsExpiredIfNeeded(): void
+    {
+        if ($this->isExpire() && $this->status !== MaterialRequestStatus::Expired) {
+            $this->update(['status' => MaterialRequestStatus::Expired]);
+        }
     }
 }

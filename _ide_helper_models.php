@@ -52,14 +52,14 @@ namespace App\Models{
  * @property string $car_type
  * @property string $car_number
  * @property string $start
- * @property string $end
+ * @property \Illuminate\Support\Carbon $end
  * @property string $depart_at
  * @property string $arrive_at
  * @property string $route
  * @property string $destination
  * @property string $company
  * @property string $reason
- * @property \Illuminate\Support\Carbon|null $expire_at
+ * @property string|null $expire_at
  * @property \App\Enum\MaterialRequestStatus $status
  * @property string $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -166,7 +166,7 @@ namespace App\Models{
  * @property int|null $hod_approval_id
  * @property string|null $hod_comment
  * @property string|null $hod_approval_date
- * @property string|null $expire_at
+ * @property \Illuminate\Support\Carbon|null $expire_at
  * @property \App\Enum\MaterialRequestStatus $status
  * @property string $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -254,19 +254,31 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property int $user_id
+ * @property string $requestable_type
+ * @property int $requestable_id
+ * @property string $action
+ * @property string $decision
+ * @property string $checked_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $requestable
- * @property-read \App\Models\User|null $user
+ * @property-read \App\Models\User $user
  * @method static \Database\Factories\RecordingFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording whereAction($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording whereCheckedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording whereDecision($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording whereRequestableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording whereRequestableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Recording whereUserId($value)
  */
-	class Recording extends \Eloquent {}
+	final class Recording extends \Eloquent {}
 }
 
 namespace App\Models{

@@ -30,12 +30,25 @@ final class AppServiceProvider extends ServiceProvider
                 return ($user->id === $Request->user_id and $Request->isPending()) || $user->isAdmin();
             }
         });
-
-        Gate::define('download-request', function (User $user, MaterialRequest|CarRequest $Request) {
-            if ($Request instanceof CarRequest || $Request instanceof MaterialRequest) {
-                return ($user->id === $Request->user_id and $Request->isApproved()) || $user->isAdmin() || $user->isSecurity();
+        Gate::define('download-request', function (User $user, MaterialRequest|CarRequest $request) {
+            // Seul un request approuvé peut être téléchargé
+            if (! $request->isApproved()) {
+                return false;
             }
+
+            // L'auteur de la demande peut télécharger
+            if ($user->id === $request->user_id) {
+                return true;
+            }
+
+            // Admin et Sécurité peuvent télécharger
+            if ($user->isAdmin() || $user->isSecurity()) {
+                return true;
+            }
+
+            return false;
         });
+
 
         Gate::define('show-request', function (User $user, MaterialRequest|CarRequest $Request) {
             if ($Request instanceof CarRequest || $Request instanceof MaterialRequest) {

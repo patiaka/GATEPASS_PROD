@@ -38,7 +38,7 @@ trait ApproveAction
                 'status' => $this->status === 'Approved' ? MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value,
             ]);
             $this->dispatchApprovalMail($request, 'hod');
-            MailRequestJob::dispatch($request, 'Awaiting a material gate pass request to approve reference '.$request->reference);
+            MailRequestJob::dispatch($request, 'Awaiting a material gate pass request to approve reference ' . $request->reference);
             $this->reset('hod_comment', 'gm_comment');
             flash()->success('Material request approved successfully');
         } elseif ($type === 'car') {
@@ -51,7 +51,7 @@ trait ApproveAction
                 'status' => $this->status === 'Approved' ? MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value,
             ]);
             $this->dispatchApprovalMail($request, 'hod');
-            MailRequestJob::dispatch($request, 'Awaiting a vehicle gate pass request to approve reference '.$request->reference);
+            MailRequestJob::dispatch($request, 'Awaiting a vehicle gate pass request to approve reference ' . $request->reference);
 
             flash()->success('Vehicle request approved successfully');
         }
@@ -86,7 +86,7 @@ trait ApproveAction
                 'expire_at' => Carbon::now()->addDays(7),
             ]);
             $this->dispatchApprovalMail($request, 'gm');
-            $this->reset('hod_comment', 'gm_comment');
+
             flash()->success('Vehicle request approved successfully');
         }
         $this->reset_filled();
@@ -132,7 +132,7 @@ trait ApproveAction
             }
         }
         $this->reset('selectedRows');
-        flash()->success($action.' applied items successfully.');
+        flash()->success($action . ' applied items successfully.');
     }
 
     protected function reset_filled(): void
@@ -152,7 +152,7 @@ trait ApproveAction
     private function dispatchApprovalMails(Collection $items, string $role, string $action): void
     {
         $items->each(function ($item) use ($role, $action) {
-            $message = "The $role a $action votre request reference ".$item->reference;
+            $message = "The $role a $action votre request reference " . $item->reference;
             MailRequestJob::dispatch($item, $message);
         });
     }

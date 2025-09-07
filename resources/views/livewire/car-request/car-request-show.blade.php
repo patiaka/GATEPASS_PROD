@@ -4,13 +4,11 @@
             <h1 class="font-medium text-xl">Resident & Vehicle Off Site Details</h1>
             <div class="flex mt-1 items-center">
                 <span class="text-sm mr-2">#Request ID | Status:</span>
-                <span @class([
-                    'flex w-4 h-4 rounded-full shadow -mt-0.5',
-                    'bg-red-500 border-red-500' =>
-                        $carRequest->isRejected() || $carRequest->isExpired(),
+                <span @class([ 'flex w-4 h-4 rounded-full shadow -mt-0.5' , 'bg-red-500 border-red-500'=>
+                    $carRequest->isRejected() || $carRequest->isExpired(),
                     'bg-orange-200 border-orange-200' => $carRequest->isPending(),
                     'bg-yellow-400 border-yellow-400' => $carRequest->isProgress(), // adjust if you mean "bg-warning"
-                ])>
+                    ])>
                 </span>
                 <span class="text-sm font-semibold ml-1">{{ $carRequest->status }}</span>
             </div>
@@ -38,8 +36,7 @@
             </a>
 
             <!-- Download Button -->
-            <button wire:click="download_pdf({{ $carRequest }})" wire:loading.attr="disabled"
-                wire:target="download_pdf"
+            <button wire:click="download_pdf({{ $carRequest }})" wire:loading.attr="disabled" wire:target="download_pdf"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm flex items-center gap-2">
 
                 <!-- Download icon (when not loading) -->
@@ -54,8 +51,8 @@
 
                 <!-- Loading icon (spinner) -->
                 <span wire:loading wire:target="download_pdf" class="flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 animate-spin" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 4v1m0 14v1m8-8h1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m0 12.728l.707-.707M17.657 6.343l.707-.707" />
                     </svg>
@@ -86,14 +83,14 @@
                     <td>{{ $carRequest->expatriate }}</td>
                 </tr>
                 @foreach ($carRequest->loadMissing('car_drivers')->car_drivers as $row)
-                    <tr>
-                        <th class="text-left py-2 pr-4">Drvier Name</th>
-                        <td>{{ $row->name }}</td>
-                    </tr>
-                    <tr class="bg-gray-50">
-                        <th class="text-left py-2 pr-4">Phone</th>
-                        <td>{{ $row->contact }}</td>
-                    </tr>
+                <tr>
+                    <th class="text-left py-2 pr-4">Drvier Name</th>
+                    <td>{{ $row->name }}</td>
+                </tr>
+                <tr class="bg-gray-50">
+                    <th class="text-left py-2 pr-4">Phone</th>
+                    <td>{{ $row->contact }}</td>
+                </tr>
                 @endforeach
                 <tr class="bg-gray-50">
                     <th class="text-left py-2 pr-4">Licence</th>
@@ -137,14 +134,14 @@
                 </tr>
 
                 @foreach ($carRequest->loadMissing('passengers')->passengers as $row)
-                    <tr class="bg-gray-50">
-                        <th class="text-left py-2 pr-4">Resident Name {{ $row->name }}</th>
-                        <td>Resident {{ $row->name }}</td>
-                    </tr>
-                    <tr>
-                        <th class="text-left py-2 pr-4">Phone {{ $row->contact }}</th>
-                        <td>{{ $row->contact }}</td>
-                    </tr>
+                <tr class="bg-gray-50">
+                    <th class="text-left py-2 pr-4">Resident Name {{ $row->name }}</th>
+                    <td>Resident {{ $row->name }}</td>
+                </tr>
+                <tr>
+                    <th class="text-left py-2 pr-4">Phone {{ $row->contact }}</th>
+                    <td>{{ $row->contact }}</td>
+                </tr>
                 @endforeach
 
             </tbody>
@@ -169,7 +166,9 @@
                     <td class="px-4 py-2">HOD</td>
                     <td class="px-4 py-2">
                         <x-request-status :status="$carRequest->getStatusFor('hod')" />
+                        @if (Auth::user()->canApprove($carRequest) && Auth::user()->isHod())
                         <x-form-request :model="$carRequest" type="car" />
+                        @endif
                     </td>
                     <td class="px-4 py-2"> {{ $carRequest->hod_comment }}</td>
                 </tr>
@@ -177,8 +176,11 @@
                     <td class="px-4 py-2">2</td>
                     <td class="px-4 py-2">GM</td>
                     <td class="px-4 py-2">
+
                         <x-request-status :status="$carRequest->getStatusFor('gm')" />
+                        @if (Auth::user()->canApprove($carRequest) && Auth::user()->isGm())
                         <x-form-request :model="$carRequest" type="car" />
+                        @endif
                     </td>
                     <td class="px-4 py-2">{{ $carRequest->gm_comment }}</td>
                 </tr>

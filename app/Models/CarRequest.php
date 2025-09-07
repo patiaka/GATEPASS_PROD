@@ -45,8 +45,9 @@ final class CarRequest extends Model
 
     public function isExpire(): bool
     {
-        return $this->expire_at !== null && $this->expire_at->isPast();
+        return $this->end !== null && $this->end->isPast();
     }
+
 
     public function markAsExpiredIfNeeded(): void
     {
@@ -75,7 +76,7 @@ final class CarRequest extends Model
     {
         return [
             'status' => MaterialRequestStatus::class,
-            'expire_at' => 'datetime',
+            'end' => 'datetime',
         ];
     }
 }

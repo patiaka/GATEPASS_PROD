@@ -16,10 +16,10 @@ final class CarRequestForm extends Form
 {
     public ?CarRequest $carRequest = null;
 
-    #[Validate('required|array|min:1')]
-    public array $drivers = [];
+    #[Validate('nullable|array|min:1')]
+    public ?array $drivers = [];
 
-    #[Validate('required|array|min:1')]
+    #[Validate('nullable|array|min:1')]
     public ?array $passengers = [];
 
     #[Validate('required|string')]
@@ -99,9 +99,9 @@ final class CarRequestForm extends Form
     public function store(): void
     {
         $this->validate([
-            'drivers' => 'required|array|min:1',
-            'drivers.*.name' => 'required|string|min:3',
-            'drivers.*.contact' => 'required|string|min:1',
+            'drivers' => 'nullable|array|min:1',
+            'drivers.*.name' => 'nullable|string|min:3',
+            'drivers.*.contact' => 'nullable|string|min:1',
             'passengers' => 'nullable|array|min:1',
             'passengers.*.name' => 'nullable|string|min:3',
             'passengers.*.contact' => 'nullable|string|min:1',

@@ -148,6 +148,27 @@ final class User extends Authenticatable
         return $this->hasMany(CarRequest::class, 'gm_approval_id');
     }
 
+    public function canApprove($request): bool
+    {
+        $isCreator = $request->user_id === $this->id;
+        $hodApproved = $request->isHodApproved();
+        $gmApproved = $request->isGmApproved();
+
+        // Si user est HOD
+        if ($this->isHod()) {
+            return !$hodApproved;
+        }
+
+        // Si user est GM
+        if ($this->isGm()) {
+            // GM ne peut approuver que si HOD a approuvé, sauf si GM est le créateur
+            return !$gmApproved && ($hodApproved || $isCreator);
+        }
+
+        return false;
+    }
+
+
     /**
      * Get the attributes that should be cast.
      *
