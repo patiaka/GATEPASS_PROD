@@ -79,7 +79,7 @@ final class MaterialRequestCheckIn extends Component
     public function render()
     {
         $departments = Department::select('id', 'name')->get();
-        $materialRequests = MaterialRequest::select('id', 'status', 'reference', 'created_at', 'expire_at', 'car_number')
+        $materialRequests = MaterialRequest::select('id', 'status', 'reference', 'created_at', 'expire_at')
             ->where('status', MaterialRequestStatus::Approved)->get();
         return view('livewire.material-request.material-request-check-in', compact('departments', 'materialRequests'));
     }

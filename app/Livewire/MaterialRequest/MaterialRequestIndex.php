@@ -43,11 +43,12 @@ final class MaterialRequestIndex extends Component
                     ->orWhere('user_id', $auth->id);
             })
             ->when($auth->isHod(), function ($query) use ($auth) {
+
                 $auth->loadMissing('department');
                 $users = $auth->department->loadMissing('users');
-                $query->whereIn('user_id', $users->users->pluck('id'))
-                    ->orWhere('user_id', $auth->id)
-                    ->orWhere('hod_approval_id', $auth->id);
+                $query->where('status', MaterialRequestStatus::Pending)
+                    ->whereIn('user_id', $users->users->pluck('id'))
+                    ->orWhere('user_id', $auth->id)->orWhere('hod_approval_id', $auth->id);
             })->when($auth->isUser(), function ($query) use ($auth) {
                 $query->where('user_id', $auth->id);
             })->when($this->department, function ($query) {
@@ -56,7 +57,7 @@ final class MaterialRequestIndex extends Component
             })->when($this->status, function ($query) {
                 $query->where('status', $this->status);
             })->when($this->search, function ($query) {
-                $query->whereAny(['reference', 'status'], 'like', '%'.$this->search.'%');
+                $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
             })->latest('id')->paginate(10);
     }
 
