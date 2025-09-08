@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Helper;
 
-use App\Enum\MaterialRequestStatus;
-use App\Models\Recording;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use App\Models\Recording;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Enum\MaterialRequestStatus;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 trait ModelAction
 {
@@ -20,6 +23,14 @@ trait ModelAction
     public function recordings(): MorphMany
     {
         return $this->morphMany(Recording::class, 'requestable');
+    }
+    #[Scope]
+    public function scopeForUser(Builder $query): Builder
+    {
+        $auth = Auth::user();
+        return $auth && $auth->isUser()
+            ? $query->where('user_id', $auth->id)
+            : $query;
     }
 
     public function getGmApprovalDateFormatAttribute(): string

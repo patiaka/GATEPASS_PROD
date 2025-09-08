@@ -24,7 +24,7 @@ final class MaterialRequestShow extends Component
     {
         $this->MaterialRequest = $MaterialRequest;
 
-        $this->MaterialRequest->loadMissing('user:id,name,email,department_id', 'user.department:id,name', 'gmApproval.department:id,name', 'hodApproval.department:id,name', 'documents');
+        $this->MaterialRequest->loadMissing('user:id,name,email,department_id,poste', 'user.department:id,name', 'gmApproval.department:id,name', 'hodApproval.department:id,name', 'documents');
     }
 
     public function delete(int $id): void

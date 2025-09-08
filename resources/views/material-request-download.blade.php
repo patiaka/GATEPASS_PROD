@@ -45,7 +45,8 @@
     <header class="relative h-20 bg-[#0F3369] text-white overflow-hidden flex items-center">
         <!-- Logo left -->
         <div class="h-full w-44 flex items-center justify-start pl-3">
-            <img src="{{ asset('assets/img/logo.jpg') }}" alt="Company Logo" class="h-full w-auto object-contain" />
+            {{-- <img src="{{ asset('assets/img/logo.jpg') }}" alt="Company Logo"
+                class="h-full w-auto object-contain" /> --}}
         </div>
         <!-- Centered title -->
         <div class="absolute inset-0 flex items-center justify-center">
@@ -127,7 +128,7 @@
                         </td>
                         <td>Head of Department</td>
                         <td class="h-14">
-                            <x-request-status :model="$MaterialRequest" type="hod" />
+                            <x-request-status :status="$MaterialRequest->getStatusFor('hod')" />
 
                             <!-- Replace with actual signature path or leave empty -->
                             {{-- <img src="storage/signatures/hod-sign.png" alt="HOD Signature"
@@ -141,7 +142,7 @@
                         </td>
                         <td>General Manager</td>
                         <td class="h-14">
-                            <x-request-status :model="$MaterialRequest" type="gm" />
+                            <x-request-status :status="$MaterialRequest->getStatusFor('gm')" />
 
                             {{-- <img src="storage/signatures/gm-sign.png" alt="GM Signature"
                                 class="mx-auto h-12 object-contain" /> --}}

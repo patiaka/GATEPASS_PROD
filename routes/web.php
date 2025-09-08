@@ -56,15 +56,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('car/request/create', CarRequestCreate::class)->name('car.create');
         Route::get('material/request', MaterialRequestIndex::class)->name('material.index');
         Route::get('car/request', CarRequestIndex::class)->name('car.index');
-    });
-    Route::middleware('role:' . RoleEnum::USER->value)->group(function () {
-        Route::get('material/request/{MaterialRequest}/edit', MaterialRequestUpdate::class)->name('material.edit');
-        Route::get('material/request/{MaterialRequest}/show', MaterialRequestShow::class)->name('material.show');
-
-        Route::get('car/request/{CarRequest}/edit', CarRequestUpdate::class)->name('car.edit');
         Route::get('car/request/{CarRequest}/show', CarRequestShow::class)->name('car.show');
+        Route::get('material/request/{MaterialRequest}/show', MaterialRequestShow::class)->name('material.show');
+        Route::get('material/request/{MaterialRequest}/edit', MaterialRequestUpdate::class)->name('material.edit');
+        Route::get('car/request/{CarRequest}/edit', CarRequestUpdate::class)->name('car.edit');
         Route::resource('document', DocumentController::class)->only('edit', 'update');
     });
+    // Route::middleware('role:' . RoleEnum::USER->value)->group(function () {
+    // });
 });
 
 require __DIR__ . '/auth.php';

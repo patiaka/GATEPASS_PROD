@@ -84,7 +84,7 @@
                 <td class="px-4 py-3">
                     <x-button-edit href="{{ route('car.edit', ['CarRequest' => $row]) }}" :row="$row" />
                     <x-button-show href="{{ route('car.show', ['CarRequest' => $row]) }}" :row="$row" />
-                    <x-button-delete url="{{ url('car/' . $row->id) }}" :row="$row" />
+                    <x-button-delete :row="$row" />
                 </td>
             </tr>
             @empty

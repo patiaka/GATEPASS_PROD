@@ -72,7 +72,6 @@
             <div class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2">
                 <div class="card bg-white rounded-lg shadow-md overflow-hidden relative">
                     <img alt="Document image" src="{{ $row->DocLink() }}" class="w-full h-48 object-cover">
-
                     @if ($MaterialRequest->user_id === Auth::user()->id and $MaterialRequest->isPending())
                     <div class="absolute inset-0 flex justify-end items-start p-2 gap-2">
                         <x-button-edit href="{{ route('document.edit', ['document' => $row]) }}" />

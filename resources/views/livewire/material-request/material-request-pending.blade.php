@@ -61,7 +61,6 @@
                 @if (Auth::user()->isGm() || Auth::user()->isHod())
                 <th class="px-4 py-3 text-left text-sm font-medium">Requestor</th>
                 @endif
-                <th class="px-4 py-3 text-left text-sm font-medium">stat</th>
                 <th class="px-4 py-3 text-left text-sm font-medium">Actions</th>
             </tr>
         </thead>
@@ -83,20 +82,9 @@
                 </td>
                 @endif
                 <td class="px-4 py-3">
-                    <span @class(['btn badge rounded-pill btn-sm' ,'bg-primary'=> $row->isApproved(),
-                        'bg-danger' => $row->isRejected(),
-                        'bg-danger' => $row->isExpired(),
-                        'bg-info' => $row->isPending(),
-                        'bg-warning' => $row->isProgress()
-                        ])>
-                        {{ $row->status }}
-                    </span>
-
-                </td>
-                <td class="px-4 py-3">
                     <x-button-edit href="{{ route('material.edit', ['MaterialRequest' => $row]) }}" :row="$row" />
                     <x-button-show href="{{ route('material.show', ['MaterialRequest' => $row]) }}" :row="$row" />
-                    <x-button-delete url="{{ url('material/' . $row->id) }}" :row="$row" />
+                    <x-button-delete :row="$row" />
                 </td>
             </tr>
             @empty

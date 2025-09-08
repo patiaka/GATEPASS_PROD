@@ -4,7 +4,7 @@
             <div class="flex flex-wrap gap-4 items-end">
 
                 {{-- Bulk Actions --}}
-                @if(!empty($selectedRows))
+                {{-- @if(!empty($selectedRows))
                 <div class="flex gap-2">
                     <button class="btn btn-danger" wire:click="bulkAction('reject','material')"
                         wire:loading.attr="disabled" wire:target="bulkAction">
@@ -22,7 +22,7 @@
                         </span>
                     </button>
                 </div>
-                @endif
+                @endif --}}
 
                 {{-- Department Filter --}}
                 @if (Auth::user()->isGm() || Auth::user()->isAdmin())
@@ -84,7 +84,7 @@
                 <td class="px-4 py-3">
                     <x-button-edit href="{{ route('material.edit', ['MaterialRequest' => $row]) }}" :row="$row" />
                     <x-button-show href="{{ route('material.show', ['MaterialRequest' => $row]) }}" :row="$row" />
-                    <x-button-delete url="{{ url('material/' . $row->id) }}" :row="$row" />
+                    <x-button-delete :row="$row" />
                 </td>
             </tr>
             @empty
