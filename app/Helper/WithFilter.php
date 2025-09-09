@@ -15,6 +15,8 @@ trait WithFilter
     public string $status = '';
 
     public string $department = '';
+    public string $debut = '';
+    public string $fin = '';
 
     public array $selectedRows = [];
 

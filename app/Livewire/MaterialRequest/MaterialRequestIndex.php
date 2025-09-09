@@ -51,7 +51,10 @@ final class MaterialRequestIndex extends Component
                     ->orWhere('user_id', $auth->id)->orWhere('hod_approval_id', $auth->id);
             })->when($auth->isUser(), function ($query) use ($auth) {
                 $query->where('user_id', $auth->id);
-            })->when($this->department, function ($query) {
+            })->when($auth->isSecurity(), function ($query) use ($auth) {
+                $query->where('status', MaterialRequestStatus::Approved)->orWhere('user_id', $auth->id);;
+            })
+            ->when($this->department, function ($query) {
                 $users = Department::with('users')->find($this->department)->users;
                 $query->whereIn('user_id', $users->pluck('id'));
             })->when($this->status, function ($query) {

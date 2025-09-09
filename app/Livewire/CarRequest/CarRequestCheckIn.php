@@ -48,8 +48,10 @@ final class CarRequestCheckIn extends Component
         return Recording::with('user', 'requestable:id,company,reference,car_number,car_type')->whereHasMorph(
             'requestable',
             [CarRequest::class]
-        )->when($this->date, function ($query) {
-            $query->whereDate('created_at', $this->date);
+        )->when($this->debut, function ($query) {
+            $query->whereDate('created_at', '>=', $this->debut);
+        })->when($this->fin && $this->debut, function ($query) {
+            $query->wherebetween('created_at', [$this->debut, $this->fin]);
         })->latest('id')->paginate();
     }
 

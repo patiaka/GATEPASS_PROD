@@ -8,6 +8,7 @@ namespace App\Models;
 
 use App\Enum\RoleEnum;
 use App\Helper\DateFormat;
+use App\Helper\HasRoles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -17,7 +18,7 @@ use Illuminate\Notifications\Notifiable;
 final class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use DateFormat, Notifiable;
+    use DateFormat, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -46,51 +47,21 @@ final class User extends Authenticatable
         'remember_token',
     ];
 
-    public function getEffectiveRole(): RoleEnum
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
     {
-        if ($this->delegated_role) {
-            return $this->delegated_role;
-        }
-
-        return $this->role;
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'role' => RoleEnum::class,
+            'delegated_role' => RoleEnum::class,
+        ];
     }
 
-    public function delegateRole(string $role): void
-    {
-        $this->update([
-            'delegated_role' => $role,
-        ]);
-    }
-
-    public function revokeDelegatedRole(): void
-    {
-        $this->update(['delegated_role' => null]);
-    }
-
-    public function isAdmin(): bool
-    {
-        return $this->role === RoleEnum::ADMIN;
-    }
-
-    public function isSecurity(): bool
-    {
-        return $this->role === RoleEnum::Security;
-    }
-
-    public function isUser(): bool
-    {
-        return $this->role === RoleEnum::USER;
-    }
-
-    public function isHod(): bool
-    {
-        return $this->getEffectiveRole() === RoleEnum::HOD;
-    }
-
-    public function isGm(): bool
-    {
-        return $this->getEffectiveRole() === RoleEnum::GM;
-    }
 
     /**
      * Get the department that owns the User
@@ -166,21 +137,5 @@ final class User extends Authenticatable
         }
 
         return false;
-    }
-
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'role' => RoleEnum::class,
-            'delegated_role' => RoleEnum::class,
-        ];
     }
 }

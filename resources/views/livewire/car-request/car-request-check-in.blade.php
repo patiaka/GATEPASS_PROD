@@ -31,9 +31,13 @@
         </div>
 
         <div class="w-full sm:w-80">
-            <x-input type="date" wire:model.live="date" label="Date" />
+            <x-input type="date" wire:model.live="debut" label="Date start" />
         </div>
-        @if ($date)
+
+        <div class="w-full sm:w-80">
+            <x-input type="date" wire:model.live="fin" label="Date end" />
+        </div>
+        @if ($debut)
 
         <div class="w-full sm:w-48">
 

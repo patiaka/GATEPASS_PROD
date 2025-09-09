@@ -27,8 +27,14 @@ use App\Livewire\User\UserUpdate;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/', Dashboard::class)->name('dashboard');
+    // Seuls HOD, GM et Admin
+    Route::middleware('role:' . RoleEnum::HOD->value . ',' . RoleEnum::GM->value . ',' . RoleEnum::ADMIN->value)
+        ->group(function () {
+            Route::get('material/request/pending', MaterialRequestPending::class)->name('material.pending');
+            Route::get('car/request/pending', CarRequestPending::class)->name('car.pending');
+        });
 
+    // Admin uniquement
     Route::middleware('role:' . RoleEnum::ADMIN->value)->group(function () {
         Route::get('user', UserIndex::class)->name('user.index');
         Route::get('user/{user}/edit', UserUpdate::class)->name('user.edit');
@@ -39,31 +45,23 @@ Route::middleware(['auth'])->group(function () {
         Route::get('department/{department}/edit', DepartmentEdit::class)->name('department.edit');
     });
 
-    Route::middleware('role:' . RoleEnum::HOD->value)->group(function () {
-        Route::get('material/request/pending', MaterialRequestPending::class)->name('material.pending');
-        Route::get('car/request/pending', CarRequestPending::class)->name('car.pending');
-    });
-
-    // Route::middleware('role:' . RoleEnum::GM->value)->group(function () {
-    //     Route::get('material/request/pending', MaterialRequestPending::class)->name('material.pending');
-    //     Route::get('car/request/pending', CarRequestPending::class)->name('car.pending');
-    // });
+    // Security uniquement
     Route::middleware('role:' . RoleEnum::Security->value)->group(function () {
         Route::get('material/request/check/in', MaterialRequestCheckIn::class)->name('material.check');
         Route::get('car/request/check/in', CarRequestCheckIn::class)->name('car.check');
-
-        Route::get('material/request/create', MaterialRequestCreate::class)->name('material.create');
-        Route::get('car/request/create', CarRequestCreate::class)->name('car.create');
-        Route::get('material/request', MaterialRequestIndex::class)->name('material.index');
-        Route::get('car/request', CarRequestIndex::class)->name('car.index');
-        Route::get('car/request/{CarRequest}/show', CarRequestShow::class)->name('car.show');
-        Route::get('material/request/{MaterialRequest}/show', MaterialRequestShow::class)->name('material.show');
-        Route::get('material/request/{MaterialRequest}/edit', MaterialRequestUpdate::class)->name('material.edit');
-        Route::get('car/request/{CarRequest}/edit', CarRequestUpdate::class)->name('car.edit');
-        Route::resource('document', DocumentController::class)->only('edit', 'update');
     });
-    // Route::middleware('role:' . RoleEnum::USER->value)->group(function () {
-    // });
+
+    // Routes accessibles à tous
+    Route::get('/', Dashboard::class)->name('dashboard');
+    Route::get('material/request/create', MaterialRequestCreate::class)->name('material.create');
+    Route::get('car/request/create', CarRequestCreate::class)->name('car.create');
+    Route::get('material/request', MaterialRequestIndex::class)->name('material.index');
+    Route::get('car/request', CarRequestIndex::class)->name('car.index');
+    Route::get('car/request/{CarRequest}/show', CarRequestShow::class)->name('car.show');
+    Route::get('material/request/{MaterialRequest}/show', MaterialRequestShow::class)->name('material.show');
+    Route::get('material/request/{MaterialRequest}/edit', MaterialRequestUpdate::class)->name('material.edit');
+    Route::get('car/request/{CarRequest}/edit', CarRequestUpdate::class)->name('car.edit');
+    Route::resource('document', DocumentController::class)->only('edit', 'update');
 });
 
 require __DIR__ . '/auth.php';

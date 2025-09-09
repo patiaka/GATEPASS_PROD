@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
-use App\Enum\RoleEnum;
-use App\Models\User;
 use Closure;
+use App\Models\User;
+use App\Enum\RoleEnum;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 final class RoleMiddleware
@@ -17,35 +18,22 @@ final class RoleMiddleware
      *
      * @param  Closure(Request): (Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        // Obtenez l'objet utilisateur à partir de la requête (assurez-vous d'avoir la fonctionnalité d'authentification configurée)
-        $user = $request->user();
+        $user = Auth::user();
 
-        // Vérifiez si l'utilisateur a le rôle requis
-        if ($user && $this->hasRole($user, $role)) {
-            return $next($request); // L'utilisateur a le rôle approprié, laissez-le accéder à la route suivante
+        if (!$user) {
+            abort(403, 'Unauthorized.');
+        }
+
+        // Vérifie si l’utilisateur possède au moins un des rôles donnés
+        foreach ($roles as $role) {
+            if ($user->hasAnyRole($roles)) {
+                return $next($request);
+            }
         }
 
         // L'utilisateur n'a pas le rôle approprié, vous pouvez personnaliser la réponse d'erreur selon vos besoins
         return abort(403);
-    }
-
-    /**
-     * Check if the user has the specified role.
-     *
-     * @param  \App\Model\User  $user
-     */
-    private function hasRole(User $user, string $role): bool
-    {
-        // Utilisez les fonctions de la classe User pour vérifier le rôle de l'utilisateur
-        return match ($role) {
-            RoleEnum::ADMIN->value => $user->isAdmin(),
-            RoleEnum::GM->value => $user->isGm() || $user->isAdmin(),
-            RoleEnum::HOD->value => $user->isHod() || $user->isAdmin() || $user->isGm(),
-            RoleEnum::USER->value => $user->isUser() || $user->isHod() || $user->isAdmin() || $user->isGm(),
-            RoleEnum::Security->value => $user->isUser() || $user->isAdmin() || $user->isSecurity(),
-            default => false, // Rôle non pris en charge
-        };
     }
 }
