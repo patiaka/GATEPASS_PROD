@@ -6,34 +6,95 @@
     <title>Resident & Vehicle Off Site Form</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root { --brand: #0E3A61; }
+        :root {
+            --brand: #0E3A61;
+        }
 
-        @page { size: A4; margin: 12mm 10mm; }
+        @page {
+            size: A4;
+            margin: 12mm 10mm;
+        }
 
-        body { font-size: 11px; color: #0b0f19; }
+        body {
+            font-size: 11px;
+            color: #0b0f19;
+        }
 
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #cbd5e1; padding: 4px 6px; vertical-align: top; }
-        thead th { background: #f1f5f9; }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
 
-        .section-title { background: var(--brand); color: #fff; font-weight: 700; padding: 4px 6px; }
-        .brand-border { border-color: var(--brand); }
-        .brand-text { color: var(--brand); }
-        .brand-bg-light { background: #eef5fb; }
-        .small { font-size: 10px; }
-        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+        th,
+        td {
+            border: 1px solid #cbd5e1;
+            padding: 4px 6px;
+            vertical-align: top;
+        }
+
+        thead th {
+            background: #f1f5f9;
+        }
+
+        .section-title {
+            background: var(--brand);
+            color: #fff;
+            font-weight: 700;
+            padding: 4px 6px;
+        }
+
+        .brand-border {
+            border-color: var(--brand);
+        }
+
+        .brand-text {
+            color: var(--brand);
+        }
+
+        .brand-bg-light {
+            background: #eef5fb;
+        }
+
+        .small {
+            font-size: 10px;
+        }
+
+        .mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
 
         /* Key-value tables: first/third label columns narrower */
-        .kv td:first-child { width: 25%; font-weight: 600; }
-        .kv td:nth-child(3) { width: 22%; font-weight: 600; }
+        .kv td:first-child {
+            width: 25%;
+            font-weight: 600;
+        }
+
+        .kv td:nth-child(3) {
+            width: 22%;
+            font-weight: 600;
+        }
 
         /* Remove borders helper */
-        .no-border td, .no-border th { border: 0; }
+        .no-border td,
+        .no-border th {
+            border: 0;
+        }
 
         /* Avoid page breaks inside critical blocks */
-        .avoid-break { page-break-inside: avoid; }
-            @media print { html { zoom: .95; } }
-        * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .avoid-break {
+            page-break-inside: avoid;
+        }
+
+        @media print {
+            html {
+                zoom: .95;
+            }
+        }
+
+        * {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
     </style>
 </head>
 
@@ -53,7 +114,8 @@
 
     {{-- Restriction Note --}}
     <div class="p-3 border brand-border brand-bg-light small mb-2">
-        Syama Camp Residents are <strong>not permitted off site between 7pm and 6am</strong> without express permission of the General Manager.
+        Syama Camp Residents are <strong>not permitted off site between 7pm and 6am</strong> without express permission
+        of the General Manager.
     </div>
 
     {{-- Resident / Vehicle Info --}}
@@ -91,8 +153,8 @@
                     <td>{{ $carRequest->route ?? '—' }}</td>
                 </tr>
                 @php
-                    $driverRel = optional($carRequest->loadMissing('car_drivers'))->car_drivers ?? collect();
-                    $driver = $driverRel->first();
+                $driverRel = optional($carRequest->loadMissing('car_drivers'))->car_drivers ?? collect();
+                $driver = $driverRel->first();
                 @endphp
                 <tr>
                     <td>Driver Name</td>
@@ -109,9 +171,15 @@
 
         <h3 class="font-semibold text-sm mb-1">Conditions</h3>
         <div class="p-3 border brand-border small mb-2">
-            I understand that as the driver of the above vehicle, I am fully responsible for the safety of the passengers and vehicle whilst driving. Should any details provided change, I will notify site as soon as possible. I agree to abide by all relevant laws applicable to driving in Mali and all relevant policies and procedures as issued by SOMISY in respect of driving company vehicles. I understand that should I not comply with the above conditions relating to off-site use of a company vehicle, then I may jeopardise future off-site use of a company vehicle for others and myself, and disciplinary action may be taken as a result of my actions.
+            I understand that as the driver of the above vehicle, I am fully responsible for the safety of the
+            passengers and vehicle whilst driving. Should any details provided change, I will notify site as soon as
+            possible. I agree to abide by all relevant laws applicable to driving in Mali and all relevant policies and
+            procedures as issued by SOMISY in respect of driving company vehicles. I understand that should I not comply
+            with the above conditions relating to off-site use of a company vehicle, then I may jeopardise future
+            off-site use of a company vehicle for others and myself, and disciplinary action may be taken as a result of
+            my actions.
             <div class="mt-4 text-sm">
-                <p>Driver’s Signature ______________________________________</p>
+                <p>Driver’s Signature ✅ Approved</p>
                 <p>Date: {{ $carRequest->created_at ?? '—' }}</p>
             </div>
         </div>
@@ -155,25 +223,30 @@
         </thead>
         <tbody>
             @foreach(($carRequest->passengers ?? collect()) as $p)
-                <tr>
-                    <td>{{ $p->name ?? '—' }}</td>
-                    <td>{{ $p->contact ?? '—' }}</td>
-                </tr>
+            <tr>
+                <td>{{ $p->name ?? '—' }}</td>
+                <td>{{ $p->contact ?? '—' }}</td>
+            </tr>
             @endforeach
         </tbody>
     </table>
 
     <div class="mt-4 p-3 border brand-border small avoid-break">
-        Approval to be obtained from General Manager and relevant Department Manager or Contract Manager. If more than one resident, then the department head who owns the vehicle signs off. If no vehicle is used, then each resident completes their own form. Notify Security via <span class="mono">SecurityDutyOfficer@rml.com.au</span> 48 hours prior to departure for an escort. The Security Duty Officer will determine the level of escort required. Late notice may result in delays. Ref <span class="mono">SEC-SEC-PRO-0011</span> Vehicle and Resident Off Site Procedure and <span class="mono">PRO-E-467</span> Security Escort Procedure.
+        Approval to be obtained from General Manager and relevant Department Manager or Contract Manager. If more than
+        one resident, then the department head who owns the vehicle signs off. If no vehicle is used, then each resident
+        completes their own form. Notify Security via <span class="mono">SecurityDutyOfficer@rml.com.au</span> 48 hours
+        prior to departure for an escort. The Security Duty Officer will determine the level of escort required. Late
+        notice may result in delays. Ref <span class="mono">SEC-SEC-PRO-0011</span> Vehicle and Resident Off Site
+        Procedure and <span class="mono">PRO-E-467</span> Security Escort Procedure.
         <div class="mt-4 text-sm">
-            <p>Resident Signature ______________________________________</p>
+            <p>Resident Signature ✅ Approved</p>
             <p>Date: {{ $carRequest->created_at ?? '—' }}</p>
         </div>
     </div>
 
     {{-- Approval --}}
     <h2 class="section-title">Approval</h2>
-    <table class="mb-2">
+    {{-- <table class="mb-2">
         <thead>
             <tr>
                 <th>Department Manager</th>
@@ -186,8 +259,51 @@
                 <td>{{ $carRequest->gm_comment ?? '—' }}</td>
             </tr>
         </tbody>
-    </table>
+    </table> --}}
 
+    <table class="w-full border-2 border-black border-collapse">
+        <thead>
+            <tr class="[&>th]:border-2 [&>th]:border-black [&>th]:bg-gray-100  text-center">
+                <th>Company / Dept</th>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Signature</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Applicant -->
+            <tr class="[&>td]:border-2 [&>td]:border-black  text-center">
+                <td>{{ $carRequest->user->department->name }}</td>
+                <td>{{ $carRequest->user->name }}</td>
+                <td>{{ $carRequest->user->poste }}</td>
+                <td class="">
+                    <a href="#" class="btn-successs">
+                        ✅ Approved
+                    </a>
+                </td>
+            </tr>
+            <!-- HOD -->
+            <tr class="[&>td]:border-2 [&>td]:border-black  text-center">
+                <td>{{ $carRequest->user->department->name }}</td>
+                <td>{{ $carRequest->hodApproval ? $carRequest->hodApproval->department->name : '—' }}
+                </td>
+                <td>Head of Department</td>
+                <td class="">
+                    <x-request-status :status="$carRequest->getStatusFor('hod')" />
+                </td>
+            </tr>
+            <!-- GM -->
+            <tr class="[&>td]:border-2 [&>td]:border-black  text-center">
+                <td>{{ $carRequest->user->department->name }}</td>
+                <td>{{ $carRequest->gmApproval ? $carRequest->gmApproval->department->name : '—' }}
+                </td>
+                <td>General Manager</td>
+                <td class="">
+                    <x-request-status :status="$carRequest->getStatusFor('gm')" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
     {{-- Security Use Only --}}
     <h2 class="section-title">Security Use Only - Duty Officer and Control Room Notification</h2>
     <table class="mb-2">
@@ -231,7 +347,8 @@
             Document Owner: Security Manager (SMY)
         </div>
         <div class="text-right">
-            Document Number: SEC-SEC-FRM-0001 &nbsp; | &nbsp; Revision 1.02 &nbsp; | &nbsp; Date Published: 23/11/2017 &nbsp; | &nbsp; Next Review: 24 months
+            Document Number: SEC-SEC-FRM-0001 &nbsp; | &nbsp; Revision 1.02 &nbsp; | &nbsp; Date Published: 23/11/2017
+            &nbsp; | &nbsp; Next Review: 24 months
         </div>
     </div>
 </body>

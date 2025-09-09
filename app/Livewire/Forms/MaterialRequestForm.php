@@ -20,7 +20,7 @@ final class MaterialRequestForm extends Form
     public array $materials = [];
 
     #[Validate('required|string')]
-    public string $company = '';
+    public string $company = 'Somisy';
 
     #[Validate(['photos.*' => 'required|image|mimes:jpeg,png,jpg|max:2048'])]
     public $photos = []; // Tableau pour stocker les fichiers
@@ -69,7 +69,7 @@ final class MaterialRequestForm extends Form
             }
             $materialRequest->material_request_items()->createMany($this->materials);
             $materialRequest->generateId('R');
-            MailRequestJob::dispatch($materialRequest, 'Awaiting a material gate pass request to approve reference'.$materialRequest->reference);
+            MailRequestJob::dispatch($materialRequest, 'Awaiting a material gate pass request to approve reference' . $materialRequest->reference);
             $this->reset();
             flash('Material request created successfully');
         });

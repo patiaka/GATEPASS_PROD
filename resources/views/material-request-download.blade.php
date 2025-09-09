@@ -88,9 +88,10 @@
                 </thead>
                 <tbody>
                     <!-- Example row (duplicate/remove as needed) -->
-                    @foreach ($MaterialRequest->loadMissing('material_request_items')->material_request_items as $row)
+                    @foreach ($MaterialRequest->loadMissing('material_request_items')->material_request_items
+                    as $key => $row)
                     <tr class="[&>td]:border-2 [&>td]:border-black [&>td]:p-2 align-top">
-                        <td>{{ $row->id }}</td>
+                        <td>{{ $key }}</td>
                         <td>{{ $row->designation }}</td>
                         <td>{{ $row->quantity }}</td>
                         <td>{{ $row->serial_number }}</td>
@@ -119,7 +120,11 @@
                         <td>{{ $MaterialRequest->user->department->name }}</td>
                         <td>{{ $MaterialRequest->user->name }}</td>
                         <td>{{ $MaterialRequest->user->poste }}</td>
-                        <td class="h-14"></td>
+                        <td class="h-14">
+                            <a href="#" class="btn-successs">
+                                ✅ Approved
+                            </a>
+                        </td>
                     </tr>
                     <!-- HOD -->
                     <tr class="[&>td]:border-2 [&>td]:border-black [&>td]:p-2 text-center">
@@ -130,9 +135,7 @@
                         <td class="h-14">
                             <x-request-status :status="$MaterialRequest->getStatusFor('hod')" />
 
-                            <!-- Replace with actual signature path or leave empty -->
-                            {{-- <img src="storage/signatures/hod-sign.png" alt="HOD Signature"
-                                class="mx-auto h-12 object-contain" /> --}}
+
                         </td>
                     </tr>
                     <!-- GM -->
@@ -143,9 +146,6 @@
                         <td>General Manager</td>
                         <td class="h-14">
                             <x-request-status :status="$MaterialRequest->getStatusFor('gm')" />
-
-                            {{-- <img src="storage/signatures/gm-sign.png" alt="GM Signature"
-                                class="mx-auto h-12 object-contain" /> --}}
                         </td>
                     </tr>
                 </tbody>

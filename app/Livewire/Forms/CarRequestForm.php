@@ -62,7 +62,7 @@ final class CarRequestForm extends Form
     public string $route = '';
 
     #[Validate('required|string')]
-    public string $company = '';
+    public string $company = 'Somisy';
 
     public function add(string $type): void
     {

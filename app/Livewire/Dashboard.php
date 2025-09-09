@@ -33,7 +33,7 @@ final class Dashboard extends Component
 
         // Car requests (grouped)
         $carStats = $getStatusCounts(CarRequest::class);
-        $car_request_all      = CarRequest::forUser()->count();
+        $car_request_all  = CarRequest::forUser()->count();
         $car_request_rejected = $carStats[MaterialRequestStatus::Rejected->value] ?? 0;
         $car_request_pending  = $carStats[MaterialRequestStatus::Pending->value]  ?? 0;
         $car_request_approved = $carStats[MaterialRequestStatus::Approved->value] ?? 0;

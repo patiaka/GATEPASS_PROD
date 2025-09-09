@@ -39,7 +39,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('user', UserIndex::class)->name('user.index');
         Route::get('user/{user}/edit', UserUpdate::class)->name('user.edit');
         Route::get('user/create', UserCreate::class)->name('user.create');
-        Route::get('user/pass', UserPassChange::class)->name('user.pass');
         Route::get('department', DepartmentIndex::class)->name('department.index');
         Route::get('department/create', DepartmentCreate::class)->name('department.create');
         Route::get('department/{department}/edit', DepartmentEdit::class)->name('department.edit');
@@ -62,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('material/request/{MaterialRequest}/edit', MaterialRequestUpdate::class)->name('material.edit');
     Route::get('car/request/{CarRequest}/edit', CarRequestUpdate::class)->name('car.edit');
     Route::resource('document', DocumentController::class)->only('edit', 'update');
+    Route::get('user/pass', UserPassChange::class)->name('user.pass');
 });
 
 require __DIR__ . '/auth.php';

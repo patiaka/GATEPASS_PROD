@@ -100,7 +100,11 @@
                         <td>{{ $MaterialRequest->user->department->name }}</td>
                         <td>{{ $MaterialRequest->user->name }}</td>
                         <td>{{ $MaterialRequest->user->poste }}</td>
-                        <td class="h-14"></td>
+                        <td class="h-14">
+                            <a href="#" class="btn-successs">
+                                ✅ Approved
+                            </a>
+                        </td>
                     </tr>
                     <!-- HOD -->
                     <tr class="[&>td]:border-2 [&>td]:border-black [&>td]:p-2 text-center">

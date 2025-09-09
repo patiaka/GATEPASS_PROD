@@ -13,6 +13,7 @@
         </h2>
 
         <div class="col-span-12 grid grid-cols-1 gap-4 md:gap-6 xl:grid-cols-4 2xl:grid-cols-5">
+            @if (Auth::user()->isAdmin() | Auth::user()->isSecurity())
             <!-- Visitor -->
             <a href="{{ route('car.check') }}"
                 class="p-4 flex items-center justify-between bg-white border border-gray-200 shadow-xs rounded-2xl">
@@ -53,7 +54,7 @@
                 </div>
                 <span class="text-2xl font-semibold text-slate-800">{{ $mat_check_out }}</span>
             </a>
-
+            @endif
             <!-- All -->
             <a href="{{ route('car.index') }}"
                 class="p-4 flex items-center justify-between bg-white border border-gray-200 shadow-xs rounded-2xl">
@@ -138,7 +139,7 @@
             </a>
 
 
-            <a href="{{ route('car.index') }}"
+            <a href="{{ route('material.index') }}"
                 class="p-4 flex items-center justify-between bg-white border border-gray-200 shadow-xs rounded-2xl">
                 <div class="flex gap-4 items-center">
                     <span class="bg-[#134169] text-white rounded-full h-14 w-14 flex items-center justify-center">
