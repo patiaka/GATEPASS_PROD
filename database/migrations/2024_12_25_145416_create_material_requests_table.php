@@ -9,24 +9,41 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('material_requests', function (Blueprint $table) {
             $table->id();
             $table->string('reference')->nullable()->unique();
             $table->string('company');
-            $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('gm_approval_id')->nullable()->constrained('users')->onDelete('set null');
+
+            // AUTEUR : NO ACTION en DELETE et UPDATE
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->onDelete('no action')
+                ->onUpdate('no action');
+
+            // GM : SEULE contrainte en cascade (DELETE SET NULL), UPDATE = NO ACTION
+            $table->foreignId('gm_approval_id')
+                ->nullable()
+                ->constrained('users')
+                ->onDelete('set null')
+                ->onUpdate('no action');
+
             $table->text('gm_comment')->nullable();
             $table->timestamp('gm_approval_date')->nullable();
 
-            $table->foreignId('hod_approval_id')->nullable()->constrained('users')->onDelete('set null');
+            // HOD : NO ACTION en DELETE et UPDATE
+            $table->foreignId('hod_approval_id')
+                ->nullable()
+                ->constrained('users')
+                ->onDelete('no action')
+                ->onUpdate('no action');
+
             $table->text('hod_comment')->nullable();
             $table->timestamp('hod_approval_date')->nullable();
+
             $table->date('expire_at')->nullable();
+
             $table->enum('status', [
                 'Pending',
                 'Progress',
@@ -34,14 +51,12 @@ return new class extends Migration
                 'Approved',
                 'Expired',
             ])->default(MaterialRequestStatus::Pending);
+
             $table->timestamps();
             $table->index('reference');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('material_requests');

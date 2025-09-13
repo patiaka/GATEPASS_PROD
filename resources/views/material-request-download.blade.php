@@ -5,69 +5,68 @@
     <meta charset="UTF-8" />
     <title>Gate Pass / Bon de Sortie</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Tailwind CDN -->
+
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Optional: Poppins font to match your style -->
+
+    <!-- Optional: Custom font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+
     <style>
         body {
-            font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+            font-family: 'Poppins', sans-serif;
         }
 
         @media print {
             @page {
                 size: A4;
-                margin: 14mm;
+                margin: 20mm;
             }
 
             .no-print {
                 display: none !important;
             }
 
+            .break-inside-avoid {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
             img {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
-            }
-
-            .break-inside-avoid {
-                break-inside: avoid;
             }
         }
     </style>
 </head>
 
-<body class="text-[12px] leading-relaxed text-gray-900">
+<body class="text-[12px] text-gray-900 leading-relaxed">
 
     <!-- Header -->
-    <header class="relative h-20 bg-[#0F3369] text-white overflow-hidden flex items-center">
-        <!-- Logo left -->
-        <div class="h-full w-44 flex items-center justify-start pl-3">
-            {{-- <img src="{{ asset('assets/img/logo.jpg') }}" alt="Company Logo"
-                class="h-full w-auto object-contain" /> --}}
-        </div>
-        <!-- Centered title -->
-        <div class="absolute inset-0 flex items-center justify-center">
-            <h1 class="text-xl font-bold tracking-wide text-center">GATE PASS / BON DE SORTIE</h1>
-        </div>
+    <header class="relative h-24 bg-[#0F3369] text-white flex items-center justify-center">
+        <h1 class="text-xl font-bold uppercase tracking-wider text-center">
+            Gate Pass / Bon de Sortie
+        </h1>
     </header>
 
-    <main class="p-4 md:p-6 space-y-6">
+    <!-- Main Content -->
+    <main class="p-6 space-y-8">
 
         <!-- Request Info -->
         <section class="break-inside-avoid">
-            <h2 class="sr-only">Request Information</h2>
-            <table class="w-full border-2 border-black border-collapse">
+            <table class="w-full table-fixed border border-black border-collapse">
                 <tbody>
                     <tr>
-                        <th class="w-1/5 border-2 border-black bg-gray-100 p-2 text-left">Date</th>
-                        <td class="border-2 border-black p-2">{{ $MaterialRequest->created_at }}</td>
+                        <th class="w-1/4 bg-gray-100 border border-black text-left px-3 py-2">Date</th>
+                        <td class="border border-black px-3 py-2">{{ $MaterialRequest->created_at }}</td>
                     </tr>
                     <tr>
-                        <th class="w-1/5 border-2 border-black bg-gray-100 p-2 text-left">Name</th>
-                        <td class="border-2 border-black p-2">{{ $MaterialRequest->user->name }}</td>
+                        <th class="bg-gray-100 border border-black text-left px-3 py-2">Name</th>
+                        <td class="border border-black px-3 py-2">{{ $MaterialRequest->user->name }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -75,101 +74,92 @@
 
         <!-- Material Items -->
         <section class="break-inside-avoid">
-            <h2 class="sr-only">Material Items</h2>
-            <table class="w-full border-2 border-black border-collapse">
-                <thead>
-                    <tr class="[&>th]:border-2 [&>th]:border-black [&>th]:bg-gray-100 [&>th]:p-2 text-left">
-                        <th class="w-12">#</th>
-                        <th>DESCRIPTION / DESIGNATION</th>
-                        <th class="w-24">QUANTITY</th>
-                        <th class="w-40">Serial Number</th>
-
+            <table class="w-full border border-black border-collapse text-sm">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="border border-black px-2 py-2 w-12 text-left">#</th>
+                        <th class="border border-black px-2 py-2 text-left">Description / Designation</th>
+                        <th class="border border-black px-2 py-2 w-24 text-center">Quantity</th>
+                        <th class="border border-black px-2 py-2 w-40 text-left">Serial Number</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Example row (duplicate/remove as needed) -->
-                    @foreach ($MaterialRequest->loadMissing('material_request_items')->material_request_items
-                    as $key => $row)
-                    <tr class="[&>td]:border-2 [&>td]:border-black [&>td]:p-2 align-top">
-                        <td>{{ $key }}</td>
-                        <td>{{ $row->designation }}</td>
-                        <td>{{ $row->quantity }}</td>
-                        <td>{{ $row->serial_number }}</td>
+                    @foreach ($MaterialRequest->loadMissing('material_request_items')->material_request_items as $key => $row)
+                    <tr>
+                        <td class="border border-black px-2 py-1 text-center">{{ $loop->iteration }}</td>
+                        <td class="border border-black px-2 py-1">{{ $row->designation }}</td>
+                        <td class="border border-black px-2 py-1 text-center">{{ $row->quantity }}</td>
+                        <td class="border border-black px-2 py-1">{{ $row->serial_number }}</td>
                     </tr>
                     @endforeach
-
-                    <!-- /Example rows -->
-                </tbody>
-            </table>
-        </section>
-        <!-- Signature Approvals -->
-        <section class="break-inside-avoid">
-            <h3 class="text-center font-semibold text-[#0F3369] text-base">AUTHORISED SIGNATURE APPROVALS</h3>
-            <table class="w-full border-2 border-black border-collapse">
-                <thead>
-                    <tr class="[&>th]:border-2 [&>th]:border-black [&>th]:bg-gray-100 [&>th]:p-2 text-center">
-                        <th>Company / Dept</th>
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>Signature</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Applicant -->
-                    <tr class="[&>td]:border-2 [&>td]:border-black [&>td]:p-2 text-center">
-                        <td>{{ $MaterialRequest->user->department->name }}</td>
-                        <td>{{ $MaterialRequest->user->name }}</td>
-                        <td>{{ $MaterialRequest->user->poste }}</td>
-                        <td class="h-14">
-                            <a href="#" class="btn-successs">
-                                ✅ Approved
-                            </a>
-                        </td>
-                    </tr>
-                    <!-- HOD -->
-                    <tr class="[&>td]:border-2 [&>td]:border-black [&>td]:p-2 text-center">
-                        <td>{{ $MaterialRequest->user->department->name }}</td>
-                        <td>{{ $MaterialRequest->hodApproval ? $MaterialRequest->hodApproval->department->name : '—' }}
-                        </td>
-                        <td>Head of Department</td>
-                        <td class="h-14">
-                            <x-request-status :status="$MaterialRequest->getStatusFor('hod')" />
-
-
-                        </td>
-                    </tr>
-                    <!-- GM -->
-                    <tr class="[&>td]:border-2 [&>td]:border-black [&>td]:p-2 text-center">
-                        <td>{{ $MaterialRequest->user->department->name }}</td>
-                        <td>{{ $MaterialRequest->gmApproval ? $MaterialRequest->gmApproval->department->name : '—' }}
-                        </td>
-                        <td>General Manager</td>
-                        <td class="h-14">
-                            <x-request-status :status="$MaterialRequest->getStatusFor('gm')" />
-                        </td>
-                    </tr>
                 </tbody>
             </table>
         </section>
 
-        <!-- Notes -->
-        <section class="text-[11px] space-y-1">
-            <p class="font-semibold">Notes:</p>
-            <ol class="list-decimal pl-5 space-y-1">
-                <li>
-                    The date items will be removed from site. Up to seven days can be nominated for where multiple exit
-                    and
-                    re-entry required.
-                </li>
-                <li>
-                    General Manager - Somisy, General Manager – Operations, or General Manager – Sustainability.
-                </li>
-            </ol>
-        </section>
+        <!-- FINAL BLOCK: Approvals + Notes -->
+        <section class="break-inside-avoid space-y-4 pt-6">
 
+            <!-- Approvals -->
+            <div>
+                <h3 class="text-base font-semibold text-center text-[#0F3369] uppercase mb-2">
+                    Authorised Signature Approvals
+                </h3>
+                <table class="w-full border border-black border-collapse text-sm">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="border border-black px-2 py-2 text-center">Department</th>
+                            <th class="border border-black px-2 py-2 text-center">Name</th>
+                            <th class="border border-black px-2 py-2 text-center">Position</th>
+                            <th class="border border-black px-2 py-2 text-center">Signature</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Applicant -->
+                        <tr>
+                            <td class="border border-black px-2 py-2 text-center">{{ $MaterialRequest->user->department->name }}</td>
+                            <td class="border border-black px-2 py-2 text-center">{{ $MaterialRequest->user->name }}</td>
+                            <td class="border border-black px-2 py-2 text-center">{{ $MaterialRequest->user->poste }}</td>
+                            <td class="border border-black px-2 py-2 text-center">✅ Approved</td>
+                        </tr>
+
+                        <!-- HOD -->
+                        <tr>
+                            <td class="border border-black px-2 py-2 text-center">{{ $MaterialRequest->user->department->name }}</td>
+                            <td class="border border-black px-2 py-2 text-center">
+                                {{ $MaterialRequest->hodApproval ? $MaterialRequest->hodApproval->department->name : '—' }}
+                            </td>
+                            <td class="border border-black px-2 py-2 text-center">Head of Department</td>
+                            <td class="border border-black px-2 py-2 text-center">
+                                <x-request-status :status="$MaterialRequest->getStatusFor('hod')" />
+                            </td>
+                        </tr>
+
+                        <!-- GM -->
+                        <tr>
+                            <td class="border border-black px-2 py-2 text-center">{{ $MaterialRequest->user->department->name }}</td>
+                            <td class="border border-black px-2 py-2 text-center">
+                                {{ $MaterialRequest->gmApproval ? $MaterialRequest->gmApproval->department->name : '—' }}
+                            </td>
+                            <td class="border border-black px-2 py-2 text-center">General Manager</td>
+                            <td class="border border-black px-2 py-2 text-center">
+                                <x-request-status :status="$MaterialRequest->getStatusFor('gm')" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Notes -->
+            <div class="text-[11px]">
+                <p class="font-semibold">Notes:</p>
+                <ol class="list-decimal pl-5 space-y-1 mt-1">
+                    <li>The date items will be removed from site. Up to seven days can be nominated for multiple exits and re-entries.</li>
+                    <li>Approval is required from a General Manager depending on the operations (Somisy, Operations, or Sustainability).</li>
+                </ol>
+            </div>
+
+        </section>
     </main>
 
-
 </body>
-
 </html>

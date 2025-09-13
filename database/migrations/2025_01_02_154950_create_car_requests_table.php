@@ -9,20 +9,35 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('car_requests', function (Blueprint $table) {
             $table->id();
             $table->string('reference')->nullable()->unique();
-            $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('gm_approval_id')->nullable()->constrained('users')->onDelete('set null');
+
+            // Aucune cascade (DELETE/UPDATE) pour éviter les multiple cascade paths
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->onDelete('no action')
+                ->onUpdate('no action');
+
+            // La SEULE FK en cascade côté DELETE (SET NULL). UPDATE = NO ACTION
+            $table->foreignId('gm_approval_id')
+                ->nullable()
+                ->constrained('users')
+                ->onDelete('set null')
+                ->onUpdate('no action');
+
             $table->text('gm_comment')->nullable();
             $table->timestamp('gm_approval_date')->nullable();
 
-            $table->foreignId('hod_approval_id')->nullable()->constrained('users')->onDelete('set null');
+            // Autre FK vers users : NO ACTION (pas de cascade)
+            $table->foreignId('hod_approval_id')
+                ->nullable()
+                ->constrained('users')
+                ->onDelete('no action')
+                ->onUpdate('no action');
+
             $table->text('hod_comment')->nullable();
             $table->timestamp('hod_approval_date')->nullable();
 
@@ -48,14 +63,12 @@ return new class extends Migration
                 'Approved',
                 'Expired',
             ])->default(MaterialRequestStatus::Pending);
+
             $table->index('reference');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('car_requests');
