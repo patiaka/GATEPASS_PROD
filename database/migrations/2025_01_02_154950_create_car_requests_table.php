@@ -41,29 +41,20 @@ return new class extends Migration
             $table->text('hod_comment')->nullable();
             $table->timestamp('hod_approval_date')->nullable();
 
-            $table->enum('somisy_car', ['Yes', 'No']);
-            $table->enum('resident', ['Yes', 'No']);
-            $table->enum('expatriate', ['Yes', 'No', 'Escort']);
-            $table->enum('licence', ['Mali DL', 'Foreign DL', 'Intl Permit']);
-            $table->enum('car_type', ['Lv', 'Bus', 'Truck']);
-            $table->string('car_number');
+            $table->string('resident');
+            $table->string('somisy_car');
+            $table->string('car_type')->nullable();
+            $table->string('car_number')->nullable();
+            $table->string('comment')->nullable();
             $table->date('start');
             $table->date('end');
             $table->time('depart_at');
             $table->time('arrive_at');
-            $table->string('route');
             $table->string('destination');
             $table->string('company');
             $table->string('reason');
             $table->date('expire_at')->nullable();
-            $table->enum('status', [
-                'Pending',
-                'Progress',
-                'Rejected',
-                'Approved',
-                'Expired',
-            ])->default(MaterialRequestStatus::Pending);
-
+            $table->string('status')->default(MaterialRequestStatus::Pending);
             $table->index('reference');
             $table->timestamps();
         });

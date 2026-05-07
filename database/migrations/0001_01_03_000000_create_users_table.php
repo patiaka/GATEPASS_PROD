@@ -18,6 +18,8 @@ return new class extends Migration
             $table->foreignId('department_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('name');
             $table->string('poste');
+            $table->string('contact')->unique();
+            $table->string('badge_number')->unique();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('role');

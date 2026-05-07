@@ -1,5 +1,5 @@
 <div>
-    <x-table title="List of users" :addbtn="false">
+    <x-table title="Users Database" :addbtn="false">
 
         <x-slot:addcreate>
             <x-button-add link="{{ route('user.create') }}" />
@@ -7,145 +7,205 @@
 
         <x-slot:filter>
             <div class="flex flex-wrap gap-4 items-end">
-                {{-- Department Filter --}}
-                <div class="w-full sm:w-52">
+                <div class="w-full sm:w-70">
                     <x-select label="Filter by Department" name="department" wire:model.live="department">
                         <option value="">All Departments</option>
                         @foreach ($departments as $row)
-                            <option value="{{ $row->id }}">{{ $row->name }}</option>
+                        <option value="{{ $row->id }}">{{ $row->name }}</option>
                         @endforeach
                     </x-select>
                 </div>
 
-                {{-- Status/Role Filter --}}
                 <div class="w-full sm:w-52">
                     <x-select label="Filter by Status" wire:model.live="role">
                         <option value="">All Roles</option>
                         @foreach (App\Enum\RoleEnum::cases() as $row)
-                            <option value="{{ $row }}">{{ $row }}</option>
+                        <option value="{{ $row }}">{{ $row }}</option>
                         @endforeach
                     </x-select>
                 </div>
             </div>
         </x-slot:filter>
 
-        <div class="overflow-x-auto rounded-lg border border-gray-200">
-            <table class="min-w-full text-sm border-collapse">
-                <!-- En-tête -->
-                <thead class="text-[11px] uppercase text-white bg-[#0e3a61] sticky top-0 shadow z-10">
+        <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
+            <table class="min-w-full text-[12px] border-collapse">
+
+                <!-- THEAD -->
+                <thead class="uppercase bg-slate-100 text-slate-700 text-[12px] sticky top-0 shadow-sm z-10">
                     <tr>
-                        <th scope="col" class="px-3 py-2 text-left">ID</th>
-                        <th scope="col" class="px-3 py-2 text-left">Department</th>
-                        <th scope="col" class="px-3 py-2 text-left">Email / Name</th>
-                        <th scope="col" class="px-3 py-2 text-left">Position</th>
-                        <th scope="col" class="px-3 py-2 text-left">Role</th>
-                        <th scope="col" class="px-3 py-2 text-left">Delegated role</th>
-                        <th scope="col" class="px-3 py-2 text-left">Status</th>
-                        <th scope="col" class="px-3 py-2 text-left">Change MDP</th>
-                        <th scope="col" class="px-3 py-2 text-left">Invite</th>
-                        <th scope="col" class="px-3 py-2 text-left">Date</th>
-                        <th scope="col" class="px-3 py-2 text-left">Action</th>
+                        <th class="px-3 py-2 text-left font-semibold">ID</th>
+                        <th class="px-3 py-2 text-left font-semibold">Department</th>
+                        <th class="px-3 py-2 text-left font-semibold">Email / Name</th>
+                        <th class="px-3 py-2 text-left font-semibold">Position</th>
+                        <th class="px-3 py-2 text-left font-semibold">Role</th>
+                        <th class="px-3 py-2 text-left font-semibold">Delegated</th>
+                        <th class="px-3 py-2 text-left font-semibold">Status</th>
+                        <th class="px-3 py-2 text-left font-semibold">Change PWD</th>
+                        <th class="px-3 py-2 text-left font-semibold">Invite</th>
+                        <th class="px-3 py-2 text-left font-semibold">Date</th>
+                        <th class="px-3 py-2 text-center font-semibold">Action</th>
                     </tr>
                 </thead>
 
-                <!-- Corps du tableau -->
-                <tbody class="divide-y divide-gray-200">
+                <!-- TBODY -->
+                <tbody class="divide-y divide-gray-100">
                     @forelse ($this->rows as $row)
-                        <tr wire:key="user-{{ $row->id }}" class="hover:bg-gray-100 even:bg-gray-50 odd:bg-white">
-                            <td class="px-3 py-2 whitespace-nowrap">{{ $row->id }}</td>
+                    <tr wire:key="user-{{ $row->id }}" class="hover:bg-slate-50 transition even:bg-gray-50/40">
 
-                            <td class="px-3 py-2 max-w-[200px]">
-                                <span class="line-clamp-1" title="{{ $row->department->name }}">
-                                    {{ $row->department->name }}
+                        <td class="px-3 py-2 font-medium text-gray-700">
+                            {{ $row->id }}
+                        </td>
+
+                        <td class="px-3 py-2 max-w-[200px] text-gray-700">
+                            <span class="line-clamp-1" title="{{ $row->department->name }}">
+                                {{ $row->department->name }}
+                            </span>
+                        </td>
+
+                        <td class="px-3 py-2">
+                            <div class="flex flex-col">
+                                <span class="font-medium text-gray-800 truncate max-w-[220px]"
+                                    title="{{ $row->email }}">
+                                    {{ $row->email }}
                                 </span>
-                            </td>
-
-                            <td class="px-3 py-2">
-                                <div class="flex flex-col">
-                                    <span class="font-medium text-gray-900 truncate max-w-[220px]" title="{{ $row->email }}">{{ $row->email }}</span>
-                                    <span class="text-gray-500 truncate max-w-[220px]" title="{{ $row->name }}">{{ $row->name }}</span>
-                                </div>
-                            </td>
-
-                            <td class="px-3 py-2">
-                                <span class="truncate block max-w-[200px]" title="{{ $row->poste }}">
-                                    {{ $row->poste }}
+                                <span class="text-gray-500 truncate max-w-[220px]" title="{{ $row->name }}">
+                                    {{ $row->name }}
                                 </span>
-                            </td>
+                            </div>
+                        </td>
 
-                            <td class="px-3 py-2">
-                                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                                    {{ $row->role }}
+                        <td class="px-3 py-2 text-gray-700">
+                            <span class="truncate block max-w-[200px]" title="{{ $row->poste }}">
+                                {{ $row->poste }}
+                            </span>
+                        </td>
+
+                        <!-- Role -->
+                        <td class="px-3 py-2">
+                            <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold
+                                           bg-blue-50 text-blue-700 border border-blue-200">
+                                {{ $row->role }}
+                            </span>
+                        </td>
+
+                        <!-- Delegated role -->
+                        <td class="px-3 py-2">
+                            <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold
+                                           bg-purple-50 text-purple-700 border border-purple-200">
+                                {{ $row->delegated_role }}
+                            </span>
+                        </td>
+
+                        <!-- Status -->
+                        <td class="px-3 py-2">
+                            <span
+                                @class([ 'inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold border'
+                                , 'bg-emerald-50 text-emerald-700 border-emerald-200'=> $row->status == 1,
+                                'bg-rose-50 text-rose-700 border-rose-200' => $row->status == 0,
+                                ])>
+                                {{ $row->status ? 'Active' : 'Inactive' }}
+                            </span>
+                        </td>
+
+                        <!-- Change password -->
+                        <td class="px-3 py-2">
+                            <span
+                                @class([ 'inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-semibold border'
+                                , 'bg-emerald-50 text-emerald-700 border-emerald-200'=>
+                                $row->change_password,
+                                'bg-gray-50 text-gray-600 border border-gray-200' => !$row->change_password,
+                                ])>
+                                {{ $row->change_password ? 'YES' : 'NO' }}
+                            </span>
+                        </td>
+
+                        <!-- Invite -->
+                        <td class="px-3 py-2">
+                            <button wire:click="invite_user({{ $row }})" wire:target="invite_user({{ $row }})"
+                                wire:loading.attr="disabled" class="inline-flex items-center gap-1.5 rounded-md
+                                           bg-[#134169] px-2 py-1 text-[10px] font-semibold text-white
+                                           shadow-sm hover:bg-blue-700 focus:outline-none
+                                           focus:ring-2 focus:ring-blue-500 focus:ring-offset-1
+                                           disabled:opacity-60 disabled:cursor-not-allowed">
+                                <span wire:loading wire:target="invite_user({{ $row }})"
+                                    class="inline-flex items-center gap-1">
+                                    <svg class="size-3 animate-spin" viewBox="0 0 24 24" fill="none">
+                                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25"
+                                            stroke-width="4" />
+                                        <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="4" />
+                                    </svg>
+                                    Sending…
                                 </span>
-                            </td>
-
-                            <td class="px-3 py-2">
-                                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200">
-                                    {{ $row->delegated_role }}
+                                <span wire:loading.remove wire:target="invite_user({{ $row }})">
+                                    Invite
                                 </span>
-                            </td>
+                            </button>
+                        </td>
 
-                            <td class="px-3 py-2">
-                                <span
-                                    @class([
-                                        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold border',
-                                        'bg-emerald-50 text-emerald-700 border-emerald-200' => $row->status == 1,
-                                        'bg-rose-50 text-rose-700 border-rose-200' => $row->status == 0,
-                                    ])>
-                                    {{ $row->status ? 'Active' : 'Inactive' }}
-                                </span>
-                            </td>
+                        <!-- Date -->
+                        <td class="px-3 py-2 whitespace-nowrap text-gray-600">
+                            {{ $row->created_at }}
+                        </td>
 
-                            <td class="px-3 py-2">
-                                <span
-                                    @class([
-                                        'inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium',
-                                        'bg-emerald-50 text-emerald-700 border border-emerald-200' => $row->change_password,
-                                        'bg-gray-50 text-gray-600 border border-gray-200' => ! $row->change_password,
-                                    ])>
-                                    {{ $row->change_password ? 'OUI' : 'NON' }}
-                                </span>
-                            </td>
+                        <td class="px-3 py-2">
+                            <div class="flex items-center justify-center gap-1.5">
 
-                            <td class="px-3 py-2">
-                                <button
-                                    wire:click="invite_user({{ $row }})"
-                                    wire:target="invite_user({{ $row }})"
-                                    wire:loading.attr="disabled"
-                                    class="inline-flex items-center gap-2 rounded-md bg-[#0e3a61] px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-60 disabled:cursor-not-allowed">
-                                    <span wire:loading wire:target="invite_user({{ $row }})" class="inline-flex items-center gap-1">
-                                        <svg class="size-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="4"/>
-                                            <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="4"/>
-                                        </svg>
-                                        Processing...
-                                    </span>
-                                    <span wire:loading.remove wire:target="invite_user({{ $row }})">
-                                        invite user
-                                    </span>
+                                <!-- Edit -->
+                                <a href="{{ route('user.edit', ['user' => $row]) }}" class="inline-flex items-center justify-center
+                  w-7 h-7 rounded-md border border-gray-200
+                  text-gray-500 hover:text-[#134169]
+                  hover:border-[#134169] hover:bg-slate-50
+                  transition">
+                                    <!-- Pencil icon (small & clean) -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l2.651 2.651M6.3 17.9l4.243-.707
+                         8.486-8.486a1.5 1.5 0 000-2.121l-2.415-2.415
+                         a1.5 1.5 0 00-2.121 0L5.657 12.95 6.3 17.9z" />
+                                    </svg>
+                                </a>
+
+                                <!-- Delete -->
+                                <button wire:click="delete_row({{ $row->id }}, {{ $row->status ? 0 : 1 }})" class="inline-flex items-center justify-center
+                   w-auto h-7 rounded-md border border-gray-200
+                   text-gray-500 hover:text-red-600
+                   hover:border-red-600 hover:bg-red-50
+                   transition">
+                                    <!-- Trash icon -->
+                                    {{ $row->status ? '❌ disable' : '✅ enable' }}
                                 </button>
-                            </td>
 
-                            <td class="px-3 py-2 whitespace-nowrap text-gray-700">
-                                {{ $row->created_at }}
-                            </td>
+                            </div>
+                        </td>
 
-                            <td class="px-3 py-2">
-                                <div class="flex items-center gap-2">
-                                    <x-button-edit href="{{ route('user.edit', ['user' => $row]) }}" />
-                                    <x-button-delete rowId="{{ $row->id }}" />
-                                </div>
-                            </td>
-                        </tr>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="11" class="px-3 py-6 text-center text-gray-500">
-                                No result
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="11" class="px-3 py-6 text-center text-gray-400 text-sm">
+                            No result
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
+
+            @if ($this->rows)
+                {{-- <div class="flex justify-start mt-4">
+                    <div
+                        class="px-3 py-2 bg-white border border-gray-200 rounded-lg shadow-sm
+                        [&>nav>div>span>span]:bg-[#134169]
+                        [&>nav>div>span>span]:text-white
+                        [&>nav>div>a]:text-[#134169]
+                        [&>nav>div>a:hover]:bg-[#134169]
+                        [&>nav>div>a:hover]:text-white">
+                        {{ $this->rows->links() }}
+                    </div>
+                </div> --}}
+
+                <div class="px-4 border-t border-slate-100 pt-4">
+                    {{ $this->rows->links() }}
+                </div>
+            @endif
         </div>
 
     </x-table>

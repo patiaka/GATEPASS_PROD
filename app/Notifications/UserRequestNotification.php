@@ -41,7 +41,8 @@ final class UserRequestNotification extends Notification
             ->greeting('Hello '.$notifiable->name.',')
             ->line($this->message)
             ->action('View Request', url($this->link))
-            ->line('Thank you for using our application!');
+            // ->line('Thank you for using our application!')
+        ;
     }
 
     /**

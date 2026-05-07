@@ -11,7 +11,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title('All Department')]
+#[Title('All Departments')]
 final class DepartmentIndex extends Component
 {
     use WithFilter;

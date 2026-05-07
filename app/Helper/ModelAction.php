@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Helper;
 
-use App\Models\User;
-use App\Models\Recording;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use App\Enum\MaterialRequestStatus;
+use App\Models\Recording;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 trait ModelAction
 {
@@ -24,10 +24,12 @@ trait ModelAction
     {
         return $this->morphMany(Recording::class, 'requestable');
     }
+
     #[Scope]
     public function scopeForUser(Builder $query): Builder
     {
         $auth = Auth::user();
+
         return $auth && $auth->isUser()
             ? $query->where('user_id', $auth->id)
             : $query;
@@ -107,15 +109,15 @@ trait ModelAction
     }
 
     // Vérifier si GM a validé
-    public function isGmApproved()
+    public function isGmApproved(): bool
     {
-        return ! is_null($this->gmApproval);
+        return ! is_null($this->gm_approval_id);
     }
 
     // Vérifier si HOD a validé
-    public function isHodApproved()
+    public function isHodApproved(): bool
     {
-        return ! is_null($this->hodApproval);
+        return ! is_null($this->hod_approval_id);
     }
 
     /**
@@ -145,11 +147,11 @@ trait ModelAction
     public function generateId(string $prefix_type)
     {
         $currentYear = Carbon::today()->format('Y');
-        $prefix = $prefix_type . $currentYear . '-';
+        $prefix = $prefix_type.$currentYear.'-';
 
         return DB::transaction(function () use ($prefix) {
             // Verrouille le dernier identifiant de courrier enregistré dans la base de données pour la mise à jour
-            $lastCourrier = self::where('reference', 'like', $prefix . '%')->whereNotNull('reference')
+            $lastCourrier = self::where('reference', 'like', $prefix.'%')->whereNotNull('reference')
                 ->latest('id')
                 ->lockForUpdate()
                 ->first(['reference']);
@@ -161,7 +163,7 @@ trait ModelAction
             }
             // Incrémente le numéro de séquence et génère le nouvel identifiant de courrier
             $sequence++;
-            $newCourrierNumber = $prefix . $sequence;
+            $newCourrierNumber = $prefix.$sequence;
             // Met à jour le numéro de courrier de l'instance courante
             $this->reference = $newCourrierNumber;
             $this->save();

@@ -22,6 +22,13 @@ return new class extends Migration
                 ->onDelete('no action')
                 ->onUpdate('no action');
 
+
+            $table->foreignId('person_out_id')
+                ->nullable()
+                ->constrained('users')
+                ->onDelete('no action')
+                ->onUpdate('no action');
+
             // GM : SEULE contrainte en cascade (DELETE SET NULL), UPDATE = NO ACTION
             $table->foreignId('gm_approval_id')
                 ->nullable()

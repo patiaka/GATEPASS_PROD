@@ -30,6 +30,8 @@ final class UserFactory extends Factory
             'name' => fake()->name(),
             'poste' => fake()->jobTitle(),
             'email' => fake()->unique()->safeEmail(),
+            'contact' => fake()->phoneNumber(),
+            'badge_number' => fake()->phoneNumber(),
             'change_password' => true,
             'email_verified_at' => now(),
             'password' => self::$password ??= Hash::make('password'),
@@ -44,7 +46,7 @@ final class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }

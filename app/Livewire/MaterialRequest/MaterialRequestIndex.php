@@ -14,14 +14,18 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 use function compact;
 
-#[Title('All material request')]
+#[Title('All material requests')]
 final class MaterialRequestIndex extends Component
 {
     use ApproveAction, DeleteAction, WithFilter;
+
+    #[Url(as: 'by_status')]
+    public ?string $by_status = null;
 
     public $material;
 
@@ -35,33 +39,55 @@ final class MaterialRequestIndex extends Component
     {
         $auth = Auth::user();
 
-        return MaterialRequest::with('user', 'user.department', 'hodApproval', 'gmApproval')
+        return MaterialRequest::with(['user.department', 'hodApproval', 'gmApproval'])
+            // ---- GM ----
             ->when($auth->isGm(), function ($query) use ($auth) {
-                $query->where('status', MaterialRequestStatus::Progress)
-                    ->whereNotNull('hod_approval_id')
-                    ->orWhere('gm_approval_id', $auth->id)
-                    ->orWhere('user_id', $auth->id);
+                $query->where(function ($q) use ($auth) {
+                    $q->where(function ($sub) {
+                        $sub->where('status', MaterialRequestStatus::Progress)
+                            ->whereNotNull('hod_approval_id');
+                    })
+                        ->orWhere('gm_approval_id', $auth->id)
+                        ->orWhere('user_id', $auth->id);
+                });
             })
-            ->when($auth->isHod(), function ($query) use ($auth) {
 
+            // ---- HOD ----
+            ->when($auth->isHod(), function ($query) use ($auth) {
                 $auth->loadMissing('department');
                 $users = $auth->department->loadMissing('users');
-                $query->where('status', MaterialRequestStatus::Pending)
-                    ->whereIn('user_id', $users->users->pluck('id'))
-                    ->orWhere('user_id', $auth->id)->orWhere('hod_approval_id', $auth->id);
-            })->when($auth->isUser(), function ($query) use ($auth) {
-                $query->where('user_id', $auth->id);
-            })->when($auth->isSecurity(), function ($query) use ($auth) {
-                $query->where('status', MaterialRequestStatus::Approved)->orWhere('user_id', $auth->id);;
+                $query->where('status', MaterialRequestStatus::Pending)->whereIn('user_id', $users->users->pluck('id'))->orWhere('user_id', $auth->id);
             })
+
+            // ---- USER ----
+            ->when($auth->isUser(), function ($query) use ($auth) {
+                $query->where('user_id', $auth->id);
+            })
+
+            // ---- SECURITY ----
+            ->when($auth->isSecurity(), function ($query) use ($auth) {
+                $query->where(function ($q) use ($auth) {
+                    $q->where('status', MaterialRequestStatus::Approved)
+                        ->orWhere('user_id', $auth->id);
+                });
+            })
+
+            // ---- FILTERS ----
             ->when($this->department, function ($query) {
-                $users = Department::with('users')->find($this->department)->users;
+                $users = Department::with('users')->find($this->department)?->users ?? collect();
                 $query->whereIn('user_id', $users->pluck('id'));
-            })->when($this->status, function ($query) {
-                $query->where('status', $this->status);
-            })->when($this->search, function ($query) {
-                $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
-            })->latest('id')->paginate(10);
+            })
+            ->when($this->by_status, function ($query) {
+                $query->where('status', $this->by_status);
+            })
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('reference', 'like', '%'.$this->search.'%')
+                        ->orWhere('status', 'like', '%'.$this->search.'%');
+                });
+            })
+            ->orderByDesc('id')
+            ->paginate(10);
     }
 
     public function delete(int $id): void
@@ -75,13 +101,16 @@ final class MaterialRequestIndex extends Component
 
             return;
         }
+
         $row->loadMissing('documents');
+
         if ($row->documents) {
             foreach ($row->loadMissing('documents')->documents as $row) {
                 $this->file_delete($row);
             }
             $row->documents->delete();
         }
+        
         $row->delete();
         flash()->success('Material request deleted with success');
     }

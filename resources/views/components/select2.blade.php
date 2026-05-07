@@ -22,10 +22,10 @@
     })" wire:ignore class="space-y-3" @click.stop x-init="init()">
 
     @if($label)
-    <label for="{{ $name }}" class="label-text uppercase text-xs font-bold text-gray-700 {{ $labelClass }}">
-        {{ $label }}
-        @if($required) <span class="text-red-500">*</span> @endif
-    </label>
+        <label for="{{ $name }}" class="block text-sm font-medium text-gray-700 mb-1 {{ $labelClass }}">
+            {{ $label }}
+            @if($required) <span class="text-red-500">*</span> @endif
+        </label>
     @endif
 
     <div class="relative">
@@ -64,13 +64,13 @@
             <div class="p-2 border-b">
                 <input x-ref="searchInput" x-model="searchTerm" @keydown.enter.prevent="selectHighlighted()" type="text"
                     class="w-full px-3 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Rechercher...">
+                    placeholder="Search...">
             </div>
 
             <!-- Options List -->
             <div class="max-h-60 overflow-y-auto py-1">
                 <template x-if="filteredOptions.length === 0">
-                    <div class="px-4 py-2 text-sm text-gray-500">Aucun résultat</div>
+                    <div class="px-4 py-2 text-sm text-gray-500">No results found</div>
                 </template>
 
                 <template x-for="(option, index) in filteredOptions" :key="option[optionValue]">

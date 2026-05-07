@@ -19,7 +19,7 @@ final class CarDriver extends Model
      *
      * @var array
      */
-    protected $fillable = ['car_request_id', 'name', 'contact'];
+    protected $fillable = ['car_request_id', 'user_id'];
 
     /**
      * Get the carRequest that owns the CarDriver
@@ -27,5 +27,13 @@ final class CarDriver extends Model
     public function carRequest(): BelongsTo
     {
         return $this->belongsTo(CarRequest::class);
+    }
+
+    /**
+     * Get the user that owns the CarDriver
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

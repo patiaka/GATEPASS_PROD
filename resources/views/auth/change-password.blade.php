@@ -1,6 +1,6 @@
 <x-guest-layout>
     <!-- Logo -->
-    <x-logo />
+    {{-- <x-logo /> --}}
     <!-- /Logo -->
     <h4 class=" mb-2">Password Change Required 🔒</h4>
     <p class="text-sm mb-2">
@@ -19,11 +19,14 @@
         </div>
     </div>
     @enderror
+
     <x-auth-session-status class="mb-4" :status="session('status')" />
-    <form class="mb-3" action="{{ route('change_password') }}" method="post">
+
+    <form class="mt-6 grid gap-4" action="{{ route('change_password') }}" method="post">
         @csrf
         <input type="hidden" name="email" value="{{ $email }}">
-        <div class="mb-3 form-password-toggle">
+        
+        <div class="form-password-toggle">
             <label class="form-label" for="password">New password</label>
             <div class="input-group input-group-merge">
                 <input type="password" id="password"
@@ -33,7 +36,8 @@
             </div>
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
-        <div class="mb-3 form-password-toggle">
+
+        <div class="form-password-toggle">
             <label class="form-label" for="password_confirmation">Confirm new password</label>
             <div class="input-group input-group-merge">
                 <input type="password" id="password_confirmation"
@@ -44,11 +48,13 @@
             </div>
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
+
         <button
-            class="w-full bg-[#134169] text-white font-semibold py-2 px-4 mt-8 rounded-lg hover:bg-[#0e3354] transition duration-300"
+            class="w-full bg-[#134169] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#0e3354] transition duration-300"
             type="submit">
-            valide
+            Validate
         </button>
+
         <div class="text-center mt-2">
             <a wire:navigate href="{{ route('login') }}">
                 Back to login

@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace App\Livewire\User;
 
-use App\Exports\UsersTemplateExport;
-use App\Imports\UsersImport;
 use App\Models\Department;
 use App\Models\User;
 use App\Notifications\UserNotification;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-#[Title('All user')]
+#[Title('All users')]
 final class UserIndex extends Component
 {
     use WithFileUploads, WithPagination;
@@ -58,14 +57,22 @@ final class UserIndex extends Component
 
     public function invite_user(User $user)
     {
+        $user->update([
+            'password' => Hash::make('password'),
+            'change_password' => false,
+        ]);
+
         $user->notify(new UserNotification($user));
 
         flash('User invited successfuly');
     }
 
-    public function delete(int $id): void
+    public function delete_row(int $id, bool $stat): void
     {
         $row = User::find($id);
+        if (Auth::user()->id === $id) {
+            abort(403, 'Vous ne pouvez pas désactiver votre propre compte');
+        }
 
         if (! $row) {
             flash()->error('User not found.');
@@ -73,8 +80,15 @@ final class UserIndex extends Component
             return;
         }
 
-        $row->delete();
-        flash()->success('User deleted with success');
+        $row->update([
+            'status' => $stat,
+        ]);
+        
+        flash()->success(
+            $row->status
+                ? 'User activé avec succès'
+                : 'user désactivé avec succès'
+        );
     }
 
     #[Computed]

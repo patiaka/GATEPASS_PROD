@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Enum\RoleEnum;
 use App\Http\Controllers\DocumentController;
 use App\Livewire\CarRequest\CarRequestCheckIn;
+use App\Livewire\CarRequest\CarRequestCheckInCreate;
 use App\Livewire\CarRequest\CarRequestCreate;
 use App\Livewire\CarRequest\CarRequestIndex;
 use App\Livewire\CarRequest\CarRequestPending;
@@ -15,6 +16,7 @@ use App\Livewire\Department\DepartmentCreate;
 use App\Livewire\Department\DepartmentEdit;
 use App\Livewire\Department\DepartmentIndex;
 use App\Livewire\MaterialRequest\MaterialRequestCheckIn;
+use App\Livewire\MaterialRequest\MaterialRequestCheckInCreate;
 use App\Livewire\MaterialRequest\MaterialRequestCreate;
 use App\Livewire\MaterialRequest\MaterialRequestIndex;
 use App\Livewire\MaterialRequest\MaterialRequestPending;
@@ -48,8 +50,10 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:' . RoleEnum::Security->value . ',' . RoleEnum::ADMIN->value)->group(function () {
         Route::get('material/request/check/in', MaterialRequestCheckIn::class)->name('material.check');
         Route::get('car/request/check/in', CarRequestCheckIn::class)->name('car.check');
-    });
 
+        Route::get('car/request/check/in/create', CarRequestCheckInCreate::class)->name('car.check_create');
+        Route::get('material/request/check/in/create', MaterialRequestCheckInCreate::class)->name('material.check_create');
+    });
     // Routes accessibles à tous
     Route::get('/', Dashboard::class)->name('dashboard');
     Route::get('material/request/create', MaterialRequestCreate::class)->name('material.create');

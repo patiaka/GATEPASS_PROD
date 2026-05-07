@@ -11,7 +11,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title('edit user password')]
+#[Title('Edit user password')]
 final class UserPassChange extends Component
 {
     public string $current_password = '';
@@ -25,7 +25,7 @@ final class UserPassChange extends Component
         try {
             $validated = $this->validate([
                 'current_password' => ['required', 'string', 'current_password'],
-                'password' => ['required', 'string',     Password::min(8)
+                'password' => ['required', 'string', Password::min(8)
                     ->mixedCase()    // Must contain both uppercase and lowercase letters.
                     ->letters()      // Must contain at least one letter.
                     ->numbers()      // Must contain at least one number.

@@ -10,7 +10,7 @@ use App\Models\User;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title('edit user')]
+#[Title('Edit user')]
 final class UserUpdate extends Component
 {
     public User $user;

@@ -15,9 +15,8 @@ return new class extends Migration
     {
         Schema::create('passengers', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('contact')->nullable();
-            $table->foreignId('car_request_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->onUpdate('no action')->onDelete('no action');
+            $table->foreignId('car_request_id')->constrained()->onUpdate('no action')->onDelete('no action');
             $table->timestamps();
         });
     }

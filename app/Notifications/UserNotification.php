@@ -44,7 +44,8 @@ final class UserNotification extends Notification
             ->line('Password: password')
             ->line('⚠️ You will be required to change this password on your first login.')
             ->action('Login Now', route('login'))
-            ->line('Thank you for using our application!');
+            // ->line('Thank you for using our application!')
+        ;
     }
 
     /**

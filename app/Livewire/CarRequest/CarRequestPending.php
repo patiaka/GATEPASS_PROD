@@ -21,9 +21,10 @@ final class CarRequestPending extends Component
 {
     use ApproveAction, WithFilter;
 
+
     public function ResetFilter(): void
     {
-        $this->reset('department', 'status', 'search', 'compagny');
+        $this->reset('search');
     }
 
     #[Computed]
@@ -49,9 +50,10 @@ final class CarRequestPending extends Component
             //     $query->whereIn('user_id', $users->pluck('id'));
             // })->when($this->status, function ($query) {
             //     $query->where('status', $this->status);
-            // })->when($this->search, function ($query) {
-            //     $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
             // })
+			->when($this->search, function ($query) {
+                $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
+            })
             ->latest('id')->paginate(10);
     }
 

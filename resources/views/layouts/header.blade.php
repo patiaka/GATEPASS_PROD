@@ -1,4 +1,4 @@
-<header class="flex justify-between items-center px-8 py-2 border-b bg-gray-50">
+<header class="flex justify-between items-center px-8 py-2 border-b border-gray-200 bg-gray-50">
     <!-- Bienvenue -->
     <div class="flex gap-4">
         <div class="flex flex-col">

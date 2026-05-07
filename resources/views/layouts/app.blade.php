@@ -7,6 +7,10 @@
     <title>{{ $title ?? 'Sidebar Somisy Template' }}</title>
     <link rel="icon" href="{{ asset('assets/img/favicon.ico') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    {{--
+    <link rel="stylesheet" href="{{ asset('build/assets/app-Dz6fu0Y1.css') }}"> --}}
+    {{-- <script src="{{ asset('build/assets/app-Dz6fu0Y1.css') }}"></script> --}}
     <style>
         /* Pour cacher/afficher les sous-menus */
         .submenu {
@@ -40,12 +44,16 @@
             display: none;
         }
     </style>
-    @vite(['resources/css/app.css','resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 </head>
 
 <body class="relative text-slate-600">
-
+    <div class="md:hidden flex items-center justify-between p-4 bg-white shadow">
+        <button id="sidebarToggle" class="text-[#0e3a61] text-2xl focus:outline-none">
+            ☰
+        </button>
+    </div>
     <div class="flex w-full h-screen bg-slate-100">
         @include('layouts.sidebar')
 
@@ -69,26 +77,40 @@
     {{-- <script src="https://unpkg.com/lucide@latest"></script> --}}
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-    lucide.createIcons();
-});
+            lucide.createIcons();
+        });
 
-window.addEventListener("livewire:navigated", () => {
-      lucide.createIcons();
-    // Recharge proprement ton store ou réinitialise le comportement
-    // Alpine.store("modal", {
-    //     isOpen: false,
-    //     open() {
-    //         this.isOpen = true;
-    //     },
-    //     close() {
-    //         this.isOpen = false;
-    //     },
-    // });
+        window.addEventListener("livewire:navigated", () => {
+            lucide.createIcons();
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('overlay');
 
-    // lucide.createIcons();
-});
+            function openSidebar() {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            }
 
+            function closeSidebar() {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+
+            toggle.addEventListener('click', function() {
+                if (sidebar.classList.contains('-translate-x-full')) {
+                    openSidebar();
+                } else {
+                    closeSidebar();
+                }
+            });
+
+            overlay.addEventListener('click', closeSidebar);
+        });
     </script>
+
+
 </body>
 
 </html>

@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Livewire\Forms;
 
+use const false;
+
 use App\Jobs\MailRequestJob;
+use App\Jobs\MailUserRequestNotifJob;
 use App\Models\CarRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
-
 
 final class CarRequestForm extends Form
 {
@@ -25,28 +27,24 @@ final class CarRequestForm extends Form
     #[Validate('required|string')]
     public string $somisy_car = '';
 
-    #[Validate('required|string|in:Yes,No,Escort')]
-    public string $expatriate = '';
-
     #[Validate('required|string')]
     public string $resident = '';
-
-    #[Validate('required|string|in:Mali DL,Foreign DL,Intl Permit')]
-    public string $licence = '';
 
     #[Validate('required|string')]
     public string $destination = '';
 
-    #[Validate('required|string|in:Lv,Bus,Truck')]
+    #[Validate('nullable|string|in:Lv,Bus,Truck,Other')]
     public string $car_type = '';
 
-    #[Validate('required')]
+    #[Validate('nullable|string')]
     public $car_number;
+
+    #[Validate('nullable|string')]
+    public $comment;
 
     #[Validate('required|date')]
     public $start;
 
-    #[Validate('required|date')]
     public $end;
 
     #[Validate('required|string')]
@@ -59,17 +57,38 @@ final class CarRequestForm extends Form
     public string $reason = '';
 
     #[Validate('required|string')]
-    public string $route = '';
-
-    #[Validate('required|string')]
     public string $company = 'Somisy';
+
+    public ?string $destination_other = null;
+
+    public ?string $type_other = null;
+
+    public function getShowDestinationField(): bool
+    {
+        return $this->destination === 'Other';
+    }
+
+    public function getShowVehicleField(): bool
+    {
+        if ($this->somisy_car === 'no_vehicle') {
+            $this->drivers = [
+                ['user_id' => ''],
+            ];
+            $this->car_type = '';
+            $this->car_number = '';
+
+            return false;
+        }
+
+        return $this->somisy_car !== 'no_vehicle';
+    }
 
     public function add(string $type): void
     {
         if ($type === 'driver') {
-            $this->drivers[] = ['name' => '', 'contact' => ''];
+            $this->drivers[] = ['user_id' => ''];
         } elseif ($type === 'passenger') {
-            $this->passengers[] = ['name' => '', 'contact' => ''];
+            $this->passengers[] = ['user_id' => ''];
         }
     }
 
@@ -87,6 +106,7 @@ final class CarRequestForm extends Form
     public function mount(CarRequest $carRequest): void
     {
         $this->carRequest = $carRequest;
+
         $this->fill($carRequest);
     }
 
@@ -99,35 +119,33 @@ final class CarRequestForm extends Form
     public function store(): void
     {
         $this->validate([
-            'drivers' => 'nullable|array|min:1',
-            'drivers.*.name' => 'nullable|string|min:3',
-            'drivers.*.contact' => 'nullable|string|min:1',
-            'passengers' => 'nullable|array|min:1',
-            'passengers.*.name' => 'nullable|string|min:3',
-            'passengers.*.contact' => 'nullable|string|min:1',
+            'drivers' => 'required_unless:somisy_car,no_vehicle|array',
+            'drivers.*.user_id' => 'nullable|integer|min:1|exists:users,id',
+            'passengers' => 'required_if:somisy_car,no_vehicle|array|min:1',
+            'passengers.*.user_id' => 'nullable|integer|min:1|exists:users,id',
             'somisy_car' => 'required|string',
-            'expatriate' => 'required|string',
             'resident' => 'required|string',
-            'licence' => 'required|string|in:Mali DL,Foreign DL,Intl Permit',
-            'destination' => 'required|string',
-            'car_type' => 'required|string|in:Lv,Bus,Truck',
-            'car_number' => 'required',
-            'start' => 'required',
-            'end' => 'required',
+            'destination' => 'required|string|in:Paysan,Taba,A21,Other',
+            'destination_other' => 'nullable|string',
+            'comment' => 'nullable|string',
+            'car_type' => 'required_unless:somisy_car,no_vehicle|string|in:Lv,Bus,Truck,Other',
+            'type_other' => 'nullable|string',
+            'car_number' => 'required_unless:somisy_car,no_vehicle|string',
+            'start' => 'required|date|after_or_equal:today',
             'depart_at' => 'required|string',
             'arrive_at' => 'required|string',
             'reason' => 'required|string',
-            'route' => 'required|string',
             'company' => 'required|string',
         ]);
-
         DB::transaction(function () {
+            $this->destination = $this->getShowDestinationField() ? $this->destination_other : $this->destination;
+            $this->car_type = $this->car_type === 'Other'
+                ? $this->type_other
+                : $this->car_type;
 
             $CarRequest = Auth::user()->car_requests()->create($this->only([
                 'somisy_car',
-                'expatriate',
                 'resident',
-                'licence',
                 'destination',
                 'car_type',
                 'car_number',
@@ -136,21 +154,23 @@ final class CarRequestForm extends Form
                 'depart_at',
                 'arrive_at',
                 'reason',
-                'route',
                 'company',
+                'comment',
             ]));
-            if ($this->drivers) {
+            if ($this->drivers and $this->somisy_car !== 'no_vehicle') {
                 $CarRequest->car_drivers()->createMany($this->drivers);
             }
-            if ($this->passengers) {
+            if ($this->passengers and $this->somisy_car === 'no_vehicle') {
                 $CarRequest->passengers()->createMany($this->passengers);
             }
 
             $CarRequest->generateId('VEH');
-            MailRequestJob::dispatch($CarRequest, 'Awaiting a vehicle gate pass request to approve reference ' . $CarRequest->reference);
+            MailRequestJob::dispatch($CarRequest, 'Awaiting a vehicle gate pass request to approve reference '.$CarRequest->reference);
+			MailUserRequestNotifJob::dispatch($CarRequest, 'Your vehicle offsite gatepass request with reference '.$CarRequest->reference.' has been created. Please check the details.');
 
             $this->reset();
             flash()->success('Car request submitted successfully');
+
             return redirect()->route('car.index');
         });
     }
@@ -158,34 +178,34 @@ final class CarRequestForm extends Form
     public function update(): void
     {
         $this->validate([
-            'drivers' => 'nullable|array|min:1',
-            'drivers.*.name' => 'nullable|string|min:3',
-            'drivers.*.contact' => 'nullable|string|min:1',
-            'passengers' => 'nullable|array|min:1',
-            'passengers.*.name' => 'nullable|string|min:3',
-            'passengers.*.contact' => 'nullable|string|min:1',
+            'drivers' => 'required_unless:somisy_car,no_vehicle|array',
+            'drivers.*.user_id' => 'nullable|integer|min:1|exists:users,id',
+            'passengers' => 'required_if:somisy_car,no_vehicle|array|min:1',
+            'passengers.*.user_id' => 'nullable|integer|min:1|exists:users,id',
             'somisy_car' => 'required|string',
-            'expatriate' => 'required|string',
             'resident' => 'required|string',
-            'licence' => 'required|string|in:Mali DL,Foreign DL,Intl Permit',
-            'destination' => 'required|string',
-            'car_type' => 'required|string|in:Lv,Bus,Truck',
-            'car_number' => 'required',
-            'start' => 'required',
-            'end' => 'required',
+            'destination' => 'required|string|in:Paysan,Taba,A21,Other',
+            'destination_other' => 'nullable|string',
+            'comment' => 'nullable|string',
+            'type_other' => 'nullable|string',
+            'car_type' => 'required_unless:somisy_car,no_vehicle|string|in:Lv,Bus,Truck,Other',
+            'car_number' => 'required_unless:somisy_car,no_vehicle|string',
+            'start' => 'required|date|after_or_equal:today',
             'depart_at' => 'required|string',
             'arrive_at' => 'required|string',
             'reason' => 'required|string',
-            'route' => 'required|string',
             'company' => 'required|string',
+            'comment' => 'nullable|string',
         ]);
 
         DB::transaction(function () {
+            $this->destination = $this->getShowDestinationField() ? $this->destination_other : $this->destination;
+            $this->car_type = $this->car_type === 'Other'
+                ? $this->type_other
+                : $this->car_type;
             $this->carRequest->update($this->only([
                 'somisy_car',
-                'expatriate',
                 'resident',
-                'licence',
                 'destination',
                 'car_type',
                 'car_number',
@@ -194,14 +214,14 @@ final class CarRequestForm extends Form
                 'depart_at',
                 'arrive_at',
                 'reason',
-                'route',
                 'company',
+                'comment',
             ]));
 
-            if ($this->drivers) {
+            if ($this->drivers and $this->somisy_car !== 'no_vehicle') {
                 $this->updateRelation('car_drivers', 'car_drivers', $this->drivers);
             }
-            if ($this->passengers) {
+            if ($this->passengers and $this->somisy_car === 'no_vehicle') {
                 $this->updateRelation('passengers', 'passengers', $this->passengers);
             }
             flash()->success('Car request updated successfully');
@@ -217,14 +237,12 @@ final class CarRequestForm extends Form
             if (isset($row['id'])) {
                 // Update existing item
                 $existingItems[$row['id']]->update([
-                    'name' => $row['name'],
-                    'contact' => $row['contact'],
+                    'user_id' => $row['user_id'],
                 ]);
             } else {
                 // Create new item
                 $this->carRequest->$relationMethod()->create([
-                    'name' => $row['name'],
-                    'contact' => $row['contact'],
+                    'user_id' => $row['user_id'],
                 ]);
             }
         }

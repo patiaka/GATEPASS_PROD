@@ -4,19 +4,18 @@
 ])
 @php $modalId = 'delete_' . $rowId; @endphp
 @if ($row)
-@can('delete', $row)
-<button command="show-modal" commandfor="dialog-{{ $modalId }}"
-    class="rounded-md  px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white">
-    <i data-lucide="trash-2"></i>
+    @can('delete-request', $row)
+    <button command="show-modal" commandfor="dialog-{{ $modalId }}"
+        class="rounded-md  px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white">
+        <i data-lucide="trash-2"></i>
 
-</button>
-@endcan
+    </button>
+    @endcan
 @else
-<button command="show-modal" commandfor="dialog-{{ $modalId }}"
-    class="rounded-md px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white">
-    <i data-lucide="trash-2"></i>
-</button>
-
+    <button command="show-modal" commandfor="dialog-{{ $modalId }}"
+        class="rounded-md px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white">
+        <i data-lucide="trash-2"></i>
+    </button>
 @endif
 
 

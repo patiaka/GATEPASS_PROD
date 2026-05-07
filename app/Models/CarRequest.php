@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enum\MaterialRequestStatus;
 use App\Helper\ModelAction;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,7 +22,17 @@ final class CarRequest extends Model
      *
      * @var array
      */
-    protected $fillable = ['reference', 'user_id', 'gm_approval_id', 'gm_comment', 'gm_approval_date', 'hod_approval_id', 'hod_comment', 'hod_approval_date', 'somisy_car', 'resident', 'expatriate', 'licence', 'car_type', 'car_number', 'start', 'end', 'depart_at', 'arrive_at', 'destination', 'company', 'passenger_id', 'car_driver_id', 'status', 'expire_at', 'reason', 'route', 'company'];
+    protected $fillable = ['reference', 'user_id', 'gm_approval_id', 'gm_comment', 'gm_approval_date', 'hod_approval_id', 'hod_comment', 'hod_approval_date', 'somisy_car', 'resident', 'car_type', 'car_number', 'start', 'end', 'depart_at', 'arrive_at', 'destination', 'company', 'passenger_id', 'car_driver_id', 'status', 'expire_at', 'reason', 'route', 'company', 'comment'];
+
+    protected $appends = ['full_name'];
+
+    public function getFullNameAttribute(): string
+    {
+
+        return $this->car_number
+            ? "{$this->reference} — {$this->car_number}"
+            : $this->reference;
+    }
 
     public function getStartFormatAttribute(): string
     {
@@ -33,12 +44,12 @@ final class CarRequest extends Model
         return Carbon::parse($this->end)->format('d/m/Y');
     }
 
-    public function getDepart_atFormatAttribute(): string
+    public function getDepartFormatAttribute(): string
     {
         return Carbon::parse($this->depart_at)->format('H:i');
     }
 
-    public function getArrive_atFormatAttribute(): string
+    public function getArriveFormatAttribute(): string
     {
         return Carbon::parse($this->arrive_at)->format('H:i');
     }
@@ -47,7 +58,6 @@ final class CarRequest extends Model
     {
         return $this->end !== null && $this->end->isPast();
     }
-
 
     public function markAsExpiredIfNeeded(): void
     {
@@ -76,7 +86,29 @@ final class CarRequest extends Model
     {
         return [
             'status' => MaterialRequestStatus::class,
-            'end' => 'datetime',
+            // 'end' => 'date',
         ];
+    }
+
+    protected function departAt(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value ? mb_substr($value, 0, 5) : null,
+        );
+    }
+
+    protected function arriveAt(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value ? mb_substr($value, 0, 5) : null,
+        );
+    }
+
+    protected function end(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value ? Carbon::parse($value)->format('Y-m-d') : null,
+            set: fn ($value) => $value ?: null, // pour éviter erreur si champ vide
+        );
     }
 }

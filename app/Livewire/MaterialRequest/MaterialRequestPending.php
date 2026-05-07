@@ -23,10 +23,10 @@ final class MaterialRequestPending extends Component
 
     public $material;
 
-    // public function ResetFilter(): void
-    // {
-    //     $this->reset('department', 'status', 'search', 'compagny');
-    // }
+     public function ResetFilter(): void
+     {
+         $this->reset('search');
+    }
     #[Computed]
     public function rows()
     {
@@ -43,18 +43,17 @@ final class MaterialRequestPending extends Component
             ->when($auth->isHod(), function ($query) use ($auth) {
                 $auth->loadMissing('department');
                 $users = $auth->department->loadMissing('users');
-                $query->whereIn('user_id', $users->users->pluck('id'))
-                    ->orWhere('user_id', $auth->id)
-                    ->orWhere('hod_approval_id', $auth->id)->orwhere('status', MaterialRequestStatus::Pending);
+                $query->where('status', MaterialRequestStatus::Pending)->whereIn('user_id', $users->users->pluck('id'))->orWhere('user_id', $auth->id);
             })
             // ->when($this->department, function ($query) {
             //     $users = Department::with('users')->find($this->department)->users;
             //     $query->whereIn('user_id', $users->pluck('id'));
             // })->when($this->status, function ($query) {
             //     $query->where('status', $this->status);
-            // })->when($this->search, function ($query) {
-            //     $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
             // })
+			->when($this->search, function ($query) {
+                $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
+            })
             ->latest('id')->paginate(10);
     }
 

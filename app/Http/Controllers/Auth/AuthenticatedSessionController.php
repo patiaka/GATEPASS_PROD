@@ -30,16 +30,19 @@ final class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $user = User::where('email', $request->email)->first();
-        if ($user->status === 0) {
+
+        if ($user->status === false) {
             Auth::logout();
 
             return to_route('login')->with('status', 'Your account is not active, please contact the administrator.');
         }
+
         if (! $user->change_password) {
             Auth::logout();
 
             return redirect()->route('change.password', ['email' => $user->email]);
         }
+        
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard', absolute: false));

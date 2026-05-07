@@ -4,86 +4,65 @@ declare(strict_types=1);
 
 namespace App\Livewire\CarRequest;
 
-use App\Enum\MaterialRequestStatus;
 use App\Exports\RecordingExport;
 use App\Helper\WithFilter;
 use App\Models\CarRequest;
 use App\Models\Department;
 use App\Models\Recording;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Validate;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 use function compact;
 
+#[Title('Check Vehicle offsite request')]
 final class CarRequestCheckIn extends Component
 {
     use WithFilter;
 
-    public string $date = '';
+    public string $gate = '';
 
-    #[Validate('required|string|in:Approved,Rejected')]
-    public string $decision = '';
-
-    #[Validate('required|string|in:Exit,Entry')]
     public string $action = '';
-
-    #[Validate('required|exists:car_requests,id')]
-    public $car_request_id = '';
 
     public function ResetFilter(): void
     {
-        $this->reset('department', 'date', 'search');
+        $this->reset('department', 'gate', 'action', 'search', 'debut', 'fin');
     }
 
     public function export()
     {
-        return (new RecordingExport($this->date))->download('recordings.xlsx');
+        return (new RecordingExport($this->baseQuery(), 'car'))->download('recordings.xlsx');
+    }
+
+    public function baseQuery()
+    {
+        return Recording::with('user', 'requestable:id,company,reference,car_number,car_type', 'car_driver:id,name,department_id', 'car_driver.department:id,name')->whereHasMorph(
+            'requestable',
+            [CarRequest::class]
+        )
+            ->when($this->gate, function ($query) {
+                $query->where('gate', $this->gate);
+            })
+            ->when($this->action, function ($query) {
+                $query->where('action', $this->action);
+            })
+            ->when($this->debut, function ($query) {
+                $query->whereDate('created_at', '>=', $this->debut);
+            })->when($this->fin && $this->debut, function ($query) {
+                $query->wherebetween('created_at', [$this->debut, $this->fin]);
+            })->latest('id');
     }
 
     #[Computed]
     public function rows()
     {
-        return Recording::with('user', 'requestable:id,company,reference,car_number,car_type')->whereHasMorph(
-            'requestable',
-            [CarRequest::class]
-        )->when($this->debut, function ($query) {
-            $query->whereDate('created_at', '>=', $this->debut);
-        })->when($this->fin && $this->debut, function ($query) {
-            $query->wherebetween('created_at', [$this->debut, $this->fin]);
-        })->latest('id')->paginate();
-    }
-
-    public function recordSecurityCheck()
-    {
-
-        $this->validate();
-        $item = CarRequest::findOrFail($this->car_request_id);
-        // Vérifier expiration
-        if ($item->isExpired()) {
-            flash()->success('request expired');
-
-            return;
-        }
-
-        $item->recordings()->create([
-            'action' => $this->action,      // 'entry' ou 'exit'
-            'decision' => $this->decision,    // 'validated' ou 'rejected'
-            'checked_at' => now(),
-            'user_id' => Auth::user()->id,
-        ]);
-        $this->reset();
-        $this->dispatch('close-modal', name: 'security-check');
-        flash()->success('Record security check added');
+        return $this->baseQuery()->paginate();
     }
 
     public function render()
     {
         $departments = Department::select('id', 'name')->get();
-        $carRequests = CarRequest::select('id', 'status', 'reference', 'created_at', 'expire_at', 'car_number')
-            ->where('status', MaterialRequestStatus::Approved)->get();
 
-        return view('livewire.car-request.car-request-check-in', compact('departments', 'carRequests'));
+        return view('livewire.car-request.car-request-check-in', compact('departments'));
     }
 }

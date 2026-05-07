@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Models\User;
-use App\Enum\RoleEnum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +20,7 @@ final class RoleMiddleware
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             abort(403, 'Unauthorized.');
         }
 

@@ -19,7 +19,7 @@ final class Passenger extends Model
      *
      * @var array
      */
-    protected $fillable = ['car_request_id', 'name', 'contact'];
+    protected $fillable = ['car_request_id', 'user_id'];
 
     /**
      * Get the carRequest that owns the Passenger
@@ -27,5 +27,13 @@ final class Passenger extends Model
     public function carRequest(): BelongsTo
     {
         return $this->belongsTo(CarRequest::class);
+    }
+
+    /**
+     * Get the user that owns the Passenger
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

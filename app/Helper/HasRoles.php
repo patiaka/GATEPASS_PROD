@@ -26,11 +26,11 @@ trait HasRoles
     public function hasRole(string $role): bool
     {
         return match ($role) {
-            RoleEnum::ADMIN->value    => $this->isAdmin(),
-            RoleEnum::GM->value       => $this->isGm(),
-            RoleEnum::HOD->value      => $this->isHod(),
+            RoleEnum::ADMIN->value => $this->isAdmin(),
+            RoleEnum::GM->value => $this->isGm(),
+            RoleEnum::HOD->value => $this->isHod(),
             RoleEnum::Security->value => $this->isSecurity(),
-            RoleEnum::USER->value     => $this->isUser(),
+            RoleEnum::USER->value => $this->isUser(),
             default => false,
         };
     }
@@ -42,12 +42,13 @@ trait HasRoles
                 return true;
             }
         }
+
         return false;
     }
 
     public function isAdmin(): bool
     {
-        return $this->role === RoleEnum::ADMIN;
+        return $this->getEffectiveRole() === RoleEnum::ADMIN;
     }
 
     public function isSecurity(): bool

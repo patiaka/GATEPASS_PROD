@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Livewire\CarRequest;
 
-use Livewire\Component;
-use App\Models\CarRequest;
 use App\Helper\ApproveAction;
-use Livewire\Attributes\Title;
-use Spatie\Browsershot\Browsershot;
+use App\Models\CarRequest;
 use Illuminate\Support\Facades\Gate;
+use Livewire\Attributes\Title;
+use Livewire\Component;
+use Spatie\Browsershot\Browsershot;
 
 #[Title('Show vehicle request')]
 final class CarRequestShow extends Component
@@ -21,8 +21,16 @@ final class CarRequestShow extends Component
     public function mount(CarRequest $CarRequest)
     {
         $this->carRequest = $CarRequest;
-
-        $this->carRequest->loadMissing('user:id,name,email,department_id', 'user.department:id,name', 'gmApproval.department:id,name', 'hodApproval.department:id,name', 'car_drivers', 'passengers');
+        $this->carRequest->loadMissing(
+            'user:id,name,email,department_id,badge_number',
+            'user.department:id,name',
+            'gmApproval.department:id,name',
+            'hodApproval.department:id,name',
+            'car_drivers',
+            'passengers',
+            'car_drivers.user:id,name,contact,badge_number',
+            'passengers.user:id,name,contact,badge_number',
+        );
     }
 
     public function download_pdf(CarRequest $carRequest)

@@ -20,6 +20,7 @@ namespace App\Models{
  * @property string $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\CarRequest $carRequest
+ * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\CarDriverFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarDriver newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarDriver newQuery()
@@ -47,15 +48,12 @@ namespace App\Models{
  * @property string|null $hod_approval_date
  * @property string $somisy_car
  * @property string $resident
- * @property string $expatriate
- * @property string $licence
  * @property string $car_type
  * @property string $car_number
  * @property string $start
- * @property \Illuminate\Support\Carbon $end
+ * @property string $end
  * @property string $depart_at
  * @property string $arrive_at
- * @property string $route
  * @property string $destination
  * @property string $company
  * @property string $reason
@@ -65,8 +63,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CarDriver> $car_drivers
  * @property-read int|null $car_drivers_count
- * @property-read string $arrive_at_format
- * @property-read string $depart_at_format
+ * @property-read string $arrive_format
+ * @property-read string $depart_format
  * @property-read string $end_format
  * @property-read string $gm_approval_date_format
  * @property-read string $hod_approval_date_format
@@ -91,7 +89,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereDepartAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereDestination($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereEnd($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereExpatriate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereExpireAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereGmApprovalDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereGmApprovalId($value)
@@ -100,11 +97,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereHodApprovalId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereHodComment($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereLicence($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereReason($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereReference($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereResident($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereRoute($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereSomisyCar($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereStart($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CarRequest whereStatus($value)
@@ -264,6 +259,7 @@ namespace App\Models{
  * @property string $checked_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $car_driver
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $requestable
  * @property-read \App\Models\User $user
  * @method static \Database\Factories\RecordingFactory factory($count = null, $state = [])
@@ -299,9 +295,12 @@ namespace App\Models{
  * @property string|null $remember_token
  * @property string $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CarDriver> $car_drivers
+ * @property-read int|null $car_drivers_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CarRequest> $car_requests
  * @property-read int|null $car_requests_count
  * @property-read \App\Models\Department $department
+ * @property-read string $full_name
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\MaterialRequest> $gm_approvals
  * @property-read int|null $gm_approvals_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CarRequest> $gm_car_approvals

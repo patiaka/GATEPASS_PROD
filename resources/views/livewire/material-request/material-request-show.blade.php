@@ -3,20 +3,61 @@
 
         {{-- Action Buttons --}}
         <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-gray-700">Material Request Details</h1>
+            <h1 class="text-2xl font-bold text-gray-700">
+                Material Request Details
+            </h1>
+
             <div class="flex gap-3">
-                <a href="{{ url()->previous() }}"
-                    class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-medium py-2 px-4 rounded text-sm flex items-center gap-2 shadow-sm">
-                    ← Back
+
+                {{-- Back --}}
+                <a href="{{ route('material.index') }}"
+                    class="inline-flex items-center justify-center w-10 h-10
+                  rounded-xl border border-slate-300
+                  bg-white text-slate-700
+                  hover:bg-slate-800 hover:text-white hover:border-slate-800
+                  transition-all duration-200
+                  shadow-sm hover:shadow-md"
+                    title="Back">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
                 </a>
+
+
+                {{-- Download PDF --}}
                 <button wire:click="download_pdf({{ $MaterialRequest->id }})" wire:loading.attr="disabled"
                     wire:target="download_pdf"
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded text-sm flex items-center gap-2 shadow">
-                    <span wire:loading.remove wire:target="download_pdf">📄 Download PDF</span>
-                    <span wire:loading wire:target="download_pdf">
-                        <span class="iconify lucide--loader size-4 animate-spin"></span> Processing...
+                    class="relative inline-flex items-center justify-center w-10 h-10
+                       rounded-xl border border-[#0e3a61]
+                       bg-white text-[#0e3a61]
+                       hover:bg-[#0e3a61] hover:text-white
+                       disabled:opacity-60 disabled:cursor-not-allowed
+                       transition-all duration-200
+                       shadow-sm hover:shadow-md"
+                    title="Download PDF">
+
+                    {{-- icon --}}
+                    <span wire:loading.remove wire:target="download_pdf">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 4v12" />
+                        </svg>
                     </span>
+
+                    {{-- loading --}}
+                    <span wire:loading wire:target="download_pdf">
+                        <svg class="w-5 h-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4v1m0 14v1m8-8h1M4 12H3" />
+                        </svg>
+                    </span>
+
                 </button>
+
             </div>
         </div>
 
@@ -40,6 +81,11 @@
                     <p class="font-medium">Position:</p>
                     <p>{{ $MaterialRequest->user->poste }}</p>
                 </div>
+
+                <div>
+                    <p class="font-medium">Delegated Person:</p>
+                    <p>{{ $MaterialRequest->person_out?->name }}</p>
+                </div>
             </div>
         </section>
 
@@ -49,10 +95,10 @@
             <table class="w-full text-sm border border-gray-300">
                 <thead class="bg-gray-100 text-left">
                     <tr>
-                        <th class="p-2 border">#</th>
+                        <th class="p-2 border text-center">#</th>
                         <th class="p-2 border">Description</th>
                         <th class="p-2 border text-center">Quantity</th>
-                        <th class="p-2 border">Serial Number</th>
+                        <th class="p-2 border">Additional Info</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -69,15 +115,20 @@
         </section>
 
         {{-- Attached Documents --}}
-        {{-- Attached Documents --}}
         <section class="bg-white shadow rounded-lg p-5">
             <h2 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Attached Documents</h2>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 @foreach ($MaterialRequest->loadMissing('documents')->documents as $row)
                     <div
-                        class="relative bg-gray-100 rounded-md overflow-hidden shadow hover:shadow-lg transition-shadow duration-200">
-                        <img src="{{ $row->DocLink() }}" alt="Document image" class="w-full h-48 object-cover" />
+                        class="relative bg-white rounded-xl border border-gray-200
+            overflow-hidden shadow-sm hover:shadow-md
+            transition-all duration-200 flex items-center justify-center">
+
+                        <img src="{{ $row->DocLink() }}" alt="Document image"
+                            class="w-full max-h-56 object-contain bg-white p-2" />
+
+
 
                         @if ($MaterialRequest->user_id === Auth::user()->id && $MaterialRequest->isPending())
                             <div class="absolute top-2 right-2 flex gap-2 bg-white/80 p-1 rounded shadow-sm">
@@ -85,12 +136,6 @@
                                 <x-button-delete url="{{ url('document/' . $row->id) }}" />
                             </div>
                         @endif
-{{-- 
-                        <div class="p-2 text-sm text-gray-700 truncate">
-                            {{ basename($row->DocLink()) }}
-                            <a href="{{ $row->DocLink() }}" target="_blank"
-                                class="block text-blue-600 text-xs underline mt-1">View full</a>
-                        </div> --}}
                     </div>
                 @endforeach
             </div>
@@ -99,7 +144,21 @@
 
         {{-- Approvals --}}
         <section class="bg-white shadow rounded-lg p-5">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2 text-center">Approval Signatures</h3>
+            <div class="flex items-center justify-between mb-4 border-b pb-2">
+
+                <div class="w-1/3"></div>
+
+                <h3 class="text-lg font-semibold text-gray-800 text-center w-1/3">
+                    Approval Signatures
+                </h3>
+
+                @if (Auth::user()->canApprove($MaterialRequest) && (Auth::user()->isHod() || Auth::user()->isGm()))
+                    <div class="w-1/3 flex justify-end">
+                        <x-form-request :model="$MaterialRequest" type="material" />
+                    </div>
+                @endif
+
+            </div>
             <table class="w-full text-sm border border-gray-300 text-center">
                 <thead class="bg-gray-100">
                     <tr>
@@ -119,30 +178,38 @@
                     </tr>
                     {{-- HOD --}}
                     <tr>
-                        <td class="p-2 border">{{ $MaterialRequest->user->department->name }}</td>
                         <td class="p-2 border">
                             {{ $MaterialRequest->hodApproval ? $MaterialRequest->hodApproval->department->name : '—' }}
                         </td>
-                        <td class="p-2 border">Head of Department</td>
+                        <td class="p-2 border">
+                            {{ $MaterialRequest->hodApproval ? $MaterialRequest->hodApproval->name : '—' }}
+                        </td>
+                        <td class="p-2 border">
+                            {{ $MaterialRequest->hodApproval ? $MaterialRequest->hodApproval->poste : '—' }}
+                        </td>
                         <td class="p-2 border">
                             <x-request-status :status="$MaterialRequest->getStatusFor('hod')" />
-                            @if (Auth::user()->canApprove($MaterialRequest) && Auth::user()->isHod())
-                                <x-form-request :model="$MaterialRequest" type="material" />
-                            @endif
+                            {{-- @if (Auth::user()->canApprove($MaterialRequest) && Auth::user()->isHod())
+                            <x-form-request :model="$MaterialRequest" type="material" />
+                            @endif --}}
                         </td>
                     </tr>
                     {{-- GM --}}
                     <tr>
-                        <td class="p-2 border">{{ $MaterialRequest->user->department->name }}</td>
                         <td class="p-2 border">
                             {{ $MaterialRequest->gmApproval ? $MaterialRequest->gmApproval->department->name : '—' }}
                         </td>
-                        <td class="p-2 border">General Manager</td>
+                        <td class="p-2 border">
+                            {{ $MaterialRequest->gmApproval ? $MaterialRequest->gmApproval->name : '-' }}
+                        </td>
+                        <td class="p-2 border">
+                            {{ $MaterialRequest->gmApproval ? $MaterialRequest->gmApproval->poste : '-' }}
+                        </td>
                         <td class="p-2 border">
                             <x-request-status :status="$MaterialRequest->getStatusFor('gm')" />
-                            @if (Auth::user()->canApprove($MaterialRequest) && Auth::user()->isGm())
-                                <x-form-request :model="$MaterialRequest" type="material" />
-                            @endif
+                            {{-- @if (Auth::user()->canApprove($MaterialRequest) && Auth::user()->isGm())
+                            <x-form-request :model="$MaterialRequest" type="material" />
+                            @endif --}}
                         </td>
                     </tr>
                 </tbody>

@@ -7,7 +7,9 @@ namespace App\Providers;
 use App\Models\CarRequest;
 use App\Models\MaterialRequest;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 final class AppServiceProvider extends ServiceProvider
@@ -25,9 +27,23 @@ final class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Model::automaticallyEagerLoadRelationships();
+        Model::shouldBeStrict(! app()->isProduction());
+        URL::forceHttps(app()->isProduction());
+
         Gate::define('update-request', function (User $user, MaterialRequest|CarRequest $Request) {
             if ($Request instanceof CarRequest || $Request instanceof MaterialRequest) {
-                return ($user->id === $Request->user_id and $Request->isPending()) || $user->isAdmin();
+                // return ($user->id === $Request->user_id and $Request->isPending()) || $user->isAdmin();
+                //    dd($user->is($Request));
+                if ((int) $Request->user_id === $user->id && $Request->isPending()) {
+                    return true;
+                }
+
+                if ($user->isAdmin()) {
+                    return true;
+                }
+
+                return false;
             }
         });
         Gate::define('download-request', function (User $user, MaterialRequest|CarRequest $request) {
@@ -37,7 +53,7 @@ final class AppServiceProvider extends ServiceProvider
             }
 
             // L'auteur de la demande peut télécharger
-            if ($user->id === $request->user_id) {
+            if ((int) $user->id === (int) $request->user_id) {
                 return true;
             }
 
@@ -49,21 +65,29 @@ final class AppServiceProvider extends ServiceProvider
             return false;
         });
 
-
         Gate::define('show-request', function (User $user, MaterialRequest|CarRequest $Request) {
             if ($Request instanceof CarRequest || $Request instanceof MaterialRequest) {
                 if ($user->isGm() || $user->isHod() || $user->isAdmin() || $user->isSecurity()) {
                     return true;
                 }
-                if ($user->isUser() and $user->id === $Request->user_id) {
+
+                if ($user->isUser()) {
                     return true;
                 }
             }
         });
 
-        Gate::define('delete-request', function (User $user, MaterialRequest|CarRequest $Request) {
+       Gate::define('delete-request', function (User $user, MaterialRequest|CarRequest $Request) {
             if ($Request instanceof CarRequest || $Request instanceof MaterialRequest) {
-                return ($user->id === $Request->user_id and $Request->isPending()) || $user->isAdmin();
+                if ($user->isAdmin()) {
+                    return true;
+                }
+                
+                if ((int) $Request->user_id === (int) $user->id && $Request->isPending()) {
+                    return true;
+                }
+
+                return false;
             }
         });
 

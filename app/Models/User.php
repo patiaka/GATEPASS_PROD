@@ -18,7 +18,7 @@ use Illuminate\Notifications\Notifiable;
 final class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use DateFormat, Notifiable, HasRoles;
+    use DateFormat, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -35,6 +35,8 @@ final class User extends Authenticatable
         'department_id',
         'status',
         'delegated_role',
+        'contact',
+        'badge_number',
     ];
 
     /**
@@ -47,21 +49,7 @@ final class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'role' => RoleEnum::class,
-            'delegated_role' => RoleEnum::class,
-        ];
-    }
-
+    protected $appends = ['full_name'];
 
     /**
      * Get the department that owns the User
@@ -85,6 +73,22 @@ final class User extends Authenticatable
     public function car_requests(): HasMany
     {
         return $this->hasMany(CarRequest::class);
+    }
+
+    /**
+     * Get all of the car_drivers for the User
+     */
+    public function car_drivers(): HasMany
+    {
+        return $this->hasMany(CarDriver::class);
+    }
+
+    /**
+     * Get all of the passengers for the User
+     */
+    public function passengers(): HasMany
+    {
+        return $this->hasMany(Passenger::class);
     }
 
     /**
@@ -119,6 +123,15 @@ final class User extends Authenticatable
         return $this->hasMany(CarRequest::class, 'gm_approval_id');
     }
 
+    public function getFullNameAttribute(): string
+    {
+        $badge = $this->getAttribute('badge_number');
+
+        return $badge
+            ? "{$badge} — {$this->name}"
+            : $this->name;
+    }
+
     public function canApprove($request): bool
     {
         $isCreator = $request->user_id === $this->id;
@@ -127,15 +140,32 @@ final class User extends Authenticatable
 
         // Si user est HOD
         if ($this->isHod()) {
-            return !$hodApproved;
+            return ! $hodApproved;
         }
 
         // Si user est GM
         if ($this->isGm()) {
             // GM ne peut approuver que si HOD a approuvé, sauf si GM est le créateur
-            return !$gmApproved && ($hodApproved || $isCreator);
+            return ! $gmApproved && ($hodApproved || $isCreator);
         }
 
         return false;
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'role' => RoleEnum::class,
+            'delegated_role' => RoleEnum::class,
+            'status' => 'boolean',
+            'change_password' => 'boolean'
+        ];
     }
 }

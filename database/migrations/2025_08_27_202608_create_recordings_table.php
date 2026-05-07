@@ -16,10 +16,15 @@ return new class extends Migration
         Schema::create('recordings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete(); // chef de sécurité
+            $table->foreignId('car_driver_id')->nullable()->constrained('users')->OnDelete('no action'); // chef de sécurité
             // Polymorphic relation pour MaterialRequest / CarRequest
             $table->morphs('requestable'); // requestable_id + requestable_type
             $table->string('action');      // entrée / sortie
             $table->string('decision'); // validée / rejetée
+            $table->string('gate')->nullable();
+            $table->string('kilometers')->nullable();
+            $table->string('fuel_level')->nullable();
+            // $table->string('destination')->nullable();
             $table->timestamp('checked_at');                // date et heure de la vérification
             $table->timestamps();
         });

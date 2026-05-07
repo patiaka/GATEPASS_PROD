@@ -21,7 +21,20 @@ final class Recording extends Model
         'decision',
         'checked_at',
         'user_id',
+        'car_driver_id',
+        'gate',
+        'fuel_level',
+        'kilometers',
+        // 'destination',
     ];
+
+    /**
+     * Get the car_driver that owns the Recording
+     */
+    public function car_driver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'car_driver_id');
+    }
 
     /**
      * Get the user that owns the Recording

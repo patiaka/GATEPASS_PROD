@@ -4,85 +4,64 @@ declare(strict_types=1);
 
 namespace App\Livewire\MaterialRequest;
 
-use Livewire\Component;
-use App\Models\Recording;
+use App\Exports\RecordingExport;
 use App\Helper\WithFilter;
 use App\Models\Department;
-use Livewire\Attributes\Title;
 use App\Models\MaterialRequest;
-use App\Exports\RecordingExport;
+use App\Models\Recording;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Validate;
-use App\Enum\MaterialRequestStatus;
-use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Title;
+use Livewire\Component;
 
 #[Title('Check material request')]
 final class MaterialRequestCheckIn extends Component
 {
     use WithFilter;
 
-    public string $date = '';
+    public string $gate = '';
 
-    #[Validate('required|string|in:Approved,Rejected')]
-    public string $decision = '';
-
-    #[Validate('required|string|in:Exit,Entry')]
     public string $action = '';
-
-    #[Validate('required|exists:material_requests,id')]
-    public $material_request_id = '';
 
     public function ResetFilter(): void
     {
-        $this->reset('department', 'date', 'search');
+        $this->reset('department', 'gate', 'action', 'search', 'debut', 'fin');
     }
 
     public function export()
     {
-        return (new RecordingExport($this->date))->download('recordings.xlsx');
+        return (new RecordingExport($this->baseQuery(), 'material'))->download('material-recordings.xlsx');
+    }
+
+    public function baseQuery()
+    {
+        return Recording::with('user', 'requestable:id,company,reference,user_id,person_out_id', 'requestable.user.department:id,name', 'requestable.person_out:id,name')->whereHasMorph(
+            'requestable',
+            [MaterialRequest::class]
+        )
+            ->when($this->gate, function ($query) {
+                $query->where('gate', $this->gate);
+            })
+            ->when($this->action, function ($query) {
+                $query->where('action', $this->action);
+            })
+            ->when($this->debut, function ($query) {
+                $query->whereDate('created_at', '>=', $this->debut);
+            })->when($this->fin && $this->debut, function ($query) {
+                $query->wherebetween('created_at', [$this->debut, $this->fin]);
+            })->latest('id');
     }
 
     #[Computed]
     public function rows()
     {
-        return Recording::with('user', 'requestable:id,company,reference')->whereHasMorph(
-            'requestable',
-            [MaterialRequest::class]
-        )->when($this->debut, function ($query) {
-            $query->whereDate('created_at', '>=', $this->debut);
-        })->when($this->fin && $this->debut, function ($query) {
-            $query->wherebetween('created_at', [$this->debut, $this->fin]);
-        })->latest('id')->paginate();
-    }
-
-    public function recordSecurityCheck()
-    {
-
-        $this->validate();
-        $item = MaterialRequest::findOrFail($this->material_request_id);
-        // Vérifier expiration
-        if ($item->isExpired()) {
-            flash()->success('request expired');
-
-            return;
-        }
-
-        $item->recordings()->create([
-            'action' => $this->action,      // 'entry' ou 'exit'
-            'decision' => $this->decision,    // 'validated' ou 'rejected'
-            'checked_at' => now(),
-            'user_id' => Auth::user()->id,
-        ]);
-        $this->reset();
-        $this->dispatch('close-modal', name: 'security-check');
-        flash()->success('Record security check added');
+        return $this->baseQuery()->paginate();
     }
 
     public function render()
     {
+
         $departments = Department::select('id', 'name')->get();
-        $materialRequests = MaterialRequest::select('id', 'status', 'reference', 'created_at', 'expire_at')
-            ->where('status', MaterialRequestStatus::Approved)->get();
-        return view('livewire.material-request.material-request-check-in', compact('departments', 'materialRequests'));
+
+        return view('livewire.material-request.material-request-check-in', compact('departments'));
     }
 }

@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Enum\MaterialRequestStatus;
 use App\Helper\ModelAction;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class MaterialRequest extends Model
@@ -30,7 +31,18 @@ final class MaterialRequest extends Model
         'hod_approval_date',
         'expire_at',
         'company',
+        'person_out_id',
     ];
+
+    protected $appends = ['full_name'];
+
+    /**
+     * Get the person out that owns the MaterialRequest
+     */
+    public function person_out(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'person_out_id');
+    }
 
     /**
      * Get all of the documents for the MaterialRequest
@@ -48,6 +60,24 @@ final class MaterialRequest extends Model
         return $this->hasMany(MaterialRequestItem::class);
     }
 
+    public function getFullNameAttribute(): string
+    {
+
+        return "{$this->reference} — {$this->person_out->name}";
+    }
+
+    public function isExpire(): bool
+    {
+        return $this->expire_at !== null && $this->expire_at->isPast();
+    }
+
+    public function markAsExpiredIfNeeded(): void
+    {
+        if ($this->isExpire() && $this->status !== MaterialRequestStatus::Expired) {
+            $this->update(['status' => MaterialRequestStatus::Expired]);
+        }
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -59,18 +89,5 @@ final class MaterialRequest extends Model
             'status' => MaterialRequestStatus::class,
             'expire_at' => 'datetime',
         ];
-    }
-
-    public function isExpire(): bool
-    {
-        return $this->expire_at !== null && $this->expire_at->isPast();
-    }
-
-
-    public function markAsExpiredIfNeeded(): void
-    {
-        if ($this->isExpire() && $this->status !== MaterialRequestStatus::Expired) {
-            $this->update(['status' => MaterialRequestStatus::Expired]);
-        }
     }
 }

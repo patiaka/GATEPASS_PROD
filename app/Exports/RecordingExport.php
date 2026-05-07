@@ -1,59 +1,95 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Exports;
 
-use App\Models\Recording;
-use Maatwebsite\Excel\Concerns\FromQuery;
-use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Illuminate\Contracts\Support\Responsable;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 
-class RecordingExport implements FromQuery, Responsable, WithHeadings, WithMapping
+final class RecordingExport implements FromQuery, Responsable, WithHeadings, WithMapping
 {
-
     use Exportable;
 
-    public function __construct(public string $by_date)
+    public function __construct(public $query, public string $type)
     {
-        $this->by_date = $by_date;
+        $this->query = $query;
+        $this->type = $type;
     }
 
     public function query()
     {
-        return Recording::query()->whereDate('created_at', $this->by_date);
+        return $this->query;
+
     }
 
     public function map($data): array
     {
+        if ($this->type === 'car') {
+            return [
+                $data->id,
+                $data->requestable->reference,
+                $data->created_at,
+                $data->car_driver->name,
+                $data->car_driver->department->name,
+                $data->user->name,
+                $data->requestable->company,
+                $data->requestable->car_number,
+                $data->requestable->car_type,
+                $data->gate,
+                $data->action,
+                $data->decision,
+            ];
+        }
+
         return [
             $data->id,
             $data->requestable->reference,
             $data->created_at,
-            $data->user->department->name,
+            $data->requestable->user->department->name,
             $data->user->name,
             $data->requestable->company,
-            $data->requestable->car_number,
-            $data->requestable->car_type,
+            $data->requestable->person_out->name,
+            $data->gate,
             $data->action,
             $data->decision,
         ];
+
     }
 
     public function headings(): array
     {
+        if ($this->type === 'car') {
+            return [
+                'ID',
+                'Reference',
+                'Checked At',
+                'Driver Name',
+                'Driver Department',
+                'Checked By',
+                'Company',
+                'Car Number',
+                'Car Type',
+                'Gate',
+                'Action',
+                'Decision',
+            ];
+        }
+
         return [
-            'id',
-            'requestable_reference',
-            'date',
-            'department',
-            'user_name',
-            'company',
-            'car_number',
-            'car_type',
-            'action',
-            'decision',
+            'ID',
+            'Reference',
+            'Checked At',
+            'User Department',
+            'Checked By',
+            'Company',
+            'Person Out',
+            'Gate',
+            'Action',
+            'Decision',
         ];
     }
 }

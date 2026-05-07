@@ -1,24 +1,24 @@
 @props(['type','model'])
 
 @php
-$isHod = Auth::user()->isHod();
-$isGm = Auth::user()->isGm();
-$isCreator = $model->user_id === Auth::id();
-$isApprovedCheck = $isHod ? $model->isHodApproved() : $model->isGmApproved();
-$role = $isHod ? 'HOD' : ($isGm ? 'GM' : '');
-$approveMethod = $isHod ? 'approveByHod' : 'approveByGm';
-$commentField = $isHod ? 'hod_comment' : 'gm_comment';
+    $isHod = Auth::user()->isHod();
+    $isGm = Auth::user()->isGm();
+    $isCreator = $model->user_id === Auth::id();
+    $isApprovedCheck = $isHod ? $model->isHodApproved() : $model->isGmApproved();
+    $role = $isHod ? 'HOD' : ($isGm ? 'GM' : '');
+    $approveMethod = $isHod ? 'approveByHod' : 'approveByGm';
+    $commentField = $isHod ? 'hod_comment' : 'gm_comment';
 
-$hodApproved = $model->isHodApproved();
-$gmApproved = $model->isGmApproved();
+    $hodApproved = $model->isHodApproved();
+    $gmApproved = $model->isGmApproved();
 
-$canShowBtn = false;
+    $canShowBtn = false;
 
-if ($isHod) {
-$canShowBtn = !$hodApproved ;
-} elseif ($isGm) {
-$canShowBtn = (!$gmApproved && !$model->isRejected() && ($hodApproved || $isCreator));
-}
+    if ($isHod) {
+        $canShowBtn = !$hodApproved ;
+    } elseif ($isGm) {
+        $canShowBtn = (!$gmApproved && !$model->isRejected() && ($hodApproved || $isCreator));
+    }
 @endphp
 
 @if ($canShowBtn)
@@ -42,7 +42,7 @@ $canShowBtn = (!$gmApproved && !$model->isRejected() && ($hodApproved || $isCrea
 
             <!-- Form -->
             <form wire:submit.prevent="{{ $approveMethod }}({{ $model->id }},'{{ $type }}')"
-                x-on:submit.window="open = false">
+            x-on:submit.window="open = false">
                 <div class="space-y-4">
                     {{-- Comments --}}
                     @if (!$isApprovedCheck)
@@ -79,7 +79,7 @@ $canShowBtn = (!$gmApproved && !$model->isRejected() && ($hodApproved || $isCrea
                     <button type="submit" wire:loading.attr="disabled" wire:target="{{ $approveMethod }}"
                         class="px-4 py-2 rounded-md bg-[#134169] text-white hover:bg-red-500">
                         <span wire:loading.remove wire:target="{{ $approveMethod }}">
-                            Approve as {{ $role }}
+                            Submit
                         </span>
                         <span wire:loading wire:target="{{ $approveMethod }}">
                             <i class="bx bx-loader-alt fa-spin"></i> Processing...

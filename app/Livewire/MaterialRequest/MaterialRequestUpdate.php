@@ -8,6 +8,7 @@ use App\Helper\DeleteAction;
 use App\Helper\RepeatInputAction;
 use App\Livewire\Forms\MaterialRequestForm;
 use App\Models\MaterialRequest;
+use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -43,5 +44,12 @@ final class MaterialRequestUpdate extends Component
         Gate::authorize('update-request', $this->materialRequest);
 
         $this->form->update();
+    }
+
+    public function render()
+    {
+        $users = User::select('name', 'id', 'badge_number')->get();
+
+        return view('livewire.material-request.material-request-update', compact('users'));
     }
 }

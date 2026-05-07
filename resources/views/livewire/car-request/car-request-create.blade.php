@@ -1,19 +1,28 @@
 <div class="mx-auto">
-    <div class="flex justify-between items-center pb-4">
-        <h1 class="text-xl font-semibold text-gray-800">Resident & Vehicle Off Site Form</h1>
+    <div class="flex items-center justify-between pb-6 border-b border-gray-200">
+        <h1 class="text-2xl font-bold text-[#0e3a61] tracking-tight flex items-center gap-2">
+            Resident & Vehicle Off Site Form
+            <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1
+                text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200">
+                New
+            </span>
+        </h1>
+
         <a wire:navigate href="{{ route('car.index') }}"
-            class="text-sm text-gary-600 hover:underline bg-white border rounded px-3 py-1 shadow-sm inline-flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-1" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg
+              bg-[#0e3a61] text-white text-sm font-medium
+              hover:bg-[#0c3253] shadow-sm transition
+              focus:outline-none focus:ring-2 focus:ring-white/30">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
             Back to list
         </a>
-
     </div>
 
-    <form wire:submit="save">
-        <div class="bg-white p-6 rounded-md shadow border-2  space-y-6">
+    <form wire:submit="save" class="mt-6">
+        <div class="bg-white rounded-2xl shadow-md border border-gray-200 p-8 space-y-8">
 
             <!-- Company -->
             <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
@@ -37,12 +46,16 @@
                 <div class="md:col-span-9">
                     <div class="flex flex-col gap-2 md:w-1/2">
                         <label class="inline-flex items-center gap-2">
-                            <input type="radio" name="form.somisy_car" wire:model="form.somisy_car" value="yes"
-                                class="form-radio"> <span>Yes</span>
+                            <input type="radio" name="form.somisy_car" wire:model.live="form.somisy_car"
+                                value="yes" class="form-radio"> <span>Yes</span>
                         </label>
                         <label class="inline-flex items-center gap-2">
-                            <input type="radio" name="form.somisy_car" wire:model="form.somisy_car" value="no"
-                                class="form-radio"> <span>No</span>
+                            <input type="radio" name="form.somisy_car" wire:model.live="form.somisy_car"
+                                value="no" class="form-radio"> <span>No</span>
+                        </label>
+                        <label class="inline-flex items-center gap-2">
+                            <input type="radio" name="form.somisy_car" wire:model.live="form.somisy_car"
+                                value="no_vehicle" class="form-radio"> <span>No Vehicle</span>
                         </label>
                     </div>
                     @error('form.somisy_car')
@@ -59,11 +72,11 @@
                 <div class="md:col-span-9">
                     <div class="flex flex-col gap-2 md:w-1/2">
                         <label class="inline-flex items-center gap-2">
-                            <input type="radio" wire:model="form.resident" name="form.resident" value="Yes"
+                            <input type="radio" name="form.resident" wire:model="form.resident" value="yes"
                                 class="form-radio"> <span>Yes</span>
                         </label>
                         <label class="inline-flex items-center gap-2">
-                            <input type="radio" wire:model="form.resident" name="form.resident" value="No"
+                            <input type="radio" name="form.resident" wire:model="form.resident" value="no"
                                 class="form-radio"> <span>No</span>
                         </label>
                     </div>
@@ -72,155 +85,162 @@
                     @enderror
                 </div>
             </div>
+            @if ($this->showVehicleFields)
 
-            <!-- Expatriate -->
-            <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
-                <label
-                    class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 after:content-['*'] after:ml-0.5 after:text-red-500">Expatriate</label>
-                <div class="md:col-span-9">
-                    <div class="flex flex-col gap-2 md:w-1/2">
-                        <label class="inline-flex items-center gap-2">
-                            <input type="radio" name="form.expatriate" wire:model="form.expatriate" value="Yes"
-                                class="form-radio"> <span>Yes</span>
-                        </label>
-                        <label class="inline-flex items-center gap-2">
-                            <input type="radio" name="form.expatriate" wire:model="form.expatriate" value="No"
-                                class="form-radio"> <span>No</span>
-                        </label>
-                        <label class="inline-flex items-center gap-2">
-                            <input type="radio" name="form.expatriate" wire:model="form.expatriate" value="Escort"
-                                class="form-radio"> <span>Escort Level</span>
-                        </label>
-                    </div>
-                    @error('form.expatriate')
-                        <small class="text-red-500 text-sm">{{ $message }}</small>
-                    @enderror
+                <!-- Drivers header -->
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Drivers</h2>
+                    <button type="button" wire:click="addDriver"
+                        class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5 mr-1" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add driver
+                    </button>
+
                 </div>
-            </div>
 
-            <!-- Drivers header -->
-            <div class="flex items-center justify-between">
-                <h2 class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Drivers</h2>
-                <button type="button" wire:click="addDriver"
-                    class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5 mr-1" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Add field
-                </button>
-            </div>
+                @foreach ($form->drivers as $index => $driver)
+                    <!-- Driver Name -->
+                    <div class="md:grid md:grid-cols-12 md:items-start md:gap-4"
+                        wire:key="form.drivers.{{ $index }}.user_id">
+                        <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Driver
+                            Name</label>
+                        <div class="md:col-span-9">
+                            <div class="flex flex-col gap-2 md:w-1/2">
 
-            @foreach ($form->drivers as $index => $driver)
-                <!-- Driver Name -->
-                <div class="md:grid md:grid-cols-12 md:items-center md:gap-4"
-                    wire:key="form.drivers.{{ $index }}.name">
-                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Driver
-                        Name</label>
+                                <x-select2 :options="$users" optionLabel="full_name"
+                                    wire:model="form.drivers.{{ $index }}.user_id" label=""
+                                    placeholder="Select car driver" />
+
+                                <button type="button" wire:click="removeDriver({{ $index }})"
+                                    class="inline-flex items-center justify-center rounded-md bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 px-2 py-1 text-xs">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            @error("form.drivers.$index.user_id")
+                                <small class="text-red-500 text-sm">{{ $message }}</small>
+                            @enderror
+                        </div>
+                    </div>
+                @endforeach
+
+                <!-- Vehicle Type -->
+                <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
+                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Vehicle
+                        Type</label>
+
                     <div class="md:col-span-9">
-                        <input type="text" name="driver_name" wire:model="form.drivers.{{ $index }}.name"
+
+                        <div x-data="{ show: @entangle('form.car_type').live === 'Other' }" x-effect="show = $wire.form.car_type === 'Other'">
+
+                            <div class="flex flex-col gap-2 md:w-1/2">
+
+                                <label class="inline-flex items-center gap-2">
+                                    <input type="radio" wire:model.live="form.car_type" value="Lv"> LV
+                                </label>
+
+                                <label class="inline-flex items-center gap-2">
+                                    <input type="radio" wire:model.live="form.car_type" value="Bus"> Bus
+                                </label>
+
+                                <label class="inline-flex items-center gap-2">
+                                    <input type="radio" wire:model.live="form.car_type" value="Truck"> Truck
+                                </label>
+
+                                <label class="inline-flex items-center gap-2">
+                                    <input type="radio" wire:model.live="form.car_type" value="Other"> Other
+                                </label>
+
+                            </div>
+
+                            <div x-show="show" x-transition.opacity.duration.200ms class="mt-2">
+                                <input type="text" wire:model.defer="form.type_other" placeholder="Enter type"
+                                    class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Vehicle Number -->
+                <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
+                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Vehicle
+                        Number</label>
+                    <div class="md:col-span-9">
+                        <input type="text" name="vehicle_number" wire:model="form.car_number"
                             class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
-                        @error("form.drivers.$index.name")
+                        @error('form.car_number')
                             <small class="text-red-500 text-sm">{{ $message }}</small>
                         @enderror
                     </div>
                 </div>
-                <!-- Phone + delete -->
-                <div class="md:grid md:grid-cols-12 md:items-center md:gap-4"
-                    wire:key="form.drivers.{{ $index }}.contact">
-                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Phone</label>
-                    <div class="md:col-span-9 flex items-center gap-2">
-                        <input type="text" name="phone" wire:model="form.drivers.{{ $index }}.contact"
-                            class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
-                        <button type="button" wire:click="removeDriver({{ $index }})"
-                            class="inline-flex items-center justify-center rounded-md bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 px-2 py-1 text-xs">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                        </button>
+            @else
+                <!-- Passengers header -->
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Passengers</h2>
+                    <button type="button" wire:click="addPassenger"
+                        class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5 mr-1" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add field
+                    </button>
+                </div>
+                @foreach ($form->passengers as $index => $passenger)
+                    <div class="md:grid md:grid-cols-12 md:items-center md:gap-4"
+                        wire:key="form.passengers.{{ $index }}.user_id">
+                        <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Resident
+                            Name</label>
+                        <div class="md:col-span-9">
+                            <div class="flex flex-col gap-2 md:w-1/2">
+
+                                <x-select2 :options="$users" optionLabel="full_name"
+                                    wire:model="form.passengers.{{ $index }}.user_id" label=""
+                                    placeholder="Select passenger" />
+
+                                <button type="button" wire:click="removePassenger({{ $index }})"
+                                    class="inline-flex items-center justify-center rounded-md bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 px-2 py-1 text-xs">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </div>
+                            @error("form.passengers.$index.name")
+                                <small class="text-red-500 text-sm">{{ $message }}</small>
+                            @enderror
+                        </div>
                     </div>
-                    @error("form.drivers.$index.contact")
-                        <small class="text-red-500 text-sm md:col-start-4 md:col-span-9">{{ $message }}</small>
-                    @enderror
-                </div>
-            @endforeach
+                @endforeach
+            @endif
+            <div class="flex items-center gap-2 mb-4">
+                <label for="default-checkbox" class="text-sm font-medium text-heading select-none">
+                    Long term
+                </label>
 
-            <!-- Licence -->
-            <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
-                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Licence</label>
-                <div class="md:col-span-9">
-                    <div class="flex flex-col gap-2 md:w-1/2">
-                        @foreach (App\Enum\CarRequestLicenceStatus::cases() as $item)
-                            <label class="inline-flex items-center gap-2">
-                                <input type="radio" name="licence" wire:model="form.licence"
-                                    value="{{ $item }}" class="form-radio">
-                                <span>{{ $item }}</span>
-                            </label>
-                        @endforeach
-                    </div>
-                    @error('form.licence')
-                        <small class="text-red-500 text-sm">{{ $message }}</small>
-                    @enderror
-                </div>
-            </div>
-
-            <!-- Vehicle Type -->
-            <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
-                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Vehicle Type</label>
-                <div class="md:col-span-9">
-                    <div class="flex flex-col gap-2 md:w-1/2">
-                        <label class="inline-flex items-center gap-2">
-                            <input type="radio" wire:model="form.car_type" name="vehicle_type" value="Lv"
-                                class="form-radio"> <span>LV</span>
-                        </label>
-                        <label class="inline-flex items-center gap-2">
-                            <input type="radio" wire:model="form.car_type" name="vehicle_type" value="Bus"
-                                class="form-radio"> <span>Bus</span>
-                        </label>
-                        <label class="inline-flex items-center gap-2">
-                            <input type="radio" wire:model="form.car_type" name="vehicle_type" value="Truck"
-                                class="form-radio"> <span>Truck</span>
-                        </label>
-                    </div>
-                    @error('form.car_type')
-                        <small class="text-red-500 text-sm">{{ $message }}</small>
-                    @enderror
-                </div>
-            </div>
-
-            <!-- Vehicle Number -->
-            <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
-                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Vehicle
-                    Number</label>
-                <div class="md:col-span-9">
-                    <input type="text" name="vehicle_number" wire:model="form.car_number"
-                        class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
-                    @error('form.car_number')
-                        <small class="text-red-500 text-sm">{{ $message }}</small>
-                    @enderror
-                </div>
-            </div>
-
-            <!-- Route -->
-            <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
-                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Route</label>
-                <div class="md:col-span-9">
-                    <input type="text" name="route" wire:model="form.route"
-                        class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
-                    @error('form.route')
-                        <small class="text-red-500 text-sm">{{ $message }}</small>
-                    @enderror
-                </div>
+                <input id="default-checkbox" type="checkbox" wire:model.live="date_long"
+                    class="w-4 h-4 border border-default-medium rounded bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft">
             </div>
 
             <!-- Dates -->
             <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
+
                 <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Date Valid
                     From</label>
                 <div class="md:col-span-9">
-                    <input type="date" name="date_from" wire:model="form.start"
+                    <input type="date" name="date_from" wire:model.live="form.start"
+                        min="{{ now()->format('Y-m-d') }}"
                         class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
                     @error('form.start')
                         <small class="text-red-500 text-sm">{{ $message }}</small>
@@ -231,13 +251,27 @@
             <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
                 <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Date Until</label>
                 <div class="md:col-span-9">
-                    <input type="date" name="date_until" wire:model="form.end"
+                    <input type="date" name="date_to" wire:model.live="form.end" readonly
                         class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
-                    @error('form.end')
-                        <small class="text-red-500 text-sm">{{ $message }}</small>
-                    @enderror
+
                 </div>
             </div>
+
+
+            @if ($date_long)
+                {{-- comment  --}}
+                <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
+                    <label
+                        class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Justification</label>
+                    <div class="md:col-span-9">
+                        <input type="text" name="comment" wire:model="form.comment"
+                            class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
+                        @error('form.comment')
+                            <small class="text-red-500 text-sm">{{ $message }}</small>
+                        @enderror
+                    </div>
+                </div>
+            @endif
 
             <!-- Time -->
             <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
@@ -264,17 +298,60 @@
             </div>
 
             <!-- Destination(s) -->
-            <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
+            <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
                 <label
-                    class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Destination(s)</label>
-                <div class="md:col-span-9">
-                    <input type="text" name="destinations" wire:model="form.destination"
-                        class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
+                    class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 after:content-['*'] after:ml-0.5 after:text-red-500">
+                    Destination(s)
+                </label>
+
+                <div class="md:col-span-9" x-data="{ show: @entangle('form.destination').live === 'Other' }"
+                    x-effect="show = $wire.form.destination === 'Other'">
+
+                    {{-- radios — même largeur que Vehicle Type --}}
+                    <div class="flex flex-col gap-2 md:w-1/2">
+
+                        <label class="inline-flex items-center gap-2">
+                            <input type="radio" wire:model.live="form.destination" value="Paysan"
+                                class="form-radio">
+                            <span>Paysan</span>
+                        </label>
+
+                        <label class="inline-flex items-center gap-2">
+                            <input type="radio" wire:model.live="form.destination" value="Taba"
+                                class="form-radio">
+                            <span>Taba</span>
+                        </label>
+
+                        <label class="inline-flex items-center gap-2">
+                            <input type="radio" wire:model.live="form.destination" value="A21"
+                                class="form-radio">
+                            <span>A21</span>
+                        </label>
+
+                        <label class="inline-flex items-center gap-2">
+                            <input type="radio" wire:model.live="form.destination" value="Other"
+                                class="form-radio">
+                            <span>Other</span>
+                        </label>
+
+                    </div>
+
+                    {{-- Other input — même largeur que autres inputs --}}
+                    <div x-show="show" x-transition.opacity.duration.200ms class="mt-2">
+                        <input type="text" wire:model.defer="form.destination_other"
+                            placeholder="Enter destination"
+                            class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
+                    </div>
+
+
                     @error('form.destination')
                         <small class="text-red-500 text-sm">{{ $message }}</small>
                     @enderror
+
                 </div>
             </div>
+
+
 
             <!-- Reason -->
             <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
@@ -288,55 +365,6 @@
                     @enderror
                 </div>
             </div>
-
-            <!-- Passengers header -->
-            <div class="flex items-center justify-between">
-                <h2 class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Passengers</h2>
-                <button type="button" wire:click="addPassenger"
-                    class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5 mr-1" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Add field
-                </button>
-            </div>
-
-            @foreach ($form->passengers as $index => $passenger)
-                <div class="md:grid md:grid-cols-12 md:items-center md:gap-4"
-                    wire:key="form.passengers.{{ $index }}.name">
-                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Resident
-                        Name</label>
-                    <div class="md:col-span-9">
-                        <input type="text" name="resident_name"
-                            wire:model="form.passengers.{{ $index }}.name"
-                            class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
-                        @error("form.passengers.$index.name")
-                            <small class="text-red-500 text-sm">{{ $message }}</small>
-                        @enderror
-                    </div>
-                </div>
-                <div class="md:grid md:grid-cols-12 md:items-center md:gap-4"
-                    wire:key="form.passengers.{{ $index }}.contact">
-                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Phone</label>
-                    <div class="md:col-span-9 flex items-center gap-2">
-                        <input type="text" name="resident_phone"
-                            wire:model="form.passengers.{{ $index }}.contact"
-                            class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
-                        <button type="button" wire:click="removePassenger({{ $index }})"
-                            class="inline-flex items-center justify-center rounded-md bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 px-2 py-1 text-xs">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                        </button>
-                    </div>
-                    @error("form.passengers.$index.contact")
-                        <small class="text-red-500 text-sm md:col-start-4 md:col-span-9">{{ $message }}</small>
-                    @enderror
-                </div>
-            @endforeach
         </div>
 
         <!-- Actions -->
@@ -354,7 +382,8 @@
                         <svg class="animate-spin -ml-1 mr-2 size-3.5" xmlns="http://www.w3.org/2000/svg"
                             fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                stroke-width="4"></circle>
+                                stroke-width="4">
+                            </circle>
                             <path class="opacity-75" fill="currentColor"
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                             </path>

@@ -1,5 +1,5 @@
 <div>
-    <x-table title="List of pending car request" :addbtn="false">
+    <x-table title="Resident & Vehicle offsite Approval" :addbtn="false">
         <x-slot:filter>
             <div class="flex flex-wrap gap-4 items-end">
 
@@ -61,9 +61,9 @@
                 <th class="px-4 py-3 text-left text-sm font-medium">Date</th>
                 <th class="px-4 py-3 text-left text-sm font-medium">Company</th>
                 <th class="px-4 py-3 text-left text-sm font-medium">Department</th>
-                @if (Auth::user()->isGm() || Auth::user()->isHod())
+                {{-- @if (Auth::user()->isGm() || Auth::user()->isHod())
                 <th class="px-4 py-3 text-left text-sm font-medium">Requestor</th>
-                @endif
+                @endif --}}
 
                 <th class="px-4 py-3 text-left text-sm font-medium">Actions</th>
             </tr>
@@ -79,11 +79,11 @@
                 <td class="px-4 py-3">{{ $row->created_at }}</td>
                 <td class="px-4 py-3">{{ $row->company }}</td>
                 <td class="px-4 py-3">{{ $row->user->department->name }}</td>
-                @if (Auth::user()->isGm() || Auth::user()->isHod())
+                {{-- @if (Auth::user()->isGm() || Auth::user()->isHod())
                 <td class="px-4 py-3 text-sm">
                     <x-form-request wire:key="request-{{ $row->id }}" :model="$row" type="car" />
                 </td>
-                @endif
+                @endif --}}
 
                 <td class="px-4 py-3">
                     <x-button-edit href="{{ route('car.edit', ['CarRequest' => $row]) }}" :row="$row" />
@@ -93,7 +93,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="9" class="text-center">No result</td>
+                <td colspan="9" class="text-center">You have no pending approval requests</td>
             </tr>
             @endforelse
         </tbody>

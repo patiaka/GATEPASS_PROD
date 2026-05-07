@@ -7,6 +7,7 @@ namespace App\Livewire\MaterialRequest;
 use App\Helper\DeleteAction;
 use App\Helper\RepeatInputAction;
 use App\Livewire\Forms\MaterialRequestForm;
+use App\Models\User;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -28,5 +29,12 @@ final class MaterialRequestCreate extends Component
     public function save()
     {
         $this->form->store();
+    }
+
+    public function render()
+    {
+        $users = User::select('name', 'id', 'badge_number')->get();
+
+        return view('livewire.material-request.material-request-create', compact('users'));
     }
 }

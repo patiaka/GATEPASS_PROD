@@ -1,194 +1,197 @@
 <div>
-    <!-- Header -->
-    <div class="flex justify-between items-center border-b pb-4 mb-4">
-        <h1 class="font-bold text-xl text-[#134169]">Material Check In / Out</h1>
+    <div class="flex justify-between items-center border-b pb-4 mb-5">
+        <!-- Header -->
+        <div>
+            <!-- Title -->
+            <h1 class="text-2xl font-bold text-[#134169] tracking-tight">
+                Material Check In / Out
+            </h1>
+            <p class="text-sm text-slate-500 mt-1">Site Materials Entrance and exit management</p>
+        </div>
 
-        <button @click="$store.modal.open('security-check')"
-            class="text-blue-600 border border-blue-600 px-3 py-1 rounded hover:bg-blue-600 hover:text-white">
+        <!-- Button -->
+        <a href="{{ route('material.check_create') }}"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg
+              bg-[#134169] text-white text-sm font-semibold
+              hover:bg-[#0e3a61] shadow-md transition
+              focus:outline-none focus:ring-2 focus:ring-[#134169]/30">
+
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+
             New Check In
-        </button>
-
-
+        </a>
 
     </div>
-    <div class="flex flex-wrap gap-4 items-end mb-4">
-        <div class="w-full sm:w-64">
-            <div class="relative flex items-center">
-                <span class="absolute left-3 text-gray-400">
-                    <i data-lucide="search"></i>
-                </span>
-                <input wire:model.live.debounce.100ms='search' type="text"
-                    class="w-full pl-10 pr-4 py-2 border rounded-md" placeholder="Search...">
-            </div>
-        </div>
-        <div class="w-full sm:w-64">
-            <x-select label="Filter by Department" name="department" wire:model.live="department">
-                <option value="">All Departments</option>
-                @foreach ($departments as $row)
-                <option value="{{ $row->id }}">{{ $row->name }}</option>
-                @endforeach
-            </x-select>
-        </div>
 
-        <div class="w-full sm:w-80">
-            <x-input type="date" wire:model.live="debut" label="Date start" />
-        </div>
+    <!-- Filters -->
+    <div class="bg-white p-4 rounded-lg border border-gray-100 shadow-sm mb-6">
 
-        <div class="w-full sm:w-80">
-            <x-input type="date" wire:model.live="fin" label="Date end" />
-        </div>
-        @if ($debut)
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
 
-        <div class="w-full sm:w-48">
-
-            <!-- Download Button -->
-            <button wire:click="export" wire:loading.attr="disabled" wire:target="export"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm flex items-center gap-2">
-
-                <!-- Download icon (when not loading) -->
-                <span wire:loading.remove wire:target="export" class="flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 4v12" />
-                    </svg>
-                    Export
-                </span>
-
-                <!-- Loading icon (spinner) -->
-                <span wire:loading wire:target="export" class="flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 4v1m0 14v1m8-8h1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m0 12.728l.707-.707M17.657 6.343l.707-.707" />
-                    </svg>
-                    Processing...
-                </span>
-            </button>
-        </div>
-        @endif
-    </div>
-    <!-- Table Card -->
-    <div class="bg-white shadow-md rounded-lg overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-[#134169] text-white">
-                <tr class="uppercase">
-                    <th class="px-4 py-3 text-left text-sm font-medium">ID</th>
-                    <th class="px-4 py-3 text-left text-sm font-medium">Date</th>
-                    <th class="px-4 py-3 text-left text-sm font-medium">Department</th>
-                    <th class="px-4 py-3 text-left text-sm font-medium">Requestor Name</th>
-                    <th class="px-4 py-3 text-left text-sm font-medium">Requestor Company</th>
-                    <th class="px-4 py-3 text-left text-sm font-medium">action</th>
-                    <th class="px-4 py-3 text-left text-sm font-medium">decision</th>
-                    <th class="px-4 py-3 text-left text-sm font-medium">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100 bg-white">
-                @forelse ($this->rows as $row)
-                <tr wire:key="row-{{ $row->id }}">
-
-                    <td class="px-4 py-3 text-sm">#{{ $row->requestable->reference }}</td>
-                    <td class="px-4 py-3 text-sm">{{ $row->created_at }}</td>
-                    <td class="px-4 py-3 text-sm">{{ $row->user->department->name }}</td>
-                    <td class="px-4 py-3 text-sm">{{ $row->user->name }}</td>
-                    <td class="px-4 py-3 text-sm">{{ $row->requestable->company }}</td>
-                    {{-- <td class="px-4 py-3 text-sm">#{{ $row->requestable->car_number }}</td> --}}
-                    {{-- <td class="px-4 py-3 text-sm">#{{ $row->requestable->car_type }}</td> --}}
-                    <td class="px-4 py-3 text-sm">{{ $row->action }}</td>
-                    <td class="px-4 py-3 text-sm">
-                        @if ($row->decision === 'Approved')
-                        <span
-                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                            ✅ Approved
-                        </span>
-                        @elseif ($row->decision === 'Rejected')
-                        <span
-                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                            ❌ Rejected
-                        </span>
-                        @else
-                        <span
-                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                            ⏳ En attente
-                        </span>
-                        @endif
-                    </td>
-
-                    <td class="px-4 py-3 text-sm">
-                        <div class="flex items-center gap-2">
-                            <span class="h-3 w-3 bg-green-400 rounded-full"></span>
-                            <span class="text-xs text-green-700">Completed</span>
-                        </div>
-                    </td>
-                </tr>
-
-                @empty
-                <tr>
-                    <td colspan="9" class="text-center">No result</td>
-                </tr>
-                @endforelse
-
-                <!-- More rows as needed... -->
-            </tbody>
-        </table>
-
-        @if($this->rows)
-        <div class="p-4">
-            {{ $this->rows->links() }}
-        </div>
-        @endif
-    </div>
-
-    <!-- Modal -->
-    <x-modal name="security-check" title="Check in Response Form">
-        <!-- Form -->
-        <form wire:submit.prevent="recordSecurityCheck">
-            <div class="space-y-4">
-                {{-- action --}}
-                <div>
-                    <x-select2 :options="$materialRequests" wire:model="material_request_id" name="material_request_id"
-                        placeholder="Select gate pass" label="material request list" />
-                    @error('material_request_id') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
-                </div>
-                {{-- action --}}
-                <div>
-                    <label class="block text-sm font-medium mb-1">Action</label>
-                    <select class="w-full border border-gray-300 rounded-lg px-3 py-2" wire:model="action">
-                        <option value="" selected>select</option>
-                        <option value="Exit">Exit</option>
-                        <option value="Entry">Entry</option>
-                    </select>
-                    @error('action') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
-                </div>
-                {{-- Decision --}}
-                <div>
-                    <label class="block text-sm font-medium mb-1">Decision</label>
-                    <select class="w-full border border-gray-300 rounded-lg px-3 py-2" wire:model="decision">
-                        <option value="" selected>select</option>
-                        @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
-                        @continue(in_array($row->value, ["Progress", "Pending", "Expired"]))
-                        <option value="{{ $row }}">{{ $row }}</option>
-                        @endforeach
-                    </select>
-                    @error('decision') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
-                </div>
+            {{-- Department --}}
+            <div>
+                <x-select label="Department" name="department" wire:model.live="department" class="w-full">
+                    <option value="">All Departments</option>
+                    @foreach ($departments as $row)
+                        <option value="{{ $row->id }}">{{ $row->name }}</option>
+                    @endforeach
+                </x-select>
             </div>
 
-            {{-- Buttons --}}
-            <div class="mt-6 flex justify-end gap-2">
-                <button type="button" @click="$store.modal.close('security-check')"
-                    class="px-4 py-2 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-100">
-                    Cancel
-                </button>
-                <button type="submit" wire:loading.attr="disabled" wire:target="recordSecurityCheck"
-                    class="px-4 py-2 rounded-md bg-[#134169] text-white hover:bg-red-500">
-                    <span wire:loading.remove wire:target="recordSecurityCheck">
-                        Approve
-                    </span>
-                    <span wire:loading wire:target="recordSecurityCheck">
-                        <i class="bx bx-loader-alt fa-spin"></i> Processing...
-                    </span>
+            {{-- Action --}}
+            <div>
+                <x-select label="Action" name="action" wire:model.live="action" class="w-full">
+                    <option value="">All</option>
+                    <option value="Entry">Entry</option>
+                    <option value="Exit">Exit</option>
+                </x-select>
+            </div>
+
+            {{-- Gate --}}
+            <div>
+                <x-select label="Gate" name="gate" wire:model.live="gate" class="w-full">
+                    <option value="">All</option>
+                    <option value="Front">Front</option>
+                    <option value="Back">Back</option>
+                </x-select>
+            </div>
+
+            {{-- Date start --}}
+            <div>
+                {{-- <label class="block text-xs font-medium text-slate-600 mb-1">Date start</label> --}}
+                <x-input type="date" wire:model.live="debut" class="w-full h-[42px]" label="Date Start"/>
+            </div>
+
+            {{-- Date end --}}
+            <div>
+                {{-- <label class="block text-xs font-medium text-slate-600 mb-1">Date end</label> --}}
+                <x-input type="date" wire:model.live="fin" class="w-full h-[42px]" label="Date End"/>
+            </div>
+
+            {{-- Reset --}}
+            <div class="flex items-end">
+                <button wire:click='ResetFilter'
+                    class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md flex items-center justify-center gap-2 h-[42px]">
+                    <i data-lucide="x"></i>
+                    Reset
                 </button>
             </div>
-        </form>
-    </x-modal>
+
+        </div>
+
+        {{-- Export (ligne séparée propre) --}}
+        @if ($debut || $action || $gate)
+            <div class="flex justify-end mt-4">
+                <button wire:click="export" wire:loading.attr="disabled" wire:target="export"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#134169] text-white text-sm font-medium hover:bg-[#0f3550] transition">
+
+                    <span wire:loading.remove wire:target="export">Export</span>
+                    <span wire:loading wire:target="export">Processing...</span>
+
+                </button>
+            </div>
+        @endif
+
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white shadow-sm rounded-xl border border-gray-200">
+
+        <!-- Scroll wrapper -->
+        <div class="overflow-auto max-h-[500px]">
+
+            <table class="min-w-full text-[13px] table-fixed">
+
+                <!-- THEAD -->
+                <thead class="bg-slate-100 sticky top-0 z-10 text-xs tracking-wide text-slate-700">
+                    <tr class="border-b">
+                        <th class="px-4 py-2 w-24 text-left">ID</th>
+                        <th class="px-4 py-2 w-40 text-left">Date</th>
+                        <th class="px-4 py-2 w-40 text-left">Department</th>
+                        <th class="px-4 py-2 w-40 text-left">Requestor</th>
+                        <th class="px-4 py-2 w-40 text-left">Company</th>
+                        <th class="px-4 py-2 w-40 text-left">Delegated Person Name</th>
+                        <th class="px-4 py-2 w-40 text-left">Gate</th>
+                        <th class="px-4 py-2 w-32 text-left">Action</th>
+                        <th class="px-4 py-2 w-32 text-left">Decision</th>
+
+                    </tr>
+                </thead>
+
+                <!-- TBODY -->
+                <tbody class="divide-y divide-gray-100">
+                    @forelse ($this->rows as $row)
+                        <tr wire:key="row-{{ $row->id }}"
+                            class="odd:bg-white even:bg-gray-50 hover:bg-slate-100 transition">
+
+                            <td class="px-4 py-2 font-medium text-gray-800">
+                                #{{ $row->requestable->reference }}
+                            </td>
+
+                            <td class="px-4 py-2 text-gray-700">
+                                {{ $row->created_at->format('Y-m-d H:i') }}
+                            </td>
+
+                            <td class="px-4 py-2 text-gray-700">
+                                {{ $row->requestable->user->department->name }}
+                            </td>
+
+                            <td class="px-4 py-2 text-gray-700">
+                                {{ $row->user->name }}
+                            </td>
+
+                            <td class="px-4 py-2 text-gray-700">
+                                {{ $row->requestable->company }}
+                            </td>
+
+                            <td class="px-4 py-2 text-gray-700">
+                                {{ $row->requestable->person_out->name }}
+                            </td>
+
+                            <td class="px-4 py-2 text-gray-700">
+                                {{ $row->gate }}
+                            </td>
+
+                            <td class="px-4 py-2">
+                                <span
+                                    class="text-[11px] px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200">
+                                    {{ $row->action }}
+                                </span>
+                            </td>
+
+                            <td class="px-4 py-2">
+                                @if ($row->decision === 'Approved')
+                                    <span
+                                        class="text-[11px] px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        Approved
+                                    </span>
+                                @elseif ($row->decision === 'Rejected')
+                                    <span
+                                        class="text-[11px] px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200">
+                                        Rejected
+                                    </span>
+                                @else
+                                    <span
+                                        class="text-[11px] px-2 py-0.5 rounded-md bg-gray-50 text-gray-600 border border-gray-200">
+                                        Pending
+                                    </span>
+                                @endif
+                            </td>
+
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="8" class="px-4 py-8 text-center text-sm text-gray-400">
+                                No result
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+</div>

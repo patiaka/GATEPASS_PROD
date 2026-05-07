@@ -126,7 +126,7 @@
                         <tr>
                             <td class="border border-black px-2 py-2 text-center">{{ $MaterialRequest->user->department->name }}</td>
                             <td class="border border-black px-2 py-2 text-center">
-                                {{ $MaterialRequest->hodApproval ? $MaterialRequest->hodApproval->department->name : '—' }}
+                                {{ $MaterialRequest->hodApproval ? $MaterialRequest->hodApproval->name : '—' }}
                             </td>
                             <td class="border border-black px-2 py-2 text-center">Head of Department</td>
                             <td class="border border-black px-2 py-2 text-center">
@@ -138,7 +138,7 @@
                         <tr>
                             <td class="border border-black px-2 py-2 text-center">{{ $MaterialRequest->user->department->name }}</td>
                             <td class="border border-black px-2 py-2 text-center">
-                                {{ $MaterialRequest->gmApproval ? $MaterialRequest->gmApproval->department->name : '—' }}
+                                {{ $MaterialRequest->gmApproval ? $MaterialRequest->gmApproval->name : '—' }}
                             </td>
                             <td class="border border-black px-2 py-2 text-center">General Manager</td>
                             <td class="border border-black px-2 py-2 text-center">

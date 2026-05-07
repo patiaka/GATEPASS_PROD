@@ -124,15 +124,9 @@
         <tbody>
             <tr>
                 <td>Somisy Vehicle</td>
-                <td>{{ ($carRequest->somisy_car ?? false) ? 'Yes' : 'No' }}</td>
+                <td>{{ $carRequest->somisy_car ?? '—' }}</td>
                 <td>Camp Resident</td>
-                <td>{{ ($carRequest->resident ?? false) ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <td>Expatriate</td>
-                <td>{{ ($carRequest->expatriate ?? false) ? 'Yes' : 'No' }}</td>
-                <td>Escort Level</td>
-                <td>{{ $carRequest->escort_level ?? '—' }}</td>
+                <td>{{ $carRequest->resident }}</td>
             </tr>
         </tbody>
     </table>
@@ -149,22 +143,20 @@
                 <tr>
                     <td>Vehicle #</td>
                     <td>{{ $carRequest->car_number ?? '—' }}</td>
-                    <td>Route</td>
-                    <td>{{ $carRequest->route ?? '—' }}</td>
                 </tr>
                 @php
-                $driverRel = optional($carRequest->loadMissing('car_drivers'))->car_drivers ?? collect();
+                $driverRel =
+                optional($carRequest->loadMissing('car_drivers','car_drivers.user:id,name,contact,badge_number'))->car_drivers
+                ?? collect();
                 $driver = $driverRel->first();
                 @endphp
                 <tr>
                     <td>Driver Name</td>
-                    <td>{{ $driver->name ?? ($carRequest->name ?? '—') }}</td>
+                    <td>{{ $driver->user->name ?? ($carRequest->user->name ?? '—') }}</td>
                     <td>Phone</td>
-                    <td>{{ $driver->contact ?? ($carRequest->contact ?? '—') }}</td>
-                </tr>
-                <tr>
-                    <td>Licence(s)</td>
-                    <td colspan="3">{{ $carRequest->licence ?? '—' }}</td>
+                    <td>{{ $driver->user->contact ?? ($carRequest->user->contact ?? '—') }}</td>
+                    <td>Badge Number</td>
+                    <td>{{ $driver->user->badge_number ?? ($carRequest->user->badge_number ?? '—') }}</td>
                 </tr>
             </tbody>
         </table>
@@ -218,14 +210,14 @@
         <thead>
             <tr>
                 <th>Names</th>
-                <th>Phones</th>
+                <th>badge</th>
             </tr>
         </thead>
         <tbody>
             @foreach(($carRequest->passengers ?? collect()) as $p)
             <tr>
-                <td>{{ $p->name ?? '—' }}</td>
-                <td>{{ $p->contact ?? '—' }}</td>
+                <td>{{ $p->user->name ?? '—' }}</td>
+                <td>{{ $p->user->badge_number ?? '—' }}</td>
             </tr>
             @endforeach
         </tbody>
@@ -246,20 +238,7 @@
 
     {{-- Approval --}}
     <h2 class="section-title">Approval</h2>
-    {{-- <table class="mb-2">
-        <thead>
-            <tr>
-                <th>Department Manager</th>
-                <th>General Manager</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>{{ $carRequest->hod_comment ?? '—' }}</td>
-                <td>{{ $carRequest->gm_comment ?? '—' }}</td>
-            </tr>
-        </tbody>
-    </table> --}}
+
 
     <table class="w-full border-2 border-black border-collapse">
         <thead>

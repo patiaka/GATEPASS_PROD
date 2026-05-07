@@ -11,8 +11,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 use Illuminate\View\View;
 
 final class NewPasswordController extends Controller
@@ -35,7 +36,7 @@ final class NewPasswordController extends Controller
         $request->validate([
             'token' => ['required'],
             'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', Password::defaults()],
+            'password' => ['required', 'confirmed', PasswordRule::defaults()],
         ]);
 
         // Here we will attempt to reset the user's password. If it is successful we
@@ -57,9 +58,9 @@ final class NewPasswordController extends Controller
         // the application's home authenticated view. If there is an error we can
         // redirect them back to where they came from with their error message.
         return $status === Password::PASSWORD_RESET
-            ? redirect()->route('login')->with('status', __($status))
+            ? redirect()->route('login')->with('status', ($status))
             : back()->withInput($request->only('email'))
-                ->withErrors(['email' => __($status)]);
+                ->withErrors(['email' => ($status)]);
     }
 
     public function form_change_password(string $email): View
@@ -76,7 +77,7 @@ final class NewPasswordController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
-            'password' => ['required', 'string', 'confirmed', Password::min(8)
+            'password' => ['required', 'string', 'confirmed', PasswordRule::min(8)
                 ->mixedCase()    // Must contain both uppercase and lowercase letters.
                 ->letters()      // Must contain at least one letter.
                 ->numbers()      // Must contain at least one number.
