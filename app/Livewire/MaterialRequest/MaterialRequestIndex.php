@@ -40,6 +40,21 @@ final class MaterialRequestIndex extends Component
         $auth = Auth::user();
 
         return MaterialRequest::with(['user.department', 'hodApproval', 'gmApproval'])
+            // ---- FILTERS ----
+            ->when($this->department, function ($query) {
+                $users = Department::with('users')->find($this->department)?->users ?? collect();
+                $query->whereIn('user_id', $users->pluck('id'));
+            })
+            ->when($this->by_status, function ($query) {
+                $query->where('status', $this->by_status);
+            })
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('reference', 'like', '%'.$this->search.'%')
+                        ->orWhere('status', 'like', '%'.$this->search.'%');
+                });
+            })
+            
             // ---- GM ----
             ->when($auth->isGm(), function ($query) use ($auth) {
                 $query->where(function ($q) use ($auth) {
@@ -56,7 +71,11 @@ final class MaterialRequestIndex extends Component
             ->when($auth->isHod(), function ($query) use ($auth) {
                 $auth->loadMissing('department');
                 $users = $auth->department->loadMissing('users');
-                $query->where('status', MaterialRequestStatus::Pending)->whereIn('user_id', $users->users->pluck('id'))->orWhere('user_id', $auth->id);
+                $query
+                    // ->where('status', MaterialRequestStatus::Pending)
+                    ->whereIn('user_id', $users->users->pluck('id'))
+                    ->orWhere('user_id', $auth->id)
+                ;
             })
 
             // ---- USER ----
@@ -69,21 +88,6 @@ final class MaterialRequestIndex extends Component
                 $query->where(function ($q) use ($auth) {
                     $q->where('status', MaterialRequestStatus::Approved)
                         ->orWhere('user_id', $auth->id);
-                });
-            })
-
-            // ---- FILTERS ----
-            ->when($this->department, function ($query) {
-                $users = Department::with('users')->find($this->department)?->users ?? collect();
-                $query->whereIn('user_id', $users->pluck('id'));
-            })
-            ->when($this->by_status, function ($query) {
-                $query->where('status', $this->by_status);
-            })
-            ->when($this->search, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('reference', 'like', '%'.$this->search.'%')
-                        ->orWhere('status', 'like', '%'.$this->search.'%');
                 });
             })
             ->orderByDesc('id')
