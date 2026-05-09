@@ -1,5 +1,4 @@
 <div class="space-y-4">
-
     <x-table title="All Resident & Vehicle Offsite request" :addbtn="false">
         <x-slot:addcreate>
             <a href="{{ route('car.create') }}"
@@ -65,99 +64,104 @@
                         </x-select>
                     </div>
                 </div>
-
-
-
             </div>
         </x-slot:filter>
 
+        <!-- THEAD -->
+        <thead class="sticky top-0 z-20">
+            <tr class="uppercase tracking-wide text-[12px] bg-slate-100 text-slate-700 border-b">
+                <th class="px-4 py-2 font-semibold">ID</th>
+                <th class="px-4 py-2 font-semibold">Reference</th>
+                <th class="px-4 py-2 font-semibold">Date</th>
+                <th class="px-4 py-2 font-semibold">Company</th>
+                <th class="px-4 py-2 font-semibold">Department</th>
+                <th class="px-4 py-2 font-semibold">Requestor</th>
+                <th class="px-4 py-2 font-semibold">Status</th>
+                <th class="px-4 py-2 font-semibold text-center">Actions</th>
+            </tr>
+        </thead>
 
-        <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm bg-white">
-            <table class="min-w-[900px] w-full text-left text-[13px]">
+        <!-- TBODY -->
+        <tbody class="bg-white divide-y divide-gray-100">
+            @forelse ($this->rows as $row)
+                <tr wire:key="row-{{ $row->id }}"
+                    class="odd:bg-white even:bg-gray-50/40 hover:bg-slate-50 transition">
 
-                <!-- THEAD -->
-                <thead class="sticky top-0 z-20">
-                    <tr class="uppercase tracking-wide text-[12px] bg-slate-100 text-slate-700 border-b">
-                        <th class="px-4 py-2 font-semibold">ID</th>
-                        <th class="px-4 py-2 font-semibold">Reference</th>
-                        <th class="px-4 py-2 font-semibold">Date</th>
-                        <th class="px-4 py-2 font-semibold">Company</th>
-                        <th class="px-4 py-2 font-semibold">Department</th>
-                        <th class="px-4 py-2 font-semibold">Requestor</th>
-                        <th class="px-4 py-2 font-semibold text-center">Actions</th>
-                    </tr>
-                </thead>
+                    <td class="px-4 py-2 font-medium text-gray-800">
+                        #{{ $row->id }}
+                    </td>
 
-                <!-- TBODY -->
-                <tbody class="bg-white divide-y divide-gray-100">
-                    @forelse ($this->rows as $row)
-                        <tr wire:key="row-{{ $row->id }}"
-                            class="odd:bg-white even:bg-gray-50/40 hover:bg-slate-50 transition">
+                    <td class="px-4 py-2">
+                        <a href="{{ route('car.show', ['CarRequest' => $row]) }}"
+                            class="inline-flex items-center gap-1.5 rounded-md bg-indigo-50 px-2 py-1
+                            text-[11px] font-semibold text-indigo-700
+                            ring-1 ring-inset ring-indigo-200
+                            hover:bg-indigo-100 hover:text-indigo-800 transition">
+                            {{ $row->reference }}
+                        </a>
+                    </td>
 
-                            <td class="px-4 py-2 font-medium text-gray-800">
-                                #{{ $row->id }}
-                            </td>
+                    <td class="px-4 py-2 text-gray-700">
+                        {{ \Illuminate\Support\Str::of($row->created_at) }}
+                    </td>
 
-                            <td class="px-4 py-2">
-                                <a href="{{ route('car.show', ['CarRequest' => $row]) }}"
-                                    class="inline-flex items-center gap-1.5 rounded-md bg-indigo-50 px-2 py-1
-                                   text-[11px] font-semibold text-indigo-700
-                                   ring-1 ring-inset ring-indigo-200
-                                   hover:bg-indigo-100 hover:text-indigo-800 transition">
-                                    {{ $row->reference }}
-                                </a>
-                            </td>
+                    <td class="px-4 py-2">
+                        <span
+                            class="inline-flex items-center rounded-md bg-slate-50 px-2 py-1
+                            text-[11px] font-medium text-slate-700
+                            ring-1 ring-inset ring-slate-200">
+                            {{ $row->company }}
+                        </span>
+                    </td>
 
-                            <td class="px-4 py-2 text-gray-700">
-                                {{ \Illuminate\Support\Str::of($row->created_at) }}
-                            </td>
+                    <td class="px-4 py-2">
+                        <span
+                            class="inline-flex items-center rounded-md bg-slate-100 px-2 py-1
+                            text-[11px] font-medium text-slate-700
+                            ring-1 ring-inset ring-slate-200">
+                            {{ $row->user->department->name }}
+                        </span>
+                    </td>
 
-                            <td class="px-4 py-2">
-                                <span
-                                    class="inline-flex items-center rounded-md bg-amber-50 px-2 py-1
-                                   text-[11px] font-medium text-amber-700
-                                   ring-1 ring-inset ring-amber-200">
-                                    {{ $row->company }}
-                                </span>
-                            </td>
+                    <td class="px-4 py-2 text-gray-800">
+                        {{ $row->user->name }}
+                    </td>
 
-                            <td class="px-4 py-2">
-                                <span
-                                    class="inline-flex items-center rounded-md bg-slate-100 px-2 py-1
-                                   text-[11px] font-medium text-slate-700
-                                   ring-1 ring-inset ring-slate-200">
-                                    {{ $row->user->department->name }}
-                                </span>
-                            </td>
+                    <td class="px-4 py-2">
+                        <span 
+                            @class([
+                                "inline-flex items-center rounded-md px-2 py-1 text-[10px] item-center justify-center
+                                font-medium text-green-700 ring-1 ring-inset ring-green-700 w-16",
+                                'text-red-700 ring-red-700' => $row->isRejected(),
+                                'bg-red-100 text-red-700 ring-red-700' => $row->isExpired(),
+                                'text-orange-600 ring-orange-600' => $row->isPending(),
+                                'text-yellow-700 ring-yellow-700' => $row->isProgress(),
+                                'text-green-700 ring-green-700' => $row->isApproved(),
+                            ])>
+                            {{ $row->status }}
+                        </span>
+                    </td>
 
-                            <td class="px-4 py-2 text-gray-800">
-                                {{ $row->user->name }}
-                            </td>
+                    <!-- ACTIONS -->
+                    <td class="px-4 py-2">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <!-- on garde tes composants, mais on les rend plus compacts -->
+                            <x-button-edit href="{{ route('car.edit', ['CarRequest' => $row]) }}" :row="$row" />
 
-                            <!-- ACTIONS -->
-                            <td class="px-4 py-2">
-                                <div class="flex items-center justify-center gap-1.5">
-                                    <!-- on garde tes composants, mais on les rend plus compacts -->
-                                    <x-button-edit class="scale-90"
-                                        href="{{ route('car.edit', ['CarRequest' => $row]) }}" :row="$row" />
+                            <x-button-show href="{{ route('car.show', ['CarRequest' => $row]) }}" :row="$row" />
 
-                                    <x-button-show class="scale-90"
-                                        href="{{ route('car.show', ['CarRequest' => $row]) }}" :row="$row" />
-
-                                    <x-button-delete class="scale-90" :row="$row" :rowId="$row->id" />
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="px-4 py-8 text-center text-sm text-gray-400">
-                                No result
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                            <x-button-delete :row="$row" :rowId="$row->id" />
+                        </div>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="7" class="px-4 py-8 text-center text-sm text-gray-400">
+                        No result
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
 
     </x-table>
 </div>

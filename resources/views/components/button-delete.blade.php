@@ -5,17 +5,28 @@
 @php $modalId = 'delete_' . $rowId; @endphp
 @if ($row)
     @can('delete-request', $row)
-    <button command="show-modal" commandfor="dialog-{{ $modalId }}"
-        class="rounded-md  px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white">
-        <i data-lucide="trash-2"></i>
-
+    <button command="show-modal" commandfor="dialog-{{ $modalId }}" 
+        {{ $attributes->merge([
+        'class' => '
+        inline-flex items-center justify-center
+        w-7 h-7 rounded-md
+        border border-gray-200
+        bg-red-50
+        text-red-600
+        hover:text-white
+        hover:border-red-600
+        hover:bg-red-600
+        transition
+        ',
+    ]) }}>
+        <i data-lucide="trash-2" class="size-4"></i>
     </button>
     @endcan
-@else
+{{-- @else
     <button command="show-modal" commandfor="dialog-{{ $modalId }}"
-        class="rounded-md px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white">
-        <i data-lucide="trash-2"></i>
-    </button>
+        class="rounded-md bg-red-600 hover:bg-red-700 text-white">
+        <i data-lucide="trash-2" class="text-xs"></i>
+    </button> --}}
 @endif
 
 

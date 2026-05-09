@@ -51,41 +51,54 @@
             </div>
         </x-slot:filter>
 
-        <thead class="bg-gray-200 uppercase">
-            <tr>
+        <!-- THEAD -->
+        <thead class="sticky top-0 z-20">
+            <tr class="uppercase tracking-wide text-[12px] bg-slate-100 text-slate-700 border-b">
                 {{-- <th class="px-4 py-3">
                     <input type="checkbox" wire:click="selectAll" wire:model="selectedRows" id="select-all">
                 </th> --}}
-                <th class="px-4 py-3 text-left text-sm font-medium">ID</th>
-                <th class="px-4 py-3 text-left text-sm font-medium">reference</th>
-                <th class="px-4 py-3 text-left text-sm font-medium">Date</th>
-                <th class="px-4 py-3 text-left text-sm font-medium">Company</th>
-                <th class="px-4 py-3 text-left text-sm font-medium">Department</th>
+                <th class="px-4 py-2 text-left font-semibold">ID</th>
+                <th class="px-4 py-2 text-left font-semibold">reference</th>
+                <th class="px-4 py-2 text-left font-semibold">Date</th>
+                <th class="px-4 py-2 text-left font-semibold">Company</th>
+                <th class="px-4 py-2 text-left font-semibold">Department</th>
                 {{-- @if (Auth::user()->isGm() || Auth::user()->isHod())
-                <th class="px-4 py-3 text-left text-sm font-medium">Requestor</th>
+                <th class="px-4 py-3 text-left font-medium">Requestor</th>
                 @endif --}}
 
-                <th class="px-4 py-3 text-left text-sm font-medium">Actions</th>
+                <th class="px-4 py-2 text-left font-semibold">Actions</th>
             </tr>
         </thead>
+
+        <!-- TBODY -->
         <tbody class="divide-y divide-gray-100 bg-white">
             @forelse ($this->rows as $row)
             <tr wire:key="row-{{ $row->id }}">
                 {{-- <td class="px-4 py-3">
                     <input type="checkbox" wire:model.live="selectedRows" value="{{ $row->id }}">
                 </td> --}}
-                <td class="px-4 py-3">{{ $row->id }}</td>
-                <td class="px-4 py-3">{{ $row->reference }}</td>
-                <td class="px-4 py-3">{{ $row->created_at }}</td>
-                <td class="px-4 py-3">{{ $row->company }}</td>
-                <td class="px-4 py-3">{{ $row->user->department->name }}</td>
+                <td class="px-4 py-2">{{ $row->id }}</td>
+
+                <td class="px-4 py-2">
+                    <a href="{{ route('car.show', ['CarRequest' => $row]) }}"
+                        class="inline-flex items-center gap-1.5 rounded-md bg-indigo-50 px-2 py-1
+                        text-[11px] font-semibold text-indigo-700
+                        ring-1 ring-inset ring-indigo-200
+                        hover:bg-indigo-100 hover:text-indigo-800 transition">
+                        {{ $row->reference }}
+                    </a>
+                </td>
+
+                <td class="px-4 py-2">{{ $row->created_at }}</td>
+                <td class="px-4 py-2">{{ $row->company }}</td>
+                <td class="px-4 py-2">{{ $row->user->department->name }}</td>
                 {{-- @if (Auth::user()->isGm() || Auth::user()->isHod())
                 <td class="px-4 py-3 text-sm">
                     <x-form-request wire:key="request-{{ $row->id }}" :model="$row" type="car" />
                 </td>
                 @endif --}}
 
-                <td class="px-4 py-3">
+                <td class="px-4 py-2">
                     <x-button-edit href="{{ route('car.edit', ['CarRequest' => $row]) }}" :row="$row" />
                     <x-button-show href="{{ route('car.show', ['CarRequest' => $row]) }}" :row="$row" />
                     <x-button-delete :row="$row" />
@@ -93,7 +106,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="9" class="text-center">You have no pending approval requests</td>
+                <td colspan="9" class="text-center py-4">You have no pending approval requests</td>
             </tr>
             @endforelse
         </tbody>
