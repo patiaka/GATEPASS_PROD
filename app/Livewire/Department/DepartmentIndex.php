@@ -38,9 +38,11 @@ final class DepartmentIndex extends Component
     #[Computed]
     public function rows()
     {
-        return Department::select('id', 'name', 'created_at')
+        return Department::with('director')
+            ->select('id', 'name', 'director_id', 'created_at')
             ->when($this->search, function (Builder $query): void {
                 $query->whereLike('name', "%{$this->search}%");
-            })->latest()->paginate();
+            })->latest()->paginate()
+        ;
     }
 }

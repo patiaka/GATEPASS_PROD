@@ -9,6 +9,7 @@ enum RoleEnum: string
     case ADMIN = 'Administrator';
     case HOD = 'Head of Department';
     case GM = 'General Manager';
+    case DIRECTOR = 'Director';
     case USER = 'User';
     case Security = 'Security';
 
@@ -18,6 +19,7 @@ enum RoleEnum: string
             self::ADMIN => 'Administrator',
             self::HOD => 'Head of Department',
             self::GM => 'General Manager',
+            self::DIRECTOR => 'Director',
             self::Security => 'Security',
             self::USER => 'User',
         };

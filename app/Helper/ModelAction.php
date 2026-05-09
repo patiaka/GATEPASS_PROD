@@ -85,23 +85,26 @@ trait ModelAction
         $status = ['⏳ Pending', 'btn-secondary'];
 
         if ($actor === 'hod') {
-            if ($this->isHodApproved()) {
+            if ($this->isHodApproved() && ($this->isApproved() || $this->isProgress())) {
                 $status = ['✅ Approved', 'btn-success'];
+            } elseif ($this->isHodApproved() && !$this->isDirectorApproved() && !$this->isGmApproved() && $this->isRejected()) {
+                $status = ['❌ Rejected', 'btn-danger'];
             }
-            if ($this->isHodApproved() && $this->isRejected()) {
+        }
+
+        if ($actor === 'director') {
+            if ($this->isDirectorApproved() && ($this->isApproved() || $this->isProgress())) {
+                $status = ['✅ Approved', 'btn-success'];
+            } elseif ($this->isDirectorApproved() && !$this->isGmApproved() && $this->isRejected()) {
                 $status = ['❌ Rejected', 'btn-danger'];
             }
         }
 
         if ($actor === 'gm') {
-            if ($this->isApproved() && $this->isGmApproved()) {
+            if ($this->isGmApproved() && $this->isApproved()) {
                 $status = ['✅ Approved', 'btn-success'];
-            }
-            if ($this->isRejected() && $this->isGmApproved()) {
+            } elseif ($this->isGmApproved() && $this->isRejected()) {
                 $status = ['❌ Rejected', 'btn-danger'];
-            }
-            if ($this->isProgress()) {
-                $status = ['⏳ Pending', 'btn-secondary'];
             }
         }
 
@@ -112,6 +115,12 @@ trait ModelAction
     public function isGmApproved(): bool
     {
         return ! is_null($this->gm_approval_id);
+    }
+
+    // Vérifier si Director a validé
+    public function isDirectorApproved(): bool
+    {
+        return ! is_null($this->director_approval_id);
     }
 
     // Vérifier si HOD a validé
@@ -134,6 +143,24 @@ trait ModelAction
     public function hodApproval(): BelongsTo
     {
         return $this->belongsTo(User::class, 'hod_approval_id');
+    }
+
+    /**
+     * Get the director_approval that owns the MaterialRequest
+     */
+    public function directorApproval(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'director_approval_id');
+    }
+
+    public function isRequiredDirectorApproval(): bool
+    {
+        $department = $this->user()->first()->department;
+        $department->loadMissing('director');
+        // Si le département a un directeur, alors une approbation du directeur est nécessaire
+        // $this->isGmApproved() doit etre false pour eviter que l'approbation du director apparaisse sur les demandes 
+        // soumises avant l'implementation du workflow d'approbation du directeur
+        return $department->director !== null && !$this->isGmApproved();
     }
 
     /**

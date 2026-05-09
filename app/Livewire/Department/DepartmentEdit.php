@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Livewire\Department;
 
+use App\Enum\RoleEnum;
 use App\Livewire\Forms\DepartmentForm;
 use App\Models\Department;
+use App\Models\User;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -25,5 +27,12 @@ final class DepartmentEdit extends Component
     public function save()
     {
         $this->form->update();
+    }
+
+    public function render()
+    {
+        return view('livewire.department.department-edit',[
+            'users' => User::where('role', RoleEnum::DIRECTOR->value)->orderBy('name', 'ASC')->get(),
+        ]);
     }
 }

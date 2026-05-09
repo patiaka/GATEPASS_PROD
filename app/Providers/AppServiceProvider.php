@@ -67,7 +67,8 @@ final class AppServiceProvider extends ServiceProvider
 
         Gate::define('show-request', function (User $user, MaterialRequest|CarRequest $Request) {
             if ($Request instanceof CarRequest || $Request instanceof MaterialRequest) {
-                if ($user->isGm() || $user->isHod() || $user->isAdmin() || $user->isSecurity()) {
+                // if ($user->isGm() || $user->isHod() || $user->isAdmin() || $user->isSecurity()) {
+                if ($user->isApprover() || $user->isAdmin() || $user->isSecurity()) {
                     return true;
                 }
 
@@ -92,7 +93,8 @@ final class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('action-approved-request', function (User $user) {
-            return $user->isGm() || $user->isHod();
+            // return $user->isGm() || $user->isHod();
+            return $user->isApprover();
         });
     }
 }

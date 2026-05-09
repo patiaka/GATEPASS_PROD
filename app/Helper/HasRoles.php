@@ -28,6 +28,7 @@ trait HasRoles
         return match ($role) {
             RoleEnum::ADMIN->value => $this->isAdmin(),
             RoleEnum::GM->value => $this->isGm(),
+            RoleEnum::DIRECTOR->value => $this->isDirector(),
             RoleEnum::HOD->value => $this->isHod(),
             RoleEnum::Security->value => $this->isSecurity(),
             RoleEnum::USER->value => $this->isUser(),
@@ -66,8 +67,18 @@ trait HasRoles
         return $this->getEffectiveRole() === RoleEnum::HOD;
     }
 
+    public function isDirector(): bool
+    {
+        return $this->getEffectiveRole() === RoleEnum::DIRECTOR;
+    }
+
     public function isGm(): bool
     {
         return $this->getEffectiveRole() === RoleEnum::GM;
+    }
+
+    public function isApprover(): bool
+    {
+        return $this->isHod() || $this->isDirector() || $this->isGm();
     }
 }

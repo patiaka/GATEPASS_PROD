@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Forms;
 
 use App\Models\Department;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
@@ -15,26 +16,38 @@ final class DepartmentForm extends Form
     #[Validate('required|string|unique:departments,name')]
     public string $name = '';
 
+    #[Validate('nullable|exists:users,id')]
+    public string|null $director_id = '';
+
     public function setDepartment(Department $department): void
     {
         $this->department = $department;
 
         $this->name = $department->name;
+        $this->director_id = $department->director_id;
     }
 
     public function store(): void
     {
-        $this->validate();
-        Department::create($this->only(['name']));
+        $validated = $this->validate();
+        $validated['director_id'] = $validated['director_id'] === '' ? null : $validated['director_id'];
+
+        Department::create($validated);
+
         $this->reset();
         flash()->success('Department added successfully');
     }
 
     public function update(): void
     {
-        $this->validate();
+        $validated = $this->validate([
+            'name' => ['required', 'string', Rule::unique('departments', 'name')->ignore($this->department->id)],
+            'director_id' => ['nullable', 'exists:users,id'],
+        ]);
 
-        $this->department->update($this->only(['name']));
+        $validated['director_id'] = $validated['director_id'] === '' ? null : $validated['director_id'];
+
+        $this->department->update($validated);
         flash()->success('Department updated successfully');
     }
 }

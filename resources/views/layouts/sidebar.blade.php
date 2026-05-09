@@ -198,7 +198,7 @@
                 </details>
             </li>
 
-            @if (Auth::user()->isGm() || Auth::user()->isHod())
+            @if (Auth::user()->isApprover())
                 <li>
                     @php $apprOpen = request()->routeIs('material.pending') || request()->routeIs('car.pending'); @endphp
                     <details class="group" {{ $apprOpen ? 'open' : '' }}>

@@ -1,32 +1,43 @@
 @props(['type','model'])
 
 @php
-    $isHod = Auth::user()->isHod();
-    $isGm = Auth::user()->isGm();
-    $isCreator = $model->user_id === Auth::id();
-    $isApprovedCheck = $isHod ? $model->isHodApproved() : $model->isGmApproved();
-    $role = $isHod ? 'HOD' : ($isGm ? 'GM' : '');
-    $approveMethod = $isHod ? 'approveByHod' : 'approveByGm';
-    $commentField = $isHod ? 'hod_comment' : 'gm_comment';
+    $user = Auth::user();
+    // $isHod = $user->isHod();
+    // $isGm = $user->isGm();
+    // $isCreator = $model->user_id === Auth::id();
+    // $isApprovedCheck = $isHod ? $model->isHodApproved() : $model->isGmApproved();
+    // $role = $isHod ? 'HOD' : ($isGm ? 'GM' : '');
+    // $approveMethod = $isHod ? 'approveByHod' : 'approveByGm';
+    // $commentField = $isHod ? 'hod_comment' : 'gm_comment';
 
-    $hodApproved = $model->isHodApproved();
-    $gmApproved = $model->isGmApproved();
+    // $hodApproved = $model->isHodApproved();
+    // $gmApproved = $model->isGmApproved();
 
-    $canShowBtn = false;
+    // $canShowBtn = false;
 
-    if ($isHod) {
-        $canShowBtn = !$hodApproved ;
-    } elseif ($isGm) {
-        $canShowBtn = (!$gmApproved && !$model->isRejected() && ($hodApproved || $isCreator));
+    // if ($user->isHod()) {
+    //     $canShowBtn = !$hodApproved ;
+    // } elseif ($user->isDirector()) {
+    //     $canShowBtn = (!$gmApproved && !$model->isRejected() && ($hodApproved || $isCreator));
+    // } elseif ($user->isGm()) {
+    //     $canShowBtn = (!$gmApproved && !$model->isRejected() && ($hodApproved || $isCreator));
+    // }
+
+    if ($user->isHod()) {
+        $approveMethod = 'approveByHod';
+    } elseif ($user->isDirector()) {
+        $approveMethod = 'approveByDirector';
+    } elseif ($user->isGm()) {
+        $approveMethod = 'approveByGm';
     }
 @endphp
 
-@if ($canShowBtn)
+{{-- @if ($canShowBtn) --}}
 <button x-data @click="$dispatch('open-modal', { id: 'dialog-{{ $model->id }}' })"
-    class="text-blue-600 border border-blue-600 px-3 py-1 rounded hover:bg-blue-600 hover:text-white">
+    class="text-white bg-[#0e3a61] border border-[#0e3a61] px-3 py-1 rounded hover:bg-white hover:text-[#0e3a61]">
     Submit Response
 </button>
-@endif
+{{-- @endif --}}
 
 {{-- Modal téléporté dans le body --}}
 <template x-teleport="body">
@@ -45,17 +56,18 @@
             x-on:submit.window="open = false">
                 <div class="space-y-4">
                     {{-- Comments --}}
-                    @if (!$isApprovedCheck)
+                    {{-- @if (!$isApprovedCheck) --}}
                     <div>
-                        <label class="block text-sm font-medium mb-1">{{ $role }} comments</label>
-                        <textarea wire:model="{{ $commentField }}"
+                        {{-- <label class="block text-sm font-medium mb-1">{{ $role }} comments</label> --}}
+                        <label class="block text-sm font-medium mb-1">Comments</label>
+                        <textarea wire:model="comment"
                             class="w-full border border-gray-300 rounded-lg px-3 py-2" rows="4"
                             placeholder="Write your response..."></textarea>
-                        @error($commentField)
+                        @error('comment')
                         <small class="text-red-600">{{ $message }}</small>
                         @enderror
                     </div>
-                    @endif
+                    {{-- @endif --}}
 
                     {{-- Decision --}}
                     <div>

@@ -8,6 +8,7 @@ use App\Helper\DateFormat;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 final class Department extends Model
 {
@@ -19,7 +20,7 @@ final class Department extends Model
      *
      * @var array
      */
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'director_id'];
 
     /**
      * Get all of the users for the Department
@@ -27,5 +28,10 @@ final class Department extends Model
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
+    }
+
+    public function director(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'director_id');
     }
 }

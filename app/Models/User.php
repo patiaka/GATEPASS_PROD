@@ -100,6 +100,14 @@ final class User extends Authenticatable
     }
 
     /**
+     * Get all of the director_approvals for the User
+     */
+    public function director_approvals(): HasMany
+    {
+        return $this->hasMany(MaterialRequest::class, 'director_approval_id');
+    }
+
+    /**
      * Get all of the gm_approvals for the User
      */
     public function gm_approvals(): HasMany
@@ -113,6 +121,14 @@ final class User extends Authenticatable
     public function hod_car_approvals(): HasMany
     {
         return $this->hasMany(CarRequest::class, 'hod_approval_id');
+    }
+
+    /**
+     * Get all of the director_approvals for the User
+     */
+    public function director_car_approvals(): HasMany
+    {
+        return $this->hasMany(CarRequest::class, 'director_approval_id');
     }
 
     /**
@@ -132,10 +148,14 @@ final class User extends Authenticatable
             : $this->name;
     }
 
+    /**
+     * @param MaterialRequest|CarRequest $request
+     */
     public function canApprove($request): bool
     {
         $isCreator = $request->user_id === $this->id;
         $hodApproved = $request->isHodApproved();
+        $directorApproved = $request->isDirectorApproved();
         $gmApproved = $request->isGmApproved();
 
         // Si user est HOD
@@ -143,10 +163,22 @@ final class User extends Authenticatable
             return ! $hodApproved;
         }
 
+        // Si user est DIRECTOR
+        if ($this->isDirector()) {
+            // Director ne peut approuver que si HOD a approuvé, sauf si GM est le créateur
+            return ! $directorApproved && ($hodApproved || $isCreator);
+        }
+
         // Si user est GM
         if ($this->isGm()) {
             // GM ne peut approuver que si HOD a approuvé, sauf si GM est le créateur
-            return ! $gmApproved && ($hodApproved || $isCreator);
+            // return ! $gmApproved && ($hodApproved || $isCreator);
+            $request = $request->load('user.department.director');
+            if ($request->user->department->director) {
+                return ! $gmApproved && ($directorApproved || $isCreator);
+            } else {
+                return ! $gmApproved && ($hodApproved || $isCreator);
+            }
         }
 
         return false;

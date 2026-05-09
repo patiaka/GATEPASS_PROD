@@ -13,9 +13,6 @@
                 Create a new department
             </p>
         </div>
-
-        <x-form route='save' url="{{ route('department.index') }}">
-            <x-input type="text" wire:model="form.name" name="form.name" label="Name" place="name of department" />
-        </x-form>
+        @include('livewire.department._form')
     </div>
 </div>

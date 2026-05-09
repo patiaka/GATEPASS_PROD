@@ -152,11 +152,11 @@
                     Approval Signatures
                 </h3>
 
-                @if (Auth::user()->canApprove($MaterialRequest) && (Auth::user()->isHod() || Auth::user()->isGm()))
-                    <div class="w-1/3 flex justify-end">
+                <div class="w-1/3 flex justify-end">
+                    @if (Auth::user()->canApprove($MaterialRequest) && Auth::user()->isApprover())
                         <x-form-request :model="$MaterialRequest" type="material" />
-                    </div>
-                @endif
+                    @endif
+                </div>
 
             </div>
             <table class="w-full text-sm border border-gray-300 text-center">
@@ -176,6 +176,7 @@
                         <td class="p-2 border">{{ $MaterialRequest->user->poste }}</td>
                         <td class="p-2 border">✅ Approved</td>
                     </tr>
+                    
                     {{-- HOD --}}
                     <tr>
                         <td class="p-2 border">
@@ -194,6 +195,28 @@
                             @endif --}}
                         </td>
                     </tr>
+
+                    {{-- Director --}}
+                    @if ($MaterialRequest->isRequiredDirectorApproval())
+                    <tr>
+                        <td class="p-2 border">
+                            {{ $MaterialRequest->directorApproval ? $MaterialRequest->directorApproval->department->name : '—' }}
+                        </td>
+                        <td class="p-2 border">
+                            {{ $MaterialRequest->directorApproval ? $MaterialRequest->directorApproval->name : '—' }}
+                        </td>
+                        <td class="p-2 border">
+                            {{ $MaterialRequest->directorApproval ? $MaterialRequest->directorApproval->poste : '—' }}
+                        </td>
+                        <td class="p-2 border">
+                            <x-request-status :status="$MaterialRequest->getStatusFor('director')" />
+                            {{-- @if (Auth::user()->canApprove($MaterialRequest) && Auth::user()->isDirector())
+                            <x-form-request :model="$MaterialRequest" type="material" />
+                            @endif --}}
+                        </td>
+                    </tr>
+                    @endif
+
                     {{-- GM --}}
                     <tr>
                         <td class="p-2 border">

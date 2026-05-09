@@ -2,9 +2,9 @@
 {{-- @if ($type === 'update')
 <h2 class="p-4 text-center text-2xl">Update form</h2>
 @endif --}}
-<form wire:submit='{{ $route }}'>
+<form wire:submit='{{ $route }}' class="grid gap-4">
     {{ $slot }}
-    <div class="flex mt-4 justify-end gap-2">
+    <div class="flex justify-end gap-2">
         @if ($url)
             <a href="{{ $url }}" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md">
                 Cancel

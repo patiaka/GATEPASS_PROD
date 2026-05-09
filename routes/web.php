@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
     // Seuls HOD, GM et Admin
-    Route::middleware('role:' . RoleEnum::HOD->value . ',' . RoleEnum::GM->value . ',' . RoleEnum::ADMIN->value)
+    Route::middleware('role:' . RoleEnum::HOD->value . ',' . RoleEnum::GM->value . ',' . RoleEnum::ADMIN->value . ',' . RoleEnum::DIRECTOR->value)
         ->group(function () {
             Route::get('material/request/pending', MaterialRequestPending::class)->name('material.pending');
             Route::get('car/request/pending', CarRequestPending::class)->name('car.pending');

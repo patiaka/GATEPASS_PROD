@@ -22,7 +22,37 @@ final class CarRequest extends Model
      *
      * @var array
      */
-    protected $fillable = ['reference', 'user_id', 'gm_approval_id', 'gm_comment', 'gm_approval_date', 'hod_approval_id', 'hod_comment', 'hod_approval_date', 'somisy_car', 'resident', 'car_type', 'car_number', 'start', 'end', 'depart_at', 'arrive_at', 'destination', 'company', 'passenger_id', 'car_driver_id', 'status', 'expire_at', 'reason', 'route', 'company', 'comment'];
+    protected $fillable = [
+        'reference', 
+        'user_id', 
+        'gm_approval_id', 
+        'gm_comment', 
+        'gm_approval_date', 
+        'director_approval_id', 
+        'director_comment', 
+        'director_approval_date', 
+        'hod_approval_id', 
+        'hod_comment', 
+        'hod_approval_date', 
+        'somisy_car', 
+        'resident', 
+        'car_type', 
+        'car_number', 
+        'start', 
+        'end', 
+        'depart_at', 
+        'arrive_at', 
+        'destination', 
+        'company', 
+        'passenger_id', 
+        'car_driver_id', 
+        'status', 
+        'expire_at', 
+        'reason', 
+        'route', 
+        'company', 
+        'comment'
+    ];
 
     protected $appends = ['full_name'];
 

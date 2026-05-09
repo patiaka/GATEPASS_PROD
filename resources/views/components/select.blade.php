@@ -1,6 +1,6 @@
 @props([
 'disabled' => false,
-'required' => true,
+'required' => false,
 'name' => '',
 'place' => '',
 'label' => '',
@@ -32,7 +32,7 @@
     @if($disabled) disabled @endif
     @if($required) required @endif
 >
-    <option value="" disabled selected class="text-gray-400">
+    <option value="" selected class="text-gray-400">
         Select {{ $label }}
     </option>
 

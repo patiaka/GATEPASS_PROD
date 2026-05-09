@@ -3,11 +3,11 @@
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 gap-4">
         <div>
             <h1 class="font-semibold text-2xl text-[#134169]">Resident & Vehicle Off Site Details</h1>
-            <div class="flex items-center gap-3 mt-2 text-sm text-slate-600">
+            <div class="flex items-center mt-2 text-sm text-slate-600">
                 <span class="whitespace-nowrap">#Request ID {{ $carRequest->reference }} | Status:</span>
 
                 <span @class([
-                    'inline-flex items-center justify-center w-4 h-4 rounded-full shadow-sm -mt-0.5 shrink-0',
+                    'inline-flex items-center justify-center w-4 h-4 rounded-full shadow-sm -mt-0.5 ml-2 shrink-0',
                     'bg-red-500 border-red-500' =>
                         $carRequest->isRejected() || $carRequest->isExpired(),
                     'bg-orange-200 border-orange-200' => $carRequest->isPending(),
@@ -39,8 +39,6 @@
 
                 Back to list
             </a>
-
-
 
             <a href="{{ route('car.edit', ['CarRequest' => $carRequest]) }}"
                 class="inline-flex items-center justify-center w-10 h-10 rounded-xl
@@ -233,7 +231,7 @@
             </h2>
 
             {{-- Submit Response Button (top right) --}}
-            @if (Auth::user()->canApprove($carRequest) && (Auth::user()->isHod() || Auth::user()->isGm()))
+            @if (Auth::user()->canApprove($carRequest) && Auth::user()->isApprover())
                 <x-form-request :model="$carRequest" type="vehicle" />
             @endif
         </div>
@@ -244,7 +242,7 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="w-12 text-left px-4 py-2 font-semibold text-gray-700">#</th>
-                        <th class="w-12 text-left px-4 py-2 font-semibold text-gray-700">Name</th>
+                        <th class="w-1/4 text-left px-4 py-2 font-semibold text-gray-700">Name</th>
                         <th class="w-1/4 text-left px-4 py-2 font-semibold text-gray-700">Approver Position</th>
                         <th class="w-1/4 text-left px-4 py-2 font-semibold text-gray-700">Status</th>
                         <th class="text-left px-4 py-2 font-semibold text-gray-700">Comments</th>
@@ -252,10 +250,12 @@
                 </thead>
 
                 <tbody class="divide-y divide-gray-200">
-
+                    @php
+                        $index = 1;
+                    @endphp
                     {{-- HOD --}}
                     <tr>
-                        <td class="px-4 py-3 font-medium">1</td>
+                        <td class="px-4 py-3 font-medium">{{ $index++ }}</td>
                         <td class="px-4 py-3 font-medium">
                             {{ $carRequest->hodApproval ? $carRequest->hodApproval->name : '—' }}</td>
 
@@ -275,9 +275,33 @@
                         </td>
                     </tr>
 
+                    {{-- Director --}}
+                    @if ($carRequest->isRequiredDirectorApproval())
+                    <tr>
+                        <td class="px-4 py-3 font-medium">{{ $index++ }}</td>
+                        <td class="px-4 py-3">
+                            <span class="inline-flex items-center gap-2">
+                                {{ $carRequest->directorApproval ? $carRequest->directorApproval->name : '—' }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3">
+                            <span class="inline-flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                {{ $carRequest->directorApproval ? $carRequest->directorApproval->poste : 'DIRECTOR' }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3">
+                            <x-request-status :status="$carRequest->getStatusFor('director')" />
+                            {{-- @if (Auth::user()->canApprove($MaterialRequest) && Auth::user()->isDirector())
+                            <x-form-request :model="$MaterialRequest" type="material" />
+                            @endif --}}
+                        </td>
+                    </tr>
+                    @endif
+
                     {{-- GM --}}
                     <tr>
-                        <td class="px-4 py-3 font-medium">2</td>
+                        <td class="px-4 py-3 font-medium">{{ $index++ }}</td>
                         <td class="px-4 py-3 font-medium">
                             {{ $carRequest->gmApproval ? $carRequest->gmApproval->name : '—' }}</td>
                         <td class="px-4 py-3">

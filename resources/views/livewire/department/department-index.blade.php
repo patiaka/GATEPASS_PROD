@@ -13,6 +13,7 @@
                     <tr>
                         <th scope="col" class="px-3 py-2 text-left font-semibold">ID</th>
                         <th scope="col" class="px-3 py-2 text-left font-semibold">Name</th>
+                        <th scope="col" class="px-3 py-2 text-left font-semibold">Director</th>
                         <th scope="col" class="px-3 py-2 text-left font-semibold">Date</th>
                         <th scope="col" class="px-3 py-2 text-center font-semibold">Action</th>
                     </tr>
@@ -31,6 +32,16 @@
                             <td class="px-3 py-2 text-gray-700">
                                 <span class="truncate block max-w-[360px]" title="{{ $row->name }}">
                                     {{ $row->name }}
+                                </span>
+                            </td>
+
+                            <td class="px-3 py-2 text-gray-600 whitespace-nowrap">
+                                <span
+                                    @class([ 'inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold border'
+                                    , 'bg-emerald-50 text-emerald-700 border-emerald-200'=> $row->director_id !== null,
+                                    // 'bg-rose-50 text-rose-700 border-rose-200' => $row->director_id === null,
+                                    ])>
+                                    {{ $row->director ? $row->director->name : 'n/a' }}
                                 </span>
                             </td>
 
