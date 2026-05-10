@@ -7,6 +7,7 @@ namespace App\Livewire\MaterialRequest;
 use App\Enum\MaterialRequestStatus;
 use App\Models\MaterialRequest;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -35,7 +36,6 @@ final class MaterialRequestCheckInCreate extends Component
 
     public function recordSecurityCheck()
     {
-
         $this->validate();
         $item = MaterialRequest::findOrFail($this->material_request_id);
         // Vérifier expiration

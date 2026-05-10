@@ -103,25 +103,7 @@
                     {{-- Buttons --}}
                     <div class="pt-6 border-t border-gray-100 flex justify-end gap-3">
 
-                        <a href="{{ route('material.check') }}"
-                            class="px-5 py-2.5 rounded-xl border border-gray-300 bg-white
-                      text-slate-700 hover:bg-gray-50 transition">
-                            Cancel
-                        </a>
-
-                        <button type="submit" wire:loading.attr="disabled" wire:target="recordSecurityCheck"
-                            class="px-5 py-2.5 rounded-xl bg-[#0f4b73] hover:bg-[#0b3b5b]
-                       text-white font-semibold shadow-sm transition">
-
-                            <span wire:loading.remove wire:target="recordSecurityCheck">
-                                Submit Check
-                            </span>
-
-                            <span wire:loading wire:target="recordSecurityCheck">
-                                Processing...
-                            </span>
-
-                        </button>
+                        <x-form-action cancel="material.check" target="recordSecurityCheck" />
 
                     </div>
 

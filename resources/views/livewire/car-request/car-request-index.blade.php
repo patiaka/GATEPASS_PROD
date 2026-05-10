@@ -1,5 +1,5 @@
 <div class="space-y-4">
-    <x-table title="All Resident & Vehicle Offsite request" :addbtn="false">
+    <x-table title="All Resident & Vehicle Offsite request" :addbtn="false" :rows="$this->rows">
         <x-slot:addcreate>
             <a href="{{ route('car.create') }}"
                 class="inline-flex items-center gap-2 px-4 py-2 rounded-lg
@@ -70,7 +70,7 @@
         <!-- THEAD -->
         <thead class="sticky top-0 z-20">
             <tr class="uppercase tracking-wide text-[12px] bg-slate-100 text-slate-700 border-b">
-                <th class="px-4 py-2 font-semibold">ID</th>
+                {{-- <th class="px-4 py-2 font-semibold">#</th> --}}
                 <th class="px-4 py-2 font-semibold">Reference</th>
                 <th class="px-4 py-2 font-semibold">Date</th>
                 <th class="px-4 py-2 font-semibold">Company</th>
@@ -87,9 +87,9 @@
                 <tr wire:key="row-{{ $row->id }}"
                     class="odd:bg-white even:bg-gray-50/40 hover:bg-slate-50 transition">
 
-                    <td class="px-4 py-2 font-medium text-gray-800">
+                    {{-- <td class="px-4 py-2 font-medium text-gray-800">
                         #{{ $row->id }}
-                    </td>
+                    </td> --}}
 
                     <td class="px-4 py-2">
                         <a href="{{ route('car.show', ['CarRequest' => $row]) }}"

@@ -1,4 +1,4 @@
-<x-form route='save' type="update" url="{{ route('department.index') }}">
+<x-form action='save' type="update" route="department.index">
     <div>
         <x-input type="text" wire:model="form.name" name="form.name" label="Nom" place="name of department" />
     </div>

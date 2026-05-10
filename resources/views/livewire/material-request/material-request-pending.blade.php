@@ -1,5 +1,5 @@
 <div>
-    <x-table title="Material Gate Pass Approval" :addbtn="false">
+    <x-table title="Material Gate Pass Approval" :addbtn="false" :rows="$this->rows">
         {{-- <x-slot:filter>
             <div class="flex flex-wrap gap-4 items-end">
                 @if(!empty($selectedRows))
@@ -49,7 +49,7 @@
                 {{-- <th class="px-4 py-3">
                     <input type="checkbox" wire:click="selectAll" wire:model="selectedRows" id="select-all">
                 </th> --}}
-                <th class="px-4 py-2 text-left font-semibold">ID</th>
+                {{-- <th class="px-4 py-2 text-left font-semibold">#</th> --}}
                 <th class="px-4 py-2 text-left font-semibold">reference</th>
                 <th class="px-4 py-2 text-left font-semibold">Date</th>
                 <th class="px-4 py-2 text-left font-semibold">Company</th>
@@ -63,31 +63,38 @@
 
         <tbody class="divide-y divide-gray-100 bg-white">
             @forelse ($this->rows as $row)
-            <tr wire:key="row-{{ $row->id }}">
-                {{-- <td class="px-4 py-2">
-                    <input type="checkbox" wire:model.live="selectedRows" value="{{ $row->id }}">
-                </td> --}}
-                <td class="px-4 py-2">{{ $row->id }}</td>
-                <td class="px-4 py-2">{{ $row->reference }}</td>
-                <td class="px-4 py-2">{{ $row->created_at }}</td>
-                <td class="px-4 py-2">{{ $row->company }}</td>
-                <td class="px-4 py-2">{{ $row->user->department->name }}</td>
+                <tr wire:key="row-{{ $row->id }}">
+                    {{-- <td class="px-4 py-2">
+                        <input type="checkbox" wire:model.live="selectedRows" value="{{ $row->id }}">
+                    </td> --}}
+                    {{-- <td class="px-4 py-2">{{ $index + 1 }}</td> --}}
+                    <td class="px-4 py-2">
+                        <a href="{{ route('material.show', ['MaterialRequest' => $row]) }}"
+                            class="inline-flex items-center gap-1.5 rounded-md bg-indigo-50 px-2 py-1
+                            text-[11px] font-semibold text-indigo-700
+                            ring-1 ring-inset ring-indigo-200
+                            hover:bg-indigo-100 hover:text-indigo-800 transition">
+                            {{ $row->reference }}
+                        </a>
+                    </td>
 
-                {{-- @if (Auth::user()->isGm() || Auth::user()->isHod())
-                <td class="px-4 py-3 text-sm">
-                    <x-form-request wire:key="request-{{ $row->id }}" :model="$row" type="material" />
-                </td>
-                @endif --}}
-                <td class="px-4 py-3">
-                    <x-button-edit href="{{ route('material.edit', ['MaterialRequest' => $row]) }}" :row="$row" />
-                    <x-button-show href="{{ route('material.show', ['MaterialRequest' => $row]) }}" :row="$row" />
-                    <x-button-delete :row="$row" />
-                </td>
-            </tr>
+                    <td class="px-4 py-2">{{ $row->created_at }}</td>
+                    <td class="px-4 py-2">{{ $row->company }}</td>
+                    <td class="px-4 py-2">{{ $row->user->department->name }}</td>
+                    <td class="px-4 py-3 flex items-center gap-2">
+                        <x-button-edit href="{{ route('material.edit', ['MaterialRequest' => $row]) }}" :row="$row" />
+                        <x-button-show href="{{ route('material.show', ['MaterialRequest' => $row]) }}" :row="$row" />
+                        <x-button-delete :row="$row" />
+
+                        @if (Auth::user()->isGm() || Auth::user()->isHod())
+                            <x-form-request wire:key="request-{{ $row->id }}" :model="$row" type="material" />
+                        @endif
+                    </td>
+                </tr>
             @empty
-            <tr>
-                <td colspan="9" class="text-center py-4">You have no pending approval requests</td>
-            </tr>
+                <tr>
+                    <td colspan="9" class="text-center py-4">You have no pending approval requests</td>
+                </tr>
             @endforelse
         </tbody>
 

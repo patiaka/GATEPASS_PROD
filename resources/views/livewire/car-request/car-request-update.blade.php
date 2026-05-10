@@ -367,30 +367,8 @@
         </div>
 
         <!-- Actions -->
-        <div class="pt-6">
-            <div class="flex justify-start gap-3">
-                <a href="{{ route('car.index') }}"
-                    class="px-3 py-1.5 border border-gray-300 rounded-md shadow-sm text-xs font-medium text-gray-700 bg-white hover:bg-gray-50">
-                    Cancel
-                </a>
-                <button type="submit"
-                    class="px-3 py-1.5 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-[#0e3a61]"
-                    wire:loading.attr="disabled" wire:target="save">
-                    <span wire:loading.remove wire:target="save">Submit</span>
-                    <span wire:loading wire:target="save" class="inline-flex items-center">
-                        <svg class="animate-spin -ml-1 mr-2 size-3.5" xmlns="http://www.w3.org/2000/svg"
-                            fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                stroke-width="4">
-                            </circle>
-                            <path class="opacity-75" fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                            </path>
-                        </svg>
-                        Processing...
-                    </span>
-                </button>
-            </div>
+        <div class="flex justify-start gap-3 mt-6">
+            <x-form-action cancel="car.index" target="save" />
         </div>
     </form>
 </div>

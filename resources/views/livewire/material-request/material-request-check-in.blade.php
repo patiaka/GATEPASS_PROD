@@ -183,7 +183,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-4 py-8 text-center text-sm text-gray-400">
+                            <td colspan="12" class="px-4 py-8 text-center text-sm text-gray-400">
                                 No result
                             </td>
                         </tr>
@@ -193,5 +193,11 @@
             </table>
         </div>
 
+        {{-- Pagination --}}
+        @if ($this->rows)
+            <div class="p-4">
+                {{ $this->rows->links() }}
+            </div>
+        @endif
     </div>
 </div>

@@ -39,7 +39,7 @@
                     <div class="my-6">
                         <h5 class="mb-4 text-lg font-medium">Material infos</h5>
                         @foreach ($form->materials as $index => $material)
-                            <div class="grid grid-cols-12 gap-4 mb-3 items-end">
+                            <div class="grid grid-cols-12 gap-4 mb-3 items-start">
                                 <!-- Désignation -->
                                 <div class="col-span-3">
                                     <label for="designation"
@@ -64,6 +64,8 @@
                                         <small class="text-red-500 text-sm">{{ $message }}</small>
                                     @enderror
                                 </div>
+
+                                <!-- Additional info -->
                                 <div class="col-span-3">
                                     <label for="serial_number"
                                         class="block text-sm font-medium text-gray-700 mb-1">Additional info
@@ -77,9 +79,9 @@
                                 </div>
 
                                 <!-- Bouton supprimer -->
-                                <div class="col-span-2">
+                                <div class="col-span-2 mt-6">
                                     <button type="button" wire:click="removeMaterial({{ $index }})"
-                                        class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                        class="w-full flex items-center justify-center px-4 py-2 border border-transparent font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -128,27 +130,8 @@
                     @enderror
                 </div>
 
-                <div class="flex justify-center gap-4 mt-6">
-                    <a href="{{ route('material.index') }}" role="button"
-                        class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Cancel
-                    </a>
-                    <button type="submit"
-                        class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#0e3a61] hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                        wire:loading.attr="disabled" wire:target="save">
-                        <span wire:loading.remove wire:target="save">Validate</span>
-                        <span wire:loading wire:target="save" class="inline-flex items-center">
-                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                                fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10"
-                                    stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
-                            </svg>
-                            Processing...
-                        </span>
-                    </button>
+                <div class="flex justify-center gap-4">
+                    <x-form-action cancel="material.index" target="save" />
                 </div>
             </form>
         </div>

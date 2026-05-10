@@ -1,5 +1,5 @@
 <div>
-    <x-table title="Resident & Vehicle offsite Approval" :addbtn="false">
+    <x-table title="Resident & Vehicle offsite Approval" :addbtn="false" :rows="$this->rows">
         <x-slot:filter>
             <div class="flex flex-wrap gap-4 items-end">
 
@@ -57,7 +57,7 @@
                 {{-- <th class="px-4 py-3">
                     <input type="checkbox" wire:click="selectAll" wire:model="selectedRows" id="select-all">
                 </th> --}}
-                <th class="px-4 py-2 text-left font-semibold">ID</th>
+                {{-- <th class="px-4 py-2 text-left font-semibold">ID</th> --}}
                 <th class="px-4 py-2 text-left font-semibold">reference</th>
                 <th class="px-4 py-2 text-left font-semibold">Date</th>
                 <th class="px-4 py-2 text-left font-semibold">Company</th>
@@ -77,7 +77,7 @@
                 {{-- <td class="px-4 py-3">
                     <input type="checkbox" wire:model.live="selectedRows" value="{{ $row->id }}">
                 </td> --}}
-                <td class="px-4 py-2">{{ $row->id }}</td>
+                {{-- <td class="px-4 py-2">{{ $row->id }}</td> --}}
 
                 <td class="px-4 py-2">
                     <a href="{{ route('car.show', ['CarRequest' => $row]) }}"

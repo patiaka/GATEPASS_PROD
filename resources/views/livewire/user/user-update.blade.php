@@ -12,7 +12,7 @@
                 </p>
             </div>
 
-            <x-form route="save" type="update" url="{{ route('user.index') }}">
+            <x-form action="save" type="update" route="user.index">
 
                 <div class="space-y-5">
 
