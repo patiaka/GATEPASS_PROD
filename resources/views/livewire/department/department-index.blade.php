@@ -66,7 +66,7 @@
 
                             <!-- Delete -->
                             <button
-                                wire:click="$emit('deleteRow', {{ $row->id }})"
+                                wire:click="delete({{ $row->id }})"
                                 class="p-1.5 rounded-md border border-gray-200 text-gray-600
                                         hover:text-red-600 hover:border-red-600 
                                         hover:bg-red-50 transition">

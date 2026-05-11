@@ -23,10 +23,16 @@ final class DepartmentIndex extends Component
 
     public function delete(int $id): void
     {
-        $row = Department::find($id);
+        $row = Department::with('users')->find($id);
 
         if (! $row) {
             flash()->error('Department not found.');
+
+            return;
+        }
+
+        if ($row->users->count() > 0) {
+            flash()->error(sprintf('Department %s has users, delete them first.', strtoupper($row->name)));
 
             return;
         }
