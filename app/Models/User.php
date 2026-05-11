@@ -9,7 +9,6 @@ namespace App\Models;
 use App\Enum\RoleEnum;
 use App\Helper\DateFormat;
 use App\Helper\HasRoles;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -17,7 +16,6 @@ use Illuminate\Notifications\Notifiable;
 
 final class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use DateFormat, HasRoles, Notifiable;
 
     /**
@@ -182,6 +180,16 @@ final class User extends Authenticatable
         }
 
         return false;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === true;
+    }
+
+    public function isBlocked(): bool
+    {
+        return $this->status === false;
     }
 
     /**

@@ -31,10 +31,10 @@ final class AuthenticatedSessionController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if ($user->status === false) {
+        if ($user->isBlocked()) {
             Auth::logout();
 
-            return to_route('login')->with('status', 'Your account is not active, please contact the administrator.');
+            return to_route('login');
         }
 
         if (! $user->change_password) {
