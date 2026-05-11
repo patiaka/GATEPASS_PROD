@@ -67,27 +67,28 @@ final class UserIndex extends Component
         flash('User invited successfuly');
     }
 
-    public function delete_row(int $id, bool $stat): void
+    public function toggleUserStatus(int $id, bool $status): void
     {
-        $row = User::find($id);
         if (Auth::user()->id === $id) {
-            abort(403, 'Vous ne pouvez pas désactiver votre propre compte');
+            flash()->error('You cannot change the status of your own account.');
+            return;
         }
+
+        $row = User::find($id);
 
         if (! $row) {
             flash()->error('User not found.');
-
             return;
         }
 
         $row->update([
-            'status' => $stat,
+            'status' => $status,
         ]);
         
         flash()->success(
             $row->status
-                ? 'User activé avec succès'
-                : 'user désactivé avec succès'
+                ? 'User activated successfully'
+                : 'User deactivated successfully'
         );
     }
 

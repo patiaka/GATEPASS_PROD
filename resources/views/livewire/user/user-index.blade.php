@@ -168,7 +168,7 @@
                                 'hover:text-red-600 hover:border-red-600 hover:bg-red-50' => $row->status == 1,
                                 'hover:text-green-600 hover:border-green-600 hover:bg-green-50' => $row->status == 0,
                             ]) 
-                            wire:click="delete_row({{ $row->id }}, {{ $row->status ? 0 : 1 }})">
+                            wire:click="toggleUserStatus({{ $row->id }}, {{ $row->status ? 0 : 1 }})">
                             <!-- Trash icon -->
                             {{ $row->status ? '❌ Disable' : '✅ Enable' }}
                         </button>
