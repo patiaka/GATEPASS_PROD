@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Livewire\Forms;
 
+use App\Enum\RoleEnum;
+use App\Events\RequestCreated;
 use App\Jobs\MailRequestJob;
 use App\Jobs\MailUserRequestNotifJob;
 use App\Models\Document;
@@ -70,10 +72,12 @@ final class MaterialRequestForm extends Form
 
                 $materialRequest = Auth::user()->material_requests()->create($this->only([
                     'company',
-
                 ]));
+
                 $this->person_out_id ? $materialRequest->person_out()->associate($this->person_out_id)->save() : null;
-                $materialRequest->updateQuietly(['expire_at' => now()->addDay(7)]);
+
+                $materialRequest->updateQuietly(['expire_at' => now()->addDay(7), 'next_approver_role' => RoleEnum::HOD->value]);
+
                 if (! empty($this->photos)) {
                     foreach ($this->photos as $row) {
                         $filename = $row->hashName();
@@ -86,9 +90,14 @@ final class MaterialRequestForm extends Form
                 }
                 $materialRequest->material_request_items()->createMany($this->materials);
                 $materialRequest->generateId('R');
-                MailRequestJob::dispatch($materialRequest, 'Awaiting a material gate pass request to approve reference'.$materialRequest->reference);
-				MailUserRequestNotifJob::dispatch($materialRequest, 'Your Material offsite gatepass request with reference '.$materialRequest->reference.' has been created. Please check the details.');
+
+                RequestCreated::dispatch($materialRequest);
+
+                // MailRequestJob::dispatch($materialRequest, 'Awaiting a material gate pass request to approve reference'.$materialRequest->reference);
+				// MailUserRequestNotifJob::dispatch($materialRequest, 'Your Material offsite gatepass request with reference '.$materialRequest->reference.' has been created. Please check the details.');
+                
                 $this->reset();
+
                 flash('Material request created successfully');
 
                 return to_route('material.index');
@@ -113,10 +122,10 @@ final class MaterialRequestForm extends Form
         DB::transaction(function () {
             $this->materialRequest->update($this->only([
                 'company',
-
             ]));
 
             $this->person_out_id ? $this->materialRequest->person_out()->associate($this->person_out_id)->save() : null;
+
             if (! empty($this->photos)) {
                 foreach ($this->photos as $key => $row) {
                     $filename = $row->hashName();
@@ -127,9 +136,11 @@ final class MaterialRequestForm extends Form
                     ]);
                 }
             }
+
             if ($this->materials) {
                 $this->updateMaterialRequestItems();
             }
+
             flash()->success('material request updated successfully');
         });
     }
@@ -158,6 +169,7 @@ final class MaterialRequestForm extends Form
 
         // Delete items that were removed
         $toDelete = $existingItems->keys()->diff(collect($this->materials)->pluck('id'));
+        
         $this->materialRequest->material_request_items()->whereIn('id', $toDelete)->delete();
     }
 }

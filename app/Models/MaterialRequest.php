@@ -35,6 +35,7 @@ final class MaterialRequest extends Model
         'expire_at',
         'company',
         'person_out_id',
+        'next_approver_role',
     ];
 
     protected $appends = ['full_name'];

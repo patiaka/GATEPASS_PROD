@@ -92,16 +92,15 @@
                 <td class="px-4 py-2">{{ $row->created_at }}</td>
                 <td class="px-4 py-2">{{ $row->company }}</td>
                 <td class="px-4 py-2">{{ $row->user->department->name }}</td>
-                {{-- @if (Auth::user()->isGm() || Auth::user()->isHod())
-                <td class="px-4 py-3 text-sm">
-                    <x-form-request wire:key="request-{{ $row->id }}" :model="$row" type="car" />
-                </td>
-                @endif --}}
 
-                <td class="px-4 py-2">
+                <td class="px-4 py-3 flex items-center gap-2">
                     <x-button-edit href="{{ route('car.edit', ['CarRequest' => $row]) }}" :row="$row" />
                     <x-button-show href="{{ route('car.show', ['CarRequest' => $row]) }}" :row="$row" />
                     <x-button-delete :row="$row" />
+
+                    @if (Auth::user()->canApprove($row) && Auth::user()->isApprover())
+                        <x-form-request wire:key="request-{{ $row->id }}" :model="$row" type="vehicle" />
+                    @endif
                 </td>
             </tr>
             @empty

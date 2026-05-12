@@ -6,8 +6,8 @@ namespace App\Livewire\Forms;
 
 use const false;
 
-use App\Jobs\MailRequestJob;
-use App\Jobs\MailUserRequestNotifJob;
+use App\Enum\RoleEnum;
+use App\Events\RequestCreated;
 use App\Models\CarRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -137,11 +137,10 @@ final class CarRequestForm extends Form
             'reason' => 'required|string',
             'company' => 'required|string',
         ]);
+        
         DB::transaction(function () {
             $this->destination = $this->getShowDestinationField() ? $this->destination_other : $this->destination;
-            $this->car_type = $this->car_type === 'Other'
-                ? $this->type_other
-                : $this->car_type;
+            $this->car_type = $this->car_type === 'Other' ? $this->type_other : $this->car_type;
 
             $CarRequest = Auth::user()->car_requests()->create($this->only([
                 'somisy_car',
@@ -157,16 +156,22 @@ final class CarRequestForm extends Form
                 'company',
                 'comment',
             ]));
+
             if ($this->drivers and $this->somisy_car !== 'no_vehicle') {
                 $CarRequest->car_drivers()->createMany($this->drivers);
             }
+
             if ($this->passengers and $this->somisy_car === 'no_vehicle') {
                 $CarRequest->passengers()->createMany($this->passengers);
             }
 
             $CarRequest->generateId('VEH');
-            MailRequestJob::dispatch($CarRequest, 'Awaiting a vehicle gate pass request to approve reference '.$CarRequest->reference);
-			MailUserRequestNotifJob::dispatch($CarRequest, 'Your vehicle offsite gatepass request with reference '.$CarRequest->reference.' has been created. Please check the details.');
+            $CarRequest->updateQuietly(['next_approver_role' => RoleEnum::HOD->value]);
+
+            RequestCreated::dispatch($CarRequest);
+
+            // MailRequestJob::dispatch($CarRequest, 'Awaiting a vehicle gate pass request to approve reference '.$CarRequest->reference);
+			// MailUserRequestNotifJob::dispatch($CarRequest, 'Your vehicle offsite gatepass request with reference '.$CarRequest->reference.' has been created. Please check the details.');
 
             $this->reset();
             flash()->success('Car request submitted successfully');
@@ -195,14 +200,13 @@ final class CarRequestForm extends Form
             'arrive_at' => 'required|string',
             'reason' => 'required|string',
             'company' => 'required|string',
-            'comment' => 'nullable|string',
         ]);
 
         DB::transaction(function () {
             $this->destination = $this->getShowDestinationField() ? $this->destination_other : $this->destination;
-            $this->car_type = $this->car_type === 'Other'
-                ? $this->type_other
-                : $this->car_type;
+            
+            $this->car_type = $this->car_type === 'Other' ? $this->type_other : $this->car_type;
+            
             $this->carRequest->update($this->only([
                 'somisy_car',
                 'resident',
@@ -221,9 +225,11 @@ final class CarRequestForm extends Form
             if ($this->drivers and $this->somisy_car !== 'no_vehicle') {
                 $this->updateRelation('car_drivers', 'car_drivers', $this->drivers);
             }
+
             if ($this->passengers and $this->somisy_car === 'no_vehicle') {
                 $this->updateRelation('passengers', 'passengers', $this->passengers);
             }
+
             flash()->success('Car request updated successfully');
         });
     }

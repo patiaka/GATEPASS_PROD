@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Helper;
 
 use App\Enum\MaterialRequestStatus;
+use App\Enum\RoleEnum;
+use App\Events\RequestApprovalSubmitted;
 use App\Jobs\MailRequestJob;
 use App\Models\CarRequest;
 use App\Models\MaterialRequest;
@@ -39,18 +41,21 @@ trait ApproveAction
 
         if ($type === 'material') {
             $request = MaterialRequest::findOrFail($id);
+
             $request->update([
                 'hod_approval_date' => now(),
                 'hod_comment' => $this->comment,
                 'hod_approval_id' => Auth::user()->id,
                 'status' => $this->status === 'Approved' ? MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value,
+                'next_approver_role' => $this->getNextApprover($request),
             ]);
 
-            $this->dispatchApprovalMail($request, 'hod');
-            MailRequestJob::dispatch($request, 'Awaiting a material gate pass request to approve reference '.$request->reference);
+            RequestApprovalSubmitted::dispatch($request, RoleEnum::HOD->value);
+
+            // $this->dispatchApprovalMail($request, 'hod');
+            // MailRequestJob::dispatch($request, 'Awaiting a material gate pass request to approve reference '.$request->reference);
 
             // $this->reset('hod_comment', 'gm_comment');
-            $this->reset_filled();
             flash()->success('Material request approved successfully');
             $this->reset_filled();
 
@@ -65,10 +70,13 @@ trait ApproveAction
                 'hod_comment' => $this->comment,
                 'hod_approval_id' => Auth::user()->id,
                 'status' => $this->status === 'Approved' ? MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value,
+                'next_approver_role' => $this->getNextApprover($request),
             ]);
 
-            $this->dispatchApprovalMail($request, 'hod');
-            MailRequestJob::dispatch($request, 'Awaiting a vehicle gate pass request to approve reference '.$request->reference);
+            RequestApprovalSubmitted::dispatch($request, RoleEnum::HOD->value);
+
+            // $this->dispatchApprovalMail($request, 'hod');
+            // MailRequestJob::dispatch($request, 'Awaiting a vehicle gate pass request to approve reference '.$request->reference);
 
             flash()->success('Vehicle request approved successfully');
             $this->reset_filled();
@@ -93,10 +101,12 @@ trait ApproveAction
                 'director_comment' => $this->comment,
                 'director_approval_id' => Auth::user()->id,
                 'status' => $this->status === 'Approved' ? MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value,
+                'next_approver_role' => $this->getNextApprover($request)
             ]);
 
-            $this->dispatchApprovalMail($request, 'director');
-            MailRequestJob::dispatch($request, 'Awaiting a material gate pass request to approve reference '.$request->reference);
+            RequestApprovalSubmitted::dispatch($request, RoleEnum::DIRECTOR->value);
+            // $this->dispatchApprovalMail($request, 'director');
+            // MailRequestJob::dispatch($request, 'Awaiting a material gate pass request to approve reference '.$request->reference);
 
             // $this->reset('hod_comment', 'gm_comment', 'director_comment');
             flash()->success('Material request approved successfully');
@@ -113,10 +123,12 @@ trait ApproveAction
                 'director_comment' => $this->comment,
                 'director_approval_id' => Auth::user()->id,
                 'status' => $this->status === 'Approved' ? MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value,
+                'next_approver_role' => $this->getNextApprover($request)
             ]);
 
-            $this->dispatchApprovalMail($request, 'director');
-            MailRequestJob::dispatch($request, 'Awaiting a vehicle gate pass request to approve reference '.$request->reference);
+            RequestApprovalSubmitted::dispatch($request, RoleEnum::DIRECTOR->value);
+            // $this->dispatchApprovalMail($request, 'director');
+            // MailRequestJob::dispatch($request, 'Awaiting a vehicle gate pass request to approve reference '.$request->reference);
 
             flash()->success('Vehicle request approved successfully');
             $this->reset_filled();
@@ -142,9 +154,11 @@ trait ApproveAction
                 'gm_approval_id' => Auth::user()->id,
                 'status' => $this->status,
                 'expire_at' => Carbon::now()->addDays(7),
+                'next_approver_role' => null,
             ]);
 
-            $this->dispatchApprovalMail($request, 'gm');
+            // $this->dispatchApprovalMail($request, 'gm');
+            RequestApprovalSubmitted::dispatch($request, RoleEnum::GM->value);
 
             flash()->success('Material request approved successfully');
             $this->reset_filled();
@@ -160,9 +174,11 @@ trait ApproveAction
                 'gm_approval_id' => Auth::user()->id,
                 'status' => $this->status,
                 'expire_at' => Carbon::now()->addDays(7),
+                'next_approver_role' => null,
             ]);
 
-            $this->dispatchApprovalMail($request, 'gm');
+            // $this->dispatchApprovalMail($request, 'gm');
+            RequestApprovalSubmitted::dispatch($request, RoleEnum::GM->value);
 
             flash()->success('Vehicle request approved successfully');
             $this->reset_filled();
@@ -237,5 +253,29 @@ trait ApproveAction
             $message = "The $role a $action votre request reference ". $item->reference;
             MailRequestJob::dispatch($item, $message);
         });
+    }
+
+    private function getNextApprover(CarRequest|MaterialRequest $request): string|null
+    {
+        $user = Auth::user();
+
+        if (
+            $user->isHod() && $this->status === MaterialRequestStatus::Approved->value && 
+            $request->isRequiredDirectorApproval()
+        ) {
+            return RoleEnum::DIRECTOR->value;
+        }
+
+        if (
+            $user->isHod() && $this->status === MaterialRequestStatus::Approved->value
+        ) {
+            return RoleEnum::GM->value;
+        }
+
+        if ($user->isDirector() && $this->status === MaterialRequestStatus::Approved->value) {
+            return RoleEnum::GM->value;
+        }
+
+        return null;
     }
 }

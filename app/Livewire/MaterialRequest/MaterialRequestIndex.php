@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\MaterialRequest;
 
 use App\Enum\MaterialRequestStatus;
+use App\Enum\RoleEnum;
 use App\Helper\ApproveAction;
 use App\Helper\DeleteAction;
 use App\Helper\WithFilter;
@@ -57,14 +58,25 @@ final class MaterialRequestIndex extends Component
             
             // ---- GM ----
             ->when($auth->isGm(), function ($query) use ($auth) {
-                $query->where(function ($q) use ($auth) {
-                    $q->where(function ($sub) {
-                        $sub->where('status', MaterialRequestStatus::Progress)
-                            ->whereNotNull('hod_approval_id');
+                $query
+                    ->where('user_id', $auth->id)
+                    ->orWhere(function ($q) {
+                        $q
+                            ->where('status', MaterialRequestStatus::Approved)
+                            ->orWhere('status', MaterialRequestStatus::Rejected)
+                            ->where('gm_approval_id', '!=', null)
+                        ;
                     })
-                        ->orWhere('gm_approval_id', $auth->id)
-                        ->orWhere('user_id', $auth->id);
-                });
+                ;
+            })
+
+            // ---- DIRECTOR ----
+            ->when($auth->isDirector(), function ($query) use ($auth) {
+                $department = Department::with('users')->where('director_id', $auth->id)->first();
+                $query
+                    ->whereIn('user_id', $department ? $department->users->pluck('id') : [])
+                    ->orWhere('user_id', $auth->id)
+                ;
             })
 
             // ---- HOD ----
@@ -72,7 +84,6 @@ final class MaterialRequestIndex extends Component
                 $auth->loadMissing('department');
                 $users = $auth->department->loadMissing('users');
                 $query
-                    // ->where('status', MaterialRequestStatus::Pending)
                     ->whereIn('user_id', $users->users->pluck('id'))
                     ->orWhere('user_id', $auth->id)
                 ;

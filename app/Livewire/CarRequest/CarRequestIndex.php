@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\CarRequest;
 
 use App\Enum\MaterialRequestStatus;
+use App\Enum\RoleEnum;
 use App\Helper\ApproveAction;
 use App\Helper\WithFilter;
 use App\Models\CarDriver;
@@ -49,25 +50,40 @@ final class CarRequestIndex extends Component
             ->when($this->search, function ($query) {
                 $query->whereAny(['reference', 'status'], 'like', '%'.$this->search.'%');
             })
-
+            
             // GM
             ->when($auth->isGm(), function ($query) use ($auth) {
-                $query->where('status', MaterialRequestStatus::Progress)
-                    ->whereNotNull('hod_approval_id')
-                    ->orWhere('gm_approval_id', $auth->id)
-                    ->orWhere('user_id', $auth->id);
+                $query->where(function ($query) use ($auth) {
+                    $query 
+                        ->where('status', MaterialRequestStatus::Approved)
+                        ->orWhere('status', MaterialRequestStatus::Rejected)
+                        ->where('gm_approval_id', '!=', null)
+                        ->orWhere('user_id', $auth->id)
+                    ;
+                });
+            })
+            
+            // DIRECTOR
+            ->when($auth->isDirector(), function ($query) use ($auth) {
+                $department = Department::with('users')->where('director_id', $auth->id)->first();
+                $query->where(function ($query) use ($department, $auth) {
+                    $query
+                        ->whereIn('user_id', $department ? $department->users->pluck('id') : [])
+                        ->orWhere('user_id', $auth->id)
+                    ;
+                });
             })
 
             // HOD
             ->when($auth->isHod(), function ($query) use ($auth) {
-                $auth->loadMissing('department');
-                $users = $auth->department->loadMissing('users');
-                // $query->where('status', MaterialRequestStatus::Pending)->whereIn('user_id', $users->users->pluck('id'))->orWhere('user_id', $auth->id);
-                $query->whereIn('user_id', $users->users->pluck('id'))->orWhere('user_id', $auth->id);
+                $auth->loadMissing('department', 'department.users');
+                $query->where(function ($query) use ($auth) {
+                    $query->whereIn('user_id', $auth->department->users->pluck('id'));
+                });
             })
 
             // User
-            ->when($auth->isUser(), function ($query) use ($auth) {
+            ->when($auth->isSimpleUser(), function ($query) use ($auth) {
                 $query->where('user_id', $auth->id);
             })
 
@@ -76,7 +92,8 @@ final class CarRequestIndex extends Component
                 $query->where('status', MaterialRequestStatus::Approved)->orWhere('user_id', $auth->id);
             })
             ->latest('id')
-            ->paginate(10);
+            ->paginate(10)
+        ;
     }
 
     public function delete(int $id): void

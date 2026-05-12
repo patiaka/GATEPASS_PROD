@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\CarRequest;
 
 use App\Enum\MaterialRequestStatus;
+use App\Enum\RoleEnum;
 use App\Helper\ApproveAction;
 use App\Helper\WithFilter;
 use App\Models\CarRequest;
@@ -34,23 +35,22 @@ final class CarRequestPending extends Component
 
         return CarRequest::with('user', 'user.department', 'hodApproval', 'gmApproval')
             ->when($auth->isGm(), function ($query) use ($auth) {
-                $query->where('status', MaterialRequestStatus::Progress)
-                    ->whereNotNull('hod_approval_id')
-                    // ->orWhere('gm_approval_id', $auth->id)
-                    ->orWhere('user_id', $auth->id)->orwhere('status', MaterialRequestStatus::Progress);
+                $query->where('next_approver_role', RoleEnum::GM->value);
+            })
+            ->when($auth->isDirector(), function ($query) use ($auth) {
+                $department = Department::with('users')->where('director_id', $auth->id)->first();
+                $query
+                    ->whereIn('user_id', $department ? $department->users->pluck('id') : [])
+                    ->where('next_approver_role', RoleEnum::DIRECTOR->value)
+                ;
             })
             ->when($auth->isHod(), function ($query) use ($auth) {
-                $auth->loadMissing('department');
-                $users = $auth->department->loadMissing('users');
-                $query->where('status', MaterialRequestStatus::Pending)->whereIn('user_id', $users->users->pluck('id'))->orWhere('user_id', $auth->id);
+                $auth->loadMissing('department', 'department.users');
+                $query
+                    ->whereIn('user_id', $auth->department->users->pluck('id'))
+                    ->where('next_approver_role', RoleEnum::HOD->value)
+                ;
             })
-
-            // ->when($this->department, function ($query) {
-            //     $users = Department::with('users')->find($this->department)->users;
-            //     $query->whereIn('user_id', $users->pluck('id'));
-            // })->when($this->status, function ($query) {
-            //     $query->where('status', $this->status);
-            // })
 			->when($this->search, function ($query) {
                 $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
             })

@@ -81,4 +81,9 @@ trait HasRoles
     {
         return $this->isHod() || $this->isDirector() || $this->isGm();
     }
+
+    public function isSimpleUser()
+    {
+        return $this->isUser() && $this->delegated_role === null;
+    }
 }

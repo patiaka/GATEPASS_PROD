@@ -85,7 +85,10 @@ trait ModelAction
         $status = ['⏳ Pending', 'btn-secondary'];
 
         if ($actor === 'hod') {
-            if ($this->isHodApproved() && ($this->isApproved() || $this->isProgress())) {
+            if (
+                $this->isHodApproved() && ($this->isApproved() || $this->isDirectorApproved() || $this->isProgress()) ||
+                ($this->isRejected() && ($this->isDirectorApproved() || $this->isGmApproved()))
+            ) {
                 $status = ['✅ Approved', 'btn-success'];
             } elseif ($this->isHodApproved() && !$this->isDirectorApproved() && !$this->isGmApproved() && $this->isRejected()) {
                 $status = ['❌ Rejected', 'btn-danger'];
@@ -93,7 +96,10 @@ trait ModelAction
         }
 
         if ($actor === 'director') {
-            if ($this->isDirectorApproved() && ($this->isApproved() || $this->isProgress())) {
+            if (
+                $this->isDirectorApproved() && ($this->isApproved() || $this->isProgress()) ||
+                 ($this->isRejected() && $this->isGmApproved())
+            ) {
                 $status = ['✅ Approved', 'btn-success'];
             } elseif ($this->isDirectorApproved() && !$this->isGmApproved() && $this->isRejected()) {
                 $status = ['❌ Rejected', 'btn-danger'];

@@ -86,7 +86,7 @@
                         <x-button-show href="{{ route('material.show', ['MaterialRequest' => $row]) }}" :row="$row" />
                         <x-button-delete :row="$row" />
 
-                        @if (Auth::user()->isGm() || Auth::user()->isHod())
+                        @if (Auth::user()->canApprove($row) && Auth::user()->isApprover())
                             <x-form-request wire:key="request-{{ $row->id }}" :model="$row" type="material" />
                         @endif
                     </td>

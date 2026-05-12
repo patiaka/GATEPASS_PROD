@@ -17,11 +17,10 @@ final class MailUserRequestNotifJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(private CarRequest|MaterialRequest $model,
-        public string $message)
-    {
-        //
-    }
+    public function __construct(
+        private CarRequest|MaterialRequest $model,
+        public string $message
+    ) { }
 
     /**
      * Execute the job.

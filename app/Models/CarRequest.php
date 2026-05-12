@@ -51,7 +51,8 @@ final class CarRequest extends Model
         'reason', 
         'route', 
         'company', 
-        'comment'
+        'comment',
+        'next_approver_role',
     ];
 
     protected $appends = ['full_name'];
