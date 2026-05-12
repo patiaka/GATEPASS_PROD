@@ -5,7 +5,7 @@
 {{-- Submit button --}}
 <button type="submit"
     class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#0e3a61]"
-    wire:loading.remove wire:target="{{ $target }}">
+    wire:loading.remove>
     Submit
 </button>
 

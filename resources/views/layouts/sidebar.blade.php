@@ -216,18 +216,6 @@
                         </summary>
                         <ul class="mt-1 ml-3 border-l border-white/10 pl-2 space-y-1">
                             <li>
-                                <a wire:navigate href="{{ route('material.pending') }}"
-                                    class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-xs
-                                      {{ request()->routeIs('material.pending') ? 'bg-[#0e3a61]/30 text-white font-medium shadow-sm' : 'hover:bg-white/10 hover:text-white' }}">
-                                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('material.pending') ? 'text-white' : 'text-white/80' }}"
-                                        fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3" />
-                                        <circle cx="12" cy="12" r="10" />
-                                    </svg>
-                                    <span class="text-sm">Material Pending Requests</span>
-                                </a>
-                            </li>
-                            <li>
                                 <a wire:navigate href="{{ route('car.pending') }}"
                                     class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-xs
                                       {{ request()->routeIs('car.pending') ? 'bg-[#0e3a61]/30 text-white font-medium shadow-sm' : 'hover:bg-white/10 hover:text-white' }}">
@@ -237,6 +225,18 @@
                                         <circle cx="12" cy="12" r="10" />
                                     </svg>
                                     <span class="text-sm">Gate Pass Pending Requests</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a wire:navigate href="{{ route('material.pending') }}"
+                                    class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-xs
+                                      {{ request()->routeIs('material.pending') ? 'bg-[#0e3a61]/30 text-white font-medium shadow-sm' : 'hover:bg-white/10 hover:text-white' }}">
+                                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('material.pending') ? 'text-white' : 'text-white/80' }}"
+                                        fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3" />
+                                        <circle cx="12" cy="12" r="10" />
+                                    </svg>
+                                    <span class="text-sm">Material Pending Requests</span>
                                 </a>
                             </li>
                         </ul>

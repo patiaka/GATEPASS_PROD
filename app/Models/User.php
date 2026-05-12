@@ -172,7 +172,7 @@ final class User extends Authenticatable
             // GM ne peut approuver que si HOD a approuvé, sauf si GM est le créateur
             // return ! $gmApproved && ($hodApproved || $isCreator);
             $request = $request->load('user.department.director');
-            if ($request->user->department->director) {
+            if ($request->user->department->director !== null) {
                 return ! $gmApproved && ($directorApproved || $isCreator);
             } else {
                 return ! $gmApproved && ($hodApproved || $isCreator);
