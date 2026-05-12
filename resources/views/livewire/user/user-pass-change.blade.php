@@ -3,7 +3,7 @@
         <div class="card-header">
             <h2 class="text-2xl font-bold text-[#134169] tracking-tight mb-4 text-center">Change Password</h2>
         </div>
-        <x-form route='save' url="{{ route('dashboard') }}">
+        <x-form action='save' route='dashboard'>
             <div class="mb-3 form-password-toggle">
                 <x-input type="password" name="current_password" wire:model="current_password" place="your current password" label="Current Password" class="w-full"/>
                 {{-- <label class="form-label" for="password">Current password</label>
