@@ -302,7 +302,7 @@
                 <ul class="border-t border-white/10 mt-2 pt-2 space-y-1">
                     <li>
                         <a wire:navigate href="{{ route('user.pass') }}"
-                            class="block px-3 py-2 rounded hover:bg-white/10 text-xs flex items-center gap-3 transition-colors">
+                            class="px-3 py-2 rounded hover:bg-white/10 text-xs flex items-center gap-3 transition-colors">
                             <svg class="w-4 h-4 text-white/85 shrink-0" fill="none" stroke="currentColor"
                                 stroke-width="2" viewBox="0 0 24 24">
                                 <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
@@ -313,7 +313,7 @@
                     </li>
                     <li>
                         <a onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                            class="block px-3 py-2 rounded hover:bg-white/10 text-xs flex items-center gap-3 transition-colors"
+                            class="px-3 py-2 rounded hover:bg-white/10 text-xs flex items-center gap-3 transition-colors"
                             href="{{ route('logout') }}">
                             <svg class="w-4 h-4 text-white/85 shrink-0" fill="none" stroke="currentColor"
                                 stroke-width="2" viewBox="0 0 24 24">
