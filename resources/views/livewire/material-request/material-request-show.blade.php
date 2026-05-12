@@ -66,6 +66,10 @@
             <h2 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Request Information</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
                 <div>
+                    <p class="font-medium">Reference</p>
+                    <p>#{{ $MaterialRequest->reference }}</p>
+                </div>
+                <div>
                     <p class="font-medium">Date:</p>
                     <p>{{ $MaterialRequest->created_at }}</p>
                 </div>
