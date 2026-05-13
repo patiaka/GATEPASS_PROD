@@ -24,6 +24,14 @@
                         @endforeach
                     </x-select>
                 </div>
+
+                <div class="w-full sm:w-52">
+                    <x-select label="Filter by status" wire:model.live="status">
+                        <option value="">All statuses</option>
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                    </x-select>
+                </div>
             </div>
         </x-slot:filter>
 

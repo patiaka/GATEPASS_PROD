@@ -23,6 +23,8 @@ final class UserIndex extends Component
 
     public string $role = '';
 
+    public string $status = '';
+
     public string $search = '';
 
     public string $department = '';
@@ -31,7 +33,7 @@ final class UserIndex extends Component
 
     public function ResetFilter(): void
     {
-        $this->reset('department', 'role', 'search');
+        $this->reset('department', 'role', 'search', 'status');
     }
 
     // public function import()
@@ -96,12 +98,22 @@ final class UserIndex extends Component
     public function rows()
     {
         return User::with('department:id,name')->when($this->search, function ($query) {
-            $query->whereAny(['name', 'email'], 'like', '%'.$this->search.'%');
-        })->when($this->department, function ($query) {
-            $query->where('department_id', $this->department);
-        })->when($this->role, function ($query) {
-            $query->where('role', $this->role);
-        })->latest('id')->paginate(10);
+                $query->whereAny(['name', 'email'], 'like', '%'.$this->search.'%');
+            })
+            // Department
+            ->when($this->department, function ($query) {
+                $query->where('department_id', $this->department);
+            })
+            // Role
+            ->when($this->role, function ($query) {
+                $query->where('role', $this->role);
+            })
+            // Status
+            ->when($this->status !== '', function ($query) {
+                $query->where('status', boolval($this->status));
+            })
+            ->latest('id')->paginate(10)
+        ;
     }
 
     public function render()
