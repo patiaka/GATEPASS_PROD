@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Helper;
 
 use App\Enum\RoleEnum;
+use Illuminate\Support\Collection;
 
 trait HasRoles
 {
@@ -25,15 +26,17 @@ trait HasRoles
 
     public function hasRole(string $role): bool
     {
-        return match ($role) {
-            RoleEnum::ADMIN->value => $this->isAdmin(),
-            RoleEnum::GM->value => $this->isGm(),
-            RoleEnum::DIRECTOR->value => $this->isDirector(),
-            RoleEnum::HOD->value => $this->isHod(),
-            RoleEnum::Security->value => $this->isSecurity(),
-            RoleEnum::USER->value => $this->isUser(),
-            default => false,
-        };
+        // return match ($role) {
+        //     RoleEnum::ADMIN->value => $this->isAdmin(),
+        //     RoleEnum::GM->value => $this->isGm(),
+        //     RoleEnum::DIRECTOR->value => $this->isDirector(),
+        //     RoleEnum::HOD->value => $this->isHod(),
+        //     RoleEnum::Security->value => $this->isSecurity(),
+        //     RoleEnum::USER->value => $this->isUser(),
+        //     default => false,
+        // };
+
+        return $this->roles()->contains($role);
     }
 
     public function hasAnyRole(array $roles): bool
@@ -49,7 +52,8 @@ trait HasRoles
 
     public function isAdmin(): bool
     {
-        return $this->getEffectiveRole() === RoleEnum::ADMIN;
+        // return $this->getEffectiveRole() === RoleEnum::ADMIN;
+        return $this->roles()->contains(RoleEnum::ADMIN->value);
     }
 
     public function isSecurity(): bool
@@ -64,17 +68,20 @@ trait HasRoles
 
     public function isHod(): bool
     {
-        return $this->getEffectiveRole() === RoleEnum::HOD;
+        // return $this->getEffectiveRole() === RoleEnum::HOD;
+        return $this->roles()->contains(RoleEnum::HOD->value);
     }
 
     public function isDirector(): bool
     {
-        return $this->getEffectiveRole() === RoleEnum::DIRECTOR;
+        // return $this->getEffectiveRole() === RoleEnum::DIRECTOR;
+        return $this->roles()->contains(RoleEnum::DIRECTOR->value);
     }
 
     public function isGm(): bool
     {
-        return $this->getEffectiveRole() === RoleEnum::GM;
+        // return $this->getEffectiveRole() === RoleEnum::GM;
+        return $this->roles()->contains(RoleEnum::GM->value);
     }
 
     public function isApprover(): bool
@@ -85,5 +92,13 @@ trait HasRoles
     public function isSimpleUser()
     {
         return $this->isUser() && $this->delegated_role === null;
+    }
+
+    private function roles(): Collection
+    {
+        return collect([
+            $this->role->value,
+            $this->delegated_role?->value
+        ])->filter(); // remove null element
     }
 }
