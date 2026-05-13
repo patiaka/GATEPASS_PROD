@@ -17,7 +17,7 @@
                 </div>
 
                 <div class="w-full sm:w-52">
-                    <x-select label="Filter by Status" wire:model.live="role">
+                    <x-select label="Filter by role" wire:model.live="role">
                         <option value="">All Roles</option>
                         @foreach (App\Enum\RoleEnum::cases() as $row)
                         <option value="{{ $row }}">{{ $row }}</option>
