@@ -29,7 +29,7 @@ final class AppServiceProvider extends ServiceProvider
     {
         Model::automaticallyEagerLoadRelationships();
         Model::shouldBeStrict(! app()->isProduction());
-        URL::forceHttps(app()->isProduction());
+        // URL::forceHttps(app()->isProduction());
 
         Gate::define('update-request', function (User $user, MaterialRequest|CarRequest $Request) {
             if ($Request instanceof CarRequest || $Request instanceof MaterialRequest) {
