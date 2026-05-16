@@ -3,8 +3,18 @@
 
         <div class="flex justify-between items-center border-b border-gray-200 p-4">
             <h1 class="text-xl font-semibold text-gray-800">Material Off Site Request Form</h1>
-            <a href="" class="text-sm text-blue-600 hover:underline bg-white border rounded px-3 py-1 shadow-sm">
-                ← Back to list
+            <a href="{{ route('material.index') }}"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg
+            bg-[#0e3a61] text-white text-sm font-medium
+            hover:bg-[#0c3253] shadow-sm transition
+            focus:outline-none focus:ring-2 focus:ring-white/30">
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+
+                Back to list
             </a>
         </div>
         <div class="p-6">
@@ -27,7 +37,7 @@
                     <div class="my-6">
                         <h5 class="mb-4 text-lg font-medium">Matérial infos</h5>
                         @foreach ($form->materials as $index => $material)
-                            <div class="grid grid-cols-12 gap-4 mb-3 items-end">
+                            <div class="grid grid-cols-12 gap-4 mb-3 items-start">
                                 <!-- Désignation -->
                                 <div class="col-span-3">
                                     <label for="designation"
@@ -65,9 +75,9 @@
                                 </div>
 
                                 <!-- Bouton supprimer -->
-                                <div class="col-span-2">
+                                <div class="col-span-2 mt-6">
                                     <button type="button" wire:click="removeMaterial({{ $index }})"
-                                        class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                        class="w-full flex items-center justify-center px-4 py-2 border border-transparent font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
