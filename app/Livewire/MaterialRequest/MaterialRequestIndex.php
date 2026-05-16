@@ -91,7 +91,13 @@ final class MaterialRequestIndex extends Component
 
             // ---- USER ----
             ->when($auth->isUser(), function ($query) use ($auth) {
-                $query->where('user_id', $auth->id);
+                $auth->loadMissing('department', 'department.users');
+                $query->where(function($q) use ($auth) {
+                    $q
+                        ->whereIn('user_id', $auth->department->users->pluck('id'))
+                        ->orWhere('user_id', $auth->id)
+                    ;
+                });
             })
 
             // ---- SECURITY ----
