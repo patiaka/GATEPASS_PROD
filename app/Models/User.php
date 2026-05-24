@@ -156,15 +156,17 @@ final class User extends Authenticatable
         $directorApproved = $request->isDirectorApproved();
         $gmApproved = $request->isGmApproved();
 
+        $can = false;
+
         // Si user est HOD
         if ($this->isHod()) {
-            return ! $hodApproved;
+            $can = ! $hodApproved;
         }
 
         // Si user est DIRECTOR
         if ($this->isDirector()) {
             // Director ne peut approuver que si HOD a approuvé, sauf si GM est le créateur
-            return ! $directorApproved && ($hodApproved || $isCreator);
+            $can = ! $directorApproved && ($hodApproved || $isCreator);
         }
 
         // Si user est GM
@@ -173,13 +175,13 @@ final class User extends Authenticatable
             // return ! $gmApproved && ($hodApproved || $isCreator);
             $request = $request->load('user.department.director');
             if ($request->user->department->director !== null) {
-                return ! $gmApproved && ($directorApproved || $isCreator);
+                $can = ! $gmApproved && ($directorApproved || $isCreator);
             } else {
-                return ! $gmApproved && ($hodApproved || $isCreator);
+                $can = ! $gmApproved && ($hodApproved || $isCreator);
             }
         }
 
-        return false;
+        return $can;
     }
 
     public function isActive(): bool

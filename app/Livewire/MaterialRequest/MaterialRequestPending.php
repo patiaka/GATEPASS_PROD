@@ -32,40 +32,44 @@ final class MaterialRequestPending extends Component
     public function rows()
     {
         $auth = Auth::user();
+        $auth->loadMissing('department', 'department.users');
 
-        return MaterialRequest::with('user', 'user.department', 'hodApproval', 'gmApproval')
+        $query = MaterialRequest::with('user', 'user.department', 'hodApproval', 'gmApproval');
 
-            ->when($auth->isGm(), function ($query) use ($auth) {
-                $query->where(function ($query) use ($auth) {
-                    $query
-                        ->where('next_approver_role', RoleEnum::GM->value)
-                        ->orWhere('user_id', $auth->id)
-                    ;
-                });
-            })
-            ->when($auth->isDirector(), function ($query) use ($auth) {
-                $department = Department::with('users')->where('director_id', $auth->id)->first();
+        if ($auth->isGm()) {
+            $query->where(function ($query) use ($auth) {
                 $query
+                    ->where('next_approver_role', RoleEnum::GM->value)
+                    ->orWhere('user_id', $auth->id)
+                ;
+            });
+        }
+
+        if ($auth->isDirector()) {
+            $department = Department::with('users')->where('director_id', $auth->id)->first();
+            $query->orWhere(function ($q) use ($auth, $department) {
+                $q
                     ->whereIn('user_id', $department ? $department->users->pluck('id') : [])
                     ->where('next_approver_role', RoleEnum::DIRECTOR->value)
                     ->orWhere('user_id', $auth->id)
                 ;
-            })
-            ->when($auth->isHod(), function ($query) use ($auth) {
-                $auth->loadMissing('department', 'department.users');
-                $query
+            });
+        }
+
+        if ($auth->isHod()) {
+            $query->orWhere(function ($q) use ($auth) {
+                $q
                     ->where('next_approver_role', RoleEnum::HOD->value)
                     ->whereIn('user_id', $auth->department->users->pluck('id'))
-                    ->orWhere('user_id', $auth->id)
                 ;
-            })
-			->when($this->search, function ($query) {
-                $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
-            })
-            ->latest('id')
-            ->paginate(10)
-            // ->dd()
-        ;
+            });
+        }
+
+        $query->when($this->search, function ($query) {
+            $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
+        });
+
+        return $query->latest('id')->paginate(10);
     }
 
     public function render()

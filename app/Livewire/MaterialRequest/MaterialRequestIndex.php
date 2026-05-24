@@ -39,8 +39,9 @@ final class MaterialRequestIndex extends Component
     public function rows()
     {
         $auth = Auth::user();
+        $auth->loadMissing('department', 'department.users');
 
-        return MaterialRequest::with(['user.department', 'hodApproval', 'gmApproval'])
+        $query = MaterialRequest::with(['user.department', 'hodApproval', 'gmApproval'])
             // ---- FILTERS ----
             ->when($this->department, function ($query) {
                 $users = Department::with('users')->find($this->department)?->users ?? collect();
@@ -55,60 +56,65 @@ final class MaterialRequestIndex extends Component
                         ->orWhere('status', 'like', '%'.$this->search.'%');
                 });
             })
+        ;
             
-            // ---- GM ----
-            ->when($auth->isGm(), function ($query) use ($auth) {
-                $query
-                    ->where('user_id', $auth->id)
-                    ->orWhere(function ($q) {
-                        $q
-                            ->where('status', MaterialRequestStatus::Approved)
-                            ->orWhere('status', MaterialRequestStatus::Rejected)
-                            ->where('gm_approval_id', '!=', null)
-                        ;
-                    })
-                ;
-            })
+        // ---- GM ----
+        if ($auth->isGm()) {
+            $query->where('user_id', $auth->id);
 
-            // ---- DIRECTOR ----
-            ->when($auth->isDirector(), function ($query) use ($auth) {
-                $department = Department::with('users')->where('director_id', $auth->id)->first();
-                $query
+            $query->orWhere(function ($q) {
+                $q
+                    ->where('status', MaterialRequestStatus::Approved)
+                    ->orWhere('status', MaterialRequestStatus::Rejected)
+                    ->where('gm_approval_id', '!=', null)
+                ;
+            });
+        }
+
+        // ---- DIRECTOR ----
+        if ($auth->isDirector()) {
+            $department = Department::with('users')->where('director_id', $auth->id)->first();
+            $query->orWhere(function ($q) use ($department, $auth) {
+                $q
                     ->whereIn('user_id', $department ? $department->users->pluck('id') : [])
                     ->orWhere('user_id', $auth->id)
                 ;
-            })
+            });
+        }
 
-            // ---- HOD ----
-            ->when($auth->isHod(), function ($query) use ($auth) {
-                $auth->loadMissing('department');
-                $users = $auth->department->loadMissing('users');
-                $query
-                    ->whereIn('user_id', $users->users->pluck('id'))
+        // ---- HOD ----
+        if ($auth->isHod()) {
+            // $auth->loadMissing('department');
+            // $department = $auth->department->loadMissing('users');
+            $usersIDs = $auth->department->users->pluck('id');
+            $query->orWhere(function ($q) use ($usersIDs, $auth) {
+                $q
+                    ->whereIn('user_id', $usersIDs)
+                    // ->orWhere('user_id', $auth->id)
+                ;
+            });
+        }
+
+        // ---- USER ----
+        $query->when($auth->isUser(), function ($query) use ($auth) {
+            $auth->loadMissing('department', 'department.users');
+            $query->where(function($q) use ($auth) {
+                $q
+                    ->whereIn('user_id', $auth->department->users->pluck('id'))
                     ->orWhere('user_id', $auth->id)
                 ;
-            })
+            });
+        });
 
-            // ---- USER ----
-            ->when($auth->isUser(), function ($query) use ($auth) {
-                $auth->loadMissing('department', 'department.users');
-                $query->where(function($q) use ($auth) {
-                    $q
-                        ->whereIn('user_id', $auth->department->users->pluck('id'))
-                        ->orWhere('user_id', $auth->id)
-                    ;
-                });
-            })
+        // ---- SECURITY ----
+        $query->when($auth->isSecurity(), function ($query) use ($auth) {
+            $query->where(function ($q) use ($auth) {
+                $q->where('status', MaterialRequestStatus::Approved)
+                    ->orWhere('user_id', $auth->id);
+            });
+        });
 
-            // ---- SECURITY ----
-            ->when($auth->isSecurity(), function ($query) use ($auth) {
-                $query->where(function ($q) use ($auth) {
-                    $q->where('status', MaterialRequestStatus::Approved)
-                        ->orWhere('user_id', $auth->id);
-                });
-            })
-            ->orderByDesc('id')
-            ->paginate(10);
+        return $query->orderByDesc('id')->paginate(10);
     }
 
     public function delete(int $id): void
