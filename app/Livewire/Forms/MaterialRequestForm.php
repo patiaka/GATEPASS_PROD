@@ -1,7 +1,5 @@
 <?php
-
 declare(strict_types=1);
-
 namespace App\Livewire\Forms;
 
 use App\Enum\RoleEnum;
@@ -30,6 +28,9 @@ final class MaterialRequestForm extends Form
 
     #[Validate('nullable|exists:users,id')]
     public $person_out_id = '';
+
+    #[Validate('nullable|string|max:255')]
+    public ?string $person_out_name = '';
 
     #[Validate(['photos.*' => 'required|image|mimes:jpeg,png,jpg'])]
     public $photos = []; // Tableau pour stocker les fichiers
@@ -61,8 +62,10 @@ final class MaterialRequestForm extends Form
             'photos.*' => 'required|image|mimes:jpeg,png,jpg',
             'company' => 'required|string',
             'person_out_id' => 'nullable|exists:users,id',
+            'person_out_name' => 'nullable|string|max:255',
         ]);
         if (empty($this->photos)) {
+
             flash()->error('Material request file is required');
 
             return;
@@ -70,11 +73,13 @@ final class MaterialRequestForm extends Form
         try {
             DB::transaction(function () {
 
-                $materialRequest = Auth::user()->material_requests()->create($this->only([
-                    'company',
-                ]));
+               $materialRequest = Auth::user()->material_requests()->create([
+                    'company' => $this->company,
+                    'person_out_name' => $this->person_out_id ? null : ($this->person_out_name ?: null),
+                ]);
 
                 $this->person_out_id ? $materialRequest->person_out()->associate($this->person_out_id)->save() : null;
+
 
                 $materialRequest->updateQuietly(['expire_at' => now()->addDay(7), 'next_approver_role' => RoleEnum::HOD->value]);
 
@@ -115,16 +120,23 @@ final class MaterialRequestForm extends Form
             'materials.*.quantity' => 'required|numeric|min:1',
             'materials.*.serial_number' => 'nullable|string|min:1',
             'photos.*' => 'required|image|mimes:jpeg,png,jpg',
-            'company' => 'required|string',
+                        'company' => 'required|string',
             'person_out_id' => 'nullable|exists:users,id',
+            'person_out_name' => 'nullable|string|max:255',
         ]);
 
         DB::transaction(function () {
-            $this->materialRequest->update($this->only([
-                'company',
-            ]));
+            $this->materialRequest->update([
+                'company' => $this->company,
+                'person_out_name' => $this->person_out_id ? null : ($this->person_out_name ?: null),
+            ]);
 
-            $this->person_out_id ? $this->materialRequest->person_out()->associate($this->person_out_id)->save() : null;
+            if ($this->person_out_id) {
+                $this->materialRequest->person_out()->associate($this->person_out_id)->save();
+            } else {
+                $this->materialRequest->person_out()->dissociate()->save();
+            }
+
 
             if (! empty($this->photos)) {
                 foreach ($this->photos as $key => $row) {

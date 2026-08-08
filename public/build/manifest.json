@@ -1,0 +1,49 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-P13VP77n.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/fonts/Poppins-Black.ttf": {
+    "file": "assets/Poppins-Black-yHqY0KRU.ttf",
+    "src": "resources/fonts/Poppins-Black.ttf"
+  },
+  "resources/fonts/Poppins-Bold.ttf": {
+    "file": "assets/Poppins-Bold-qTAUjFF7.ttf",
+    "src": "resources/fonts/Poppins-Bold.ttf"
+  },
+  "resources/fonts/Poppins-ExtraBold.ttf": {
+    "file": "assets/Poppins-ExtraBold-W_qeO1XX.ttf",
+    "src": "resources/fonts/Poppins-ExtraBold.ttf"
+  },
+  "resources/fonts/Poppins-ExtraLight.ttf": {
+    "file": "assets/Poppins-ExtraLight-u2IJXg5c.ttf",
+    "src": "resources/fonts/Poppins-ExtraLight.ttf"
+  },
+  "resources/fonts/Poppins-Light.ttf": {
+    "file": "assets/Poppins-Light-DT6-CsId.ttf",
+    "src": "resources/fonts/Poppins-Light.ttf"
+  },
+  "resources/fonts/Poppins-Medium.ttf": {
+    "file": "assets/Poppins-Medium-Cxde2ZoM.ttf",
+    "src": "resources/fonts/Poppins-Medium.ttf"
+  },
+  "resources/fonts/Poppins-Regular.ttf": {
+    "file": "assets/Poppins-Regular-CTKNfV9P.ttf",
+    "src": "resources/fonts/Poppins-Regular.ttf"
+  },
+  "resources/fonts/Poppins-SemiBold.ttf": {
+    "file": "assets/Poppins-SemiBold-B_fPDAUb.ttf",
+    "src": "resources/fonts/Poppins-SemiBold.ttf"
+  },
+  "resources/fonts/Poppins-Thin.ttf": {
+    "file": "assets/Poppins-Thin-leD9T1nx.ttf",
+    "src": "resources/fonts/Poppins-Thin.ttf"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-DdEAFUMU.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  }
+}

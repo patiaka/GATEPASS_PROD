@@ -28,6 +28,19 @@
                         @error('material_request_id')
                             <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
                         @enderror
+
+                        @if ($material_request_id)
+                            @if ($last_movement)
+                                <p class="text-xs text-slate-500 mt-2">
+                                    Last movement: <span class="font-semibold text-[#134169]">{{ $last_movement }}</span>
+                                    — suggested action preselected.
+                                </p>
+                            @else
+                                <p class="text-xs text-slate-500 mt-2">
+                                    No previous movement — <span class="font-semibold text-[#134169]">Exit</span> preselected.
+                                </p>
+                            @endif
+                        @endif
                     </div>
 
                     {{-- Gate (RADIO CARDS — SAME STYLE) --}}
@@ -36,8 +49,8 @@
                             Gate <span class="text-red-500">*</span>
                         </label>
 
-                        <div class="grid grid-cols-2 gap-3">
-                            @foreach (['Front', 'Back'] as $g)
+                        <div class="grid grid-cols-3 gap-3">
+                            @foreach (['Front', 'Back', 'Airport'] as $g)
                                 <label
                                     class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 bg-gray-50
                               hover:bg-blue-50 hover:border-[#134169] cursor-pointer transition">
@@ -72,30 +85,6 @@
                         </select>
 
                         @error('action')
-                            <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    {{-- Decision --}}
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">
-                            Decision <span class="text-red-500">*</span>
-                        </label>
-
-                        <select wire:model="decision"
-                            class="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-2
-                       focus:ring-2 focus:ring-[#134169] focus:border-transparent outline-none">
-
-                            <option value="">Select decision</option>
-
-                            @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
-                                @continue(in_array($row->value, ['Progress', 'Pending', 'Expired']))
-                                <option value="{{ $row }}">{{ $row }}</option>
-                            @endforeach
-
-                        </select>
-
-                        @error('decision')
                             <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
                         @enderror
                     </div>

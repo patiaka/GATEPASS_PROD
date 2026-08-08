@@ -8,6 +8,8 @@ use App\Enum\MaterialRequestStatus;
 use App\Models\CarRequest;
 use App\Models\MaterialRequest;
 use App\Models\Recording;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -23,81 +25,24 @@ final class Dashboard extends Component
 
         /*
         |--------------------------------------------------------------------------
-        | MATERIAL REQUEST COUNTS (filtrés par rôle)
+        | MATERIAL / CAR REQUEST COUNTS
         |--------------------------------------------------------------------------
+        | Même logique de visibilité que les pages de listing (scopes
+        | RequestVisibility) pour que chaque carte corresponde à sa liste.
         */
-        $materialQuery = MaterialRequest::query()
-            ->when($auth->isGm(), function ($query) use ($auth) {
-                $query->where(function ($q) use ($auth) {
-                    $q->where('status', MaterialRequestStatus::Progress)
-                        ->whereNotNull('hod_approval_id')
-                        ->orWhere('gm_approval_id', $auth->id)
-                        ->orWhere('user_id', $auth->id);
-                });
-            })
-            ->when($auth->isHod(), function ($query) use ($auth) {
-                $auth->loadMissing('department');
-                $users = $auth->department->loadMissing('users');
-                $query->where(function ($q) use ($users, $auth) {
-                    $q->where('status', MaterialRequestStatus::Pending)
-                        ->whereIn('user_id', $users->users->pluck('id'))
-                        ->orWhere('user_id', $auth->id)
-                        ->orWhere('hod_approval_id', $auth->id);
-                });
-            })
-            ->when($auth->isUser(), fn ($query) => $query->where('user_id', $auth->id))
-            ->when($auth->isSecurity(), fn ($query) => $query->where('status', MaterialRequestStatus::Approved)
-                ->orWhere('user_id', $auth->id));
+        [
+            'all' => $mat_request_all,
+            'approved' => $mat_request_approved,
+            'pending' => $mat_request_pending,
+            'rejected' => $mat_request_rejected,
+        ] = $this->requestStats(MaterialRequest::query(), $auth);
 
-        $matStats = (clone $materialQuery)
-            ->selectRaw('status, COUNT(*) as total')
-            ->groupBy('status')
-            ->pluck('total', 'status');
-
-        $mat_request_all = (clone $materialQuery)->count();
-        $mat_request_rejected = $matStats[MaterialRequestStatus::Rejected->value] ?? 0;
-        $mat_request_pending = $matStats[MaterialRequestStatus::Pending->value] ?? 0;
-        $mat_request_approved = $matStats[MaterialRequestStatus::Approved->value] ?? 0;
-
-        /*
-        |--------------------------------------------------------------------------
-        | CAR REQUEST COUNTS (filtrés par rôle)
-        |--------------------------------------------------------------------------
-        */
-        $carQuery = CarRequest::query()
-            ->when($auth->isGm(), function ($query) use ($auth) {
-                $query->where(function ($q) use ($auth) {
-                    $q->where('status', MaterialRequestStatus::Progress)
-                        ->whereNotNull('hod_approval_id')
-                        ->orWhere('gm_approval_id', $auth->id)
-                        ->orWhere('user_id', $auth->id);
-                });
-            })
-            ->when($auth->isHod(), function ($query) use ($auth) {
-                $auth->loadMissing('department');
-                $users = $auth->department->loadMissing('users');
-                $query->where(function ($q) use ($users, $auth) {
-                    $q->where('status', MaterialRequestStatus::Pending)
-                        ->whereIn('user_id', $users->users->pluck('id'))
-                        ->orWhere('user_id', $auth->id)
-                        ->orWhere('hod_approval_id', $auth->id);
-                });
-            })
-            ->when($auth->isUser(), fn ($query) => $query->where('user_id', $auth->id))
-            ->when($auth->isSecurity(), fn ($query) => $query->where('status', MaterialRequestStatus::Approved)
-                ->orWhere('user_id', $auth->id));
-
-        $carStats = (clone $carQuery)
-            ->selectRaw('status, COUNT(*) as total')
-            ->groupBy('status')
-            ->pluck('total', 'status');
-
-        $car_request_all = (clone $carQuery)->count();
-        $car_request_rejected = $carStats[MaterialRequestStatus::Rejected->value] ?? 0;
-        $car_request_pending = $auth->isGm()
-            ? ($carStats[MaterialRequestStatus::Progress->value] ?? 0)
-            : ($carStats[MaterialRequestStatus::Pending->value] ?? 0);
-        $car_request_approved = $carStats[MaterialRequestStatus::Approved->value] ?? 0;
+        [
+            'all' => $car_request_all,
+            'approved' => $car_request_approved,
+            'pending' => $car_request_pending,
+            'rejected' => $car_request_rejected,
+        ] = $this->requestStats(CarRequest::query(), $auth);
 
         /*
         |--------------------------------------------------------------------------
@@ -138,10 +83,9 @@ final class Dashboard extends Component
         $car_check_out = $carCheckouts->count();
         $mat_check_out = $matCheckouts->count();
 
-        $car_check_latest = $auth->isGm() || $auth->isHod() || $auth->isAdmin() ? $carCheckouts->latest()->limit(10)->get() : [];
-        $mat_check_latest = $auth->isGm() || $auth->isHod() || $auth->isAdmin() ? $matCheckouts->latest()->limit(10)->get() : [];
-
-        // dd($car_check_latest);
+        $canSeeCheckouts = $auth->isGm() || $auth->isDirector() || $auth->isHod() || $auth->isAdmin() || $auth->isSecurity();
+        $car_check_latest = $canSeeCheckouts ? $carCheckouts->latest()->limit(10)->get() : [];
+        $mat_check_latest = $canSeeCheckouts ? $matCheckouts->latest()->limit(10)->get() : [];
 
         /*
         |--------------------------------------------------------------------------
@@ -163,5 +107,30 @@ final class Dashboard extends Component
             'car_check_latest',
             'mat_check_latest'
         ));
+    }
+
+    /**
+     * @return array{all: int, approved: int, pending: int, rejected: int}
+     */
+    private function requestStats(Builder $query, User $auth): array
+    {
+        $byStatus = (clone $query)
+            ->visibleTo($auth)
+            ->selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        // Pour les approbateurs, "Pending" = en attente de MON action
+        // (même logique que les pages material.pending / car.pending)
+        $pending = $auth->isApprover()
+            ? (clone $query)->awaitingApprovalBy($auth)->count()
+            : (int) ($byStatus[MaterialRequestStatus::Pending->value] ?? 0);
+
+        return [
+            'all' => (int) $byStatus->sum(),
+            'approved' => (int) ($byStatus[MaterialRequestStatus::Approved->value] ?? 0),
+            'pending' => $pending,
+            'rejected' => (int) ($byStatus[MaterialRequestStatus::Rejected->value] ?? 0),
+        ];
     }
 }

@@ -21,15 +21,19 @@ final class MaterialRequestUpdate extends Component
 
     public MaterialRequest $materialRequest;
 
-    public MaterialRequestForm $form;
+        public MaterialRequestForm $form;
+
+    public string $personOutMode = 'list';
 
     public function mount(MaterialRequest $MaterialRequest)
     {
         $this->materialRequest = $MaterialRequest;
         Gate::authorize('update-request', $this->materialRequest);
         $this->form->setMaterialRequest($MaterialRequest);
+        $this->personOutMode = $MaterialRequest->person_out_id || ! $MaterialRequest->person_out_name ? 'list' : 'manual';
 
         $MaterialRequest->loadMissing('material_request_items', 'documents');
+
         $this->form->materials = $MaterialRequest->material_request_items
             ->map(fn ($item) => [
                 'designation' => $item->designation,
@@ -39,12 +43,24 @@ final class MaterialRequestUpdate extends Component
             ->toArray();
     }
 
+       public function setPersonOutMode(string $mode): void
+    {
+        $this->personOutMode = $mode;
+
+        if ($mode === 'list') {
+            $this->form->person_out_name = '';
+        } else {
+            $this->form->person_out_id = '';
+        }
+    }
+
     public function save()
     {
         Gate::authorize('update-request', $this->materialRequest);
 
         $this->form->update();
     }
+
 
     public function render()
     {

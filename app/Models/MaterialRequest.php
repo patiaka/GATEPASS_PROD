@@ -1,18 +1,17 @@
 <?php
-
 declare(strict_types=1);
-
 namespace App\Models;
 
 use App\Enum\MaterialRequestStatus;
 use App\Helper\ModelAction;
+use App\Helper\RequestVisibility;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class MaterialRequest extends Model
 {
-    use ModelAction;
+    use ModelAction, RequestVisibility;
 
     /**
      * The attributes that are mass assignable.
@@ -35,6 +34,7 @@ final class MaterialRequest extends Model
         'expire_at',
         'company',
         'person_out_id',
+        'person_out_name',
         'next_approver_role',
     ];
 

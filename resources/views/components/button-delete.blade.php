@@ -1,7 +1,8 @@
 @props([
-'row' => '',
+'row' => null,
 'rowId' => '',
 ])
+@php $rowId = $rowId ?: $row?->id; @endphp
 @php $modalId = 'delete_' . $rowId; @endphp
 @if ($row)
     @can('delete-request', $row)

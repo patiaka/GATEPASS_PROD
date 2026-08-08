@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Livewire\MaterialRequest;
 
-use App\Enum\MaterialRequestStatus;
-use App\Enum\RoleEnum;
 use App\Helper\ApproveAction;
 use App\Helper\DeleteAction;
 use App\Helper\WithFilter;
@@ -42,6 +40,8 @@ final class MaterialRequestIndex extends Component
         $auth->loadMissing('department', 'department.users');
 
         $query = MaterialRequest::with(['user.department', 'hodApproval', 'gmApproval'])
+            // ---- VISIBILITÉ PAR RÔLE (même logique que le Dashboard) ----
+            ->visibleTo($auth)
             // ---- FILTERS ----
             ->when($this->department, function ($query) {
                 $users = Department::with('users')->find($this->department)?->users ?? collect();
@@ -57,71 +57,13 @@ final class MaterialRequestIndex extends Component
                 });
             })
         ;
-            
-        // ---- GM ----
-        if ($auth->isGm()) {
-            $query->where('user_id', $auth->id);
-
-            $query->orWhere(function ($q) {
-                $q
-                    ->where('status', MaterialRequestStatus::Approved)
-                    ->orWhere('status', MaterialRequestStatus::Rejected)
-                    ->where('gm_approval_id', '!=', null)
-                ;
-            });
-        }
-
-        // ---- DIRECTOR ----
-        if ($auth->isDirector()) {
-            $department = Department::with('users')->where('director_id', $auth->id)->first();
-            $query->orWhere(function ($q) use ($department, $auth) {
-                $q
-                    ->whereIn('user_id', $department ? $department->users->pluck('id') : [])
-                    ->orWhere('user_id', $auth->id)
-                ;
-            });
-        }
-
-        // ---- HOD ----
-        if ($auth->isHod()) {
-            // $auth->loadMissing('department');
-            // $department = $auth->department->loadMissing('users');
-            $usersIDs = $auth->department->users->pluck('id');
-            $query->orWhere(function ($q) use ($usersIDs, $auth) {
-                $q
-                    ->whereIn('user_id', $usersIDs)
-                    // ->orWhere('user_id', $auth->id)
-                ;
-            });
-        }
-
-        // ---- USER ----
-        $query->when($auth->isUser(), function ($query) use ($auth) {
-            $auth->loadMissing('department', 'department.users');
-            $query->where(function($q) use ($auth) {
-                $q
-                    ->whereIn('user_id', $auth->department->users->pluck('id'))
-                    ->orWhere('user_id', $auth->id)
-                ;
-            });
-        });
-
-        // ---- SECURITY ----
-        $query->when($auth->isSecurity(), function ($query) use ($auth) {
-            $query->where(function ($q) use ($auth) {
-                $q->where('status', MaterialRequestStatus::Approved)
-                    ->orWhere('user_id', $auth->id);
-            });
-        });
 
         return $query->orderByDesc('id')->paginate(10);
     }
 
     public function delete(int $id): void
     {
-
-        $row = MaterialRequest::find($id);
-        Gate::authorize('delete-request', $row);
+        $row = MaterialRequest::with('documents')->find($id);
 
         if (! $row) {
             flash()->error('Material request not found.');
@@ -129,15 +71,13 @@ final class MaterialRequestIndex extends Component
             return;
         }
 
-        $row->loadMissing('documents');
+        Gate::authorize('delete-request', $row);
 
-        if ($row->documents) {
-            foreach ($row->loadMissing('documents')->documents as $row) {
-                $this->file_delete($row);
-            }
-            $row->documents->delete();
+        foreach ($row->documents as $document) {
+            $this->file_delete($document);
+            $document->delete();
         }
-        
+
         $row->delete();
         flash()->success('Material request deleted with success');
     }

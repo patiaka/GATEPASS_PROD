@@ -26,13 +26,39 @@
                         <small class="text-red-500 text-sm">{{ $message }}</small>
                     @enderror
 
-                    <div class="mt-4">
-                        <x-select2 :options="$users" optionLabel="full_name" wire:model="form.person_out_id"
-                            label="name" placeholder="Select users" />
-                        @error('form.person_out_id')
-                            <small class="text-red-500 text-sm">{{ $message }}</small>
-                        @enderror
+                                       <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Delegated Person</label>
+
+                        <div class="inline-flex items-center gap-2 mb-2">
+                            <button type="button" wire:click="setPersonOutMode('list')"
+                                class="px-3 py-1 text-xs font-medium rounded-md border {{ $personOutMode === 'list' ? 'bg-[#0e3a61] text-white border-[#0e3a61]' : 'bg-white text-gray-700 border-gray-300' }}">
+                                From list
+                            </button>
+                            <button type="button" wire:click="setPersonOutMode('manual')"
+                                class="px-3 py-1 text-xs font-medium rounded-md border {{ $personOutMode === 'manual' ? 'bg-[#0e3a61] text-white border-[#0e3a61]' : 'bg-white text-gray-700 border-gray-300' }}">
+                                Enter manually
+                            </button>
+                        </div>
+
+                        @if ($personOutMode === 'list')
+                            <div wire:key="person-out-list">
+                                <x-select2 :options="$users" optionLabel="full_name" wire:model="form.person_out_id"
+                                    placeholder="Select users" />
+                                @error('form.person_out_id')
+                                    <small class="text-red-500 text-sm">{{ $message }}</small>
+                                @enderror
+                            </div>
+                        @else
+                            <div wire:key="person-out-manual">
+                                <input type="text" wire:model="form.person_out_name" placeholder="Enter full name"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                @error('form.person_out_name')
+                                    <small class="text-red-500 text-sm">{{ $message }}</small>
+                                @enderror
+                            </div>
+                        @endif
                     </div>
+
                     <!-- Liste des matériels -->
                     <div class="my-6">
                         <h5 class="mb-4 text-lg font-medium">Matérial infos</h5>

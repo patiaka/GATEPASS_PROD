@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Livewire\CarRequest;
 
-use App\Enum\MaterialRequestStatus;
-use App\Enum\RoleEnum;
 use App\Helper\ApproveAction;
 use App\Helper\WithFilter;
 use App\Models\CarDriver;
@@ -39,9 +37,11 @@ final class CarRequestIndex extends Component
         $auth = Auth::user();
 
         return CarRequest::with('user', 'user.department', 'hodApproval', 'gmApproval')
+            // Visibilité par rôle (même logique que le Dashboard)
+            ->visibleTo($auth)
             // Filters
             ->when($this->department, function ($query) {
-                $users = Department::with('users')->find($this->department)->users;
+                $users = Department::with('users')->find($this->department)?->users ?? collect();
                 $query->whereIn('user_id', $users->pluck('id'));
             })
             ->when($this->by_status, function ($query) {
@@ -49,53 +49,6 @@ final class CarRequestIndex extends Component
             })
             ->when($this->search, function ($query) {
                 $query->whereAny(['reference', 'status'], 'like', '%'.$this->search.'%');
-            })
-            
-            // GM
-            ->when($auth->isGm(), function ($query) use ($auth) {
-                $query->where(function ($query) use ($auth) {
-                    $query 
-                        ->where('status', MaterialRequestStatus::Approved)
-                        ->orWhere('status', MaterialRequestStatus::Rejected)
-                        ->where('gm_approval_id', '!=', null)
-                        ->orWhere('user_id', $auth->id)
-                    ;
-                });
-            })
-            
-            // DIRECTOR
-            ->when($auth->isDirector(), function ($query) use ($auth) {
-                $department = Department::with('users')->where('director_id', $auth->id)->first();
-                $query->where(function ($query) use ($department, $auth) {
-                    $query
-                        ->whereIn('user_id', $department ? $department->users->pluck('id') : [])
-                        ->orWhere('user_id', $auth->id)
-                    ;
-                });
-            })
-
-            // HOD
-            ->when($auth->isHod(), function ($query) use ($auth) {
-                $auth->loadMissing('department', 'department.users');
-                $query->where(function ($query) use ($auth) {
-                    $query->whereIn('user_id', $auth->department->users->pluck('id'));
-                });
-            })
-
-            // User
-            ->when($auth->isSimpleUser(), function ($query) use ($auth) {
-                $auth->loadMissing('department', 'department.users');
-                $query->where(function($q) use ($auth) {
-                    $q
-                        ->whereIn('user_id', $auth->department->users->pluck('id'))
-                        ->orWhere('user_id', $auth->id)
-                    ;
-                });
-            })
-
-            // Security
-            ->when($auth->isSecurity(), function ($query) use ($auth) {
-                $query->where('status', MaterialRequestStatus::Approved)->orWhere('user_id', $auth->id);
             })
             ->latest('id')
             ->paginate(10)

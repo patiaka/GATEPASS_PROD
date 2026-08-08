@@ -9,6 +9,7 @@ use App\Models\CarRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -17,13 +18,10 @@ use function compact;
 #[Title('Vehicle Off site Check In/Out')]
 final class CarRequestCheckInCreate extends Component
 {
-    #[Validate('required|string|in:Approved,Rejected')]
-    public string $decision = '';
-
     #[Validate('required|string|in:Exit,Entry')]
     public string $action = '';
 
-    #[Validate('required|string|in:Back,Front')]
+    #[Validate('required|string|in:Back,Front,Airport')]
     public string $gate = '';
 
     #[Validate('nullable|string|in:25%,50%,75%,100%')]
@@ -32,6 +30,7 @@ final class CarRequestCheckInCreate extends Component
     #[Validate('nullable|integer')]
     public string $kilometers = '';
 
+    #[Url(as: 'request')]
     #[Validate('required|exists:car_requests,id')]
     public $car_request_id = '';
 
@@ -43,6 +42,8 @@ final class CarRequestCheckInCreate extends Component
     public ?CarRequest $carRequest = null;
 
     public $Kilometers_type = '';
+
+    public ?string $last_movement = null;
 
     public function updatedCarRequestId($value)
     {
@@ -59,11 +60,25 @@ final class CarRequestCheckInCreate extends Component
             ])->find($value);
 
         $this->car_driver_list = $this->carRequest ? User::select('id', 'name', 'badge_number')->whereIn('id', $this->carRequest->car_drivers->pluck('user_id'))->get() : collect();
+
+        // Suggérer automatiquement le mouvement opposé au dernier enregistré
+        $last = $this->carRequest?->recordings()->latest('id')->first();
+        $this->last_movement = $last
+            ? "{$last->action} — {$last->gate} gate — {$last->created_at->format('Y-m-d H:i')}"
+            : null;
+        $this->action = $last?->action === 'Exit' ? 'Entry' : 'Exit';
     }
 
     public function mount()
     {
         $this->carRequest = null;
+
+        // Présélection depuis le bouton "Record" des listes (?request=ID)
+        $id = $this->car_request_id ?: request('request');
+        if ($id) {
+            $this->car_request_id = (string) $id;
+            $this->updatedCarRequestId($id);
+        }
     }
 
     public function recordSecurityCheck()
@@ -74,20 +89,34 @@ final class CarRequestCheckInCreate extends Component
 
         // Vérifier expiration
         if ($item->isExpired()) {
-            flash()->success('request expired');
+            flash()->error('This request has expired.');
 
             return;
         }
-        $kilometer = $this->Kilometers_type === 'Kilometers' ? $this->kilometers.'KM' : $this->kilometers.'H';
+
+        // Empêcher deux mouvements identiques consécutifs (pas 2 Exit ni 2 Entry de suite)
+        $lastAction = $item->recordings()->latest('id')->value('action');
+        if ($lastAction === $this->action) {
+            flash()->error("This request was already recorded as '{$this->action}'. Please record the opposite movement first.");
+
+            return;
+        }
+
+        $kilometer = $this->kilometers !== ''
+            ? $this->kilometers.($this->Kilometers_type === 'Kilometers' ? 'KM' : 'H')
+            : null;
+
         $item->recordings()->create([
-            'action' => $this->action,      // 'entry' ou 'exit'
+            'action' => $this->action,      // 'Entry' ou 'Exit'
             'gate' => $this->gate,
             'kilometers' => $kilometer,
-            'fuel_level' => $this->fuel_level,
-            'decision' => $this->decision,    // 'validated' ou 'rejected'
+            'fuel_level' => $this->fuel_level ?: null,
+            // Un mouvement enregistré = passage validé (colonne NOT NULL en base)
+            'decision' => 'Approved',
             'checked_at' => now(),
             'user_id' => Auth::user()->id,
-            'car_driver_id' => $this->car_driver_id,
+            // '' provoquerait une violation de clé étrangère sur SQL Server
+            'car_driver_id' => $this->car_driver_id ?: null,
         ]);
         $this->reset();
         flash()->success('Record security check added');

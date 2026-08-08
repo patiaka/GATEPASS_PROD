@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Livewire\CarRequest;
 
-use App\Enum\MaterialRequestStatus;
-use App\Enum\RoleEnum;
 use App\Helper\ApproveAction;
 use App\Helper\WithFilter;
 use App\Models\CarRequest;
@@ -33,24 +31,20 @@ final class CarRequestPending extends Component
     {
         $auth = Auth::user();
 
-        return CarRequest::with('user', 'user.department', 'hodApproval', 'gmApproval')
-            ->when($auth->isGm(), function ($query) use ($auth) {
-                $query->where('next_approver_role', RoleEnum::GM->value);
-            })
-            ->when($auth->isDirector(), function ($query) use ($auth) {
-                $department = Department::with('users')->where('director_id', $auth->id)->first();
-                $query
-                    ->whereIn('user_id', $department ? $department->users->pluck('id') : [])
-                    ->where('next_approver_role', RoleEnum::DIRECTOR->value)
-                ;
-            })
-            ->when($auth->isHod(), function ($query) use ($auth) {
-                $auth->loadMissing('department', 'department.users');
-                $query
-                    ->whereIn('user_id', $auth->department->users->pluck('id'))
-                    ->where('next_approver_role', RoleEnum::HOD->value)
-                ;
-            })
+        $query = CarRequest::with('user', 'user.department', 'hodApproval', 'gmApproval');
+
+        // En attente de MON action (même logique que le compteur du Dashboard)
+        if ($auth->isApprover()) {
+            $query->awaitingApprovalBy($auth);
+        } elseif ($auth->isAdmin()) {
+            // Admin : toutes les demandes encore en cours d'approbation
+            $query->whereNotNull('next_approver_role');
+        } else {
+            // Autres rôles : leurs propres demandes en cours d'approbation
+            $query->whereNotNull('next_approver_role')->where('user_id', $auth->id);
+        }
+
+        return $query
 			->when($this->search, function ($query) {
                 $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
             })

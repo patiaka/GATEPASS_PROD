@@ -52,7 +52,7 @@ final class RecordingExport implements FromQuery, Responsable, WithHeadings, Wit
             $data->requestable->user->department->name,
             $data->user->name,
             $data->requestable->company,
-            $data->requestable->person_out->name,
+            $data->requestable->person_out?->name ?? $data->requestable->person_out_name,
             $data->gate,
             $data->action,
             $data->decision,

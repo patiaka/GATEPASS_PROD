@@ -88,7 +88,8 @@
 
                 <div>
                     <p class="font-medium">Delegated Person:</p>
-                    <p>{{ $MaterialRequest->person_out?->name }}</p>
+					<p>{{ $MaterialRequest->person_out?->name ?? $MaterialRequest->person_out_name ?? '—' }}</p>
+
                 </div>
             </div>
         </section>

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Livewire\MaterialRequest;
 
-use App\Enum\MaterialRequestStatus;
-use App\Enum\RoleEnum;
 use App\Helper\ApproveAction;
 use App\Helper\WithFilter;
 use App\Models\Department;
@@ -36,33 +34,15 @@ final class MaterialRequestPending extends Component
 
         $query = MaterialRequest::with('user', 'user.department', 'hodApproval', 'gmApproval');
 
-        if ($auth->isGm()) {
-            $query->where(function ($query) use ($auth) {
-                $query
-                    ->where('next_approver_role', RoleEnum::GM->value)
-                    ->orWhere('user_id', $auth->id)
-                ;
-            });
-        }
-
-        if ($auth->isDirector()) {
-            $department = Department::with('users')->where('director_id', $auth->id)->first();
-            $query->orWhere(function ($q) use ($auth, $department) {
-                $q
-                    ->whereIn('user_id', $department ? $department->users->pluck('id') : [])
-                    ->where('next_approver_role', RoleEnum::DIRECTOR->value)
-                    ->orWhere('user_id', $auth->id)
-                ;
-            });
-        }
-
-        if ($auth->isHod()) {
-            $query->orWhere(function ($q) use ($auth) {
-                $q
-                    ->where('next_approver_role', RoleEnum::HOD->value)
-                    ->whereIn('user_id', $auth->department->users->pluck('id'))
-                ;
-            });
+        // En attente de MON action (même logique que le compteur du Dashboard)
+        if ($auth->isApprover()) {
+            $query->awaitingApprovalBy($auth);
+        } elseif ($auth->isAdmin()) {
+            // Admin : toutes les demandes encore en cours d'approbation
+            $query->whereNotNull('next_approver_role');
+        } else {
+            // Autres rôles : leurs propres demandes en cours d'approbation
+            $query->whereNotNull('next_approver_role')->where('user_id', $auth->id);
         }
 
         $query->when($this->search, function ($query) {

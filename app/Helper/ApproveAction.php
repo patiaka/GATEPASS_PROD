@@ -11,7 +11,6 @@ use App\Jobs\MailRequestJob;
 use App\Models\CarRequest;
 use App\Models\MaterialRequest;
 use Gate;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -191,44 +190,65 @@ trait ApproveAction
     {
         Gate::authorize('action-approved-request', Auth::user());
 
-        if ($type === 'material') {
-            $query = MaterialRequest::query()->whereIn('id', $this->selectedRows);
-        } elseif ($type === 'vehicle') {
-            $query = CarRequest::query()->whereIn('id', $this->selectedRows);
+        if (! in_array($action, ['approve', 'reject'], true)) {
+            return;
         }
-        if ($action === 'reject') {
-            if (Auth::user()->isHod()) {
-                $query->where('status', MaterialRequestStatus::Pending)->update([
-                    'status' => MaterialRequestStatus::Rejected,
-                    'hod_approval_id' => Auth::user()->id,
-                ]);
-                $this->dispatchApprovalMails($query->get(), 'hod', 'rejeté');
-            } elseif (Auth::user()->isGm()) {
-                $query->where('status', MaterialRequestStatus::Progress)->update([
-                    'status' => MaterialRequestStatus::Rejected,
-                    'gm_approval_id' => Auth::user()->id,
-                ]);
-                $this->dispatchApprovalMails($query->get(), 'gm', 'rejeté');
-            }
-        } elseif ($action === 'approve') {
-            if (Auth::user()->isHod()) {
-                $query->where('status', MaterialRequestStatus::Pending)->update([
-                    'status' => MaterialRequestStatus::Progress,
-                    'hod_approval_id' => Auth::user()->id,
-                ]);
-                $this->dispatchApprovalMails($query->get(), 'hod', 'validé');
-            } elseif (Auth::user()->isGm()) {
-                $query->where('status', MaterialRequestStatus::Progress)->update([
-                    'status' => MaterialRequestStatus::Approved,
-                    'gm_approval_id' => Auth::user()->id,
+
+        $user = Auth::user();
+        $approved = $action === 'approve';
+        $model = $type === 'material' ? MaterialRequest::class : CarRequest::class;
+
+        // Uniquement les demandes en attente de l'action de cet utilisateur
+        $requests = $model::query()
+            ->whereIn('id', $this->selectedRows)
+            ->awaitingApprovalBy($user)
+            ->get();
+
+        foreach ($requests as $request) {
+            $role = $request->next_approver_role;
+
+            $data = match ($role) {
+                RoleEnum::HOD->value => [
+                    'hod_approval_date' => now(),
+                    'hod_approval_id' => $user->id,
+                    'status' => $approved ? MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value,
+                    'next_approver_role' => ! $approved
+                        ? null
+                        : ($request->isRequiredDirectorApproval() ? RoleEnum::DIRECTOR->value : RoleEnum::GM->value),
+                ],
+                RoleEnum::DIRECTOR->value => [
+                    'director_approval_date' => now(),
+                    'director_approval_id' => $user->id,
+                    'status' => $approved ? MaterialRequestStatus::Progress->value : MaterialRequestStatus::Rejected->value,
+                    'next_approver_role' => $approved ? RoleEnum::GM->value : null,
+                ],
+                RoleEnum::GM->value => [
+                    'gm_approval_date' => now(),
+                    'gm_approval_id' => $user->id,
+                    'status' => $approved ? MaterialRequestStatus::Approved->value : MaterialRequestStatus::Rejected->value,
                     'expire_at' => Carbon::now()->addDays(7),
-                ]);
-                $this->dispatchApprovalMails($query->get(), 'gm', 'validé');
+                    'next_approver_role' => null,
+                ],
+                default => null,
+            };
+
+            if ($data === null) {
+                continue;
             }
+
+            $request->update($data);
+            RequestApprovalSubmitted::dispatch($request, $role);
         }
 
         $this->reset('selectedRows');
-        flash()->success($action.' applied items successfully.');
+
+        if ($requests->isEmpty()) {
+            flash()->warning('No selected request is awaiting your approval.');
+
+            return;
+        }
+
+        flash()->success($requests->count().' request(s) '.($approved ? 'approved' : 'rejected').' successfully.');
     }
 
     protected function reset_filled(): void
@@ -245,14 +265,6 @@ trait ApproveAction
         $action = $this->status === 'Approved' ? 'valided' : 'rejected';
         $message = "The $role request reference $request->reference has been $action";
         MailRequestJob::dispatch($request, $message);
-    }
-
-    private function dispatchApprovalMails(Collection $items, string $role, string $action): void
-    {
-        $items->each(function ($item) use ($role, $action) {
-            $message = "The $role a $action votre request reference ". $item->reference;
-            MailRequestJob::dispatch($item, $message);
-        });
     }
 
     private function getNextApprover(CarRequest|MaterialRequest $request): string|null

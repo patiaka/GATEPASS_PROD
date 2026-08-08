@@ -17,7 +17,9 @@ final class MaterialRequestCreate extends Component
 {
     use DeleteAction, RepeatInputAction, WithFileUploads;
 
-    public MaterialRequestForm $form;
+        public MaterialRequestForm $form;
+
+    public string $personOutMode = 'list';
 
     public function mount()
     {
@@ -26,7 +28,19 @@ final class MaterialRequestCreate extends Component
         ];
     }
 
+    public function setPersonOutMode(string $mode): void
+    {
+        $this->personOutMode = $mode;
+
+        if ($mode === 'list') {
+            $this->form->person_out_name = '';
+        } else {
+            $this->form->person_out_id = '';
+        }
+    }
+
     public function save()
+
     {
         $this->form->store();
     }

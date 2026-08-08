@@ -55,6 +55,7 @@
                     <option value="">All</option>
                     <option value="Front">Front</option>
                     <option value="Back">Back</option>
+                    <option value="Airport">Airport</option>
                 </x-select>
             </div>
 
@@ -115,7 +116,7 @@
                         <th class="px-4 py-2 w-40 text-left">Delegated Person Name</th>
                         <th class="px-4 py-2 w-40 text-left">Gate</th>
                         <th class="px-4 py-2 w-32 text-left">Action</th>
-                        <th class="px-4 py-2 w-32 text-left">Decision</th>
+                        <th class="px-4 py-2 w-32 text-left">Record</th>
 
                     </tr>
                 </thead>
@@ -162,22 +163,14 @@
                             </td>
 
                             <td class="px-4 py-2">
-                                @if ($row->decision === 'Approved')
-                                    <span
-                                        class="text-[11px] px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                        Approved
-                                    </span>
-                                @elseif ($row->decision === 'Rejected')
-                                    <span
-                                        class="text-[11px] px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200">
-                                        Rejected
-                                    </span>
-                                @else
-                                    <span
-                                        class="text-[11px] px-2 py-0.5 rounded-md bg-gray-50 text-gray-600 border border-gray-200">
-                                        Pending
-                                    </span>
-                                @endif
+                                {{-- Lien classique (pas wire:navigate) : le select2 a besoin d'un
+                                     chargement complet pour afficher la présélection --}}
+                                <a href="{{ route('material.check_create', ['request' => $row->requestable_id]) }}"
+                                    class="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-md
+                                           bg-[#134169] text-white border border-[#134169]
+                                           hover:bg-white hover:text-[#134169] transition">
+                                    Record {{ $row->action === 'Exit' ? 'Entry' : 'Exit' }}
+                                </a>
                             </td>
 
                         </tr>

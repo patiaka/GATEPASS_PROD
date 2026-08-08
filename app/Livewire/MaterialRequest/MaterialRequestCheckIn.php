@@ -34,7 +34,7 @@ final class MaterialRequestCheckIn extends Component
 
     public function baseQuery()
     {
-        return Recording::with('user', 'requestable:id,company,reference,user_id,person_out_id', 'requestable.user.department:id,name', 'requestable.person_out:id,name')->whereHasMorph(
+             return Recording::with('user', 'requestable:id,company,reference,user_id,person_out_id,person_out_name', 'requestable.user.department:id,name', 'requestable.person_out:id,name')->whereHasMorph(
             'requestable',
             [MaterialRequest::class]
         )

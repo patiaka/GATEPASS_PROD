@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enum\MaterialRequestStatus;
 use App\Helper\ModelAction;
+use App\Helper\RequestVisibility;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +16,7 @@ use Illuminate\Support\Carbon;
 final class CarRequest extends Model
 {
     /** @use HasFactory<\Database\Factories\CarRequestFactory> */
-    use ModelAction;
+    use ModelAction, RequestVisibility;
 
     /**
      * The attributes that are mass assignable.

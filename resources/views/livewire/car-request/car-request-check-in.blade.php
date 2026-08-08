@@ -53,6 +53,7 @@
                     <option value="">All</option>
                     <option value="Front">Front</option>
                     <option value="Back">Back</option>
+                    <option value="Airport">Airport</option>
                 </x-select>
             </div>
 
@@ -99,7 +100,7 @@
                         {{-- <th class="px-4 py-3 text-left font-medium">destination</th> --}}
                         <th class="px-4 py-3 text-left font-medium">kilometers / Per Hours</th>
                         <th class="px-4 py-3 text-left font-medium">Action</th>
-                        <th class="px-4 py-3 text-left font-medium">Decision</th>
+                        <th class="px-4 py-3 text-left font-medium">Record</th>
 
                     </tr>
                 </thead>
@@ -122,22 +123,14 @@
                             <td class="px-4 py-4">{{ $row->action }}</td>
 
                             <td class="px-4 py-4">
-                                @if ($row->decision === 'Approved')
-                                    <span
-                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700">
-                                        ✅ Approved
-                                    </span>
-                                @elseif ($row->decision === 'Rejected')
-                                    <span
-                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-700">
-                                        ❌ Rejected
-                                    </span>
-                                @else
-                                    <span
-                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gray-50 text-gray-700">
-                                        ⏳ En attente
-                                    </span>
-                                @endif
+                                {{-- Lien classique (pas wire:navigate) : le select2 a besoin d'un
+                                     chargement complet pour afficher la présélection --}}
+                                <a href="{{ route('car.check_create', ['request' => $row->requestable_id]) }}"
+                                    class="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-md
+                                           bg-[#134169] text-white border border-[#134169]
+                                           hover:bg-white hover:text-[#134169] transition">
+                                    Record {{ $row->action === 'Exit' ? 'Entry' : 'Exit' }}
+                                </a>
                             </td>
                         </tr>
                     @empty

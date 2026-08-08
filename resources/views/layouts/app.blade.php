@@ -7,7 +7,6 @@
     <title>{{ $title ?? 'Sidebar Somisy Template' }}</title>
     <link rel="icon" href="{{ asset('assets/img/favicon.ico') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     {{--
     <link rel="stylesheet" href="{{ asset('build/assets/app-Dz6fu0Y1.css') }}"> --}}
     {{-- <script src="{{ asset('build/assets/app-Dz6fu0Y1.css') }}"></script> --}}
@@ -69,20 +68,8 @@
     <!-- Sidebar -->
 
     <!-- Content -->
-    <!-- Development version -->
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    {{-- <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script> --}}
-
-    <!-- Production version -->
-    {{-- <script src="https://unpkg.com/lucide@latest"></script> --}}
+    {{-- Lucide (icônes) est servi en local via Vite : voir resources/js/app.js --}}
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            lucide.createIcons();
-        });
-
-        window.addEventListener("livewire:navigated", () => {
-            lucide.createIcons();
-        });
         document.addEventListener('DOMContentLoaded', function() {
             const sidebar = document.getElementById('sidebar');
             const toggle = document.getElementById('sidebarToggle');
