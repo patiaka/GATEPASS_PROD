@@ -36,11 +36,9 @@ final class UserForm extends Form
     #[Validate('required|string|exists:departments,id')]
     public $department_id = '';
 
-    #[Validate(['required', new Enum(RoleEnum::class)])]
-    public string $role = '';
-
-    #[Validate(['nullable', new Enum(RoleEnum::class)])]
-    public $delegated_role = null;
+    /** @var array<int, string> Rôles cochés (multi-rôles) */
+    #[Validate(['required', 'array', 'min:1'])]
+    public array $roles = [];
 
     public function setUser(User $user): void
     {
@@ -51,9 +49,8 @@ final class UserForm extends Form
         $this->poste = $user->poste;
         $this->badge_number = $user->badge_number;
         $this->contact = $user->contact;
-        $this->role = $user->role->value;
         $this->department_id = $user->department_id;
-        $this->delegated_role = $user->delegated_role;
+        $this->roles = $user->currentRoles();
     }
 
     public function store()
@@ -63,11 +60,19 @@ final class UserForm extends Form
             'contact' => ['required', 'string', 'max:10', 'unique:users'],
             'badge_number' => ['required', 'string', 'max:12', 'unique:users'],
             'name' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'string', 'max:255'],
+            'roles' => ['required', 'array', 'min:1'],
+            'roles.*' => [new Enum(RoleEnum::class)],
             'poste' => ['required', 'string', 'max:100'],
             'department_id' => ['required', 'integer', 'exists:departments,id'],
         ]);
-        $item = User::create($this->only(['name', 'email', 'role', 'department_id', 'poste', 'badge_number', 'contact']));
+
+        $item = User::create([
+            ...$this->only(['name', 'email', 'department_id', 'poste', 'badge_number', 'contact']),
+            // colonne users.role NOT NULL : on met le rôle principal (le 1er coché)
+            'role' => $this->roles[0],
+        ]);
+        $item->syncRoles($this->roles);
+
         $item->notify(new UserNotification($item));
         $this->reset();
         flash()->success('User added successfully');
@@ -75,28 +80,27 @@ final class UserForm extends Form
         return to_route('user.index');
     }
 
-    public function update(): void
+    public function update()
     {
         $this->validate([
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->user->id)],
             'contact' => ['required', 'string', 'max:10', Rule::unique('users', 'contact')->ignore($this->user->id)],
             'badge_number' => ['required', 'string', 'max:12', Rule::unique('users', 'badge_number')->ignore($this->user->id)],
             'name' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'string', 'max:255'],
+            'roles' => ['required', 'array', 'min:1'],
+            'roles.*' => [new Enum(RoleEnum::class)],
             'poste' => ['required', 'string', 'max:100'],
             'department_id' => ['required', 'integer', 'exists:departments,id'],
         ]);
 
-        $this->user->update($this->only(['name', 'email', 'role', 'department_id', 'poste', 'badge_number', 'contact']));
-        if ($this->delegated_role) {
-            $this->user->delegateRole($this->delegated_role);
-        } else {
-            $this->user->revokeDelegatedRole();
-        }
+        $this->user->update($this->only(['name', 'email', 'department_id', 'poste', 'badge_number', 'contact']));
+        $this->user->syncRoles($this->roles);
 
         if ($this->user->wasChanged('email')) {
             $this->user->notify(new UserNotification($this->user));
         }
         flash()->success('User updated successfully');
+
+        return to_route('user.index');
     }
 }

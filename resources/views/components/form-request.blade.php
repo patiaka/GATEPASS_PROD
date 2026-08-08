@@ -2,35 +2,20 @@
 
 @php
     $user = Auth::user();
-    // $isHod = $user->isHod();
-    // $isGm = $user->isGm();
-    // $isCreator = $model->user_id === Auth::id();
-    // $isApprovedCheck = $isHod ? $model->isHodApproved() : $model->isGmApproved();
-    // $role = $isHod ? 'HOD' : ($isGm ? 'GM' : '');
-    // $approveMethod = $isHod ? 'approveByHod' : 'approveByGm';
-    // $commentField = $isHod ? 'hod_comment' : 'gm_comment';
 
-    // $hodApproved = $model->isHodApproved();
-    // $gmApproved = $model->isGmApproved();
-
-    // $canShowBtn = false;
-
-    // if ($user->isHod()) {
-    //     $canShowBtn = !$hodApproved ;
-    // } elseif ($user->isDirector()) {
-    //     $canShowBtn = (!$gmApproved && !$model->isRejected() && ($hodApproved || $isCreator));
-    // } elseif ($user->isGm()) {
-    //     $canShowBtn = (!$gmApproved && !$model->isRejected() && ($hodApproved || $isCreator));
-    // }
-
-    if ($user->isHod()) {
-        $approveMethod = 'approveByHod';
-    } elseif ($user->isDirector()) {
-        $approveMethod = 'approveByDirector';
-    } elseif ($user->isGm()) {
-        $approveMethod = 'approveByGm';
-    }
+    // La méthode d'approbation est déterminée par l'ÉTAPE de la demande
+    // (next_approver_role), pas par le rôle de l'utilisateur — indispensable
+    // pour un utilisateur multi-rôles (ex. HOD+GM) qui doit appeler la bonne
+    // étape et ne pas rester bloqué sur approveByHod.
+    $approveMethod = match ($model->next_approver_role) {
+        \App\Enum\RoleEnum::HOD->value => 'approveByHod',
+        \App\Enum\RoleEnum::DIRECTOR->value => 'approveByDirector',
+        \App\Enum\RoleEnum::GM->value => 'approveByGm',
+        default => null,
+    };
 @endphp
+
+@if ($approveMethod)
 
 {{-- @if ($canShowBtn) --}}
 <button x-data @click="$dispatch('open-modal', { id: 'dialog-{{ $model->id }}' })"
@@ -102,3 +87,4 @@
         </div>
     </div>
 </template>
+@endif

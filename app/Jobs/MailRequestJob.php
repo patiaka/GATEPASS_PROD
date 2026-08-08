@@ -46,13 +46,13 @@ final class MailRequestJob implements ShouldQueue
     private function getHodUsers(): Collection
     {
         return User::where('department_id', $this->model->user->department_id)
-            ->where('role', RoleEnum::HOD)
+            ->whereHas('roleAssignments', fn ($q) => $q->where('role', RoleEnum::HOD->value))
             ->get();
     }
 
     private function getGmUsers(): Collection
     {
-        return User::where('role', RoleEnum::GM)->get();
+        return User::whereHas('roleAssignments', fn ($q) => $q->where('role', RoleEnum::GM->value))->get();
     }
 
     private function getRoute(): string

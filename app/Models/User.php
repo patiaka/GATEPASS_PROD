@@ -58,6 +58,35 @@ final class User extends Authenticatable
     }
 
     /**
+     * Rôles de l'utilisateur (multi-rôles via la table pivot role_user).
+     */
+    public function roleAssignments(): HasMany
+    {
+        return $this->hasMany(RoleUser::class);
+    }
+
+    /**
+     * Remplace l'ensemble des rôles de l'utilisateur.
+     *
+     * @param  array<int, string>  $roles
+     */
+    public function syncRoles(array $roles): void
+    {
+        $roles = collect($roles)->filter()->unique()->values();
+
+        $this->roleAssignments()->delete();
+        foreach ($roles as $role) {
+            $this->roleAssignments()->create(['role' => $role]);
+        }
+        $this->setRelation('roleAssignments', $this->roleAssignments()->get());
+
+        // Rétrocompat : on garde users.role rempli avec le rôle principal (le 1er)
+        if ($roles->isNotEmpty()) {
+            $this->updateQuietly(['role' => $roles->first()]);
+        }
+    }
+
+    /**
      * Get all of the material_requests for the User
      */
     public function material_requests(): HasMany
@@ -151,37 +180,22 @@ final class User extends Authenticatable
      */
     public function canApprove($request): bool
     {
-        $isCreator = $request->user_id === $this->id;
-        $hodApproved = $request->isHodApproved();
-        $directorApproved = $request->isDirectorApproved();
-        $gmApproved = $request->isGmApproved();
+        // L'approbation suit l'ÉTAPE courante de la demande (next_approver_role).
+        // L'utilisateur peut approuver s'il possède le rôle de cette étape et que
+        // celle-ci n'est pas déjà validée. Basé sur l'étape (et non sur une
+        // cascade de if), c'est correct pour un utilisateur multi-rôles.
+        $stage = $request->next_approver_role;
 
-        $can = false;
-
-        // Si user est HOD
-        if ($this->isHod()) {
-            $can = ! $hodApproved;
+        if ($stage === null) {
+            return false; // demande déjà entièrement traitée
         }
 
-        // Si user est DIRECTOR
-        if ($this->isDirector()) {
-            // Director ne peut approuver que si HOD a approuvé, sauf si GM est le créateur
-            $can = ! $directorApproved && ($hodApproved || $isCreator);
-        }
-
-        // Si user est GM
-        if ($this->isGm()) {
-            // GM ne peut approuver que si HOD a approuvé, sauf si GM est le créateur
-            // return ! $gmApproved && ($hodApproved || $isCreator);
-            $request = $request->load('user.department.director');
-            if ($request->user->department->director !== null) {
-                $can = ! $gmApproved && ($directorApproved || $isCreator);
-            } else {
-                $can = ! $gmApproved && ($hodApproved || $isCreator);
-            }
-        }
-
-        return $can;
+        return match ($stage) {
+            RoleEnum::HOD->value => $this->isHod() && ! $request->isHodApproved(),
+            RoleEnum::DIRECTOR->value => $this->isDirector() && ! $request->isDirectorApproved(),
+            RoleEnum::GM->value => $this->isGm() && ! $request->isGmApproved(),
+            default => false,
+        };
     }
 
     public function isActive(): bool

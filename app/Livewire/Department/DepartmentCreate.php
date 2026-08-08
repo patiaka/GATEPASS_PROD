@@ -23,7 +23,7 @@ final class DepartmentCreate extends Component
     public function render()
     {
         return view('livewire.department.department-create',[
-            'users' => User::where('role', RoleEnum::DIRECTOR->value)->orderBy('name', 'ASC')->get(),
+            'users' => User::whereHas('roleAssignments', fn ($q) => $q->where('role', RoleEnum::DIRECTOR->value))->orderBy('name', 'ASC')->get(),
         ]);
     }
 }

@@ -16,7 +16,7 @@ final class UserCreate extends Component
 
     public function save()
     {
-        $this->form->store();
+        return $this->form->store();
     }
 
     public function render()

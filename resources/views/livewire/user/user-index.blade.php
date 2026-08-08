@@ -85,20 +85,25 @@
                     </span>
                 </td>
 
-                <!-- Role -->
+                <!-- Roles (primaire) -->
                 <td class="px-3 py-2">
+                    @php $userRoles = $row->currentRoles(); @endphp
                     <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold
                                     bg-blue-50 text-blue-700 border border-blue-200">
-                        {{ $row->role }}
+                        {{ $userRoles[0] ?? '—' }}
                     </span>
                 </td>
 
-                <!-- Delegated role -->
+                <!-- Roles (secondaires) -->
                 <td class="px-3 py-2">
-                    <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold
-                                    bg-purple-50 text-purple-700 border border-purple-200">
-                        {{ $row->delegated_role }}
-                    </span>
+                    <div class="flex flex-wrap gap-1">
+                        @foreach (array_slice($userRoles, 1) as $extraRole)
+                            <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold
+                                        bg-purple-50 text-purple-700 border border-purple-200">
+                                {{ $extraRole }}
+                            </span>
+                        @endforeach
+                    </div>
                 </td>
 
                 <!-- Status -->

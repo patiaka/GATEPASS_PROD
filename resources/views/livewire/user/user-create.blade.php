@@ -72,10 +72,10 @@
                         @enderror
                     </div>
 
-                    <!-- Role -->
+                    <!-- Roles (multi) -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-3">
-                            Role
+                            Roles <span class="text-xs font-normal text-gray-400">(un ou plusieurs)</span>
                         </label>
 
                         <div class="space-y-2">
@@ -84,17 +84,17 @@
                                     class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 bg-gray-50
                                               hover:border-[#134169] hover:bg-blue-50 cursor-pointer transition">
 
-                                    <input type="radio" wire:model="form.role" name="form.role"
-                                        value="{{ $row }}" class="text-[#134169] focus:ring-[#134169]">
+                                    <input type="checkbox" wire:model="form.roles"
+                                        value="{{ $row->value }}" class="rounded text-[#134169] focus:ring-[#134169]">
 
                                     <span class="text-sm font-medium text-gray-700">
-                                        {{ $row }}
+                                        {{ $row->value }}
                                     </span>
                                 </label>
                             @endforeach
                         </div>
 
-                        @error('form.role')
+                        @error('form.roles')
                             <small class="text-red-500 text-xs">{{ $message }}</small>
                         @enderror
                     </div>

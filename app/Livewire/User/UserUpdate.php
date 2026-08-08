@@ -25,7 +25,7 @@ final class UserUpdate extends Component
 
     public function save()
     {
-        $this->form->update();
+        return $this->form->update();
     }
 
     public function render()

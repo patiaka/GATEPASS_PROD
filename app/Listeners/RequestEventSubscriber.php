@@ -84,18 +84,14 @@ class RequestEventSubscriber
     private function getHodUsers(int $departmentId): Collection
     {
         return User::where('department_id', $departmentId)
-            ->where(function ($query) {
-                $query
-                    ->where('role', RoleEnum::HOD)
-                    ->orWhere('delegated_role', RoleEnum::HOD)
-                ;
-            })->get()
+            ->whereHas('roleAssignments', fn ($q) => $q->where('role', RoleEnum::HOD->value))
+            ->get()
         ;
     }
 
     private function getGMUsers(): Collection
     {
-        return User::where('role', RoleEnum::GM)->orWhere('delegated_role', RoleEnum::GM)->get();
+        return User::whereHas('roleAssignments', fn ($q) => $q->where('role', RoleEnum::GM->value))->get();
     }
 
     private function getRoute(CarRequest|MaterialRequest $model): string

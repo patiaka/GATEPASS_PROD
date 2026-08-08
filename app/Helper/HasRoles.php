@@ -11,7 +11,19 @@ trait HasRoles
 {
     public function getEffectiveRole(): RoleEnum
     {
-        return $this->delegated_role ?? $this->role;
+        $first = $this->roles()->first() ?? $this->role?->value;
+
+        return RoleEnum::from($first);
+    }
+
+    /**
+     * Liste des rôles de l'utilisateur (pour l'UI/les formulaires).
+     *
+     * @return array<int, string>
+     */
+    public function currentRoles(): array
+    {
+        return $this->roles()->all();
     }
 
     public function delegateRole(string $role): void
@@ -58,12 +70,12 @@ trait HasRoles
 
     public function isSecurity(): bool
     {
-        return $this->role === RoleEnum::Security;
+        return $this->roles()->contains(RoleEnum::Security->value);
     }
 
     public function isUser(): bool
     {
-        return $this->role === RoleEnum::USER;
+        return $this->roles()->contains(RoleEnum::USER->value);
     }
 
     public function isHod(): bool
@@ -89,16 +101,24 @@ trait HasRoles
         return $this->isHod() || $this->isDirector() || $this->isGm();
     }
 
-    public function isSimpleUser()
+    public function isSimpleUser(): bool
     {
-        return $this->isUser() && $this->delegated_role === null;
+        return $this->isUser() && $this->roles()->count() === 1;
     }
 
     private function roles(): Collection
     {
+        $this->loadMissing('roleAssignments');
+        $pivotRoles = $this->roleAssignments->pluck('role')->filter();
+
+        if ($pivotRoles->isNotEmpty()) {
+            return $pivotRoles->unique()->values();
+        }
+
+        // Fallback rétrocompatible : users sans entrée pivot (pendant la transition)
         return collect([
-            $this->role->value,
-            $this->delegated_role?->value
-        ])->filter(); // remove null element
+            $this->role?->value,
+            $this->delegated_role?->value,
+        ])->filter()->unique()->values();
     }
 }

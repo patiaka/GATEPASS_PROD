@@ -97,7 +97,7 @@ final class UserIndex extends Component
     #[Computed]
     public function rows()
     {
-        return User::with('department:id,name')->when($this->search, function ($query) {
+        return User::with('department:id,name', 'roleAssignments')->when($this->search, function ($query) {
                 $query->whereAny(['name', 'email'], 'like', '%'.$this->search.'%');
             })
             // Department
@@ -106,7 +106,7 @@ final class UserIndex extends Component
             })
             // Role
             ->when($this->role, function ($query) {
-                $query->where('role', $this->role);
+                $query->whereHas('roleAssignments', fn ($q) => $q->where('role', $this->role));
             })
             // Status
             ->when($this->status !== '', function ($query) {

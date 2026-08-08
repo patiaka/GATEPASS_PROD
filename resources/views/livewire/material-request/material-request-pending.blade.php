@@ -2,7 +2,7 @@
     <x-table title="Material Gate Pass Approval" :addbtn="false" :rows="$this->rows">
         {{-- <x-slot:filter>
             <div class="flex flex-wrap gap-4 items-end">
-                @if(!empty($selectedRows))
+                @if (!empty($selectedRows))
                 <div class="flex gap-2">
                     <button class="btn btn-danger" wire:click="bulkAction('reject','material')"
                         wire:loading.attr="disabled" wire:target="bulkAction">
@@ -82,13 +82,11 @@
                     <td class="px-4 py-2">{{ $row->company }}</td>
                     <td class="px-4 py-2">{{ $row->user->department->name }}</td>
                     <td class="px-4 py-3 flex items-center gap-2">
-                        <x-button-edit href="{{ route('material.edit', ['MaterialRequest' => $row]) }}" :row="$row" />
-                        <x-button-show href="{{ route('material.show', ['MaterialRequest' => $row]) }}" :row="$row" />
+                        <x-button-edit href="{{ route('material.edit', ['MaterialRequest' => $row]) }}"
+                            :row="$row" />
+                        <x-button-show href="{{ route('material.show', ['MaterialRequest' => $row]) }}"
+                            :row="$row" />
                         <x-button-delete :row="$row" />
-
-                        @if (Auth::user()->canApprove($row) && Auth::user()->isApprover())
-                            <x-form-request wire:key="request-{{ $row->id }}" :model="$row" type="material" />
-                        @endif
                     </td>
                 </tr>
             @empty
