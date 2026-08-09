@@ -11,8 +11,11 @@ use App\Events\RequestCreated;
 use App\Models\CarRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
+
+use function filled;
 
 final class CarRequestForm extends Form
 {
@@ -112,12 +115,14 @@ final class CarRequestForm extends Form
         $this->carRequest = $carRequest;
 
         $this->fill($carRequest);
+        $this->stripCarNumberPrefix();
     }
 
     public function setCarRequest(CarRequest $carRequest): void
     {
         $this->carRequest = $carRequest;
         $this->fill($carRequest);
+        $this->stripCarNumberPrefix();
 
         // Préremplir les multi-selects depuis les relations existantes
         $carRequest->loadMissing('car_drivers', 'passengers');
@@ -154,6 +159,7 @@ final class CarRequestForm extends Form
         DB::transaction(function () {
             $this->destination = $this->getShowDestinationField() ? $this->destination_other : $this->destination;
             $this->car_type = $this->car_type === 'Other' ? $this->type_other : $this->car_type;
+            $this->normalizeCarNumber();
 
             $CarRequest = Auth::user()->car_requests()->create($this->only([
                 'somisy_car',
@@ -219,6 +225,7 @@ final class CarRequestForm extends Form
             $this->destination = $this->getShowDestinationField() ? $this->destination_other : $this->destination;
 
             $this->car_type = $this->car_type === 'Other' ? $this->type_other : $this->car_type;
+            $this->normalizeCarNumber();
 
             $this->carRequest->update($this->only([
                 'somisy_car',
@@ -243,6 +250,27 @@ final class CarRequestForm extends Form
 
             flash()->success('Car request updated successfully');
         });
+    }
+
+    /**
+     * Le champ saisi ne contient que le numéro ; on stocke toujours avec le préfixe LV-.
+     */
+    private function normalizeCarNumber(): void
+    {
+        if ($this->somisy_car !== 'no_vehicle' && filled($this->car_number)) {
+            $number = trim((string) $this->car_number);
+            $this->car_number = Str::startsWith($number, 'LV-') ? $number : 'LV-'.$number;
+        }
+    }
+
+    /**
+     * À l'édition, on retire le préfixe LV- pour n'afficher que le numéro dans le champ.
+     */
+    private function stripCarNumberPrefix(): void
+    {
+        if (filled($this->car_number)) {
+            $this->car_number = Str::after((string) $this->car_number, 'LV-');
+        }
     }
 
     /**

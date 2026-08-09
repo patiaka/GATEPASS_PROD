@@ -57,6 +57,18 @@
                 <span wire:loading wire:target="export">Exporting…</span>
             </button>
         </div>
+
+        {{-- Period filter --}}
+        <div class="mt-3 pt-3 border-t border-gray-100 flex flex-wrap items-center gap-2">
+            <span class="text-xs font-semibold uppercase tracking-wide text-slate-500 mr-1">Period</span>
+            @foreach (['all' => 'All', 'today' => 'Today', '24h' => 'Last 24h', 'week' => 'This week', 'month' => 'This month'] as $key => $label)
+                <button type="button" wire:click="setPeriod('{{ $key }}')" @class([
+                    'px-3 py-1.5 rounded-full text-xs font-medium border transition',
+                    'bg-[#134169] text-white border-[#134169] shadow-sm' => $period === $key,
+                    'bg-white text-slate-600 border-gray-300 hover:bg-slate-50' => $period !== $key,
+                ])>{{ $label }}</button>
+            @endforeach
+        </div>
     </div>
 
     {{-- Table Card --}}
@@ -97,7 +109,20 @@
                             <td class="px-4 py-4">{{ $row->fuel_level }}</td>
                             {{-- <td class="px-4 py-4">{{ $row->destination }}</td> --}}
                             <td class="px-4 py-4">{{ $row->kilometers }}</td>
-                            <td class="px-4 py-4">{{ $row->action }}</td>
+                            <td class="px-4 py-4">
+                                <span @class([
+                                    'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ring-1',
+                                    'bg-amber-50 text-amber-700 ring-amber-200' => $row->action === 'Exit',
+                                    'bg-emerald-50 text-emerald-700 ring-emerald-200' => $row->action === 'Entry',
+                                ])>
+                                    <span @class([
+                                        'w-1.5 h-1.5 rounded-full',
+                                        'bg-amber-500' => $row->action === 'Exit',
+                                        'bg-emerald-500' => $row->action === 'Entry',
+                                    ])></span>
+                                    {{ $row->action }}
+                                </span>
+                            </td>
 
                             <td class="px-4 py-4">
                                 {{-- Lien classique (pas wire:navigate) : le select2 a besoin d'un
@@ -112,7 +137,14 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="px-4 py-8 text-center text-sm text-slate-500">No result</td>
+                            <td colspan="12" class="px-4 py-10 text-center">
+                                <div class="flex flex-col items-center gap-2 text-slate-400">
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M3 12h18M3 17h18" />
+                                    </svg>
+                                    <span class="text-sm">No record for this filter.</span>
+                                </div>
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>

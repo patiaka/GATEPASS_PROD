@@ -31,7 +31,7 @@ final class CarRequestCheckIn extends Component
 
     public function baseQuery()
     {
-        return Recording::with('user', 'requestable:id,company,reference,car_number,car_type', 'car_driver:id,name,department_id', 'car_driver.department:id,name')
+        $query = Recording::with('user', 'requestable:id,company,reference,car_number,car_type', 'car_driver:id,name,department_id', 'car_driver.department:id,name')
             ->whereHasMorph('requestable', [CarRequest::class])
             ->when($this->search, function ($query) {
                 $term = '%'.$this->search.'%';
@@ -50,8 +50,11 @@ final class CarRequestCheckIn extends Component
                         ->orWhereHas('user', fn ($sub) => $sub->where('name', 'like', $term))
                         ->orWhereHas('car_driver', fn ($sub) => $sub->where('name', 'like', $term));
                 });
-            })
-            ->latest('id');
+            });
+
+        $this->applyPeriod($query);
+
+        return $query->latest('id');
     }
 
     #[Computed]

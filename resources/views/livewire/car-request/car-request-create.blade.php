@@ -143,8 +143,12 @@
                     <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Vehicle
                         Number</label>
                     <div class="md:col-span-9">
-                        <input type="text" name="vehicle_number" wire:model="form.car_number"
-                            class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
+                        <div class="flex w-full md:w-1/2 rounded-lg border border-gray-300 bg-gray-50 overflow-hidden focus-within:ring-2 focus-within:ring-[#134169]/20 focus-within:border-[#134169]">
+                            <span class="inline-flex items-center px-3 bg-gray-100 text-slate-600 text-sm font-semibold border-r border-gray-300 select-none">LV-</span>
+                            <input type="text" inputmode="numeric" name="vehicle_number" wire:model="form.car_number"
+                                placeholder="1234"
+                                class="flex-1 min-w-0 bg-gray-50 px-4 py-2 outline-none border-0 focus:ring-0">
+                        </div>
                         @error('form.car_number')
                             <small class="text-red-500 text-sm">{{ $message }}</small>
                         @enderror

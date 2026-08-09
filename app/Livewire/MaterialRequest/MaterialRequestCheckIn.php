@@ -29,7 +29,7 @@ final class MaterialRequestCheckIn extends Component
 
     public function baseQuery()
     {
-        return Recording::with('user', 'requestable:id,company,reference,user_id,person_out_id,person_out_name', 'requestable.user.department:id,name', 'requestable.person_out:id,name')
+        $query = Recording::with('user', 'requestable:id,company,reference,user_id,person_out_id,person_out_name', 'requestable.user.department:id,name', 'requestable.person_out:id,name')
             ->whereHasMorph('requestable', [MaterialRequest::class])
             ->when($this->search, function ($query) {
                 $term = '%'.$this->search.'%';
@@ -46,8 +46,11 @@ final class MaterialRequestCheckIn extends Component
                         })
                         ->orWhereHas('user', fn ($sub) => $sub->where('name', 'like', $term));
                 });
-            })
-            ->latest('id');
+            });
+
+        $this->applyPeriod($query);
+
+        return $query->latest('id');
     }
 
     #[Computed]

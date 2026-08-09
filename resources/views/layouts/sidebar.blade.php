@@ -2,28 +2,19 @@
 <aside id="sidebar"
     class="sidebar fixed md:static inset-y-0 left-0 z-40 flex flex-col w-70 p-4 bg-[#0e3a61] text-white border-r border-white/10 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out">
 
-    <a href="/" class="mb-3 px-2 pb-2 flex rounded-md">
-        <img src="{{ asset('assets/img/logo.png') }}" alt="Logo" class="w-32">
-    </a>
-
-    <a href="/"
-        class="logo-wrapper p-2 flex items-center gap-2 bg-white/90 text-slate-700 border rounded-md border-white/70 shadow hover:shadow-md transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
-        <div
-            class="flex items-center justify-center h-9 w-9 bg-[#ffd324] rounded text-white border border-[#edcb34] shadow-lg shrink-0">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="w-5" aria-hidden="true">
-                <path fill="currentColor" d="M9.715 12c1.151 0 2-.849 2-2s-.849-2-2-2s-2 .849-2 2s.848 2 2 2"></path>
-                <path fill="currentColor"
-                    d="M20 4H4c-1.103 0-2 .841-2 1.875v12.25C2 19.159 2.897 20 4 20h16c1.103 0 2-.841 2-1.875V5.875C22 4.841 21.103 4 20 4m0 14l-16-.011V6l16 .011z">
-                </path>
+    <a href="/" wire:navigate
+        class="mb-3 flex flex-col items-center gap-2 rounded-lg bg-white/5 border border-white/10 px-3 py-3 hover:bg-white/10 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
+        <img src="{{ asset('assets/img/logo.png') }}" alt="Gate Pass Management" class="w-32">
+        <span class="inline-flex items-center gap-1.5 text-[10px] text-white/60 tracking-wide">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <path d="M16 2v4M8 2v4M3 10h18" />
             </svg>
-        </div>
-        <div class="flex flex-col">
-            <span class="font-bold bold text-xs leading-tight">Gate Pass Management</span>
-            <span class="text-[10px] text-slate-500 leading-tight">{{ now()->format('l, F j, Y') }}</span>
-        </div>
+            {{ now()->format('l, F j, Y') }}
+        </span>
     </a>
 
-    <div class="border-b my-3"></div>
+    <div class="border-b border-white/10 mb-3"></div>
 
     <div class="flex flex-col h-full overflow-y-auto pr-1">
         <h2 class="ml-3 mb-2 uppercase tracking-wider text-sm font-medium text-white/70">Menu</h2>
