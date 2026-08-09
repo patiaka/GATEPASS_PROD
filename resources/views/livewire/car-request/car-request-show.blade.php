@@ -117,6 +117,14 @@
             <div class="overflow-x-auto">
                 <table class="table-auto w-full text-sm">
                     <tbody class="divide-y divide-gray-100">
+                        <tr>
+                            <th class="text-left py-3 pr-4 text-slate-600 w-1/3">Created at</th>
+                            <td class="py-3 text-slate-800">{{ $carRequest->created_at }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-left py-3 pr-4 text-slate-600 w-1/3">Updated at</th>
+                            <td class="py-3 text-slate-800">{{ $carRequest->updated_at?->format('d/m/Y H:i') ?? '—' }}</td>
+                        </tr>
                         <tr class="bg-gray-50">
                             <th class="text-left py-3 pr-4 text-slate-600 w-1/3">Company</th>
                             <td class="py-3 text-slate-800">{{ $carRequest->company }}</td>

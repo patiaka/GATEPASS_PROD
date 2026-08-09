@@ -145,6 +145,10 @@
                                     <td class="border-2 border-black p-2">{{ $materialRequest->created_at }}</td>
                                 </tr>
                                 <tr>
+                                    <th class="w-1/5 border-2 border-black bg-gray-100 p-2 text-left">Updated</th>
+                                    <td class="border-2 border-black p-2">{{ $materialRequest->updated_at?->format('d/m/Y H:i') ?? '—' }}</td>
+                                </tr>
+                                <tr>
                                     <th class="w-1/5 border-2 border-black bg-gray-100 p-2 text-left">Requester</th>
                                     <td class="border-2 border-black p-2">{{ $materialRequest->user->name }}</td>
                                 </tr>

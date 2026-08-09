@@ -74,6 +74,10 @@
                     <p>{{ $MaterialRequest->created_at }}</p>
                 </div>
                 <div>
+                    <p class="font-medium">Updated:</p>
+                    <p>{{ $MaterialRequest->updated_at?->format('d/m/Y H:i') ?? '—' }}</p>
+                </div>
+                <div>
                     <p class="font-medium">Requested By:</p>
                     <p>{{ $MaterialRequest->user->name }}</p>
                 </div>

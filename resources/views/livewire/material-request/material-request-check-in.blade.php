@@ -148,7 +148,7 @@
                             </td>
 
                             <td class="px-4 py-2 text-gray-700">
-                                {{ $row->requestable->person_out->name }}
+                                {{ $row->requestable->person_out?->name ?? $row->requestable->person_out_name ?? '—' }}
                             </td>
 
                             <td class="px-4 py-2 text-gray-700">
