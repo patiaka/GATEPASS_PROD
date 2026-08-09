@@ -6,18 +6,34 @@ namespace App\Livewire;
 
 use App\Enum\MaterialRequestStatus;
 use App\Models\CarRequest;
+use App\Models\Department;
 use App\Models\MaterialRequest;
 use App\Models\Recording;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 #[Title('Dashboard')]
 final class Dashboard extends Component
 {
+    /** Période des statistiques en jours (7 / 14 / 30). */
+    #[Url(as: 'period')]
+    public int $stat_period = 14;
+
+    /** Département filtré (uniquement pour Admin/GM/Director). */
+    #[Url(as: 'dept')]
+    public string $stat_department = '';
+
+    /** Type de demande : all / material / vehicle. */
+    #[Url(as: 'type')]
+    public string $stat_type = 'all';
+
     #[Layout('layouts.app')]
     public function render()
     {
@@ -25,10 +41,8 @@ final class Dashboard extends Component
 
         /*
         |--------------------------------------------------------------------------
-        | MATERIAL / CAR REQUEST COUNTS
+        | MATERIAL / CAR REQUEST COUNTS (cartes du haut — inchangé)
         |--------------------------------------------------------------------------
-        | Même logique de visibilité que les pages de listing (scopes
-        | RequestVisibility) pour que chaque carte corresponde à sa liste.
         */
         [
             'all' => $mat_request_all,
@@ -63,13 +77,12 @@ final class Dashboard extends Component
                             MaterialRequest::class => [],
                         ]);
 
-                        // ⚡️ Sélection des colonnes par type
                         $morphTo->constrain([
                             CarRequest::class => function ($query) {
                                 $query->select('id', 'company', 'reference', 'car_number', 'car_type');
                             },
                             MaterialRequest::class => function ($query) {
-                                $query->select('id', 'reference', 'company'); // ✅ SAFE
+                                $query->select('id', 'reference', 'company');
                             },
                         ]);
                     },
@@ -89,9 +102,38 @@ final class Dashboard extends Component
 
         /*
         |--------------------------------------------------------------------------
-        | RETURN VIEW
+        | STATISTIQUES (visibles par tous, limitées au périmètre + filtres)
         |--------------------------------------------------------------------------
         */
+        $scope = $this->resolveScope($auth);
+
+        $days = in_array($this->stat_period, [7, 14, 30], true) ? $this->stat_period : 14;
+        $since = Carbon::today()->subDays($days - 1);
+
+        $typeClasses = match ($this->stat_type) {
+            'material' => [MaterialRequest::class],
+            'vehicle' => [CarRequest::class],
+            default => [MaterialRequest::class, CarRequest::class],
+        };
+        $models = match ($this->stat_type) {
+            'material' => [new MaterialRequest],
+            'vehicle' => [new CarRequest],
+            default => [new MaterialRequest, new CarRequest],
+        };
+
+        $gate_traffic = $this->gateTraffic($scope['userIds'], $since, $typeClasses);
+        $daily_traffic = $this->dailyTraffic($scope['userIds'], $since, $days, $typeClasses);
+        // Les demandes sont cumulatives/rares : pas de filtre période (sinon presque
+        // tout est masqué). Seuls le périmètre et le type s'appliquent ici.
+        $dept_requests = $this->requestsByDepartment($scope['deptIds'], $models);
+
+        // Filtre département : liste des départements que l'utilisateur peut choisir
+        $canFilterDepartment = $auth->isAdmin() || $auth->isGm() || $auth->isDirector();
+        $filterDepartments = ! $canFilterDepartment
+            ? collect()
+            : ($auth->isAdmin() || $auth->isGm()
+                ? Department::orderBy('name')->get(['id', 'name'])
+                : Department::where('director_id', $auth->id)->orderBy('name')->get(['id', 'name']));
 
         return view('livewire.dashboard', compact(
             'car_request_all',
@@ -105,8 +147,133 @@ final class Dashboard extends Component
             'mat_check_out',
             'car_check_out',
             'car_check_latest',
-            'mat_check_latest'
+            'mat_check_latest',
+            'gate_traffic',
+            'daily_traffic',
+            'dept_requests',
+            'canFilterDepartment',
+            'filterDepartments'
         ));
+    }
+
+    /**
+     * Périmètre de l'utilisateur : départements (deptIds) et utilisateurs (userIds).
+     * null = aucune restriction (voit tout).
+     *
+     * @return array{deptIds: ?array<int,int>, userIds: ?array<int,int>}
+     */
+    private function resolveScope(User $auth): array
+    {
+        if ($auth->isAdmin() || $auth->isGm()) {
+            $deptIds = null; // tout
+        } elseif ($auth->isDirector()) {
+            $deptIds = Department::where('director_id', $auth->id)->pluck('id')->map(fn ($i) => (int) $i)->all();
+        } else {
+            // HOD / User : leur propre département
+            $deptIds = $auth->department_id ? [(int) $auth->department_id] : [];
+        }
+
+        // Filtre département sélectionné (si autorisé / dans le périmètre)
+        if ($this->stat_department !== '') {
+            $selected = (int) $this->stat_department;
+            if ($deptIds === null || in_array($selected, $deptIds, true)) {
+                $deptIds = [$selected];
+            }
+        }
+
+        $userIds = $deptIds === null
+            ? null
+            : User::whereIn('department_id', $deptIds)->pluck('id')->map(fn ($i) => (int) $i)->all();
+
+        return ['deptIds' => $deptIds, 'userIds' => $userIds];
+    }
+
+    /**
+     * Répartition des passages par porte, dans le périmètre + filtres.
+     *
+     * @param  array<int,int>|null  $userIds
+     * @param  array<int,string>  $typeClasses
+     */
+    private function gateTraffic(?array $userIds, Carbon $since, array $typeClasses)
+    {
+        $counts = Recording::query()
+            ->whereNotNull('gate')
+            ->where('created_at', '>=', $since)
+            ->whereHasMorph('requestable', $typeClasses, function ($q) use ($userIds) {
+                if ($userIds !== null) {
+                    $q->whereIn('user_id', $userIds);
+                }
+            })
+            ->selectRaw('gate, COUNT(*) as total')
+            ->groupBy('gate')
+            ->pluck('total', 'gate');
+
+        return collect(['Front', 'Back', 'Airport'])
+            ->mapWithKeys(fn ($gate) => [$gate => (int) ($counts[$gate] ?? 0)]);
+    }
+
+    /**
+     * Passages par jour sur la période (séries complètes, zéros inclus).
+     *
+     * @param  array<int,int>|null  $userIds
+     * @param  array<int,string>  $typeClasses
+     */
+    private function dailyTraffic(?array $userIds, Carbon $since, int $days, array $typeClasses)
+    {
+        $raw = Recording::query()
+            ->where('created_at', '>=', $since)
+            ->whereHasMorph('requestable', $typeClasses, function ($q) use ($userIds) {
+                if ($userIds !== null) {
+                    $q->whereIn('user_id', $userIds);
+                }
+            })
+            ->selectRaw('CAST(created_at AS DATE) as day, COUNT(*) as total')
+            ->groupBy(DB::raw('CAST(created_at AS DATE)'))
+            ->get()
+            ->mapWithKeys(fn ($row) => [Carbon::parse($row->day)->format('Y-m-d') => (int) $row->total]);
+
+        return collect(range(0, $days - 1))->map(function ($i) use ($since, $raw) {
+            $date = $since->copy()->addDays($i);
+            $key = $date->format('Y-m-d');
+
+            return [
+                'label' => $date->format('d/m'),
+                'date' => $key,
+                'total' => (int) ($raw[$key] ?? 0),
+            ];
+        });
+    }
+
+    /**
+     * Nombre de demandes par département (top 8), dans le périmètre + filtre type.
+     * Volontairement NON filtré par période (demandes cumulatives/rares).
+     *
+     * @param  array<int,int>|null  $deptIds
+     * @param  array<int, MaterialRequest|CarRequest>  $models
+     */
+    private function requestsByDepartment(?array $deptIds, array $models)
+    {
+        $counts = [];
+
+        foreach ($models as $model) {
+            $table = $model->getTable();
+
+            $rows = $model->newQuery()
+                ->join('users', 'users.id', '=', $table.'.user_id')
+                ->join('departments', 'departments.id', '=', 'users.department_id')
+                ->when($deptIds !== null, fn ($q) => $q->whereIn('users.department_id', $deptIds))
+                ->selectRaw('departments.name as dept, COUNT(*) as total')
+                ->groupBy('departments.name')
+                ->pluck('total', 'dept');
+
+            foreach ($rows as $dept => $total) {
+                $counts[$dept] = ($counts[$dept] ?? 0) + (int) $total;
+            }
+        }
+
+        arsort($counts);
+
+        return collect(array_slice($counts, 0, 8, true));
     }
 
     /**
@@ -120,8 +287,6 @@ final class Dashboard extends Component
             ->groupBy('status')
             ->pluck('total', 'status');
 
-        // Pour les approbateurs, "Pending" = en attente de MON action
-        // (même logique que les pages material.pending / car.pending)
         $pending = $auth->isApprover()
             ? (clone $query)->awaitingApprovalBy($auth)->count()
             : (int) ($byStatus[MaterialRequestStatus::Pending->value] ?? 0);
