@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -47,5 +48,22 @@ final class Recording extends Model
     public function requestable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    /**
+     * Véhicules actuellement dehors : le dernier passage de la demande est une "Exit".
+     */
+    public function scopeVehiclesOut(Builder $query): Builder
+    {
+        return $query
+            ->whereHasMorph('requestable', [CarRequest::class])
+            ->whereIn('id', function ($sub) {
+                $sub->selectRaw('MAX(id)')
+                    ->from('recordings')
+                    ->where('requestable_type', CarRequest::class)
+                    ->groupBy('requestable_id');
+            })
+            ->where('action', 'Exit')
+            ->latest('id');
     }
 }

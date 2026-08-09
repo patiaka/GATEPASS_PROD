@@ -32,7 +32,10 @@ final class MaterialRequestForm extends Form
     #[Validate('nullable|string|max:255')]
     public ?string $person_out_name = '';
 
-    #[Validate(['photos.*' => 'required|image|mimes:jpeg,png,jpg'])]
+    #[Validate([
+        'photos' => 'required|array|max:5',
+        'photos.*' => 'image|mimes:jpeg,png,jpg|max:4096', // 4 Mo par image
+    ])]
     public $photos = []; // Tableau pour stocker les fichiers
 
     public function addMaterial(): void
@@ -44,6 +47,12 @@ final class MaterialRequestForm extends Form
     {
         unset($this->materials[$index]);
         $this->materials = array_values($this->materials); // Réindexer le tableau
+    }
+
+    public function removePhoto(int $index): void
+    {
+        unset($this->photos[$index]);
+        $this->photos = array_values($this->photos); // Réindexer
     }
 
     public function setMaterialRequest(MaterialRequest $materialRequest): void
@@ -59,7 +68,8 @@ final class MaterialRequestForm extends Form
             'materials.*.designation' => 'required|string|min:3',
             'materials.*.quantity' => 'required|numeric|min:1',
             'materials.*.serial_number' => 'nullable|string|min:1',
-            'photos.*' => 'required|image|mimes:jpeg,png,jpg',
+            'photos' => 'required|array|min:1|max:5',
+            'photos.*' => 'image|mimes:jpeg,png,jpg|max:4096',
             'company' => 'required|string',
             'person_out_id' => 'nullable|exists:users,id',
             'person_out_name' => 'nullable|string|max:255',

@@ -1,261 +1,323 @@
 <div>
-    <main class="p-4 md:p-6 space-y-8 bg-gray-50">
+    @php
+        $statusValue = $MaterialRequest->status->value;
+        $statusStyles = [
+            'Pending' => ['bg-orange-50 text-orange-700 ring-orange-200', 'bg-orange-500'],
+            'Progress' => ['bg-yellow-50 text-yellow-700 ring-yellow-200', 'bg-yellow-500'],
+            'Approved' => ['bg-emerald-50 text-emerald-700 ring-emerald-200', 'bg-emerald-500'],
+            'Rejected' => ['bg-rose-50 text-rose-700 ring-rose-200', 'bg-rose-500'],
+            'Expired' => ['bg-slate-100 text-slate-600 ring-slate-200', 'bg-slate-400'],
+        ];
+        [$statusBadge, $statusDot] = $statusStyles[$statusValue] ?? $statusStyles['Pending'];
 
-        {{-- Action Buttons --}}
-        <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-gray-700">
-                Material Request Details
-            </h1>
+        // Circuit d'approbation
+        $fmt = fn ($d) => $d ? \Illuminate\Support\Carbon::parse($d)->format('d-m-Y H:i') : null;
+        $stateOf = function (string $actor) use ($MaterialRequest) {
+            $label = $MaterialRequest->getStatusFor($actor)[0] ?? '';
+            return str_contains($label, 'Approved') ? 'approved' : (str_contains($label, 'Rejected') ? 'rejected' : 'pending');
+        };
 
-            <div class="flex gap-3">
+        $steps = [];
+        $steps[] = [
+            'role' => 'Requester', 'name' => $MaterialRequest->user->name,
+            'dept' => $MaterialRequest->user->department?->name, 'poste' => $MaterialRequest->user->poste,
+            'date' => $fmt($MaterialRequest->getRawOriginal('created_at')), 'comment' => null, 'state' => 'approved',
+        ];
+        $steps[] = [
+            'role' => 'HOD', 'name' => $MaterialRequest->hodApproval?->name,
+            'dept' => $MaterialRequest->hodApproval?->department?->name, 'poste' => $MaterialRequest->hodApproval?->poste,
+            'date' => $fmt($MaterialRequest->hod_approval_date), 'comment' => $MaterialRequest->hod_comment, 'state' => $stateOf('hod'),
+        ];
+        if ($MaterialRequest->isRequiredDirectorApproval()) {
+            $steps[] = [
+                'role' => 'Director', 'name' => $MaterialRequest->directorApproval?->name,
+                'dept' => $MaterialRequest->directorApproval?->department?->name, 'poste' => $MaterialRequest->directorApproval?->poste,
+                'date' => $fmt($MaterialRequest->director_approval_date), 'comment' => $MaterialRequest->director_comment, 'state' => $stateOf('director'),
+            ];
+        }
+        $steps[] = [
+            'role' => 'General Manager', 'name' => $MaterialRequest->gmApproval?->name,
+            'dept' => $MaterialRequest->gmApproval?->department?->name, 'poste' => $MaterialRequest->gmApproval?->poste,
+            'date' => $fmt($MaterialRequest->gm_approval_date), 'comment' => $MaterialRequest->gm_comment, 'state' => $stateOf('gm'),
+        ];
 
-                {{-- Back --}}
+        $items = $MaterialRequest->loadMissing('material_request_items')->material_request_items;
+        $documents = $MaterialRequest->loadMissing('documents')->documents;
+        $totalQty = $items->sum('quantity');
+    @endphp
+
+    <main class="p-4 md:p-6 space-y-6 bg-gray-50">
+
+        {{-- ============ Header ============ --}}
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-[#134169]">Material Request Details</h1>
+                <div class="flex items-center gap-3 mt-1">
+                    <span class="text-sm font-semibold text-slate-700">#{{ $MaterialRequest->reference }}</span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ring-1 {{ $statusBadge }}">
+                        <span class="w-1.5 h-1.5 rounded-full {{ $statusDot }}"></span>
+                        {{ $statusValue }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
                 <a href="{{ route('material.index') }}"
-                    class="inline-flex items-center justify-center w-10 h-10
-                  rounded-xl border border-slate-300
-                  bg-white text-slate-700
-                  hover:bg-slate-800 hover:text-white hover:border-slate-800
-                  transition-all duration-200
-                  shadow-sm hover:shadow-md"
-                    title="Back">
-
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 bg-white text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                     </svg>
+                    Back
                 </a>
 
-
-                {{-- Download PDF --}}
-                <button wire:click="download_pdf({{ $MaterialRequest->id }})" wire:loading.attr="disabled"
-                    wire:target="download_pdf"
-                    class="relative inline-flex items-center justify-center w-10 h-10
-                       rounded-xl border border-[#0e3a61]
-                       bg-white text-[#0e3a61]
-                       hover:bg-[#0e3a61] hover:text-white
-                       disabled:opacity-60 disabled:cursor-not-allowed
-                       transition-all duration-200
-                       shadow-sm hover:shadow-md"
-                    title="Download PDF">
-
-                    {{-- icon --}}
-                    <span wire:loading.remove wire:target="download_pdf">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 4v12" />
+                <button wire:click="download_pdf({{ $MaterialRequest->id }})" wire:loading.attr="disabled" wire:target="download_pdf"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0e3a61] text-white text-sm font-medium hover:bg-[#0c3252] disabled:opacity-60 disabled:cursor-not-allowed transition shadow-sm">
+                    <span wire:loading.remove wire:target="download_pdf" class="inline-flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 4v12" />
                         </svg>
+                        Download PDF
                     </span>
-
-                    {{-- loading --}}
-                    <span wire:loading wire:target="download_pdf">
-                        <svg class="w-5 h-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 4v1m0 14v1m8-8h1M4 12H3" />
+                    <span wire:loading wire:target="download_pdf" class="inline-flex items-center gap-2">
+                        <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="4" />
+                            <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
                         </svg>
+                        Generating…
                     </span>
-
                 </button>
-
             </div>
         </div>
 
-        {{-- Request Info --}}
-        <section class="bg-white shadow rounded-lg p-5">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Request Information</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
-                <div>
-                    <p class="font-medium">Reference</p>
-                    <p>#{{ $MaterialRequest->reference }}</p>
-                </div>
-                <div>
-                    <p class="font-medium">Date:</p>
-                    <p>{{ $MaterialRequest->created_at }}</p>
-                </div>
-                <div>
-                    <p class="font-medium">Updated:</p>
-                    <p>{{ $MaterialRequest->updated_at?->format('d/m/Y H:i') ?? '—' }}</p>
-                </div>
-                <div>
-                    <p class="font-medium">Requested By:</p>
-                    <p>{{ $MaterialRequest->user->name }}</p>
-                </div>
-                <div>
-                    <p class="font-medium">Department:</p>
-                    <p>{{ $MaterialRequest->user->department->name }}</p>
-                </div>
-                <div>
-                    <p class="font-medium">Position:</p>
-                    <p>{{ $MaterialRequest->user->poste }}</p>
-                </div>
-
-                <div>
-                    <p class="font-medium">Delegated Person:</p>
-					<p>{{ $MaterialRequest->person_out?->name ?? $MaterialRequest->person_out_name ?? '—' }}</p>
-
-                </div>
+        {{-- ============ KPI tiles ============ --}}
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+                <p class="text-xs text-slate-500">Items</p>
+                <p class="text-xl font-bold text-[#134169]">{{ $items->count() }}</p>
             </div>
-        </section>
+            <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+                <p class="text-xs text-slate-500">Total quantity</p>
+                <p class="text-xl font-bold text-[#134169]">{{ $totalQty }}</p>
+            </div>
+            <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+                <p class="text-xs text-slate-500">Documents</p>
+                <p class="text-xl font-bold text-[#134169]">{{ $documents->count() }}</p>
+            </div>
+        </div>
 
-        {{-- Material Items --}}
-        <section class="bg-white shadow rounded-lg p-5">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Requested Items</h2>
-            <table class="w-full text-sm border border-gray-300">
-                <thead class="bg-gray-100 text-left">
-                    <tr>
-                        <th class="p-2 border text-center">#</th>
-                        <th class="p-2 border">Description</th>
-                        <th class="p-2 border text-center">Quantity</th>
-                        <th class="p-2 border">Additional Info</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($MaterialRequest->loadMissing('material_request_items')->material_request_items as $row)
-                        <tr class="hover:bg-gray-50">
-                            <td class="p-2 border text-center">{{ $loop->iteration }}</td>
-                            <td class="p-2 border">{{ $row->designation }}</td>
-                            <td class="p-2 border text-center">{{ $row->quantity }}</td>
-                            <td class="p-2 border">{{ $row->serial_number }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </section>
+        {{-- ============ 2-column layout ============ --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {{-- Attached Documents --}}
-        <section class="bg-white shadow rounded-lg p-5">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Attached Documents</h2>
+            {{-- ---------- Left : items + documents ---------- --}}
+            <div class="lg:col-span-2 space-y-6">
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                @foreach ($MaterialRequest->loadMissing('documents')->documents as $row)
-                    <div
-                        class="relative bg-white rounded-xl border border-gray-200
-            overflow-hidden shadow-sm hover:shadow-md
-            transition-all duration-200 flex items-center justify-center">
-
-                        <img src="{{ $row->DocLink() }}" alt="Document image"
-                            class="w-full max-h-56 object-contain bg-white p-2" />
-
-
-
-                        @if ($MaterialRequest->user_id === Auth::user()->id && $MaterialRequest->isPending())
-                            <div class="absolute top-2 right-2 flex gap-2 bg-white/80 p-1 rounded shadow-sm">
-                                <x-button-edit href="{{ route('document.edit', ['document' => $row]) }}" />
-                                <x-button-delete url="{{ url('document/' . $row->id) }}" />
-                            </div>
-                        @endif
+                {{-- Requested Items --}}
+                <section class="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden">
+                    <div class="flex items-center gap-2 px-5 py-3 border-b bg-slate-50">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#134169]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20 7 12 3 4 7m16 0-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+                        <h2 class="font-semibold text-sm text-[#134169]">Requested Items</h2>
                     </div>
-                @endforeach
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase tracking-wider">
+                                <tr class="border-b border-gray-100">
+                                    <th class="px-4 py-2.5 text-center font-semibold w-12">#</th>
+                                    <th class="px-4 py-2.5 text-left font-semibold">Description</th>
+                                    <th class="px-4 py-2.5 text-center font-semibold w-24">Quantity</th>
+                                    <th class="px-4 py-2.5 text-left font-semibold">Additional info</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                @foreach ($items as $row)
+                                    <tr class="hover:bg-slate-50/70 transition-colors">
+                                        <td class="px-4 py-2.5 text-center text-slate-400">{{ $loop->iteration }}</td>
+                                        <td class="px-4 py-2.5 text-slate-800 font-medium">{{ $row->designation }}</td>
+                                        <td class="px-4 py-2.5 text-center text-slate-700">{{ $row->quantity }}</td>
+                                        <td class="px-4 py-2.5 text-slate-500">{{ $row->serial_number ?: '—' }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                            <tfoot>
+                                <tr class="border-t border-gray-200 bg-slate-50/60">
+                                    <td colspan="2" class="px-4 py-2.5 text-right text-xs font-semibold text-slate-500">Total</td>
+                                    <td class="px-4 py-2.5 text-center font-bold text-[#134169]">{{ $totalQty }}</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </section>
+
+                {{-- Attached Documents --}}
+                <section class="bg-white border border-gray-200 shadow-sm rounded-xl p-5" x-data="{ lightbox: null }">
+                    <div class="flex items-center gap-2 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#134169]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v9a2.25 2.25 0 0 0 4.5 0V6.75" />
+                        </svg>
+                        <h2 class="font-semibold text-sm text-[#134169]">Attached Documents</h2>
+                        <span class="text-xs text-slate-400">({{ $documents->count() }})</span>
+                    </div>
+
+                    @if ($documents->isEmpty())
+                        <p class="text-sm text-slate-400">No document attached.</p>
+                    @else
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                            @foreach ($documents as $row)
+                                <div class="relative group bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition flex items-center justify-center">
+                                    <img src="{{ $row->DocLink() }}" alt="Document image"
+                                        @click="lightbox = '{{ $row->DocLink() }}'"
+                                        class="w-full max-h-56 object-contain bg-white p-2 cursor-zoom-in hover:opacity-90 transition" />
+                                    @if ($MaterialRequest->user_id === Auth::user()->id && $MaterialRequest->isPending())
+                                        <div class="absolute top-2 right-2 flex gap-2 bg-white/80 p-1 rounded shadow-sm">
+                                            <x-button-edit href="{{ route('document.edit', ['document' => $row]) }}" />
+                                            <x-button-delete url="{{ url('document/' . $row->id) }}" />
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+
+                        {{-- Lightbox --}}
+                        <template x-teleport="body">
+                            <div x-show="lightbox" x-cloak x-transition.opacity
+                                @click="lightbox = null" @keydown.escape.window="lightbox = null"
+                                class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 cursor-zoom-out">
+                                <img :src="lightbox" alt="Document" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl" @click.stop>
+                                <button type="button" @click="lightbox = null"
+                                    class="absolute top-4 right-4 inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 transition" aria-label="Close">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </template>
+                    @endif
+                </section>
             </div>
-        </section>
 
+            {{-- ---------- Right : status + meta + timeline ---------- --}}
+            <div class="space-y-6">
 
-        {{-- Approvals --}}
-        <section class="bg-white shadow rounded-lg p-5">
-            <div class="flex items-center justify-between mb-4 border-b pb-2">
+                {{-- Status card + action --}}
+                <section class="bg-white border border-gray-200 shadow-sm rounded-xl p-5">
+                    <p class="text-xs text-slate-500 mb-1">Current status</p>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full {{ $statusDot }}"></span>
+                        <span class="text-lg font-bold text-slate-800">{{ $statusValue }}</span>
+                    </div>
 
-                <div class="w-1/3"></div>
+                    @if ($MaterialRequest->expire_at)
+                        <div class="mt-3 pt-3 border-t text-xs text-slate-500">
+                            <span class="font-medium text-slate-600">Expires:</span>
+                            {{ \Illuminate\Support\Carbon::parse($MaterialRequest->expire_at)->format('d-m-Y') }}
+                        </div>
+                    @endif
 
-                <h3 class="text-lg font-semibold text-gray-800 text-center w-1/3">
-                    Approval Signatures
-                </h3>
-
-                <div class="w-1/3 flex justify-end">
                     @if (Auth::user()->canApprove($MaterialRequest) && Auth::user()->isApprover())
-                        <x-form-request :model="$MaterialRequest" type="material" />
+                        <div class="mt-4">
+                            <x-form-request :model="$MaterialRequest" type="material" />
+                        </div>
                     @endif
-                </div>
+                </section>
 
+                {{-- Requester --}}
+                <section class="bg-white border border-gray-200 shadow-sm rounded-xl p-5">
+                    <h2 class="font-semibold text-sm text-[#134169] mb-3">Requester</h2>
+                    <dl class="space-y-2.5 text-sm">
+                        <div class="flex justify-between gap-2">
+                            <dt class="text-slate-500">Name</dt>
+                            <dd class="text-slate-800 font-medium text-right">{{ $MaterialRequest->user->name }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-2">
+                            <dt class="text-slate-500">Department</dt>
+                            <dd class="text-slate-800 text-right">{{ $MaterialRequest->user->department?->name ?? '—' }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-2">
+                            <dt class="text-slate-500">Position</dt>
+                            <dd class="text-slate-800 text-right">{{ $MaterialRequest->user->poste }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-2">
+                            <dt class="text-slate-500">Delegated person</dt>
+                            <dd class="text-slate-800 text-right">{{ $MaterialRequest->person_out?->name ?? $MaterialRequest->person_out_name ?? '—' }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-2">
+                            <dt class="text-slate-500">Company</dt>
+                            <dd class="text-slate-800 text-right">{{ $MaterialRequest->company }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-2 pt-2 border-t">
+                            <dt class="text-slate-500">Created</dt>
+                            <dd class="text-slate-600 text-right">{{ $fmt($MaterialRequest->getRawOriginal('created_at')) }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-2">
+                            <dt class="text-slate-500">Updated</dt>
+                            <dd class="text-slate-600 text-right">{{ $MaterialRequest->updated_at?->format('d-m-Y H:i') ?? '—' }}</dd>
+                        </div>
+                    </dl>
+                </section>
+
+                {{-- Approval timeline --}}
+                <section class="bg-white border border-gray-200 shadow-sm rounded-xl p-5">
+                    <h2 class="font-semibold text-sm text-[#134169] mb-4">Approval workflow</h2>
+                    <ol class="relative border-l border-gray-200 ml-2 space-y-5">
+                        @foreach ($steps as $step)
+                            @php
+                                $dot = match ($step['state']) {
+                                    'approved' => 'bg-emerald-500',
+                                    'rejected' => 'bg-rose-500',
+                                    default => 'bg-slate-300',
+                                };
+                                $badge = match ($step['state']) {
+                                    'approved' => ['Approved', 'text-emerald-700 bg-emerald-50 ring-emerald-200'],
+                                    'rejected' => ['Rejected', 'text-rose-700 bg-rose-50 ring-rose-200'],
+                                    default => ['Pending', 'text-slate-500 bg-slate-50 ring-slate-200'],
+                                };
+                            @endphp
+                            <li class="ml-5">
+                                <span class="absolute -left-[7px] flex items-center justify-center w-3.5 h-3.5 rounded-full ring-4 ring-white {{ $dot }}"></span>
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-sm font-semibold text-slate-700">{{ $step['role'] }}</span>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ring-1 {{ $badge[1] }}">{{ $badge[0] }}</span>
+                                </div>
+                                @if ($step['name'])
+                                    <p class="text-xs text-slate-600 mt-0.5">{{ $step['name'] }}@if ($step['poste']) · {{ $step['poste'] }}@endif</p>
+                                @endif
+                                @if ($step['date'])
+                                    <p class="text-[11px] text-slate-400 mt-0.5">{{ $step['date'] }}</p>
+                                @endif
+                                @if ($step['comment'])
+                                    <p class="text-xs text-slate-500 mt-1 italic bg-slate-50 rounded-md px-2 py-1">“{{ $step['comment'] }}”</p>
+                                @endif
+                            </li>
+                        @endforeach
+                    </ol>
+                </section>
             </div>
-            <table class="w-full text-sm border border-gray-300 text-center">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="p-2 border">Department</th>
-                        <th class="p-2 border">Name</th>
-                        <th class="p-2 border">Position</th>
-                        <th class="p-2 border">Signature</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{-- Applicant --}}
-                    <tr>
-                        <td class="p-2 border">{{ $MaterialRequest->user->department->name }}</td>
-                        <td class="p-2 border">{{ $MaterialRequest->user->name }}</td>
-                        <td class="p-2 border">{{ $MaterialRequest->user->poste }}</td>
-                        <td class="p-2 border">✅ Approved</td>
-                    </tr>
-                    
-                    {{-- HOD --}}
-                    <tr>
-                        <td class="p-2 border">
-                            {{ $MaterialRequest->hodApproval ? $MaterialRequest->hodApproval->department->name : '—' }}
-                        </td>
-                        <td class="p-2 border">
-                            {{ $MaterialRequest->hodApproval ? $MaterialRequest->hodApproval->name : '—' }}
-                        </td>
-                        <td class="p-2 border">
-                            {{ $MaterialRequest->hodApproval ? $MaterialRequest->hodApproval->poste : '—' }}
-                        </td>
-                        <td class="p-2 border">
-                            <x-request-status :status="$MaterialRequest->getStatusFor('hod')" />
-                            {{-- @if (Auth::user()->canApprove($MaterialRequest) && Auth::user()->isHod())
-                            <x-form-request :model="$MaterialRequest" type="material" />
-                            @endif --}}
-                        </td>
-                    </tr>
+        </div>
 
-                    {{-- Director --}}
-                    @if ($MaterialRequest->isRequiredDirectorApproval())
-                    <tr>
-                        <td class="p-2 border">
-                            {{ $MaterialRequest->directorApproval ? $MaterialRequest->directorApproval->department->name : '—' }}
-                        </td>
-                        <td class="p-2 border">
-                            {{ $MaterialRequest->directorApproval ? $MaterialRequest->directorApproval->name : '—' }}
-                        </td>
-                        <td class="p-2 border">
-                            {{ $MaterialRequest->directorApproval ? $MaterialRequest->directorApproval->poste : '—' }}
-                        </td>
-                        <td class="p-2 border">
-                            <x-request-status :status="$MaterialRequest->getStatusFor('director')" />
-                            {{-- @if (Auth::user()->canApprove($MaterialRequest) && Auth::user()->isDirector())
-                            <x-form-request :model="$MaterialRequest" type="material" />
-                            @endif --}}
-                        </td>
-                    </tr>
-                    @endif
-
-                    {{-- GM --}}
-                    <tr>
-                        <td class="p-2 border">
-                            {{ $MaterialRequest->gmApproval ? $MaterialRequest->gmApproval->department->name : '—' }}
-                        </td>
-                        <td class="p-2 border">
-                            {{ $MaterialRequest->gmApproval ? $MaterialRequest->gmApproval->name : '-' }}
-                        </td>
-                        <td class="p-2 border">
-                            {{ $MaterialRequest->gmApproval ? $MaterialRequest->gmApproval->poste : '-' }}
-                        </td>
-                        <td class="p-2 border">
-                            <x-request-status :status="$MaterialRequest->getStatusFor('gm')" />
-                            {{-- @if (Auth::user()->canApprove($MaterialRequest) && Auth::user()->isGm())
-                            <x-form-request :model="$MaterialRequest" type="material" />
-                            @endif --}}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-
-        {{-- Notes --}}
-        <section class="text-xs text-gray-600 mt-6">
-            <p class="font-semibold">Notes:</p>
-            <ul class="list-disc pl-5 mt-2 space-y-1">
-                <li>Items may be removed from site on specified dates. Up to seven days can be nominated for multiple
-                    entries/exits.</li>
-                <li>Final approval must come from the designated General Manager depending on the department.</li>
-            </ul>
+        {{-- ============ Notes ============ --}}
+        <section class="flex gap-3 rounded-xl border border-blue-100 bg-blue-50/50 p-4">
+            <div class="shrink-0 mt-0.5">
+                <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-100 text-[#134169]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25 12 12v4.5m0-9h.008M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                </span>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-[#134169] mb-1">Good to know</p>
+                <ul class="space-y-1 text-xs text-slate-600">
+                    <li class="flex gap-2">
+                        <span class="text-blue-400">•</span>
+                        Items may be removed from site on specified dates. Up to seven days can be nominated for multiple entries/exits.
+                    </li>
+                    <li class="flex gap-2">
+                        <span class="text-blue-400">•</span>
+                        Final approval must come from the designated General Manager depending on the department.
+                    </li>
+                </ul>
+            </div>
         </section>
 
     </main>

@@ -35,4 +35,9 @@ trait RepeatInputAction
     {
         $this->form->removeMaterial($index);
     }
+
+    public function removePhoto(int $index): void
+    {
+        $this->form->removePhoto($index);
+    }
 }

@@ -166,16 +166,8 @@ final class Dashboard extends Component
     private function vehiclesCurrentlyOut()
     {
         return Recording::query()
-            ->whereHasMorph('requestable', [CarRequest::class])
-            ->whereIn('id', function ($sub) {
-                $sub->selectRaw('MAX(id)')
-                    ->from('recordings')
-                    ->where('requestable_type', CarRequest::class)
-                    ->groupBy('requestable_id');
-            })
-            ->where('action', 'Exit')
+            ->vehiclesOut()
             ->with(['car_driver:id,name', 'requestable'])
-            ->latest('id')
             ->get();
     }
 

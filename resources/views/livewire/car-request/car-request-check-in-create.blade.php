@@ -210,166 +210,163 @@
                     </div>
 
                     @if ($carRequest)
+                        @php
+                            $sv = $carRequest->status->value;
+                            $sStyles = [
+                                'Pending' => ['bg-orange-50 text-orange-700 ring-orange-200', 'bg-orange-500'],
+                                'Progress' => ['bg-yellow-50 text-yellow-700 ring-yellow-200', 'bg-yellow-500'],
+                                'Approved' => ['bg-emerald-50 text-emerald-700 ring-emerald-200', 'bg-emerald-500'],
+                                'Rejected' => ['bg-rose-50 text-rose-700 ring-rose-200', 'bg-rose-500'],
+                                'Expired' => ['bg-slate-100 text-slate-600 ring-slate-200', 'bg-slate-400'],
+                            ];
+                            [$sBadge, $sDot] = $sStyles[$sv] ?? $sStyles['Pending'];
+                            $fmt = fn ($d) => $d ? \Illuminate\Support\Carbon::parse($d)->format('d-m-Y H:i') : null;
+                            $fmtDate = fn ($d) => $d ? \Illuminate\Support\Carbon::parse($d)->format('d-m-Y') : '—';
+                            $stateOf = function (string $actor) use ($carRequest) {
+                                $l = $carRequest->getStatusFor($actor)[0] ?? '';
+                                return str_contains($l, 'Approved') ? 'approved' : (str_contains($l, 'Rejected') ? 'rejected' : 'pending');
+                            };
+                            $steps = [
+                                ['role' => 'HOD', 'name' => $carRequest->hodApproval?->name, 'date' => $fmt($carRequest->hod_approval_date), 'comment' => $carRequest->hod_comment, 'state' => $stateOf('hod')],
+                            ];
+                            if ($carRequest->isRequiredDirectorApproval()) {
+                                $steps[] = ['role' => 'Director', 'name' => $carRequest->directorApproval?->name, 'date' => $fmt($carRequest->director_approval_date), 'comment' => $carRequest->director_comment, 'state' => $stateOf('director')];
+                            }
+                            $steps[] = ['role' => 'General Manager', 'name' => $carRequest->gmApproval?->name, 'date' => $fmt($carRequest->gm_approval_date), 'comment' => $carRequest->gm_comment, 'state' => $stateOf('gm')];
+                            $hasVehicle = $carRequest->somisy_car !== 'no_vehicle';
+                        @endphp
+
                         <div class="bg-white rounded-2xl shadow-inner border border-gray-100 p-6" wire:loading.remove
                             wire:target="car_request_id">
-                            <div class="flex items-start justify-between gap-4">
+
+                            {{-- Header --}}
+                            <div class="flex items-start justify-between gap-4 pb-4 border-b border-gray-100">
                                 <div>
-                                    <h2 class="text-lg font-semibold text-slate-800">Gate Pass Details</h2>
-                                    <p class="text-xs text-slate-500 mt-1">Détails et approbations</p>
+                                    <h2 class="text-lg font-semibold text-[#134169]">Gate Pass Details</h2>
+                                    <p class="text-xs text-slate-500 mt-0.5">#{{ $carRequest->reference }}</p>
                                 </div>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ring-1 {{ $sBadge }}">
+                                    <span class="w-1.5 h-1.5 rounded-full {{ $sDot }}"></span>
+                                    {{ $sv }}
+                                </span>
+                            </div>
 
+                            {{-- Info grid --}}
+                            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm mt-4">
                                 <div>
-                                    <span @class([
-                                        'inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium',
-                                        'bg-blue-500 text-white' => $carRequest->isApproved(),
-                                    ])>
-                                        {{ $carRequest->status }}
-                                    </span>
+                                    <dt class="text-xs text-slate-500">Company</dt>
+                                    <dd class="text-slate-800 font-medium">{{ $carRequest->company }}</dd>
                                 </div>
-                            </div>
+                                <div>
+                                    <dt class="text-xs text-slate-500">Somisy vehicle</dt>
+                                    <dd class="text-slate-800 uppercase">{{ $carRequest->somisy_car }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-xs text-slate-500">Camp resident</dt>
+                                    <dd class="text-slate-800 uppercase">{{ $carRequest->resident }}</dd>
+                                </div>
+                                @if ($hasVehicle)
+                                    <div>
+                                        <dt class="text-xs text-slate-500">Vehicle type</dt>
+                                        <dd class="text-slate-800">{{ $carRequest->car_type ?: '—' }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-xs text-slate-500">Vehicle number</dt>
+                                        <dd class="text-slate-800 font-medium">{{ $carRequest->car_number ?: '—' }}</dd>
+                                    </div>
+                                @endif
+                                <div>
+                                    <dt class="text-xs text-slate-500">Valid from</dt>
+                                    <dd class="text-slate-800">{{ $fmtDate($carRequest->start) }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-xs text-slate-500">Valid until</dt>
+                                    <dd class="text-slate-800">{{ $fmtDate($carRequest->end) }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-xs text-slate-500">Departure time</dt>
+                                    <dd class="text-slate-800">{{ $carRequest->depart_at }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-xs text-slate-500">Arrival time</dt>
+                                    <dd class="text-slate-800">{{ $carRequest->arrive_at }}</dd>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <dt class="text-xs text-slate-500">Destination</dt>
+                                    <dd class="text-slate-800">{{ $carRequest->destination }}</dd>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <dt class="text-xs text-slate-500">Reason</dt>
+                                    <dd class="text-slate-800">{{ $carRequest->reason }}</dd>
+                                </div>
+                            </dl>
 
-                            <div class="mt-4 overflow-x-auto">
-                                <table class="w-full text-sm">
-                                    <tbody class="divide-y divide-gray-100">
-                                        <tr class="py-2">
-                                            <th class="text-left py-3 pr-4 text-slate-600 w-1/3">Company</th>
-                                            <td class="py-3">{{ $carRequest->company }}</td>
-                                        </tr>
+                            {{-- Drivers --}}
+                            @if ($carRequest->car_drivers->isNotEmpty())
+                                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mt-5 mb-2 pt-4 border-t">Drivers</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    @foreach ($carRequest->car_drivers as $row)
+                                        <div class="flex items-center gap-3 rounded-lg border border-gray-100 bg-slate-50/60 px-3 py-2">
+                                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#134169]/10 text-[#134169] text-xs font-bold">
+                                                {{ \Illuminate\Support\Str::of($row->user?->name)->substr(0, 1)->upper() }}
+                                            </span>
+                                            <div class="min-w-0">
+                                                <p class="text-sm font-medium text-slate-800 truncate">{{ $row->user?->name ?? '—' }}</p>
+                                                <p class="text-xs text-slate-500">{{ $row->user?->contact ?? '—' }} · {{ $row->user?->badge_number ?? '—' }}</p>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
 
-                                        <tr class="bg-gray-50">
-                                            <th class="text-left py-3 pr-4 text-slate-600">Somisy Vehicle
-                                            </th>
-                                            <td class="py-3 text-uppercase">{{ $carRequest->somisy_car }}</td>
-                                        </tr>
+                            {{-- Passengers --}}
+                            @if ($carRequest->passengers->isNotEmpty())
+                                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mt-5 mb-2 pt-4 border-t">Residents / passengers</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    @foreach ($carRequest->passengers as $row)
+                                        <div class="flex items-center gap-3 rounded-lg border border-gray-100 bg-slate-50/60 px-3 py-2">
+                                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#134169]/10 text-[#134169] text-xs font-bold">
+                                                {{ \Illuminate\Support\Str::of($row->user?->name)->substr(0, 1)->upper() }}
+                                            </span>
+                                            <div class="min-w-0">
+                                                <p class="text-sm font-medium text-slate-800 truncate">{{ $row->user?->name ?? '—' }}</p>
+                                                <p class="text-xs text-slate-500">{{ $row->user?->contact ?? '—' }} · {{ $row->user?->badge_number ?? '—' }}</p>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
 
-                                        <tr>
-                                            <th class="text-left py-3 pr-4 text-slate-600">Camp Resident</th>
-                                            <td class="py-3 text-uppercase">{{ $carRequest->resident }}</td>
-                                        </tr>
-
-
-                                        {{-- Drivers --}}
-                                        @foreach ($carRequest->car_drivers as $row)
-                                            <tr>
-                                                <th class="text-left py-3 pr-4 text-slate-600">Driver Name</th>
-                                                <td class="py-3">{{ $row->user->name }}</td>
-                                            </tr>
-                                            <tr class="bg-gray-50">
-                                                <th class="text-left py-3 pr-4 text-slate-600">Driver Phone</th>
-                                                <td class="py-3">{{ $row->user->contact }}</td>
-                                            </tr>
-                                            <tr class="bg-gray-50">
-                                                <th class="text-left py-3 pr-4 text-slate-600">Driver Badge Number</th>
-                                                <td class="py-3">{{ $row->user->badge_number }}</td>
-                                            </tr>
-                                        @endforeach
-
-
-                                        <tr class="bg-gray-50">
-                                            <th class="text-left py-3 pr-4 text-slate-600">Vehicle Type</th>
-                                            <td class="py-3">{{ $carRequest->car_type }}</td>
-                                        </tr>
-
-                                        <tr>
-                                            <th class="text-left py-3 pr-4 text-slate-600">Vehicle Number</th>
-                                            <td class="py-3">{{ $carRequest->car_number }}</td>
-                                        </tr>
-
-
-                                        <tr>
-                                            <th class="text-left py-3 pr-4 text-slate-600">Valid From</th>
-                                            <td class="py-3">{{ $carRequest->start }}</td>
-                                        </tr>
-
-                                        <tr class="bg-gray-50">
-                                            <th class="text-left py-3 pr-4 text-slate-600">Valid Until</th>
-                                            <td class="py-3">{{ $carRequest->end }}</td>
-                                        </tr>
-
-                                        <tr>
-                                            <th class="text-left py-3 pr-4 text-slate-600">Departure Time</th>
-                                            <td class="py-3">{{ $carRequest->depart_at }}</td>
-                                        </tr>
-
-                                        <tr class="bg-gray-50">
-                                            <th class="text-left py-3 pr-4 text-slate-600">Arrival Time</th>
-                                            <td class="py-3">{{ $carRequest->arrive_at }}</td>
-                                        </tr>
-
-                                        <tr>
-                                            <th class="text-left py-3 pr-4 text-slate-600">Destination</th>
-                                            <td class="py-3">{{ $carRequest->destination }}</td>
-                                        </tr>
-
-                                        <tr class="bg-gray-50">
-                                            <th class="text-left py-3 pr-4 text-slate-600">Reason</th>
-                                            <td class="py-3">{{ $carRequest->reason }}</td>
-                                        </tr>
-
-                                        {{-- Passengers --}}
-                                        @foreach ($carRequest->passengers as $row)
-                                            <tr>
-                                                <th class="text-left py-3 pr-4 text-slate-600">Passenger</th>
-                                                <td class="py-3">{{ $row->user->name }}</td>
-                                            </tr>
-                                            <tr class="bg-gray-50">
-                                                <th class="text-left py-3 pr-4 text-slate-600">Phone</th>
-                                                <td class="py-3">{{ $row->user->contact }}</td>
-                                            </tr>
-                                            <tr class="bg-gray-50">
-                                                <th class="text-left py-3 pr-4 text-slate-600"> Badge Number</th>
-                                                <td class="py-3">{{ $row->user->badge_number }}</td>
-                                            </tr>
-                                        @endforeach
-
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <h3 class="mt-6 text-md font-semibold text-slate-800">Approvals</h3>
-                            <div class="bg-white rounded-lg mt-3 shadow-sm border border-gray-100 p-4">
-                                <table class="w-full text-sm table-auto">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th class="w-10 text-left px-4 py-2 font-semibold text-slate-700">#</th>
-                                            <th class="w-10 text-left px-4 py-2 font-semibold text-slate-700">Name</th>
-                                            <th class="w-1/3 text-left px-4 py-2 font-semibold text-slate-700">Approver
-                                                Position</th>
-                                            <th class="text-left px-4 py-2 font-semibold text-slate-700">Status</th>
-                                            <th class="text-left px-4 py-2 font-semibold text-slate-700">Comments</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-100">
-                                        <tr>
-                                            <td class="px-4 py-3">1</td>
-                                            <td class="px-4 py-3">
-                                                {{ $carRequest->hodApproval ? $carRequest->hodApproval->name : '—' }}
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                {{ $carRequest->hodApproval ? $carRequest->hodApproval->poste : 'HOD' }}
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <x-request-status :status="$carRequest->getStatusFor('hod')" />
-                                            </td>
-                                            <td class="px-4 py-3 text-slate-600">{{ $carRequest->hod_comment }}</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td class="px-4 py-3">2</td>
-                                            <td class="px-4 py-3">
-                                                {{ $carRequest->gmApproval ? $carRequest->gmApproval->name : '—' }}
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                {{ $carRequest->gmApproval ? $carRequest->gmApproval->poste : 'GM' }}
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <x-request-status :status="$carRequest->getStatusFor('gm')" />
-                                            </td>
-                                            <td class="px-4 py-3 text-slate-600">{{ $carRequest->gm_comment }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                            {{-- Approval workflow --}}
+                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mt-5 mb-3 pt-4 border-t">Approval workflow</p>
+                            <ol class="relative border-l border-gray-200 ml-2 space-y-5">
+                                @foreach ($steps as $step)
+                                    @php
+                                        $d = match ($step['state']) { 'approved' => 'bg-emerald-500', 'rejected' => 'bg-rose-500', default => 'bg-slate-300' };
+                                        $b = match ($step['state']) {
+                                            'approved' => ['Approved', 'text-emerald-700 bg-emerald-50 ring-emerald-200'],
+                                            'rejected' => ['Rejected', 'text-rose-700 bg-rose-50 ring-rose-200'],
+                                            default => ['Pending', 'text-slate-500 bg-slate-50 ring-slate-200'],
+                                        };
+                                    @endphp
+                                    <li class="ml-5">
+                                        <span class="absolute -left-[7px] w-3.5 h-3.5 rounded-full ring-4 ring-white {{ $d }}"></span>
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="text-sm font-semibold text-slate-700">{{ $step['role'] }}</span>
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ring-1 {{ $b[1] }}">{{ $b[0] }}</span>
+                                        </div>
+                                        @if ($step['name'])
+                                            <p class="text-xs text-slate-600 mt-0.5">{{ $step['name'] }}</p>
+                                        @endif
+                                        @if ($step['date'])
+                                            <p class="text-[11px] text-slate-400 mt-0.5">{{ $step['date'] }}</p>
+                                        @endif
+                                        @if ($step['comment'])
+                                            <p class="text-xs text-slate-500 mt-1 italic bg-slate-50 rounded-md px-2 py-1">“{{ $step['comment'] }}”</p>
+                                        @endif
+                                    </li>
+                                @endforeach
+                            </ol>
                         </div>
                     @else
                         <p class="text-sm text-slate-500 italic mt-4" wire:loading.remove
