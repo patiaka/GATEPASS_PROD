@@ -7,7 +7,6 @@ namespace App\Livewire\CarRequest;
 use App\Exports\RecordingExport;
 use App\Helper\WithFilter;
 use App\Models\CarRequest;
-use App\Models\Department;
 use App\Models\Recording;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
@@ -20,13 +19,9 @@ final class CarRequestCheckIn extends Component
 {
     use WithFilter;
 
-    public string $gate = '';
-
-    public string $action = '';
-
     public function ResetFilter(): void
     {
-        $this->reset('department', 'gate', 'action', 'search', 'debut', 'fin');
+        $this->reset('search');
     }
 
     public function export()
@@ -36,21 +31,27 @@ final class CarRequestCheckIn extends Component
 
     public function baseQuery()
     {
-        return Recording::with('user', 'requestable:id,company,reference,car_number,car_type', 'car_driver:id,name,department_id', 'car_driver.department:id,name')->whereHasMorph(
-            'requestable',
-            [CarRequest::class]
-        )
-            ->when($this->gate, function ($query) {
-                $query->where('gate', $this->gate);
+        return Recording::with('user', 'requestable:id,company,reference,car_number,car_type', 'car_driver:id,name,department_id', 'car_driver.department:id,name')
+            ->whereHasMorph('requestable', [CarRequest::class])
+            ->when($this->search, function ($query) {
+                $term = '%'.$this->search.'%';
+
+                $query->where(function ($q) use ($term) {
+                    $q->where('gate', 'like', $term)
+                        ->orWhere('action', 'like', $term)
+                        ->orWhere('fuel_level', 'like', $term)
+                        ->orWhere('kilometers', 'like', $term)
+                        ->orWhereHasMorph('requestable', [CarRequest::class], function ($sub) use ($term) {
+                            $sub->where('reference', 'like', $term)
+                                ->orWhere('car_number', 'like', $term)
+                                ->orWhere('company', 'like', $term)
+                                ->orWhere('car_type', 'like', $term);
+                        })
+                        ->orWhereHas('user', fn ($sub) => $sub->where('name', 'like', $term))
+                        ->orWhereHas('car_driver', fn ($sub) => $sub->where('name', 'like', $term));
+                });
             })
-            ->when($this->action, function ($query) {
-                $query->where('action', $this->action);
-            })
-            ->when($this->debut, function ($query) {
-                $query->whereDate('created_at', '>=', $this->debut);
-            })->when($this->fin && $this->debut, function ($query) {
-                $query->wherebetween('created_at', [$this->debut, $this->fin]);
-            })->latest('id');
+            ->latest('id');
     }
 
     #[Computed]
@@ -61,8 +62,6 @@ final class CarRequestCheckIn extends Component
 
     public function render()
     {
-        $departments = Department::select('id', 'name')->get();
-
-        return view('livewire.car-request.car-request-check-in', compact('departments'));
+        return view('livewire.car-request.car-request-check-in');
     }
 }

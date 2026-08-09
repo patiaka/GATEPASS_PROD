@@ -99,6 +99,27 @@
                         @enderror
                     </div>
 
+                    {{-- Reset password (optionnel) --}}
+                    <div class="border-t pt-5">
+                        <p class="text-sm font-semibold text-gray-700">Reset password</p>
+                        <p class="text-xs text-gray-400 mb-3">Leave empty to keep the current password. Min. 8 characters.</p>
+
+                        <div class="space-y-4">
+                            <div>
+                                <x-input type="password" name="password" place="New password" label="New password"
+                                    :required="false" wire:model="form.password" class="w-full" />
+                                @error('form.password')
+                                    <small class="text-red-500 text-xs">{{ $message }}</small>
+                                @enderror
+                            </div>
+                            <div>
+                                <x-input type="password" name="password_confirmation" place="Confirm new password"
+                                    label="Confirm new password" :required="false" wire:model="form.password_confirmation"
+                                    class="w-full" />
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
             </x-form>

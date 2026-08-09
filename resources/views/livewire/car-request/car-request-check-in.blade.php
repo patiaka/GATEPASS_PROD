@@ -23,63 +23,40 @@
         @endif
     </div>
 
-    {{-- Filters --}}
+    {{-- Search --}}
     <div class="bg-white p-4 rounded-lg border border-gray-100 shadow-sm mb-6">
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
-
-            {{-- Department --}}
-            <div>
-                <x-select label="Department" name="department" wire:model.live="department" class="w-full">
-                    <option value="">All Departments</option>
-                    @foreach ($departments as $row)
-                        <option value="{{ $row->id }}">{{ $row->name }}</option>
-                    @endforeach
-                </x-select>
+        <div class="flex flex-wrap items-center gap-3">
+            <div class="relative flex-1 min-w-[240px]">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" />
+                    </svg>
+                </span>
+                <input type="text" wire:model.live.debounce.300ms="search"
+                    placeholder="Search — reference, vehicle, company, agent, driver, gate, action..."
+                    class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none">
             </div>
 
-            {{-- Action --}}
-            <div>
-                <x-select label="Action" name="action" wire:model.live="action" class="w-full">
-                    <option value="">All</option>
-                    <option value="Entry">Entry</option>
-                    <option value="Exit">Exit</option>
-                </x-select>
-            </div>
-
-            {{-- Gate --}}
-            <div>
-                <x-select label="Gate" name="gate" wire:model.live="gate" class="w-full">
-                    <option value="">All</option>
-                    <option value="Front">Front</option>
-                    <option value="Back">Back</option>
-                    <option value="Airport">Airport</option>
-                </x-select>
-            </div>
-
-            {{-- Date start --}}
-            <div>
-                {{-- <label class="block text-xs font-medium text-slate-600 mb-1">Date start</label> --}}
-                <x-input type="date" wire:model.live="debut" class="w-full h-[42px]" label="Date Start"/>
-            </div>
-
-            {{-- Date end --}}
-            <div>
-                {{-- <label class="block text-xs font-medium text-slate-600 mb-1">Date end</label> --}}
-                <x-input type="date" wire:model.live="fin" class="w-full h-[42px]" label="Date End"/>
-            </div>
-
-            {{-- Reset --}}
-            <div class="flex items-end">
-                <button wire:click='ResetFilter'
-                    class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md flex items-center justify-center gap-2 h-[42px]">
-                    <i data-lucide="x"></i>
-                    Reset
+            @if ($this->search !== '')
+                <button wire:click="ResetFilter"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-300 text-slate-600 text-sm hover:bg-slate-50 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                    Clear
                 </button>
-            </div>
+            @endif
 
+            <button wire:click="export" wire:loading.attr="disabled" wire:target="export"
+                class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#0e3a61] text-white text-sm font-medium hover:bg-[#0c3253] shadow-sm transition disabled:opacity-60">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                </svg>
+                <span wire:loading.remove wire:target="export">Export</span>
+                <span wire:loading wire:target="export">Exporting…</span>
+            </button>
         </div>
-
     </div>
 
     {{-- Table Card --}}

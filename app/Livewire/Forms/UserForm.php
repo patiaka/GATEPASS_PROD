@@ -7,10 +7,14 @@ namespace App\Livewire\Forms;
 use App\Enum\RoleEnum;
 use App\Models\User;
 use App\Notifications\UserNotification;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
+
+use function filled;
 
 use function to_route;
 
@@ -39,6 +43,11 @@ final class UserForm extends Form
     /** @var array<int, string> Rôles cochés (multi-rôles) */
     #[Validate(['required', 'array', 'min:1'])]
     public array $roles = [];
+
+    /** Nouveau mot de passe (optionnel en édition — vide = inchangé). */
+    public string $password = '';
+
+    public string $password_confirmation = '';
 
     public function setUser(User $user): void
     {
@@ -91,10 +100,20 @@ final class UserForm extends Form
             'roles.*' => [new Enum(RoleEnum::class)],
             'poste' => ['required', 'string', 'max:100'],
             'department_id' => ['required', 'integer', 'exists:departments,id'],
+            // Mot de passe optionnel : validé seulement s'il est rempli
+            'password' => ['nullable', 'confirmed', Password::min(8)],
         ]);
 
         $this->user->update($this->only(['name', 'email', 'department_id', 'poste', 'badge_number', 'contact']));
         $this->user->syncRoles($this->roles);
+
+        // L'admin a défini un nouveau mot de passe -> prêt à l'emploi (connexion normale)
+        if (filled($this->password)) {
+            $this->user->update([
+                'password' => Hash::make($this->password),
+                'change_password' => true,
+            ]);
+        }
 
         if ($this->user->wasChanged('email')) {
             $this->user->notify(new UserNotification($this->user));
