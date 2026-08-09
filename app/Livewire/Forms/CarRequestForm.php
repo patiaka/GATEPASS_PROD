@@ -257,7 +257,8 @@ final class CarRequestForm extends Form
      */
     private function normalizeCarNumber(): void
     {
-        if ($this->somisy_car !== 'no_vehicle' && filled($this->car_number)) {
+        // Préfixe LV- uniquement pour les véhicules légers (type Lv).
+        if ($this->somisy_car !== 'no_vehicle' && $this->car_type === 'Lv' && filled($this->car_number)) {
             $number = trim((string) $this->car_number);
             $this->car_number = Str::startsWith($number, 'LV-') ? $number : 'LV-'.$number;
         }

@@ -21,7 +21,8 @@ final class CarRequestCheckIn extends Component
 
     public function ResetFilter(): void
     {
-        $this->reset('search');
+        $this->reset('search', 'period');
+        $this->resetPage();
     }
 
     public function export()

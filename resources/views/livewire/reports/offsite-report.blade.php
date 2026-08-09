@@ -7,8 +7,31 @@
             <p class="text-sm text-slate-500 mt-1">Vehicle exits analytics — busiest vehicles and departments</p>
         </div>
 
-        <div class="flex flex-wrap items-center gap-3">
-            {{-- Department filter --}}
+        {{-- Export buttons --}}
+        <div class="flex items-center gap-2">
+            <button wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel"
+                class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 shadow-sm transition disabled:opacity-60">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                </svg>
+                <span wire:loading.remove wire:target="exportExcel">Excel</span>
+                <span wire:loading wire:target="exportExcel">…</span>
+            </button>
+            <button wire:click="exportPdf" wire:loading.attr="disabled" wire:target="exportPdf"
+                class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#0e3a61] text-white text-sm font-medium hover:bg-[#0c3253] shadow-sm transition disabled:opacity-60">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 4v12" />
+                </svg>
+                <span wire:loading.remove wire:target="exportPdf">PDF</span>
+                <span wire:loading wire:target="exportPdf">…</span>
+            </button>
+        </div>
+    </div>
+
+    {{-- Filters bar --}}
+    <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm">
+        <div class="flex flex-col lg:flex-row lg:items-center gap-3">
+            {{-- Department --}}
             <select wire:model.live="department"
                 class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-slate-700 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none">
                 <option value="">All departments</option>
@@ -17,13 +40,22 @@
                 @endforeach
             </select>
 
-            {{-- Period pills --}}
-            <div class="flex flex-wrap items-center gap-1.5">
+            {{-- Gate --}}
+            <select wire:model.live="gate"
+                class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-slate-700 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none">
+                <option value="">All gates</option>
+                @foreach (['Front', 'Back', 'Airport'] as $g)
+                    <option value="{{ $g }}">{{ $g }} gate</option>
+                @endforeach
+            </select>
+
+            {{-- Period segmented control --}}
+            <div class="inline-flex items-center rounded-lg border border-gray-300 bg-gray-50 p-0.5 self-start lg:self-auto lg:ml-auto">
                 @foreach (['all' => 'All', 'today' => 'Today', '24h' => '24h', 'week' => 'Week', 'month' => 'Month'] as $key => $label)
                     <button type="button" wire:click="setPeriod('{{ $key }}')" @class([
-                        'px-3 py-1.5 rounded-full text-xs font-medium border transition',
-                        'bg-[#134169] text-white border-[#134169] shadow-sm' => $period === $key,
-                        'bg-white text-slate-600 border-gray-300 hover:bg-slate-50' => $period !== $key,
+                        'px-3 py-1.5 rounded-md text-xs font-medium transition whitespace-nowrap',
+                        'bg-[#134169] text-white shadow-sm' => $period === $key,
+                        'text-slate-600 hover:text-slate-900' => $period !== $key,
                     ])>{{ $label }}</button>
                 @endforeach
             </div>

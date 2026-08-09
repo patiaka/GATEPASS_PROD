@@ -47,8 +47,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('department/{department}/edit', DepartmentEdit::class)->name('department.edit');
     });
 
-    // Security uniquement
-    Route::middleware('role:' . RoleEnum::Security->value . ',' . RoleEnum::ADMIN->value)->group(function () {
+    // Check-in : Admin, GM, Security
+    Route::middleware('role:' . RoleEnum::Security->value . ',' . RoleEnum::ADMIN->value . ',' . RoleEnum::GM->value)->group(function () {
         Route::get('material/request/check/in', MaterialRequestCheckIn::class)->name('material.check');
         Route::get('car/request/check/in', CarRequestCheckIn::class)->name('car.check');
 

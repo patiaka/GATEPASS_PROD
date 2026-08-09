@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Reports;
 
+use App\Exports\OffsiteReportExport;
 use App\Models\CarRequest;
 use App\Models\Department;
 use App\Models\Recording;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Spatie\Browsershot\Browsershot;
 
 use function compact;
 
@@ -25,6 +27,10 @@ final class OffsiteReport extends Component
     /** Filtre département (id) — vide = tous. */
     #[Url]
     public string $department = '';
+
+    /** Filtre porte — vide = toutes. */
+    #[Url]
+    public string $gate = '';
 
     public function setPeriod(string $period): void
     {
@@ -42,41 +48,34 @@ final class OffsiteReport extends Component
         };
     }
 
-    /** Base : sorties (Exit) de véhicules, jointes à la demande + demandeur + département. */
-    private function exitsBase(?Carbon $since)
+    /** Base : mouvements de véhicules joints à la demande + demandeur + département. */
+    private function movementsBase(string $action, ?Carbon $since, bool $withDepartment = true)
     {
         return DB::table('recordings')
             ->join('car_requests', 'recordings.requestable_id', '=', 'car_requests.id')
             ->join('users', 'car_requests.user_id', '=', 'users.id')
             ->leftJoin('departments', 'users.department_id', '=', 'departments.id')
-            ->where('recordings.action', 'Exit')
+            ->where('recordings.action', $action)
             ->where('recordings.requestable_type', CarRequest::class)
-            ->when($since, fn ($q) => $q->where('recordings.created_at', '>=', $since));
+            ->when($since, fn ($q) => $q->where('recordings.created_at', '>=', $since))
+            ->when($this->gate !== '', fn ($q) => $q->where('recordings.gate', $this->gate))
+            ->when($withDepartment && $this->department !== '', fn ($q) => $q->where('users.department_id', $this->department));
     }
 
-    public function render()
+    /** Toutes les données du rapport, partagées par l'affichage et les exports. */
+    private function data(): array
     {
         $since = $this->periodStart();
 
-        // KPIs
-        $exitsCount = (clone $this->exitsBase($since))->count();
-
-        $entriesCount = Recording::query()
-            ->where('action', 'Entry')
-            ->where('requestable_type', CarRequest::class)
-            ->when($since, fn ($q) => $q->where('created_at', '>=', $since))
-            ->count();
-
+        $exitsCount = (clone $this->movementsBase('Exit', $since))->count();
+        $entriesCount = (clone $this->movementsBase('Entry', $since))->count();
         $currentlyOut = Recording::query()->vehiclesOut()->count();
-
-        $distinctVehicles = (clone $this->exitsBase($since))
+        $distinctVehicles = (clone $this->movementsBase('Exit', $since))
             ->whereNotNull('car_requests.car_number')
             ->distinct()
             ->count('car_requests.car_number');
 
-        // Top véhicules par nombre de sorties (respecte le filtre département)
-        $topVehicles = (clone $this->exitsBase($since))
-            ->when($this->department !== '', fn ($q) => $q->where('users.department_id', $this->department))
+        $topVehicles = (clone $this->movementsBase('Exit', $since))
             ->whereNotNull('car_requests.car_number')
             ->groupBy('car_requests.car_number')
             ->selectRaw('car_requests.car_number as label, COUNT(*) as total')
@@ -84,32 +83,79 @@ final class OffsiteReport extends Component
             ->limit(10)
             ->get();
 
-        // Sorties par département (vue d'ensemble — ignore le filtre département)
-        $byDepartment = (clone $this->exitsBase($since))
+        // Vue d'ensemble par département (ignore le filtre département)
+        $byDepartment = (clone $this->movementsBase('Exit', $since, withDepartment: false))
             ->groupBy('departments.name')
             ->selectRaw("COALESCE(departments.name, 'Unassigned') as label, COUNT(*) as total")
             ->orderByDesc('total')
             ->get();
 
-        // Sorties dans le temps (par jour) — borné aux 30 derniers jours si période = all
         $timeSince = $since ?? Carbon::now()->subDays(29)->startOfDay();
-        $overTime = (clone $this->exitsBase($timeSince))
+        $overTime = (clone $this->movementsBase('Exit', $timeSince))
             ->selectRaw('CAST(recordings.created_at AS DATE) as d, COUNT(*) as total')
             ->groupBy(DB::raw('CAST(recordings.created_at AS DATE)'))
             ->orderBy('d')
             ->get();
 
+        return compact('exitsCount', 'entriesCount', 'currentlyOut', 'distinctVehicles', 'topVehicles', 'byDepartment', 'overTime');
+    }
+
+    /** Libellé lisible des filtres actifs (pour l'en-tête d'export). */
+    private function filterLabel(): string
+    {
+        $periodLabels = ['all' => 'All time', 'today' => 'Today', '24h' => 'Last 24h', 'week' => 'This week', 'month' => 'This month'];
+        $parts = ['Period: '.($periodLabels[$this->period] ?? $this->period)];
+        if ($this->department !== '') {
+            $parts[] = 'Department: '.(Department::find($this->department)?->name ?? $this->department);
+        }
+        if ($this->gate !== '') {
+            $parts[] = 'Gate: '.$this->gate;
+        }
+
+        return implode('  |  ', $parts);
+    }
+
+    public function exportExcel()
+    {
+        $d = $this->data();
+
+        return (new OffsiteReportExport([
+            'Top vehicles' => [
+                'headings' => ['Vehicle', 'Exits'],
+                'rows' => $d['topVehicles']->map(fn ($r) => [$r->label, $r->total])->all(),
+            ],
+            'By department' => [
+                'headings' => ['Department', 'Exits'],
+                'rows' => $d['byDepartment']->map(fn ($r) => [$r->label, $r->total])->all(),
+            ],
+            'Daily exits' => [
+                'headings' => ['Date', 'Exits'],
+                'rows' => $d['overTime']->map(fn ($r) => [Carbon::parse($r->d)->format('d-m-Y'), $r->total])->all(),
+            ],
+        ]))->download('offsite-report-'.now()->format('Ymd-His').'.xlsx');
+    }
+
+    public function exportPdf()
+    {
+        $data = $this->data();
+        $filters = $this->filterLabel();
+        $html = view('reports.offsite-pdf', array_merge($data, ['filters' => $filters, 'generatedAt' => now()->format('d-m-Y H:i')]))->render();
+
+        $path = storage_path('app/offsite-report-'.now()->format('Ymd-His').'.pdf');
+
+        Browsershot::html($html)
+            ->margins(10, 10, 10, 10)
+            ->format('A4')
+            ->showBackground()
+            ->save($path);
+
+        return response()->download($path)->deleteFileAfterSend(true);
+    }
+
+    public function render()
+    {
         $departments = Department::orderBy('name')->get(['id', 'name']);
 
-        return view('livewire.reports.offsite-report', compact(
-            'exitsCount',
-            'entriesCount',
-            'currentlyOut',
-            'distinctVehicles',
-            'topVehicles',
-            'byDepartment',
-            'overTime',
-            'departments',
-        ));
+        return view('livewire.reports.offsite-report', array_merge($this->data(), compact('departments')));
     }
 }
