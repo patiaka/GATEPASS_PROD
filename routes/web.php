@@ -22,6 +22,7 @@ use App\Livewire\MaterialRequest\MaterialRequestIndex;
 use App\Livewire\MaterialRequest\MaterialRequestPending;
 use App\Livewire\MaterialRequest\MaterialRequestShow;
 use App\Livewire\MaterialRequest\MaterialRequestUpdate;
+use App\Livewire\Reports\OffsiteReport;
 use App\Livewire\User\UserCreate;
 use App\Livewire\User\UserIndex;
 use App\Livewire\User\UserPassChange;
@@ -53,6 +54,11 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('car/request/check/in/create', CarRequestCheckInCreate::class)->name('car.check_create');
         Route::get('material/request/check/in/create', MaterialRequestCheckInCreate::class)->name('material.check_create');
+    });
+
+    // Rapports : Admin, GM, Security
+    Route::middleware('role:' . RoleEnum::ADMIN->value . ',' . RoleEnum::GM->value . ',' . RoleEnum::Security->value)->group(function () {
+        Route::get('reports/offsite', OffsiteReport::class)->name('reports.offsite');
     });
     // Routes accessibles à tous
     Route::get('/', Dashboard::class)->name('dashboard');

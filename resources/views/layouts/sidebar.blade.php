@@ -235,6 +235,7 @@
                 </li>
             @endif
 
+            @if (Auth::user()->isAdmin() || Auth::user()->isGm() || Auth::user()->isSecurity())
             <li>
                 @php $repOpen = request()->routeIs('reports.*'); @endphp
                 <details class="group" {{ $repOpen ? 'open' : '' }}>
@@ -257,13 +258,13 @@
                     </summary>
                     <ul class="mt-1 ml-3 border-l border-white/10 pl-2 space-y-1">
                         <li>
-                            <a wire:navigate href="#"
-                                class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-xs hover:bg-white/10 hover:text-white">
-                                <svg class="w-4 h-4 shrink-0 text-white/80" fill="none" stroke="currentColor"
+                            <a wire:navigate href="{{ route('reports.offsite') }}"
+                                class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-xs
+                                      {{ request()->routeIs('reports.offsite') ? 'bg-white/15 text-white font-semibold shadow-[inset_3px_0_0_0_#ffd324]' : 'hover:bg-white/10 hover:text-white' }}">
+                                <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('reports.offsite') ? 'text-white' : 'text-white/80' }}" fill="none" stroke="currentColor"
                                     stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M12 8c-1.5 2-3 3-3 5a3 3 0 006 0c0-2-1.5-3-3-5z" />
-                                    <circle cx="12" cy="12" r="10" />
+                                        d="M9 17v-6M12 17V7M15 17v-4M3 3v18h18" />
                                 </svg>
                                 <span class="text-sm">Offsite Records</span>
                             </a>
@@ -271,6 +272,7 @@
                     </ul>
                 </details>
             </li>
+            @endif
         </ul>
 
         <div class="mt-auto border border-white/15 rounded-xl px-4 py-3 bg-white/5">
