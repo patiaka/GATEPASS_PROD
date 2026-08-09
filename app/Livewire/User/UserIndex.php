@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Livewire\User;
 
+use App\Exports\UsersTemplateExport;
+use App\Imports\UsersImport;
 use App\Models\Department;
 use App\Models\User;
 use App\Notifications\UserNotification;
@@ -36,26 +38,28 @@ final class UserIndex extends Component
         $this->reset('department', 'role', 'search', 'status');
     }
 
-    // public function import()
-    // {
-    //     $this->validate([
-    //         'import_file' => 'required|mimes:xlsx,xls',
-    //     ]);
+    public function import()
+    {
+        $this->validate([
+            'import_file' => 'required|file|mimes:xlsx,xls',
+        ]);
 
-    //     $import = new UsersImport();
-    //     Excel::import($import, $this->import_file);
+        $import = new UsersImport();
+        Excel::import($import, $this->import_file);
 
-    //     if (! empty($import->errors)) {
-    //         return back()->withErrors($import->errors);
-    //     }
+        $this->reset('import_file');
 
-    //     flash('User exported successfuly');
-    // }
+        if (! empty($import->errors)) {
+            flash()->warning($import->imported.' user(s) imported. '.count($import->errors).' row(s) skipped (duplicate or invalid).');
+        } else {
+            flash()->success($import->imported.' user(s) imported successfully.');
+        }
+    }
 
-    // public function downloadTemplate(): BinaryFileResponse
-    // {
-    //     return Excel::download(new UsersTemplateExport, 'template_users.xlsx');
-    // }
+    public function downloadTemplate()
+    {
+        return Excel::download(new UsersTemplateExport, 'template_users.xlsx');
+    }
 
     public function invite_user(User $user)
     {

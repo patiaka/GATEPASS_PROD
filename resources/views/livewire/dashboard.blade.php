@@ -337,6 +337,56 @@
         </div>
     </div>
 
+    <!-- ========================= Vehicles currently out ========================= -->
+    @if (Auth::user()->isGm() || Auth::user()->isDirector() || Auth::user()->isHod() || Auth::user()->isAdmin() || Auth::user()->isSecurity())
+
+        <div class="bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden mt-8">
+            <div class="flex justify-between items-center border-b bg-amber-50/60 px-5 py-3">
+                <h1 class="font-semibold text-base text-[#134169] flex items-center gap-2">
+                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-100 text-amber-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8m-8 5h5m-9 4V6a2 2 0 012-2h10a2 2 0 012 2v13l-3-2-3 2-3-2-3 2z" />
+                        </svg>
+                    </span>
+                    Vehicles currently out
+                    <span class="text-xs font-medium text-amber-700 bg-amber-100 rounded-full px-2 py-0.5">{{ $vehicles_out->count() }}</span>
+                </h1>
+                <a href="{{ route('car.check') }}"
+                    class="text-xs text-[#134169] border border-[#134169] px-3 py-1 rounded-lg hover:bg-[#134169] hover:text-white transition">
+                    Vehicle log
+                </a>
+            </div>
+
+            @if ($vehicles_out->isEmpty())
+                <div class="flex flex-col items-center justify-center py-8 text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mb-2 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <p class="text-sm">All vehicles are on site</p>
+                </div>
+            @else
+                <div class="divide-y divide-gray-100">
+                    @foreach ($vehicles_out as $rec)
+                        <div class="flex flex-wrap items-center justify-between gap-2 px-5 py-3 hover:bg-slate-50/70 transition-colors">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <span class="font-semibold text-[#134169] text-sm whitespace-nowrap">#{{ $rec->requestable?->reference }}</span>
+                                <span class="text-sm font-medium text-slate-800 whitespace-nowrap">{{ $rec->requestable?->car_number ?: '—' }}</span>
+                                <span class="text-xs text-slate-500 truncate">{{ $rec->requestable?->company }}</span>
+                                @if ($rec->car_driver)
+                                    <span class="text-xs text-slate-400 truncate">· {{ $rec->car_driver->name }}</span>
+                                @endif
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-slate-500 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 ring-1 ring-slate-200">{{ $rec->gate }}</span>
+                                <span title="{{ $rec->created_at?->format('d/m/Y H:i') }}">out {{ $rec->created_at?->diffForHumans() }}</span>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    @endif
+
     <!-- ========================= Latest Check-in / Check-out Tables ========================= -->
     @if (Auth::user()->isGm() || Auth::user()->isDirector() || Auth::user()->isHod() || Auth::user()->isAdmin() || Auth::user()->isSecurity())
 
@@ -375,8 +425,8 @@
                                     <td class="px-3 py-2.5 font-semibold text-[#134169] whitespace-nowrap">
                                         #{{ $row->requestable->reference }}
                                     </td>
-                                    <td class="px-3 py-2.5 text-slate-500 whitespace-nowrap">
-                                        {{ $row->created_at?->format('d/m/Y H:i') }}
+                                    <td class="px-3 py-2.5 text-slate-500 whitespace-nowrap" title="{{ $row->created_at?->format('d/m/Y H:i') }}">
+                                        {{ $row->created_at?->diffForHumans() }}
                                     </td>
                                     <td class="px-3 py-2.5 text-slate-700">
                                         {{ $row->user->name }}
@@ -460,8 +510,8 @@
                                     <td class="px-3 py-2.5 font-semibold text-[#134169] whitespace-nowrap">
                                         #{{ $row->requestable->reference }}
                                     </td>
-                                    <td class="px-3 py-2.5 text-slate-500 whitespace-nowrap">
-                                        {{ $row->created_at?->format('d/m/Y H:i') }}
+                                    <td class="px-3 py-2.5 text-slate-500 whitespace-nowrap" title="{{ $row->created_at?->format('d/m/Y H:i') }}">
+                                        {{ $row->created_at?->diffForHumans() }}
                                     </td>
                                     <td class="px-3 py-2.5 text-slate-700">
                                         {{ $row->user->department?->name ?? '—' }}

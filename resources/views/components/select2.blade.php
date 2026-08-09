@@ -99,9 +99,10 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener('alpine:init', () => {
-    Alpine.data('select2', (config) => ({
+@once
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('select2', (config) => ({
         options: config.options || [],
         placeholderText: config.placeholder || 'Select an option',
         value: config.value || null,
@@ -177,15 +178,7 @@
                 this.selectOption(this.filteredOptions[this.highlightedIndex]);
             }
         }
-    }));
-});
-
-window.addEventListener("livewire:navigated", () => {
-    // Réinitialiser tous les select2 Alpine après navigation
-    if (typeof Alpine !== "undefined") {
-        Alpine.flushAndStopDeferringMutations();
-        Alpine.initTree(document.body);
-    }
-
-});
-</script>
+            }));
+        });
+    </script>
+@endonce

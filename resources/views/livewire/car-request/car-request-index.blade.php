@@ -156,8 +156,20 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="px-4 py-8 text-center text-sm text-gray-400">
-                        No result
+                    <td colspan="7" class="px-4 py-12 text-center">
+                        <div class="flex flex-col items-center gap-3 text-slate-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+                            </svg>
+                            <p class="text-sm">No vehicle request found</p>
+                            <a wire:navigate href="{{ route('car.create') }}"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#134169] text-white text-xs font-medium hover:bg-[#0f3557] transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                </svg>
+                                New request
+                            </a>
+                        </div>
                     </td>
                 </tr>
             @endforelse

@@ -11,18 +11,14 @@ final class UsersTemplateExport implements FromArray, WithHeadings
 {
     public function headings(): array
     {
-        return ['name', 'email', 'role', 'position', 'compagny', 'department'];
+        return ['name', 'email', 'position', 'contact', 'badge_number', 'role', 'department'];
     }
 
     public function array(): array
     {
+        // Une ligne d'exemple pour guider le remplissage
         return [
-            // 'name' => 'test',
-            // 'email' => 'test@test.com',
-            // 'role' => 'test',
-            // 'position' => 'test',
-            // 'compagny' => 'test',
-            // 'department' => 'test',
-        ]; // Pas de données, juste les en-têtes
+            ['John Doe', 'john.doe@example.com', 'Technician', '70000000', 'BN-0001', 'User', 'ICT'],
+        ];
     }
 }

@@ -100,6 +100,9 @@ final class Dashboard extends Component
         $car_check_latest = $canSeeCheckouts ? $carCheckouts->latest()->limit(10)->get() : [];
         $mat_check_latest = $canSeeCheckouts ? $matCheckouts->latest()->limit(10)->get() : [];
 
+        // Véhicules actuellement dehors : dernier mouvement = Exit (pas encore rentrés)
+        $vehicles_out = $canSeeCheckouts ? $this->vehiclesCurrentlyOut() : collect();
+
         /*
         |--------------------------------------------------------------------------
         | STATISTIQUES (visibles par tous, limitées au périmètre + filtres)
@@ -152,8 +155,28 @@ final class Dashboard extends Component
             'daily_traffic',
             'dept_requests',
             'canFilterDepartment',
-            'filterDepartments'
+            'filterDepartments',
+            'vehicles_out'
         ));
+    }
+
+    /**
+     * Véhicules dont le dernier passage est une "Exit" (donc encore hors site).
+     */
+    private function vehiclesCurrentlyOut()
+    {
+        return Recording::query()
+            ->whereHasMorph('requestable', [CarRequest::class])
+            ->whereIn('id', function ($sub) {
+                $sub->selectRaw('MAX(id)')
+                    ->from('recordings')
+                    ->where('requestable_type', CarRequest::class)
+                    ->groupBy('requestable_id');
+            })
+            ->where('action', 'Exit')
+            ->with(['car_driver:id,name', 'requestable'])
+            ->latest('id')
+            ->get();
     }
 
     /**

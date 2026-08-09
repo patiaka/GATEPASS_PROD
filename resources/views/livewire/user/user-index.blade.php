@@ -2,7 +2,49 @@
     <x-table title="Users Database" :addbtn="false" :rows="$this->rows">
 
         <x-slot:addcreate>
-            <x-button-add link="{{ route('user.create') }}" />
+            <div class="flex flex-col items-end gap-1">
+                <div class="flex flex-wrap items-center gap-2">
+                    {{-- Choisir un fichier --}}
+                    <label class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-300 text-slate-600 text-sm cursor-pointer hover:bg-slate-50 transition"
+                        wire:loading.class="opacity-60" wire:target="import_file">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0 4 4m-4-4L8 8M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                        </svg>
+                        <span>
+                            <span wire:loading.remove wire:target="import_file">{{ $import_file ? 'File ready' : 'Choose Excel' }}</span>
+                            <span wire:loading wire:target="import_file">Loading…</span>
+                        </span>
+                        <input type="file" wire:model="import_file" accept=".xlsx,.xls" class="hidden">
+                    </label>
+
+                    @if ($import_file)
+                        <button wire:click="import" wire:loading.attr="disabled" wire:target="import"
+                            class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition disabled:opacity-60">
+                            <span wire:loading.remove wire:target="import">Import</span>
+                            <span wire:loading wire:target="import" class="inline-flex items-center gap-1.5">
+                                <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="4" />
+                                    <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+                                </svg>
+                                Importing…
+                            </span>
+                        </button>
+                    @endif
+
+                    <button wire:click="downloadTemplate"
+                        class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-300 text-slate-600 text-sm hover:bg-slate-50 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                        </svg>
+                        Template
+                    </button>
+
+                    <x-button-add link="{{ route('user.create') }}" />
+                </div>
+                @error('import_file')
+                    <span class="text-red-500 text-xs">{{ $message }}</span>
+                @enderror
+            </div>
         </x-slot:addcreate>
 
         <x-slot:filter>
