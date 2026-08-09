@@ -20,7 +20,7 @@
                     <x-select label="Filter by role" wire:model.live="role">
                         <option value="">All Roles</option>
                         @foreach (App\Enum\RoleEnum::cases() as $row)
-                        <option value="{{ $row }}">{{ $row }}</option>
+                        <option value="{{ $row->value }}">{{ $row->value }}</option>
                         @endforeach
                     </x-select>
                 </div>
@@ -43,7 +43,7 @@
                 <th class="px-3 py-2 text-left font-semibold">Email / Name</th>
                 <th class="px-3 py-2 text-left font-semibold">Position</th>
                 <th class="px-3 py-2 text-left font-semibold">Role</th>
-                <th class="px-3 py-2 text-left font-semibold">Delegated</th>
+                <th class="px-3 py-2 text-left font-semibold">Other roles</th>
                 <th class="px-3 py-2 text-left font-semibold">Status</th>
                 <th class="px-3 py-2 text-left font-semibold">Change PWD</th>
                 <th class="px-3 py-2 text-left font-semibold">Invite</th>
@@ -161,12 +161,10 @@
                     <div class="flex items-center justify-center gap-1.5">
 
                         <!-- Edit -->
-                        <a href="{{ route('user.edit', ['user' => $row]) }}" class="inline-flex items-center justify-center
-            w-7 h-7 rounded-md border border-gray-200
-            text-gray-500 hover:text-[#134169]
-            hover:border-[#134169] hover:bg-slate-50
-            transition">
-                            <!-- Pencil icon (small & clean) -->
+                        <a href="{{ route('user.edit', ['user' => $row]) }}" title="Edit user"
+                            class="inline-flex items-center justify-center w-7 h-7 rounded-md border border-gray-200
+                                   text-gray-500 hover:text-[#134169] hover:border-[#134169] hover:bg-slate-50 transition">
+                            <!-- Pencil icon -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l2.651 2.651M6.3 17.9l4.243-.707
@@ -175,15 +173,41 @@
                             </svg>
                         </a>
 
-                        <!-- Delete -->
-                        <button @class([
-                                "inline-flex items-center justify-center w-auto h-7 text-xs rounded-md border border-gray-200 text-gray-500 transition px-2",
-                                'hover:text-red-600 hover:border-red-600 hover:bg-red-50' => $row->status == 1,
-                                'hover:text-green-600 hover:border-green-600 hover:bg-green-50' => $row->status == 0,
-                            ]) 
-                            wire:click="toggleUserStatus({{ $row->id }}, {{ $row->status ? 0 : 1 }})">
-                            <!-- Trash icon -->
-                            {{ $row->status ? '❌ Disable' : '✅ Enable' }}
+                        <!-- Enable / Disable (icône seule) -->
+                        <button wire:click="toggleUserStatus({{ $row->id }}, {{ $row->status ? 0 : 1 }})"
+                            wire:target="toggleUserStatus({{ $row->id }}, {{ $row->status ? 0 : 1 }})"
+                            wire:loading.attr="disabled"
+                            title="{{ $row->status ? 'Disable user' : 'Enable user' }}"
+                            @class([
+                                'inline-flex items-center justify-center w-7 h-7 rounded-md border border-gray-200 text-gray-500 transition disabled:opacity-50',
+                                'hover:text-rose-600 hover:border-rose-600 hover:bg-rose-50' => $row->status == 1,
+                                'hover:text-emerald-600 hover:border-emerald-600 hover:bg-emerald-50' => $row->status == 0,
+                            ])>
+                            {{-- Spinner pendant le traitement --}}
+                            <svg wire:loading wire:target="toggleUserStatus({{ $row->id }}, {{ $row->status ? 0 : 1 }})"
+                                class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="4" />
+                                <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="4" />
+                            </svg>
+
+                            <span wire:loading.remove wire:target="toggleUserStatus({{ $row->id }}, {{ $row->status ? 0 : 1 }})"
+                                class="inline-flex">
+                                @if ($row->status)
+                                    {{-- Ban / no-symbol : désactiver --}}
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M18.364 5.636 5.636 18.364M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18Z" />
+                                    </svg>
+                                @else
+                                    {{-- Check-circle : réactiver --}}
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="m9 12.75 2.25 2.25L15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                @endif
+                            </span>
                         </button>
 
                     </div>

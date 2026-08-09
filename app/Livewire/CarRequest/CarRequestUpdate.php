@@ -52,17 +52,9 @@ final class CarRequestUpdate extends Component
         $this->carRequest = $CarRequest;
 
         Gate::authorize('update-request', $this->carRequest);
+
+        // setCarRequest charge aussi driver_ids / passenger_ids depuis les relations
         $this->form->setCarRequest($CarRequest);
-
-        $CarRequest->loadMissing('car_drivers', 'passengers');
-
-        $CarRequest->car_drivers->pluck('user_id')->each(function ($user_id) {
-            $this->form->drivers[] = ['user_id' => $user_id];
-        });
-
-        $CarRequest->passengers->pluck('user_id')->each(function ($user_id) {
-            $this->form->passengers[] = ['user_id' => $user_id];
-        });
     }
 
     public function save()

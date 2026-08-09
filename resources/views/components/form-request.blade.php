@@ -28,7 +28,7 @@
 <template x-teleport="body">
     <div x-data="{ open: false }"
         x-on:open-modal.window="if ($event.detail.id === 'dialog-{{ $model->id }}') open = true" x-show="open" x-cloak
-        class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
+        class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50">
         <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative" @click.outside="open = false">
             <!-- Header -->
             <div class="mb-4 border-b pb-2 flex justify-between items-center">
@@ -74,12 +74,19 @@
                         Cancel
                     </button>
                     <button type="submit" wire:loading.attr="disabled" wire:target="{{ $approveMethod }}"
-                        class="px-4 py-2 rounded-md bg-[#134169] text-white hover:bg-red-500">
+                        class="inline-flex items-center justify-center gap-2 min-w-[120px] px-4 py-2 rounded-md
+                               bg-[#134169] text-white text-sm font-semibold shadow-sm transition-colors
+                               hover:bg-[#0f3557] focus:outline-none focus:ring-2 focus:ring-[#134169]/40 focus:ring-offset-1
+                               disabled:opacity-70 disabled:cursor-not-allowed">
                         <span wire:loading.remove wire:target="{{ $approveMethod }}">
                             Submit
                         </span>
-                        <span wire:loading wire:target="{{ $approveMethod }}">
-                            <i class="bx bx-loader-alt fa-spin"></i> Processing...
+                        <span wire:loading wire:target="{{ $approveMethod }}" class="inline-flex items-center gap-2">
+                            <svg class="size-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="4" />
+                                <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+                            </svg>
+                            Processing…
                         </span>
                     </button>
                 </div>

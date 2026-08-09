@@ -66,8 +66,11 @@ final class MaterialRequest extends Model
 
     public function getFullNameAttribute(): string
     {
+        // person_out peut être null si la personne a été saisie manuellement
+        // (person_out_name) ou s'il n'y a pas de personne déléguée.
+        $person = $this->person_out?->name ?? $this->person_out_name;
 
-        return "{$this->reference} — {$this->person_out->name}";
+        return $person ? "{$this->reference} — {$person}" : $this->reference;
     }
 
     public function isExpire(): bool

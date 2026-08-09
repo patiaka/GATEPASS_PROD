@@ -1,24 +1,28 @@
 @props([
-    'target' => 'save', // The Livewire action to target for loading state
+    'target' => 'save', // Action Livewire ciblée pour l'état de chargement
+    'label' => 'Save',
+    'loadingLabel' => 'Saving…',
 ])
 
-{{-- Submit button --}}
-<button type="submit"
-    class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#0e3a61]"
-    wire:loading.remove>
-    Submit
-</button>
+<button type="submit" wire:target="{{ $target }}" wire:loading.attr="disabled"
+    {{ $attributes->merge([
+        'class' => 'inline-flex items-center justify-center gap-2 min-w-[120px] px-4 py-2 rounded-md text-sm font-semibold
+                    text-white bg-[#0e3a61] shadow-sm transition-colors
+                    hover:bg-[#0c3252] focus:outline-none focus:ring-2 focus:ring-[#0e3a61]/40 focus:ring-offset-1
+                    disabled:opacity-70 disabled:cursor-not-allowed',
+    ]) }}>
 
-{{-- Loading spinner --}}
-<div class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#0e3a61]"
-    wire:loading wire:loading.attr="disabled">
-    <span class="flex items-center">
-        <svg class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-            </path>
-        </svg>
-        <span>Processing...</span>
+    {{-- État normal --}}
+    <span wire:loading.remove wire:target="{{ $target }}" class="inline-flex items-center gap-2">
+        {{ $label }}
     </span>
-</div>
+
+    {{-- État chargement : spinner + libellé --}}
+    <span wire:loading wire:target="{{ $target }}" class="inline-flex items-center gap-2">
+        <svg class="size-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="4" />
+            <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+        </svg>
+        {{ $loadingLabel }}
+    </span>
+</button>

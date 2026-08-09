@@ -86,49 +86,17 @@
             </div>
             @if ($this->showVehicleFields)
 
-                <!-- Drivers header -->
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Drivers</h2>
-                    <button type="button" wire:click="addDriver"
-                        class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5 mr-1" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Add field
-                    </button>
-
-                </div>
-
-                @foreach ($form->drivers as $index => $driver)
-                    <!-- Driver Name -->
-                    <div class="md:grid md:grid-cols-12 md:items-start md:gap-4"
-                        wire:key="form.drivers.{{ $index }}.user_id">
-                        <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Driver
-                            Name</label>
-                        <div class="md:col-span-9">
-                            <div class="flex flex-col gap-2 md:w-1/2">
-
-                                <x-select2 :options="$users" optionLabel="full_name"
-                                    wire:model="form.drivers.{{ $index }}.user_id" label=""
-                                    placeholder="Select car driver" />
-
-                                <button type="button" wire:click="removeDriver({{ $index }})"
-                                    class="inline-flex items-center justify-center rounded-md bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 px-2 py-1 text-xs">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                </button>
-                            </div>
-
-                            @error("form.drivers.$index.user_id")
-                                <small class="text-red-500 text-sm">{{ $message }}</small>
-                            @enderror
-                        </div>
+                <!-- Drivers (multi-select) -->
+                <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
+                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Drivers</label>
+                    <div class="md:col-span-9 md:w-2/3">
+                        <x-select2-multiple :options="$users" optionLabel="full_name" wire:model="form.driver_ids"
+                            placeholder="Select one or more drivers" />
+                        @error('form.driver_ids')
+                            <small class="text-red-500 text-sm">{{ $message }}</small>
+                        @enderror
                     </div>
-                @endforeach
+                </div>
 
                 <!-- Vehicle Type -->
                 <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
@@ -182,46 +150,17 @@
                     </div>
                 </div>
             @else
-                <!-- Passengers header -->
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Passengers</h2>
-                    <button type="button" wire:click="addPassenger"
-                        class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5 mr-1" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 4v16m8-8H4" />
-                        </svg>
-                        Add field
-                    </button>
-                </div>
-                @foreach ($form->passengers as $index => $passenger)
-                    <div class="md:grid md:grid-cols-12 md:items-center md:gap-4"
-                        wire:key="form.passengers.{{ $index }}.user_id">
-                        <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Resident
-                            Name</label>
-                        <div class="md:col-span-9">
-                            <div class="flex flex-col gap-2 md:w-1/2">
-
-                                <x-select2 :options="$users" optionLabel="full_name"
-                                    wire:model="form.passengers.{{ $index }}.user_id" label=""
-                                    placeholder="Select passenger" />
-
-                                <button type="button" wire:click="removePassenger({{ $index }})"
-                                    class="inline-flex items-center justify-center rounded-md bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 px-2 py-1 text-xs">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                </button>
-                            </div>
-                            @error("form.passengers.$index.name")
-                                <small class="text-red-500 text-sm">{{ $message }}</small>
-                            @enderror
-                        </div>
+                <!-- Passengers (multi-select) -->
+                <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
+                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Residents</label>
+                    <div class="md:col-span-9 md:w-2/3">
+                        <x-select2-multiple :options="$users" optionLabel="full_name" wire:model="form.passenger_ids"
+                            placeholder="Select one or more residents" />
+                        @error('form.passenger_ids')
+                            <small class="text-red-500 text-sm">{{ $message }}</small>
+                        @enderror
                     </div>
-                @endforeach
+                </div>
             @endif
             <div class="flex items-center gap-2 mb-4">
                 <label for="default-checkbox" class="text-sm font-medium text-heading select-none">

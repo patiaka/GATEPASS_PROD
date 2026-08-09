@@ -40,13 +40,8 @@ final class CarRequestCreate extends Component
 
     public function mount()
     {
-        $this->form->drivers = [
-            ['user_id' => ''], // Un élément initial
-        ];
-
-        $this->form->passengers = [
-            ['user_id' => ''], // Un élément initial
-        ];
+        $this->form->driver_ids = [];
+        $this->form->passenger_ids = [];
     }
 
     public function save()

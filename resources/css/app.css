@@ -88,3 +88,8 @@ body, html {
 button {
     cursor: pointer;
 }
+
+/* Alpine : cache les éléments x-cloak tant qu'Alpine n'est pas initialisé (évite le flash) */
+[x-cloak] {
+    display: none !important;
+}

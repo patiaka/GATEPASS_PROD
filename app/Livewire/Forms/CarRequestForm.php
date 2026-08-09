@@ -24,6 +24,12 @@ final class CarRequestForm extends Form
     #[Validate('nullable|array|min:1')]
     public ?array $passengers = [];
 
+    /** @var array<int, int> Multi-select : IDs des chauffeurs sélectionnés */
+    public array $driver_ids = [];
+
+    /** @var array<int, int> Multi-select : IDs des passagers sélectionnés */
+    public array $passenger_ids = [];
+
     #[Validate('required|string')]
     public string $somisy_car = '';
 
@@ -71,9 +77,7 @@ final class CarRequestForm extends Form
     public function getShowVehicleField(): bool
     {
         if ($this->somisy_car === 'no_vehicle') {
-            $this->drivers = [
-                ['user_id' => ''],
-            ];
+            $this->driver_ids = [];
             $this->car_type = '';
             $this->car_number = '';
 
@@ -114,15 +118,20 @@ final class CarRequestForm extends Form
     {
         $this->carRequest = $carRequest;
         $this->fill($carRequest);
+
+        // Préremplir les multi-selects depuis les relations existantes
+        $carRequest->loadMissing('car_drivers', 'passengers');
+        $this->driver_ids = $carRequest->car_drivers->pluck('user_id')->filter()->map(fn ($id) => (int) $id)->values()->all();
+        $this->passenger_ids = $carRequest->passengers->pluck('user_id')->filter()->map(fn ($id) => (int) $id)->values()->all();
     }
 
     public function store(): void
     {
         $this->validate([
-            'drivers' => 'required_unless:somisy_car,no_vehicle|array',
-            'drivers.*.user_id' => 'nullable|integer|min:1|exists:users,id',
-            'passengers' => 'required_if:somisy_car,no_vehicle|array|min:1',
-            'passengers.*.user_id' => 'nullable|integer|min:1|exists:users,id',
+            'driver_ids' => 'required_unless:somisy_car,no_vehicle|array',
+            'driver_ids.*' => 'integer|exists:users,id',
+            'passenger_ids' => 'required_if:somisy_car,no_vehicle|array',
+            'passenger_ids.*' => 'integer|exists:users,id',
             'somisy_car' => 'required|string',
             'resident' => 'required|string',
             'destination' => 'required|string|in:Paysan,Taba,A21,Other',
@@ -137,7 +146,11 @@ final class CarRequestForm extends Form
             'reason' => 'required|string',
             'company' => 'required|string',
         ]);
-        
+
+        // Multi-select -> structure attendue par les relations
+        $this->drivers = $this->mapIdsToRows($this->driver_ids);
+        $this->passengers = $this->mapIdsToRows($this->passenger_ids);
+
         DB::transaction(function () {
             $this->destination = $this->getShowDestinationField() ? $this->destination_other : $this->destination;
             $this->car_type = $this->car_type === 'Other' ? $this->type_other : $this->car_type;
@@ -183,10 +196,10 @@ final class CarRequestForm extends Form
     public function update(): void
     {
         $this->validate([
-            'drivers' => 'required_unless:somisy_car,no_vehicle|array',
-            'drivers.*.user_id' => 'nullable|integer|min:1|exists:users,id',
-            'passengers' => 'required_if:somisy_car,no_vehicle|array|min:1',
-            'passengers.*.user_id' => 'nullable|integer|min:1|exists:users,id',
+            'driver_ids' => 'required_unless:somisy_car,no_vehicle|array',
+            'driver_ids.*' => 'integer|exists:users,id',
+            'passenger_ids' => 'required_if:somisy_car,no_vehicle|array',
+            'passenger_ids.*' => 'integer|exists:users,id',
             'somisy_car' => 'required|string',
             'resident' => 'required|string',
             'destination' => 'required|string|in:Paysan,Taba,A21,Other',
@@ -204,9 +217,9 @@ final class CarRequestForm extends Form
 
         DB::transaction(function () {
             $this->destination = $this->getShowDestinationField() ? $this->destination_other : $this->destination;
-            
+
             $this->car_type = $this->car_type === 'Other' ? $this->type_other : $this->car_type;
-            
+
             $this->carRequest->update($this->only([
                 'somisy_car',
                 'resident',
@@ -222,40 +235,43 @@ final class CarRequestForm extends Form
                 'comment',
             ]));
 
-            if ($this->drivers and $this->somisy_car !== 'no_vehicle') {
-                $this->updateRelation('car_drivers', 'car_drivers', $this->drivers);
-            }
-
-            if ($this->passengers and $this->somisy_car === 'no_vehicle') {
-                $this->updateRelation('passengers', 'passengers', $this->passengers);
+            if ($this->somisy_car !== 'no_vehicle') {
+                $this->syncRelationFromIds('car_drivers', $this->driver_ids);
+            } else {
+                $this->syncRelationFromIds('passengers', $this->passenger_ids);
             }
 
             flash()->success('Car request updated successfully');
         });
     }
 
-    private function updateRelation(string $relation, string $relationMethod, array $items): void
+    /**
+     * Transforme une liste d'IDs utilisateurs en lignes [['user_id' => id], ...].
+     *
+     * @param  array<int, int|string>  $ids
+     * @return array<int, array{user_id: int}>
+     */
+    private function mapIdsToRows(array $ids): array
     {
-        $this->carRequest->loadMissing('car_drivers', 'passengers');
-        $existingItems = $this->carRequest->$relation->keyBy('id');
+        return collect($ids)
+            ->filter()
+            ->unique()
+            ->map(fn ($id) => ['user_id' => (int) $id])
+            ->values()
+            ->all();
+    }
 
-        foreach ($items as $row) {
-            if (isset($row['id'])) {
-                // Update existing item
-                $existingItems[$row['id']]->update([
-                    'user_id' => $row['user_id'],
-                ]);
-            } else {
-                // Create new item
-                $this->carRequest->$relationMethod()->create([
-                    'user_id' => $row['user_id'],
-                ]);
-            }
+    /**
+     * Remplace le contenu d'une relation (car_drivers / passengers) par les IDs choisis.
+     *
+     * @param  array<int, int|string>  $ids
+     */
+    private function syncRelationFromIds(string $relationMethod, array $ids): void
+    {
+        $this->carRequest->$relationMethod()->delete();
+        $rows = $this->mapIdsToRows($ids);
+        if ($rows) {
+            $this->carRequest->$relationMethod()->createMany($rows);
         }
-
-        // Delete items that were removed
-        $itemIds = collect($items)->pluck('id');
-        $toDelete = $existingItems->keys()->diff($itemIds);
-        $this->carRequest->$relationMethod()->whereIn('id', $toDelete)->delete();
     }
 }
