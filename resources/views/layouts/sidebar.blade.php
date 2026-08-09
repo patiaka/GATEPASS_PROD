@@ -32,7 +32,7 @@
             <li>
                 <a href="/" wire:navigate
                     class="group flex items-center gap-3 py-2 px-3 rounded-md transition-colors
-              {{ request()->is('/') ? 'bg-[#0e3a61]/30 text-white font-medium shadow-sm' : 'bg-white/10 text-white hover:bg-white/15' }}">
+              {{ request()->is('/') ? 'bg-white/15 text-white font-semibold shadow-[inset_3px_0_0_0_#ffd324]' : 'text-white/90 hover:bg-white/10 hover:text-white' }}">
                     <svg xmlns="http://www.w3.org/2000/svg"
                         class="w-6 h-6 shrink-0 {{ request()->is('/') ? 'text-white' : 'text-white/80 group-hover:text-white' }}"
                         fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -50,7 +50,7 @@
                     @php $dbOpen = request()->routeIs('user.*') || request()->routeIs('department.*'); @endphp
                     <details class="group" {{ $dbOpen ? 'open' : '' }}>
                         <summary
-                            class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-white/10 hover:text-white cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
+                            class="flex items-center gap-3 px-3 py-2 rounded transition-colors group-open:bg-white/5 group-open:text-white hover:bg-white/10 hover:text-white cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
                             <svg class="w-6 h-6 text-white/90 group-hover:text-white shrink-0" fill="none"
                                 stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <ellipse cx="12" cy="5" rx="9" ry="3" />
@@ -66,7 +66,7 @@
                             <li>
                                 <a wire:navigate href="{{ route('user.index') }}"
                                     class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-xs
-                                      {{ request()->routeIs('user.*') ? 'bg-[#0e3a61]/30 text-white font-medium shadow-sm' : 'hover:bg-white/10 hover:text-white' }}">
+                                      {{ request()->routeIs('user.*') ? 'bg-white/15 text-white font-semibold shadow-[inset_3px_0_0_0_#ffd324]' : 'hover:bg-white/10 hover:text-white' }}">
                                     <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('user.*') ? 'text-white' : 'text-white/80' }}"
                                         fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -78,7 +78,7 @@
                             <li>
                                 <a wire:navigate href="{{ route('department.index') }}"
                                     class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-xs
-                                      {{ request()->routeIs('department.*') ? 'bg-[#0e3a61]/30 text-white font-medium shadow-sm' : 'hover:bg-white/10 hover:text-white' }}">
+                                      {{ request()->routeIs('department.*') ? 'bg-white/15 text-white font-semibold shadow-[inset_3px_0_0_0_#ffd324]' : 'hover:bg-white/10 hover:text-white' }}">
                                     <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('department.*') ? 'text-white' : 'text-white/80' }}"
                                         fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -104,7 +104,7 @@
                 @endphp
                 <details class="group" {{ $gpOpen ? 'open' : '' }}>
                     <summary
-                        class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-white/10 hover:text-white cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
+                        class="flex items-center gap-3 px-3 py-2 rounded transition-colors group-open:bg-white/5 group-open:text-white hover:bg-white/10 hover:text-white cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
                         <svg class="w-6 h-6 text-white/90 group-hover:text-white shrink-0" fill="none"
                             stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -120,7 +120,7 @@
                         <li>
                             <a href="{{ route('car.create') }}"
                                 class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-xs
-             {{ request()->routeIs('car.create') ? 'bg-[#0e3a61]/30 text-white font-medium shadow-sm' : 'hover:bg-white/10 hover:text-white' }}">
+             {{ request()->routeIs('car.create') ? 'bg-white/15 text-white font-semibold shadow-[inset_3px_0_0_0_#ffd324]' : 'hover:bg-white/10 hover:text-white' }}">
                                 <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('car.create') ? 'text-white' : 'text-white/80' }}"
                                     fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
@@ -133,7 +133,7 @@
                         <li>
                             <a href="{{ route('material.create') }}"
                                 class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-xs
-             {{ request()->routeIs('material.create') ? 'bg-[#0e3a61]/30 text-white font-medium shadow-sm' : 'hover:bg-white/10 hover:text-white' }}">
+             {{ request()->routeIs('material.create') ? 'bg-white/15 text-white font-semibold shadow-[inset_3px_0_0_0_#ffd324]' : 'hover:bg-white/10 hover:text-white' }}">
                                 <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('material.create') ? 'text-white' : 'text-white/80' }}"
                                     fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
@@ -145,7 +145,7 @@
                         <li>
                             <a wire:navigate href="{{ route('car.index') }}"
                                 class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-xs
-                                      {{ request()->routeIs('car.index') ? 'bg-[#0e3a61]/30 text-white font-medium shadow-sm' : 'hover:bg-white/10 hover:text-white' }}">
+                                      {{ request()->routeIs('car.index') ? 'bg-white/15 text-white font-semibold shadow-[inset_3px_0_0_0_#ffd324]' : 'hover:bg-white/10 hover:text-white' }}">
                                 <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('car.index') ? 'text-white' : 'text-white/80' }}"
                                     fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -157,7 +157,7 @@
                         <li>
                             <a wire:navigate href="{{ route('material.index') }}"
                                 class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-xs
-                                      {{ request()->routeIs('material.index') ? 'bg-[#0e3a61]/30 text-white font-medium shadow-sm' : 'hover:bg-white/10 hover:text-white' }}">
+                                      {{ request()->routeIs('material.index') ? 'bg-white/15 text-white font-semibold shadow-[inset_3px_0_0_0_#ffd324]' : 'hover:bg-white/10 hover:text-white' }}">
                                 <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('material.index') ? 'text-white' : 'text-white/80' }}"
                                     fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -171,7 +171,7 @@
                             <li>
                                 <a wire:navigate href="{{ route('car.check') }}"
                                     class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-xs
-                                      {{ request()->routeIs('car.check') ? 'bg-[#0e3a61]/30 text-white font-medium shadow-sm' : 'hover:bg-white/10 hover:text-white' }}">
+                                      {{ request()->routeIs('car.check') ? 'bg-white/15 text-white font-semibold shadow-[inset_3px_0_0_0_#ffd324]' : 'hover:bg-white/10 hover:text-white' }}">
                                     <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('car.check') ? 'text-white' : 'text-white/80' }}"
                                         fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -184,7 +184,7 @@
                             <li>
                                 <a wire:navigate href="{{ route('material.check') }}"
                                     class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-xs
-                                      {{ request()->routeIs('material.check') ? 'bg-[#0e3a61]/30 text-white font-medium shadow-sm' : 'hover:bg-white/10 hover:text-white' }}">
+                                      {{ request()->routeIs('material.check') ? 'bg-white/15 text-white font-semibold shadow-[inset_3px_0_0_0_#ffd324]' : 'hover:bg-white/10 hover:text-white' }}">
                                     <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('material.check') ? 'text-white' : 'text-white/80' }}"
                                         fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -203,7 +203,7 @@
                     @php $apprOpen = request()->routeIs('material.pending') || request()->routeIs('car.pending'); @endphp
                     <details class="group" {{ $apprOpen ? 'open' : '' }}>
                         <summary
-                            class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-white/10 hover:text-white cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
+                            class="flex items-center gap-3 px-3 py-2 rounded transition-colors group-open:bg-white/5 group-open:text-white hover:bg-white/10 hover:text-white cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
                             <svg class="w-6 h-6 text-white/90 group-hover:text-white shrink-0" fill="none"
                                 stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -218,7 +218,7 @@
                             <li>
                                 <a wire:navigate href="{{ route('car.pending') }}"
                                     class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-xs
-                                      {{ request()->routeIs('car.pending') ? 'bg-[#0e3a61]/30 text-white font-medium shadow-sm' : 'hover:bg-white/10 hover:text-white' }}">
+                                      {{ request()->routeIs('car.pending') ? 'bg-white/15 text-white font-semibold shadow-[inset_3px_0_0_0_#ffd324]' : 'hover:bg-white/10 hover:text-white' }}">
                                     <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('car.pending') ? 'text-white' : 'text-white/80' }}"
                                         fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3" />
@@ -230,7 +230,7 @@
                             <li>
                                 <a wire:navigate href="{{ route('material.pending') }}"
                                     class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-xs
-                                      {{ request()->routeIs('material.pending') ? 'bg-[#0e3a61]/30 text-white font-medium shadow-sm' : 'hover:bg-white/10 hover:text-white' }}">
+                                      {{ request()->routeIs('material.pending') ? 'bg-white/15 text-white font-semibold shadow-[inset_3px_0_0_0_#ffd324]' : 'hover:bg-white/10 hover:text-white' }}">
                                     <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('material.pending') ? 'text-white' : 'text-white/80' }}"
                                         fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3" />
@@ -248,7 +248,7 @@
                 @php $repOpen = request()->routeIs('reports.*'); @endphp
                 <details class="group" {{ $repOpen ? 'open' : '' }}>
                     <summary
-                        class="flex items-center gap-3 px-3 py-2 rounded transition-colors hover:bg-white/10 hover:text-white cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
+                        class="flex items-center gap-3 px-3 py-2 rounded transition-colors group-open:bg-white/5 group-open:text-white hover:bg-white/10 hover:text-white cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
                         {{-- <svg class="w-4 h-4 text-white/90 group-hover:text-white shrink-0" fill="none"
                             stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h10M4 18h6" />
