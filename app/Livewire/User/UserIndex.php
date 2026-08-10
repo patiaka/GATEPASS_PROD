@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\User;
 
+use App\Enum\RoleEnum;
 use App\Exports\UsersTemplateExport;
 use App\Imports\UsersImport;
 use App\Models\Department;
@@ -11,6 +12,7 @@ use App\Models\User;
 use App\Notifications\UserNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Enum;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -33,6 +35,10 @@ final class UserIndex extends Component
 
     public $import_file;
 
+    public $import_department = '';
+
+    public $import_role = '';
+
     public function ResetFilter(): void
     {
         $this->reset('department', 'role', 'search', 'status');
@@ -42,12 +48,17 @@ final class UserIndex extends Component
     {
         $this->validate([
             'import_file' => 'required|file|mimes:xlsx,xls',
+            'import_department' => 'required|exists:departments,id',
+            'import_role' => ['required', new Enum(RoleEnum::class)],
+        ], attributes: [
+            'import_department' => 'department',
+            'import_role' => 'role',
         ]);
 
-        $import = new UsersImport();
+        $import = new UsersImport((int) $this->import_department, $this->import_role);
         Excel::import($import, $this->import_file);
 
-        $this->reset('import_file');
+        $this->reset('import_file', 'import_department', 'import_role');
 
         if (! empty($import->errors)) {
             flash()->warning($import->imported.' user(s) imported. '.count($import->errors).' row(s) skipped (duplicate or invalid).');

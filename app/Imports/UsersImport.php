@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Imports;
 
-use App\Enum\RoleEnum;
-use App\Models\Department;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\OnEachRow;
@@ -22,14 +20,19 @@ final class UsersImport implements OnEachRow, SkipsOnFailure, WithHeadingRow, Wi
 
     public int $imported = 0;
 
+    /**
+     * Le département et le rôle sont choisis dans l'interface et appliqués à
+     * toutes les lignes importées — le fichier ne contient plus ces colonnes,
+     * ce qui évite les fautes de frappe sur les noms de département.
+     */
+    public function __construct(
+        private int $departmentId,
+        private string $role,
+    ) {}
+
     public function onRow(Row $row): void
     {
         $data = $row->toArray();
-
-        $department = Department::where('name', $data['department'])->first();
-        if (! $department) {
-            return; // sécurité (déjà couvert par la validation exists)
-        }
 
         $user = User::create([
             'name' => $data['name'],
@@ -37,15 +40,15 @@ final class UsersImport implements OnEachRow, SkipsOnFailure, WithHeadingRow, Wi
             'poste' => $data['position'],
             'contact' => (string) $data['contact'],
             'badge_number' => (string) $data['badge_number'],
-            'role' => $data['role'],
-            'department_id' => $department->id,
+            'role' => $this->role,
+            'department_id' => $this->departmentId,
             // Mot de passe temporaire : l'utilisateur devra le définir à la connexion
             'password' => Hash::make('password'),
             'change_password' => false,
         ]);
 
         // Multi-rôles : alimenter le pivot role_user
-        $user->syncRoles([$data['role']]);
+        $user->syncRoles([$this->role]);
 
         $this->imported++;
     }
@@ -61,8 +64,6 @@ final class UsersImport implements OnEachRow, SkipsOnFailure, WithHeadingRow, Wi
             'position' => 'required|string|max:255',
             'contact' => 'required|max:255|unique:users,contact',
             'badge_number' => 'required|max:255|unique:users,badge_number',
-            'role' => 'required|in:'.implode(',', array_map(fn (RoleEnum $r) => $r->value, RoleEnum::cases())),
-            'department' => 'required|exists:departments,name',
         ];
     }
 

@@ -18,6 +18,23 @@
                     </label>
 
                     @if ($import_file)
+                        {{-- Département + rôle appliqués à toutes les lignes importées --}}
+                        <select wire:model="import_department"
+                            class="px-3 py-2 rounded-lg border border-gray-300 text-slate-600 text-sm focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none">
+                            <option value="">Department…</option>
+                            @foreach ($departments as $row)
+                                <option value="{{ $row->id }}">{{ $row->name }}</option>
+                            @endforeach
+                        </select>
+
+                        <select wire:model="import_role"
+                            class="px-3 py-2 rounded-lg border border-gray-300 text-slate-600 text-sm focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none">
+                            <option value="">Role…</option>
+                            @foreach (App\Enum\RoleEnum::cases() as $r)
+                                <option value="{{ $r->value }}">{{ $r->value }}</option>
+                            @endforeach
+                        </select>
+
                         <button wire:click="import" wire:loading.attr="disabled" wire:target="import"
                             class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition disabled:opacity-60">
                             <span wire:loading.remove wire:target="import">Import</span>
@@ -41,16 +58,19 @@
 
                     <x-button-add link="{{ route('user.create') }}" />
                 </div>
-                @error('import_file')
-                    <span class="text-red-500 text-xs">{{ $message }}</span>
-                @enderror
+                @if ($import_file)
+                    <span class="text-slate-400 text-xs">Pick a department &amp; role, then Import — applied to all rows.</span>
+                @endif
+                @error('import_file') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                @error('import_department') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                @error('import_role') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
         </x-slot:addcreate>
 
         <x-slot:filter>
-            <div class="flex flex-wrap gap-4 items-end">
-                <div class="w-full sm:w-70">
-                    <x-select label="Filter by Department" name="department" wire:model.live="department">
+            <div class="flex flex-wrap gap-3 items-end">
+                <div class="w-full sm:w-44">
+                    <x-select label="Department" name="department" wire:model.live="department">
                         <option value="">All Departments</option>
                         @foreach ($departments as $row)
                         <option value="{{ $row->id }}">{{ $row->name }}</option>
@@ -58,8 +78,8 @@
                     </x-select>
                 </div>
 
-                <div class="w-full sm:w-52">
-                    <x-select label="Filter by role" wire:model.live="role">
+                <div class="w-full sm:w-36">
+                    <x-select label="Role" wire:model.live="role">
                         <option value="">All Roles</option>
                         @foreach (App\Enum\RoleEnum::cases() as $row)
                         <option value="{{ $row->value }}">{{ $row->value }}</option>
@@ -67,8 +87,8 @@
                     </x-select>
                 </div>
 
-                <div class="w-full sm:w-52">
-                    <x-select label="Filter by status" wire:model.live="status">
+                <div class="w-full sm:w-36">
+                    <x-select label="Status" wire:model.live="status">
                         <option value="">All statuses</option>
                         <option value="1">Active</option>
                         <option value="0">Inactive</option>

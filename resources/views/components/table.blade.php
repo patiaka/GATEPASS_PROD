@@ -18,33 +18,30 @@
 
     <div class="bg-white rounded-lg shadow-md">
         
-        <div class="p-4 grid gap-4">
-            @if ($filter)
-            <div class="flex">
-                {{ $filter }}
-            </div>
-            @endif
-        
-            <div class="flex items-center justify-between">
-                <div class="w-1/3">
-                    <div class="relative flex items-center">
-                        <span class="absolute left-3 text-gray-400">
-                            <i data-lucide="search"></i>
-                        </span>
-                        <input wire:model.live.debounce.100ms='search' type="text"
-                            class="w-full pl-10 pr-4 py-2 border rounded-md" placeholder="Search...">
+        <div class="p-4">
+            {{-- Recherche + filtres + reset sur une même ligne --}}
+            <div class="flex flex-wrap items-end gap-3">
+                {{-- Search --}}
+                <div class="relative flex items-center w-full sm:w-64">
+                    <span class="absolute left-3 text-gray-400">
+                        <i data-lucide="search"></i>
+                    </span>
+                    <input wire:model.live.debounce.100ms='search' type="text"
+                        class="w-full pl-10 pr-4 py-2 border rounded-md" placeholder="Search...">
+                </div>
+
+                @if ($filter)
+                    <div class="flex flex-wrap items-end gap-3">
+                        {{ $filter }}
                     </div>
-                </div>
-        
-                <div class="flex-1 text-right">
-                    <button wire:click='ResetFilter' {{ $attributes->merge([
-                        'class' => 'ml-3 bg-white hover:bg-[#0e3a61] text-[#134169] hover:text-white border border-[#134169] px-4 py-2 rounded-md flex items-center'
-                    ]) }}
-                        type="button">
-                        <i class='mr-1' data-lucide="x"></i>
-                        Reset Filters
-                    </button>
-                </div>
+                @endif
+
+                <button wire:click='ResetFilter'
+                    class="ml-auto bg-white hover:bg-[#0e3a61] text-[#134169] hover:text-white border border-[#134169] px-4 py-2 rounded-md flex items-center whitespace-nowrap"
+                    type="button">
+                    <i class='mr-1' data-lucide="x"></i>
+                    Reset Filters
+                </button>
             </div>
         </div>
     
