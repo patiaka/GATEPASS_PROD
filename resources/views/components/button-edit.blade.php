@@ -2,7 +2,7 @@
 
 @if ($row)
     @can('update-request', $row)
-        <a aria-label="Edit" {{ $attributes->merge([
+        <a aria-label="Edit" title="Edit" {{ $attributes->merge([
             'class' => '
             inline-flex items-center justify-center
             w-7 h-7 rounded-md
@@ -21,7 +21,7 @@
         </a>
     @endcan
 @else
-    <a aria-label="Edit" {{ $attributes->merge([
+    <a aria-label="Edit" title="Edit" {{ $attributes->merge([
         'class' => '
         inline-flex items-center justify-center
         w-7 h-7 rounded-md

@@ -2,7 +2,7 @@
 
 @if ($row)
     @can('show-request', $row)
-        <a aria-label="Show"
+        <a aria-label="Show" title="View details"
             {{ $attributes->merge([
                 'class' => '
                                 inline-flex items-center justify-center
@@ -23,7 +23,7 @@
         </a>
     @endcan
 @else
-    <a aria-label="Show"
+    <a aria-label="Show" title="View details"
         {{ $attributes->merge([
             'class' => '
                         inline-flex items-center justify-center

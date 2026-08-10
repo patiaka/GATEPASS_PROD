@@ -108,7 +108,7 @@
                         <svg class="w-6 h-6 text-white/90 group-hover:text-white shrink-0" fill="none"
                             stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V4a2 2 0 0 1 2-2h5l2 2h5a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2z" />
+                                d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 0 1 0 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 0 1 0-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z" />
                         </svg>
                         <span class="text-sm font-normal">Gate Pass Requests</span>
                         <svg class="ml-auto w-4 h-4 text-white/80 transition-transform duration-200 group-open:rotate-180"
@@ -123,7 +123,7 @@
              {{ request()->routeIs('car.create') ? 'bg-white/15 text-white font-semibold shadow-[inset_3px_0_0_0_#ffd324]' : 'hover:bg-white/10 hover:text-white' }}">
                                 <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('car.create') ? 'text-white' : 'text-white/80' }}"
                                     fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 13l2-5a2 2 0 0 1 1.9-1.4h10.2A2 2 0 0 1 19 8l2 5m-18 0v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h12v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-4m-18 0h18M6.5 16.5h.01M17.5 16.5h.01" />
                                 </svg>
                                 {{-- <span class="text-sm">New Vehicle Offsite Form</span> --}}
                                 <span class="text-sm">New Vehicle Form</span>
@@ -136,7 +136,7 @@
              {{ request()->routeIs('material.create') ? 'bg-white/15 text-white font-semibold shadow-[inset_3px_0_0_0_#ffd324]' : 'hover:bg-white/10 hover:text-white' }}">
                                 <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('material.create') ? 'text-white' : 'text-white/80' }}"
                                     fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
                                 </svg>
                                 <span class="text-sm">New Material Form</span>
                             </a>
@@ -175,7 +175,7 @@
                                     <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('car.check') ? 'text-white' : 'text-white/80' }}"
                                         fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
                                     </svg>
                                     {{-- <span class="text-sm">Vehicle Offsite Check In / Out</span> --}}
                                     <span class="text-sm">Vehicle Check In / Out</span>
@@ -188,7 +188,7 @@
                                     <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('material.check') ? 'text-white' : 'text-white/80' }}"
                                         fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
                                     </svg>
                                     <span class="text-sm">Material Check In / Out</span>
                                 </a>
@@ -206,7 +206,7 @@
                             class="flex items-center gap-3 px-3 py-2 rounded transition-colors group-open:bg-white/5 group-open:text-white hover:bg-white/10 hover:text-white cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
                             <svg class="w-6 h-6 text-white/90 group-hover:text-white shrink-0" fill="none"
                                 stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.573-.598-3.751h-.152c-3.196 0-6.1-1.25-8.25-3.285z" />
                             </svg>
                             <span class="text-sm font-normal">Approvals</span>
                             <svg class="ml-auto w-4 h-4 text-white/80 transition-transform duration-200 group-open:rotate-180"

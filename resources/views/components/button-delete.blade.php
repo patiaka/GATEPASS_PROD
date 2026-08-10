@@ -6,7 +6,7 @@
 @php $modalId = 'delete_' . $rowId; @endphp
 @if ($row)
     @can('delete-request', $row)
-    <button command="show-modal" commandfor="dialog-{{ $modalId }}" 
+    <button command="show-modal" commandfor="dialog-{{ $modalId }}" title="Delete"
         {{ $attributes->merge([
         'class' => '
         inline-flex items-center justify-center
