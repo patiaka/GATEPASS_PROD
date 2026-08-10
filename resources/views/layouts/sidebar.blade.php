@@ -52,9 +52,10 @@
                         <summary
                             class="flex items-center gap-3 px-3 py-2 rounded transition-colors group-open:bg-white/5 group-open:text-white hover:bg-white/10 hover:text-white cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
                             <svg class="w-6 h-6 text-white/90 group-hover:text-white shrink-0" fill="none"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <ellipse cx="12" cy="5" rx="9" ry="3" />
-                                <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5" />
+                                stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <ellipse cx="12" cy="5" rx="8" ry="3" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 5v6c0 1.657 3.582 3 8 3s8-1.343 8-3V5" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 11v6c0 1.657 3.582 3 8 3s8-1.343 8-3v-6" />
                             </svg>
                             <span class="text-sm font-normal">Databases</span>
                             <svg class="ml-auto w-4 h-4 text-white/80 transition-transform duration-200 group-open:rotate-180"

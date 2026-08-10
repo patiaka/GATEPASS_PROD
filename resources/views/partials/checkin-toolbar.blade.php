@@ -26,9 +26,18 @@
             @endforeach
         </div>
 
+        {{-- Custom date range (de… à…) --}}
+        <div class="inline-flex items-center gap-1.5 self-start lg:self-auto">
+            <input type="date" wire:model.live="debut" aria-label="From date" max="{{ $fin ?: '' }}"
+                class="rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs text-slate-600 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none">
+            <span class="text-xs text-slate-400">&rarr;</span>
+            <input type="date" wire:model.live="fin" aria-label="To date" min="{{ $debut ?: '' }}"
+                class="rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs text-slate-600 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none">
+        </div>
+
         {{-- Actions --}}
         <div class="flex items-center gap-2 lg:ml-auto">
-            @if ($this->search !== '' || $period !== 'all')
+            @if ($this->search !== '' || $period !== 'all' || $debut !== '' || $fin !== '')
                 <button wire:click="ResetFilter"
                     class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-300 text-slate-600 text-sm hover:bg-slate-50 transition">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

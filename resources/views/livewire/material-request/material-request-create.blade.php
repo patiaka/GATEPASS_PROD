@@ -146,14 +146,27 @@
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Request document (images)</label>
 
-                        {{-- Dropzone --}}
+                        {{-- Dropzone (clic OU glisser-déposer) --}}
                         <label for="material-photos"
-                            class="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 px-4 py-6 cursor-pointer hover:border-[#134169] hover:bg-blue-50/40 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            x-data="{ over: false }"
+                            x-on:dragover.prevent="over = true"
+                            x-on:dragenter.prevent="over = true"
+                            x-on:dragleave.prevent="over = false"
+                            x-on:drop.prevent="
+                                over = false;
+                                const input = document.getElementById('material-photos');
+                                if ($event.dataTransfer && $event.dataTransfer.files.length) {
+                                    input.files = $event.dataTransfer.files;
+                                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                                }
+                            "
+                            :class="over ? 'border-[#134169] bg-blue-50/60' : 'border-gray-300 bg-gray-50'"
+                            class="flex flex-col items-center justify-center w-full border-2 border-dashed rounded-xl px-4 py-6 cursor-pointer hover:border-[#134169] hover:bg-blue-50/40 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
                             </svg>
-                            <span class="text-sm text-slate-600 mt-2"><span class="font-medium text-[#134169]">Click to upload</span> or drag &amp; drop</span>
-                            <span class="text-xs text-slate-400 mt-1">JPEG, PNG · max 4 MB each · up to 5 images</span>
+                            <span class="text-sm text-slate-600 mt-2 pointer-events-none"><span class="font-medium text-[#134169]">Click to upload</span> or drag &amp; drop</span>
+                            <span class="text-xs text-slate-400 mt-1 pointer-events-none">JPEG, PNG · max 4 MB each · up to 5 images</span>
                             <input id="material-photos" type="file" wire:model="form.photos"
                                 accept="image/jpeg,image/png,image/jpg" multiple class="hidden">
                         </label>

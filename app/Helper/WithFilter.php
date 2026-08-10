@@ -29,16 +29,41 @@ trait WithFilter
 
     public array $selectedRows = [];
 
-    /** Change la période active et revient à la première page. */
+    /** Change la période active (raccourci) et efface la plage personnalisée. */
     public function setPeriod(string $period): void
     {
         $this->period = in_array($period, ['all', 'today', '24h', 'week', 'month'], true) ? $period : 'all';
+        $this->reset('debut', 'fin');
         $this->resetPage();
     }
 
-    /** Applique le filtre de période sur la colonne created_at (mutation du builder). */
+    /** Une date personnalisée désactive les raccourcis (aucun bouton période actif). */
+    public function updatedDebut(): void
+    {
+        $this->period = 'custom';
+        $this->resetPage();
+    }
+
+    public function updatedFin(): void
+    {
+        $this->period = 'custom';
+        $this->resetPage();
+    }
+
+    /** Applique le filtre de période sur created_at (plage personnalisée prioritaire). */
     protected function applyPeriod(Builder $query): void
     {
+        if ($this->debut !== '' || $this->fin !== '') {
+            if ($this->debut !== '') {
+                $query->whereDate('created_at', '>=', $this->debut);
+            }
+            if ($this->fin !== '') {
+                $query->whereDate('created_at', '<=', $this->fin);
+            }
+
+            return;
+        }
+
         match ($this->period) {
             'today' => $query->whereDate('created_at', Carbon::today()->toDateString()),
             '24h' => $query->where('created_at', '>=', Carbon::now()->subDay()),

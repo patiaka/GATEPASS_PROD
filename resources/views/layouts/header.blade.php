@@ -49,26 +49,28 @@
                         Material offsite
                     </a>
                 </li>
-                <li class="hover:bg-[#0e3a615d] hover:text-slate-50 rounded-lg">
-                    <a href="{{ route('user.create') }}" class="py-2 px-4 flex items-center gap-2">
-                        <!-- Icône utilisateur -->
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M12 12a4 4 0 100-8 4 4 0 000 8z" />
-                        </svg>
-                        User
-                    </a>
-                </li>
-                <li class="hover:bg-[#0e3a615d] hover:text-slate-50 rounded-lg">
-                    <a href="{{ route('department.create') }}" class="py-2 px-4 flex items-center gap-2">
-                        <!-- Icône bâtiment / département -->
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M3 21v-8a4 4 0 014-4h10a4 4 0 014 4v8M7 21v-4h10v4M7 10V7a4 4 0 018 0v3" />
-                        </svg>
-                        Department
-                    </a>
-                </li>
+                @if (Auth::user()->isAdmin())
+                    <li class="hover:bg-[#0e3a615d] hover:text-slate-50 rounded-lg">
+                        <a href="{{ route('user.create') }}" class="py-2 px-4 flex items-center gap-2">
+                            <!-- Icône utilisateur -->
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M12 12a4 4 0 100-8 4 4 0 000 8z" />
+                            </svg>
+                            User
+                        </a>
+                    </li>
+                    <li class="hover:bg-[#0e3a615d] hover:text-slate-50 rounded-lg">
+                        <a href="{{ route('department.create') }}" class="py-2 px-4 flex items-center gap-2">
+                            <!-- Icône bâtiment / département -->
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3 21v-8a4 4 0 014-4h10a4 4 0 014 4v8M7 21v-4h10v4M7 10V7a4 4 0 018 0v3" />
+                            </svg>
+                            Department
+                        </a>
+                    </li>
+                @endif
             </ul>
         </div>
 

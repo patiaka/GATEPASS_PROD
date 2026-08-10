@@ -19,7 +19,7 @@ final class MaterialRequestCheckIn extends Component
 
     public function ResetFilter(): void
     {
-        $this->reset('search', 'period');
+        $this->reset('search', 'period', 'debut', 'fin');
         $this->resetPage();
     }
 
