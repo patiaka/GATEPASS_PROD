@@ -2,7 +2,7 @@
     <!-- Bienvenue -->
     <div class="flex gap-4">
         <div class="flex flex-col">
-            <span class="text-xs">Welcome,</span>
+            <span class="text-xs">{{ __('Welcome,') }}</span>
             <span class="font-medium text-md">{{ Auth::user()->name }}</span>
         </div>
     </div>
@@ -18,7 +18,7 @@
             <!-- Bouton "Create New" -->
             <label for="toggle-dropdown"
                 class="flex items-center gap-2 relative p-1 text-sm cursor-pointer select-none">
-                <span>Create New</span>
+                <span>{{ __('Create New') }}</span>
                 <svg class="w-4 h-4 ml-auto text-gray-600" fill="none" stroke="currentColor" stroke-width="2"
                     viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
@@ -36,7 +36,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z" />
                         </svg>
-                        Vehicle offsite
+                        {{ __('Vehicle offsite') }}
                     </a>
                 </li>
                 <li class="hover:bg-[#0e3a615d] hover:text-slate-50 rounded-lg">
@@ -46,7 +46,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z" />
                         </svg>
-                        Material offsite
+                        {{ __('Material offsite') }}
                     </a>
                 </li>
                 @if (Auth::user()->isAdmin())
@@ -57,7 +57,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M12 12a4 4 0 100-8 4 4 0 000 8z" />
                             </svg>
-                            User
+                            {{ __('User') }}
                         </a>
                     </li>
                     <li class="hover:bg-[#0e3a615d] hover:text-slate-50 rounded-lg">
@@ -67,7 +67,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M3 21v-8a4 4 0 014-4h10a4 4 0 014 4v8M7 21v-4h10v4M7 10V7a4 4 0 018 0v3" />
                             </svg>
-                            Department
+                            {{ __('Department') }}
                         </a>
                     </li>
                 @endif
@@ -77,10 +77,24 @@
         <!-- Cloche de notifications (workflow d'approbation + décisions + véhicules dehors) -->
         <livewire:notification-bell />
 
+        <!-- Sélecteur de langue FR / EN -->
+        <div class="flex items-center rounded-md border bg-white shadow-sm overflow-hidden text-xs font-semibold">
+            <a href="{{ route('locale.switch', 'fr') }}" @class([
+                'px-2 py-1.5 transition',
+                'bg-[#134169] text-white' => app()->getLocale() === 'fr',
+                'text-slate-500 hover:bg-slate-50' => app()->getLocale() !== 'fr',
+            ])>FR</a>
+            <a href="{{ route('locale.switch', 'en') }}" @class([
+                'px-2 py-1.5 transition',
+                'bg-[#134169] text-white' => app()->getLocale() === 'en',
+                'text-slate-500 hover:bg-slate-50' => app()->getLocale() !== 'en',
+            ])>EN</a>
+        </div>
+
 
         <!-- Réglages (Admin) -->
         @if (Auth::user()->isAdmin())
-            <a href="{{ route('settings.index') }}" wire:navigate title="Settings"
+            <a href="{{ route('settings.index') }}" wire:navigate title="{{ __('Settings') }}"
                 @class([
                     'border rounded-md p-1 shadow-sm flex items-center justify-center transition',
                     'bg-[#134169] text-white border-[#134169]' => request()->routeIs('settings.*'),

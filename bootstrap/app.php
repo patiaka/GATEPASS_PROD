@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         // Définir des alias de middleware
         $middleware->alias(['role' => App\Http\Middleware\RoleMiddleware::class]);
+
+        // Applique la langue choisie (session) à chaque requête web
+        $middleware->web(append: [App\Http\Middleware\SetLocale::class]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

@@ -18,9 +18,9 @@
         class="absolute top-full right-0 mt-2 w-80 bg-white shadow-lg rounded-lg z-50 border border-gray-100 overflow-hidden">
 
         <div class="flex items-center justify-between px-4 py-2.5 border-b bg-slate-50">
-            <span class="font-semibold text-sm text-[#134169]">Notifications</span>
+            <span class="font-semibold text-sm text-[#134169]">{{ __('Notifications') }}</span>
             @if ($badge > 0)
-                <span class="text-xs font-medium text-amber-700 bg-amber-100 rounded-full px-2 py-0.5">{{ $badge }} to approve</span>
+                <span class="text-xs font-medium text-amber-700 bg-amber-100 rounded-full px-2 py-0.5">{{ $badge }} {{ __('to approve') }}</span>
             @endif
         </div>
 
@@ -28,7 +28,7 @@
 
             {{-- 1) À approuver (selon l'étape) --}}
             @if ($awaiting->isNotEmpty())
-                <p class="px-4 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400">Awaiting your approval</p>
+                <p class="px-4 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400">{{ __('Awaiting your approval') }}</p>
                 <div class="divide-y divide-gray-50">
                     @foreach ($awaiting as $item)
                         <a wire:navigate href="{{ $item->link }}" class="block px-4 py-2.5 hover:bg-slate-50 transition">
@@ -37,8 +37,8 @@
                                 <span class="text-[11px] text-slate-400 whitespace-nowrap">{{ $item->at?->diffForHumans() }}</span>
                             </div>
                             <div class="text-xs text-slate-500 mt-0.5">
-                                <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 text-[10px] font-medium mr-1">{{ $item->type }}</span>
-                                by {{ $item->who ?? '—' }}
+                                <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 text-[10px] font-medium mr-1">{{ __($item->type) }}</span>
+                                {{ __('by') }} {{ $item->who ?? '—' }}
                             </div>
                         </a>
                     @endforeach
@@ -47,7 +47,7 @@
 
             {{-- 2) Décisions sur mes demandes --}}
             @if ($myDecisions->isNotEmpty())
-                <p class="px-4 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400">Your requests — decisions</p>
+                <p class="px-4 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400">{{ __('Your requests — decisions') }}</p>
                 <div class="divide-y divide-gray-50">
                     @foreach ($myDecisions as $item)
                         <a wire:navigate href="{{ $item->link }}" class="block px-4 py-2.5 hover:bg-slate-50 transition">
@@ -56,12 +56,12 @@
                                 <span class="text-[11px] text-slate-400 whitespace-nowrap">{{ $item->at?->diffForHumans() }}</span>
                             </div>
                             <div class="text-xs text-slate-500 mt-0.5">
-                                <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-medium mr-1">{{ $item->type }}</span>
+                                <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-medium mr-1">{{ __($item->type) }}</span>
                                 <span @class([
                                     'inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold',
                                     'bg-emerald-50 text-emerald-700' => $item->status === 'Approved',
                                     'bg-rose-50 text-rose-700' => $item->status === 'Rejected',
-                                ])>{{ $item->status }}</span>
+                                ])>{{ __($item->status) }}</span>
                             </div>
                         </a>
                     @endforeach
@@ -70,13 +70,13 @@
 
             {{-- 3) Véhicules dehors (Admin / GM / Security) --}}
             @if ($vehiclesOut->isNotEmpty())
-                <p class="px-4 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400">Vehicles currently out ({{ $vehiclesOut->count() }})</p>
+                <p class="px-4 pt-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400">{{ __('Vehicles currently out') }} ({{ $vehiclesOut->count() }})</p>
                 <div class="divide-y divide-gray-50">
                     @foreach ($vehiclesOut as $rec)
                         <a wire:navigate href="{{ route('car.check') }}" class="block px-4 py-2.5 hover:bg-slate-50 transition">
                             <div class="flex items-center justify-between gap-2">
                                 <span class="font-semibold text-[#134169] text-sm">#{{ $rec->requestable?->reference }}</span>
-                                <span class="text-[11px] text-slate-400 whitespace-nowrap">out {{ $rec->created_at?->diffForHumans() }}</span>
+                                <span class="text-[11px] text-slate-400 whitespace-nowrap">{{ __('out') }} {{ $rec->created_at?->diffForHumans() }}</span>
                             </div>
                             <div class="text-xs text-slate-500 mt-0.5">
                                 {{ $rec->requestable?->car_number ?: '—' }}
@@ -94,7 +94,7 @@
                     <svg class="w-8 h-8 mb-2 text-emerald-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
-                    <p class="text-sm">You're all caught up</p>
+                    <p class="text-sm">{{ __("You're all caught up") }}</p>
                 </div>
             @endif
         </div>

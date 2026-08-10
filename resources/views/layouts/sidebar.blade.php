@@ -18,7 +18,7 @@
             </svg>
         </div>
         <div class="flex flex-col">
-            <span class="font-bold bold text-xs leading-tight">Gate Pass Management</span>
+            <span class="font-bold bold text-xs leading-tight">{{ __('Gate Pass Management') }}</span>
             <span class="text-[10px] text-slate-500 leading-tight">{{ now()->format('l, F j, Y') }}</span>
         </div>
     </a>
@@ -26,7 +26,7 @@
     <div class="border-b my-3"></div>
 
     <div class="flex flex-col h-full overflow-y-auto pr-1">
-        <h2 class="ml-3 mb-2 uppercase tracking-wider text-sm font-medium text-white/70">Menu</h2>
+        <h2 class="ml-3 mb-2 uppercase tracking-wider text-sm font-medium text-white/70">{{ __('Menu') }}</h2>
 
         <ul class="flex flex-col gap-1.5">
             <li>
@@ -41,7 +41,7 @@
                         <rect x="14" y="14" width="7" height="7" rx="1.5" />
                         <rect x="3" y="14" width="7" height="7" rx="1.5" />
                     </svg>
-                    <span class="text-sm font-normal">Dashboard</span>
+                    <span class="text-sm font-normal">{{ __('Dashboard') }}</span>
                 </a>
             </li>
 
@@ -57,7 +57,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 5v6c0 1.657 3.582 3 8 3s8-1.343 8-3V5" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 11v6c0 1.657 3.582 3 8 3s8-1.343 8-3v-6" />
                             </svg>
-                            <span class="text-sm font-normal">Databases</span>
+                            <span class="text-sm font-normal">{{ __('Databases') }}</span>
                             <svg class="ml-auto w-4 h-4 text-white/80 transition-transform duration-200 group-open:rotate-180"
                                 fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
@@ -73,7 +73,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M12 12a4 4 0 100-8 4 4 0 000 8z" />
                                     </svg>
-                                    <span class="text-sm">User Database</span>
+                                    <span class="text-sm">{{ __('User Database') }}</span>
                                 </a>
                             </li>
                             <li>
@@ -85,7 +85,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M3 21v-8a4 4 0 014-4h10a4 4 0 014 4v8M7 21v-4h10v4M7 10V7a4 4 0 018 0v3" />
                                     </svg>
-                                    <span class="text-sm">Department Database</span>
+                                    <span class="text-sm">{{ __('Department Database') }}</span>
                                 </a>
                             </li>
                         </ul>
@@ -111,7 +111,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 0 1 0 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 0 1 0-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z" />
                         </svg>
-                        <span class="text-sm font-normal">Gate Pass Requests</span>
+                        <span class="text-sm font-normal">{{ __('Gate Pass Requests') }}</span>
                         <svg class="ml-auto w-4 h-4 text-white/80 transition-transform duration-200 group-open:rotate-180"
                             fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
@@ -127,7 +127,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 13l2-5a2 2 0 0 1 1.9-1.4h10.2A2 2 0 0 1 19 8l2 5m-18 0v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h12v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-4m-18 0h18M6.5 16.5h.01M17.5 16.5h.01" />
                                 </svg>
                                 {{-- <span class="text-sm">New Vehicle Offsite Form</span> --}}
-                                <span class="text-sm">New Vehicle Form</span>
+                                <span class="text-sm">{{ __('New Vehicle Form') }}</span>
                             </a>
                         </li>
 
@@ -139,7 +139,7 @@
                                     fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
                                 </svg>
-                                <span class="text-sm">New Material Form</span>
+                                <span class="text-sm">{{ __('New Material Form') }}</span>
                             </a>
                         </li>
 
@@ -152,7 +152,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M3 4h18M3 8h18M3 12h18M3 16h18M3 20h18" />
                                 </svg>
-                                <span class="text-sm">All Gatepass Requests</span>
+                                <span class="text-sm">{{ __('All Gatepass Requests') }}</span>
                             </a>
                         </li>
                         <li>
@@ -164,7 +164,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M3 4h18M3 8h18M3 12h18M3 16h18M3 20h18" />
                                 </svg>
-                                <span class="text-sm">All Material Requests</span>
+                                <span class="text-sm">{{ __('All Material Requests') }}</span>
                             </a>
                         </li>
 
@@ -179,7 +179,7 @@
                                             d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
                                     </svg>
                                     {{-- <span class="text-sm">Vehicle Offsite Check In / Out</span> --}}
-                                    <span class="text-sm">Vehicle Check In / Out</span>
+                                    <span class="text-sm">{{ __('Vehicle Check In / Out') }}</span>
                                 </a>
                             </li>
                             <li>
@@ -191,7 +191,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
                                     </svg>
-                                    <span class="text-sm">Material Check In / Out</span>
+                                    <span class="text-sm">{{ __('Material Check In / Out') }}</span>
                                 </a>
                             </li>
                         @endif
@@ -209,7 +209,7 @@
                                 stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.573-.598-3.751h-.152c-3.196 0-6.1-1.25-8.25-3.285z" />
                             </svg>
-                            <span class="text-sm font-normal">Approvals</span>
+                            <span class="text-sm font-normal">{{ __('Approvals') }}</span>
                             @php $apprCount = Auth::user()->awaitingApprovalCount(); @endphp
                             @if ($apprCount > 0)
                                 <span class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-[#0e3a61] bg-[#ffd324] rounded-full">{{ $apprCount }}</span>
@@ -229,7 +229,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3" />
                                         <circle cx="12" cy="12" r="10" />
                                     </svg>
-                                    <span class="text-sm">Gate Pass Pending Requests</span>
+                                    <span class="text-sm">{{ __('Gate Pass Pending Requests') }}</span>
                                 </a>
                             </li>
                             <li>
@@ -241,7 +241,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3" />
                                         <circle cx="12" cy="12" r="10" />
                                     </svg>
-                                    <span class="text-sm">Material Pending Requests</span>
+                                    <span class="text-sm">{{ __('Material Pending Requests') }}</span>
                                 </a>
                             </li>
                         </ul>
@@ -264,7 +264,7 @@
                             <path fill="currentColor" d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8zm4 18H6V4h7v5h5zm-9-7v6H7v-6zm6 2v4h2v-4zm-4-4v8h2v-8z"></path>
                         </svg>
 
-                        <span class="text-sm font-normal">Reports</span>
+                        <span class="text-sm font-normal">{{ __('Reports') }}</span>
                         <svg class="ml-auto w-4 h-4 text-white/80 transition-transform duration-200 group-open:rotate-180"
                             fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
@@ -280,7 +280,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M9 17v-6M12 17V7M15 17v-4M3 3v18h18" />
                                 </svg>
-                                <span class="text-sm">Offsite Records</span>
+                                <span class="text-sm">{{ __('Offsite Records') }}</span>
                             </a>
                         </li>
                     </ul>
@@ -315,7 +315,7 @@
                                 <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
                                 <path d="M7 7V5a5 5 0 0110 0v2" />
                             </svg>
-                            Change Password
+                            {{ __('Change Password') }}
                         </a>
                     </li>
                     <li>
@@ -327,7 +327,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 01-2-2h6a2 2 0 012 2v1" />
                             </svg>
-                            Logout
+                            {{ __('Logout') }}
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
                                 @csrf
                                 <input type="hidden" name="id" value="{{ Auth::user()->id }}">

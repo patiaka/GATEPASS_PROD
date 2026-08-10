@@ -30,6 +30,15 @@ use App\Livewire\User\UserPassChange;
 use App\Livewire\User\UserUpdate;
 use Illuminate\Support\Facades\Route;
 
+// Bascule de langue (FR / EN) — mémorisée en session
+Route::get('locale/{locale}', function (string $locale) {
+    if (in_array($locale, App\Http\Middleware\SetLocale::SUPPORTED, true)) {
+        session(['locale' => $locale]);
+    }
+
+    return back();
+})->name('locale.switch');
+
 Route::middleware(['auth'])->group(function () {
     // Seuls HOD, GM et Admin
     Route::middleware('role:' . RoleEnum::HOD->value . ',' . RoleEnum::GM->value . ',' . RoleEnum::ADMIN->value . ',' . RoleEnum::DIRECTOR->value)
