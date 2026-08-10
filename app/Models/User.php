@@ -198,6 +198,27 @@ final class User extends Authenticatable
         };
     }
 
+    protected ?int $awaitingApprovalCountMemo = null;
+
+    /**
+     * Nombre de demandes (véhicule + matériel) en attente de l'approbation de
+     * cet utilisateur, selon son étape (HOD / Directeur / GM). Mémoïsé pour la
+     * requête courante (utilisé par la cloche et le badge de la sidebar).
+     */
+    public function awaitingApprovalCount(): int
+    {
+        if ($this->awaitingApprovalCountMemo !== null) {
+            return $this->awaitingApprovalCountMemo;
+        }
+
+        if (! $this->isApprover()) {
+            return $this->awaitingApprovalCountMemo = 0;
+        }
+
+        return $this->awaitingApprovalCountMemo = CarRequest::query()->awaitingApprovalBy($this)->count()
+            + MaterialRequest::query()->awaitingApprovalBy($this)->count();
+    }
+
     public function isActive(): bool
     {
         return $this->status === true;

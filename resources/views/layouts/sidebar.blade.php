@@ -210,6 +210,10 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.573-.598-3.751h-.152c-3.196 0-6.1-1.25-8.25-3.285z" />
                             </svg>
                             <span class="text-sm font-normal">Approvals</span>
+                            @php $apprCount = Auth::user()->awaitingApprovalCount(); @endphp
+                            @if ($apprCount > 0)
+                                <span class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-[#0e3a61] bg-[#ffd324] rounded-full">{{ $apprCount }}</span>
+                            @endif
                             <svg class="ml-auto w-4 h-4 text-white/80 transition-transform duration-200 group-open:rotate-180"
                                 fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
