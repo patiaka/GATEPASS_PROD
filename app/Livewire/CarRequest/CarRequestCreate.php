@@ -9,6 +9,7 @@ use const false;
 use App\Helper\RepeatInputAction;
 use App\Livewire\Forms\CarRequestForm;
 use App\Models\CarRequest;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -83,7 +84,9 @@ final class CarRequestCreate extends Component
             return;
         }
 
-        $days = $this->date_long ? 30 : 7;
+        $days = $this->date_long
+            ? (int) Setting::get('vehicle_validity_days_long', 30)
+            : (int) Setting::get('vehicle_validity_days', 7);
 
         $this->form->end = Carbon::parse($this->form->start)
             ->addDays($days)

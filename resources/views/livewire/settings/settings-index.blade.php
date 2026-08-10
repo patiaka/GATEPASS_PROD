@@ -37,6 +37,45 @@
                 @enderror
             </div>
 
+            {{-- Véhicule : deux durées (standard / longue) --}}
+            <div class="pt-5 border-t border-gray-100">
+                <div class="flex items-center gap-2 mb-3">
+                    <svg class="w-5 h-5 text-[#134169]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 13l2-5a2 2 0 0 1 1.9-1.4h10.2A2 2 0 0 1 19 8l2 5m-18 0v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h12v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-4m-18 0h18M6.5 16.5h.01M17.5 16.5h.01" />
+                    </svg>
+                    <h2 class="font-semibold text-sm text-[#134169]">Vehicle validity</h2>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                        <label for="vehicle_validity_days" class="block text-sm font-medium text-slate-700 mb-1">
+                            Standard <span class="text-slate-400 font-normal">(days)</span>
+                        </label>
+                        <input id="vehicle_validity_days" type="number" min="1" max="365"
+                            wire:model="vehicle_validity_days"
+                            class="w-32 rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-sm focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none">
+                        @error('vehicle_validity_days')
+                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="vehicle_validity_days_long" class="block text-sm font-medium text-slate-700 mb-1">
+                            Long duration <span class="text-slate-400 font-normal">(days)</span>
+                        </label>
+                        <input id="vehicle_validity_days_long" type="number" min="1" max="365"
+                            wire:model="vehicle_validity_days_long"
+                            class="w-32 rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-sm focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none">
+                        @error('vehicle_validity_days_long')
+                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+                <p class="text-xs text-slate-400 mt-2">
+                    A vehicle request's validity end date is computed from its start date. « Long duration » applies when the requester ticks the long-duration option.
+                </p>
+            </div>
+
             {{-- Actions --}}
             <div class="pt-4 border-t border-gray-100 flex justify-end">
                 <button type="submit" wire:loading.attr="disabled" wire:target="save"
