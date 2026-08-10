@@ -188,6 +188,16 @@
                                 <dt class="text-xs text-slate-500">Updated</dt>
                                 <dd class="text-slate-600">{{ $materialRequest->updated_at?->format('d-m-Y H:i') ?? '—' }}</dd>
                             </div>
+                            <div>
+                                <dt class="text-xs text-slate-500">Expires</dt>
+                                <dd @class([
+                                    'font-medium',
+                                    'text-rose-600' => $materialRequest->expire_at && \Illuminate\Support\Carbon::parse($materialRequest->expire_at)->isPast(),
+                                    'text-slate-800' => ! ($materialRequest->expire_at && \Illuminate\Support\Carbon::parse($materialRequest->expire_at)->isPast()),
+                                ])>
+                                    {{ $materialRequest->expire_at ? \Illuminate\Support\Carbon::parse($materialRequest->expire_at)->format('d-m-Y') : '—' }}
+                                </dd>
+                            </div>
                         </dl>
 
                         {{-- Material items --}}
