@@ -19,7 +19,7 @@ final class UsersTemplateExport implements FromArray, WithHeadings
     {
         // Une ligne d'exemple pour guider le remplissage
         return [
-            ['John Doe', 'john.doe@example.com', 'Technician', '70000000', 'BN-0001'],
+            ['Oumar Oureiba', 'test@app.com', 'Technician', '70000000', 'BN-0001'],
         ];
     }
 }
