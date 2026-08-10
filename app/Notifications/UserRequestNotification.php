@@ -38,12 +38,13 @@ final class UserRequestNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->from(config('mail.from.address'), config('mail.from.name'))
-            ->subject('Request Update Notification')
-            ->greeting('Hello '.$notifiable->name.',')
-            ->line($this->message)
-            ->action('View Request', url($this->link))
-            // ->line('Thank you for using our application!')
-        ;
+            ->subject(config('app.name').' — Gate Pass Request Notification')
+            ->view('emails.request-notification', [
+                'name' => $notifiable->name,
+                'body' => $this->message,
+                'link' => $this->link,
+                'company' => config('app.name'),
+            ]);
     }
 
     /**
