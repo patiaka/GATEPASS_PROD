@@ -33,8 +33,11 @@ final class AppServiceProvider extends ServiceProvider
 
         Gate::define('update-request', function (User $user, MaterialRequest|CarRequest $Request) {
             if ($Request instanceof CarRequest || $Request instanceof MaterialRequest) {
-                // return ($user->id === $Request->user_id and $Request->isPending()) || $user->isAdmin();
-                //    dd($user->is($Request));
+                // Une demande approuvée ou expirée n'est plus modifiable (personne, admin inclus)
+                if ($Request->isApproved() || $Request->isExpired()) {
+                    return false;
+                }
+
                 if ((int) $Request->user_id === $user->id && $Request->isPending()) {
                     return true;
                 }

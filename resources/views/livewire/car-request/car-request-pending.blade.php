@@ -94,7 +94,9 @@
                     <td class="px-4 py-2">{{ $row->user->department->name }}</td>
 
                     <td class="px-4 py-3 flex items-center gap-2">
-                        <x-button-edit href="{{ route('car.edit', ['CarRequest' => $row]) }}" :row="$row" />
+                        @can('update-request', $row)
+                            <x-button-edit href="{{ route('car.edit', ['CarRequest' => $row]) }}" :row="$row" />
+                        @endcan
                         <x-button-show href="{{ route('car.show', ['CarRequest' => $row]) }}" :row="$row" />
                         <x-button-delete :row="$row" />
                     </td>

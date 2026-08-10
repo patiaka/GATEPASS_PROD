@@ -124,10 +124,12 @@ final class CarRequestForm extends Form
         $this->fill($carRequest);
         $this->stripCarNumberPrefix();
 
-        // Préremplir les multi-selects depuis les relations existantes
+        // Préremplir les multi-selects depuis les relations existantes.
+        // Les valeurs doivent être des chaînes pour correspondre aux checkboxes
+        // du composant multi-select (sinon Livewire ne coche pas les cases).
         $carRequest->loadMissing('car_drivers', 'passengers');
-        $this->driver_ids = $carRequest->car_drivers->pluck('user_id')->filter()->map(fn ($id) => (int) $id)->values()->all();
-        $this->passenger_ids = $carRequest->passengers->pluck('user_id')->filter()->map(fn ($id) => (int) $id)->values()->all();
+        $this->driver_ids = $carRequest->car_drivers->pluck('user_id')->filter()->map(fn ($id) => (string) $id)->values()->all();
+        $this->passenger_ids = $carRequest->passengers->pluck('user_id')->filter()->map(fn ($id) => (string) $id)->values()->all();
     }
 
     public function store(): void

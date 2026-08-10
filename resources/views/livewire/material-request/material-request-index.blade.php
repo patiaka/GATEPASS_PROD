@@ -117,7 +117,9 @@
                     <!-- ACTIONS -->
                     <td class="px-4 py-2">
                         <div class="flex items-center justify-center gap-1.5">
-                            <x-button-edit href="{{ route('material.edit', ['MaterialRequest' => $row]) }}" :row="$row" />
+                            @can('update-request', $row)
+                                <x-button-edit href="{{ route('material.edit', ['MaterialRequest' => $row]) }}" :row="$row" />
+                            @endcan
 
                             <x-button-show href="{{ route('material.show', ['MaterialRequest' => $row]) }}" :row="$row" />
 

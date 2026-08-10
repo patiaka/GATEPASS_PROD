@@ -15,12 +15,13 @@
 <div x-data="{
         open: false,
         search: '',
-        selected: [],
+        // Initialisé depuis le modèle Livewire (et non le DOM) pour éviter la
+        // course : à l'édition, les cases ne sont cochées qu'après l'init Alpine.
+        selected: ($wire.get('{{ $wireModel }}') ?? []).map(String),
         syncFromDom() {
             this.selected = [...$root.querySelectorAll('input[type=checkbox]:checked')].map(c => c.value);
         },
     }"
-    x-init="syncFromDom()"
     @click.outside="open = false"
     class="relative">
 

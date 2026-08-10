@@ -146,7 +146,9 @@
                     <td class="px-4 py-2">
                         <div class="flex items-center justify-center gap-1.5">
                             <!-- on garde tes composants, mais on les rend plus compacts -->
-                            <x-button-edit href="{{ route('car.edit', ['CarRequest' => $row]) }}" :row="$row" />
+                            @can('update-request', $row)
+                                <x-button-edit href="{{ route('car.edit', ['CarRequest' => $row]) }}" :row="$row" />
+                            @endcan
 
                             <x-button-show href="{{ route('car.show', ['CarRequest' => $row]) }}" :row="$row" />
 
