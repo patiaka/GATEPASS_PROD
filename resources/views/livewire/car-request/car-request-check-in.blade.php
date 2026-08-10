@@ -30,8 +30,8 @@
     <div class="bg-white shadow-sm rounded-xl overflow-hidden border border-gray-200">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-[#134169] text-white">
-                    <tr class="uppercase text-xs tracking-wider">
+                <thead class="bg-slate-50 border-b border-slate-200">
+                    <tr class="uppercase text-xs tracking-wider text-slate-500">
                         <th class="px-4 py-3 text-left font-medium">Reference</th>
                         <th class="px-4 py-3 text-left font-medium">Date</th>
                         <th class="px-4 py-3 text-left font-medium">Agent</th>
@@ -80,14 +80,18 @@
                             </td>
 
                             <td class="px-4 py-4">
-                                {{-- Lien classique (pas wire:navigate) : le select2 a besoin d'un
-                                     chargement complet pour afficher la présélection --}}
-                                <a href="{{ route('car.check_create', ['request' => $row->requestable_id]) }}"
-                                    class="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-md
-                                           bg-[#134169] text-white border border-[#134169]
-                                           hover:bg-white hover:text-[#134169] transition">
-                                    Record {{ $row->action === 'Exit' ? 'Entry' : 'Exit' }}
-                                </a>
+                                @if (Auth::user()->isAdmin() || Auth::user()->isSecurity())
+                                    {{-- Lien classique (pas wire:navigate) : le select2 a besoin d'un
+                                         chargement complet pour afficher la présélection --}}
+                                    <a href="{{ route('car.check_create', ['request' => $row->requestable_id]) }}"
+                                        class="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-md
+                                               bg-[#134169] text-white border border-[#134169]
+                                               hover:bg-white hover:text-[#134169] transition">
+                                        Record {{ $row->action === 'Exit' ? 'Entry' : 'Exit' }}
+                                    </a>
+                                @else
+                                    <span class="text-slate-300">—</span>
+                                @endif
                             </td>
                         </tr>
                     @empty

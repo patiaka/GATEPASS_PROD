@@ -3,7 +3,7 @@
     <div class="flex flex-col lg:flex-row lg:items-center gap-3">
 
         {{-- Search --}}
-        <div class="relative flex-1 min-w-[220px]">
+        <div class="relative w-full lg:w-72">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="2">
@@ -27,7 +27,7 @@
         </div>
 
         {{-- Actions --}}
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 lg:ml-auto">
             @if ($this->search !== '' || $period !== 'all')
                 <button wire:click="ResetFilter"
                     class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-300 text-slate-600 text-sm hover:bg-slate-50 transition">

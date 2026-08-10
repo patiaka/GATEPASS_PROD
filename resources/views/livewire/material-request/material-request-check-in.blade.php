@@ -10,18 +10,20 @@
         </div>
 
         <!-- Button -->
-        <a href="{{ route('material.check_create') }}"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg
+        @if (Auth::user()->isAdmin() || Auth::user()->isSecurity())
+            <a href="{{ route('material.check_create') }}"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg
               bg-[#134169] text-white text-sm font-semibold
               hover:bg-[#0e3a61] shadow-md transition
               focus:outline-none focus:ring-2 focus:ring-[#134169]/30">
 
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
 
-            New Check In
-        </a>
+                New Check In
+            </a>
+        @endif
 
     </div>
 
@@ -33,8 +35,8 @@
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
 
-                <thead class="bg-[#134169] text-white">
-                    <tr class="uppercase text-xs tracking-wider">
+                <thead class="bg-slate-50 border-b border-slate-200">
+                    <tr class="uppercase text-xs tracking-wider text-slate-500">
                         <th class="px-4 py-3 text-left font-medium">Reference</th>
                         <th class="px-4 py-3 text-left font-medium">Date</th>
                         <th class="px-4 py-3 text-left font-medium">Department</th>
@@ -93,14 +95,18 @@
                             </td>
 
                             <td class="px-4 py-4">
-                                {{-- Lien classique (pas wire:navigate) : le select2 a besoin d'un
-                                     chargement complet pour afficher la présélection --}}
-                                <a href="{{ route('material.check_create', ['request' => $row->requestable_id]) }}"
-                                    class="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-md
-                                           bg-[#134169] text-white border border-[#134169]
-                                           hover:bg-white hover:text-[#134169] transition">
-                                    Record {{ $row->action === 'Exit' ? 'Entry' : 'Exit' }}
-                                </a>
+                                @if (Auth::user()->isAdmin() || Auth::user()->isSecurity())
+                                    {{-- Lien classique (pas wire:navigate) : le select2 a besoin d'un
+                                         chargement complet pour afficher la présélection --}}
+                                    <a href="{{ route('material.check_create', ['request' => $row->requestable_id]) }}"
+                                        class="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-md
+                                               bg-[#134169] text-white border border-[#134169]
+                                               hover:bg-white hover:text-[#134169] transition">
+                                        Record {{ $row->action === 'Exit' ? 'Entry' : 'Exit' }}
+                                    </a>
+                                @else
+                                    <span class="text-slate-300">—</span>
+                                @endif
                             </td>
 
                         </tr>
