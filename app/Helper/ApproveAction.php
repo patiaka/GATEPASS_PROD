@@ -10,6 +10,7 @@ use App\Events\RequestApprovalSubmitted;
 use App\Jobs\MailRequestJob;
 use App\Models\CarRequest;
 use App\Models\MaterialRequest;
+use App\Models\Setting;
 use Gate;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -152,7 +153,7 @@ trait ApproveAction
                 'gm_approval_date' => now(),
                 'gm_approval_id' => Auth::user()->id,
                 'status' => $this->status,
-                'expire_at' => Carbon::now()->addDays(7),
+                'expire_at' => Carbon::now()->addDays($this->materialValidityDays()),
                 'next_approver_role' => null,
             ]);
 
@@ -172,7 +173,7 @@ trait ApproveAction
                 'gm_approval_date' => now(),
                 'gm_approval_id' => Auth::user()->id,
                 'status' => $this->status,
-                'expire_at' => Carbon::now()->addDays(7),
+                'expire_at' => Carbon::now()->addDays($this->materialValidityDays()),
                 'next_approver_role' => null,
             ]);
 
@@ -226,7 +227,7 @@ trait ApproveAction
                     'gm_approval_date' => now(),
                     'gm_approval_id' => $user->id,
                     'status' => $approved ? MaterialRequestStatus::Approved->value : MaterialRequestStatus::Rejected->value,
-                    'expire_at' => Carbon::now()->addDays(7),
+                    'expire_at' => Carbon::now()->addDays($this->materialValidityDays()),
                     'next_approver_role' => null,
                 ],
                 default => null,
@@ -249,6 +250,12 @@ trait ApproveAction
         }
 
         flash()->success($requests->count().' request(s) '.($approved ? 'approved' : 'rejected').' successfully.');
+    }
+
+    /** Durée de validité (en jours) configurable pour les demandes matériel. */
+    private function materialValidityDays(): int
+    {
+        return (int) Setting::get('material_validity_days', 7);
     }
 
     protected function reset_filled(): void

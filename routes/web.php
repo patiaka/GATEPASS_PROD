@@ -23,6 +23,7 @@ use App\Livewire\MaterialRequest\MaterialRequestPending;
 use App\Livewire\MaterialRequest\MaterialRequestShow;
 use App\Livewire\MaterialRequest\MaterialRequestUpdate;
 use App\Livewire\Reports\OffsiteReport;
+use App\Livewire\Settings\SettingsIndex;
 use App\Livewire\User\UserCreate;
 use App\Livewire\User\UserIndex;
 use App\Livewire\User\UserPassChange;
@@ -45,6 +46,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('department', DepartmentIndex::class)->name('department.index');
         Route::get('department/create', DepartmentCreate::class)->name('department.create');
         Route::get('department/{department}/edit', DepartmentEdit::class)->name('department.edit');
+        Route::get('settings', SettingsIndex::class)->name('settings.index');
     });
 
     // Check-in : listes visibles par Admin, GM, Security (lecture)
