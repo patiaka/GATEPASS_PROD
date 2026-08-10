@@ -20,7 +20,9 @@
         transition
         ',
     ]) }}>
-        <i data-lucide="trash-2" class="size-4"></i>
+        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 7h12M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2m-1 0v12a2 2 0 01-2 2H10a2 2 0 01-2-2V7m3 4v6m2-6v6" />
+        </svg>
     </button>
     @endcan
 {{-- @else

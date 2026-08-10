@@ -1,6 +1,6 @@
-<div id="overlay" class="fixed inset-0 bg-black/50 hidden z-30 md:hidden"></div>
+<div id="overlay" class="fixed inset-0 bg-black/50 hidden z-30 lg:hidden"></div>
 <aside id="sidebar"
-    class="sidebar fixed md:static inset-y-0 left-0 z-40 flex flex-col w-70 p-4 bg-[#0e3a61] text-white border-r border-white/10 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out">
+    class="sidebar fixed lg:static inset-y-0 left-0 z-40 flex flex-col w-72 max-w-[85vw] p-4 bg-[#0e3a61] text-white border-r border-white/10 transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-in-out">
 
     <a href="/" class="mb-3 px-2 pb-2 flex rounded-md">
         <img src="{{ asset('assets/img/logo.png') }}" alt="Logo" class="w-32">

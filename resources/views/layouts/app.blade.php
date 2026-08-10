@@ -48,8 +48,8 @@
 </head>
 
 <body class="relative text-slate-600">
-    <div class="md:hidden flex items-center justify-between p-4 bg-white shadow">
-        <button id="sidebarToggle" class="text-[#0e3a61] text-2xl focus:outline-none">
+    <div class="lg:hidden flex items-center justify-between p-4 bg-white shadow">
+        <button id="sidebarToggle" class="text-[#0e3a61] text-2xl focus:outline-none" aria-label="Open menu">
             ☰
         </button>
     </div>
@@ -59,7 +59,7 @@
 
         <div class="main flex flex-col flex-1">
             @include('layouts.header')
-            <div class="content flex-1 p-8 bg-slate-50 overflow-y-scroll">
+            <div class="content flex-1 p-4 sm:p-6 lg:p-8 bg-slate-50 overflow-y-auto overflow-x-hidden">
 
                 {{ $slot }}
             </div>
@@ -70,31 +70,29 @@
     <!-- Content -->
     {{-- Lucide (icônes) est servi en local via Vite : voir resources/js/app.js --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.getElementById('sidebar');
-            const toggle = document.getElementById('sidebarToggle');
-            const overlay = document.getElementById('overlay');
+        // Délégation sur document : survit aux navigations SPA de Livewire.
+        (function() {
+            function sidebar() { return document.getElementById('sidebar'); }
+            function overlay() { return document.getElementById('overlay'); }
+            function open() { sidebar()?.classList.remove('-translate-x-full'); overlay()?.classList.remove('hidden'); }
+            function close() { sidebar()?.classList.add('-translate-x-full'); overlay()?.classList.add('hidden'); }
 
-            function openSidebar() {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-            }
-
-            function closeSidebar() {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            }
-
-            toggle.addEventListener('click', function() {
-                if (sidebar.classList.contains('-translate-x-full')) {
-                    openSidebar();
-                } else {
-                    closeSidebar();
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('#sidebarToggle')) {
+                    sidebar()?.classList.contains('-translate-x-full') ? open() : close();
+                } else if (e.target.closest('#overlay')) {
+                    close();
+                } else if (e.target.closest('#sidebar a') && window.innerWidth < 1024) {
+                    // Fermer le tiroir après un clic de navigation sur tablette/mobile
+                    close();
                 }
             });
 
-            overlay.addEventListener('click', closeSidebar);
-        });
+            // Sécurité : à chaque navigation SPA, on repart tiroir fermé sur petit écran.
+            document.addEventListener('livewire:navigated', function() {
+                if (window.innerWidth < 1024) close();
+            });
+        })();
     </script>
 
 

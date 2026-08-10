@@ -1,8 +1,5 @@
+// Composants <el-dialog> (modales de suppression, etc.)
 import "@tailwindplus/elements";
-import { createIcons, Plus, Pencil, Trash2, Eye, Search, X } from "lucide";
 
-const refreshIcons = () =>
-    createIcons({ icons: { Plus, Pencil, Trash2, Eye, Search, X } });
-
-document.addEventListener("DOMContentLoaded", refreshIcons);
-document.addEventListener("livewire:navigated", refreshIcons);
+// Les icônes sont désormais des SVG inline dans les vues : plus besoin de
+// ré-initialiser une librairie d'icônes après chaque rendu Livewire.

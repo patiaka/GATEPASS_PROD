@@ -18,8 +18,9 @@ return Configuration::from([
 
     // Set global options for all notifications (optional)
     'options' => [
-        'timeout' => 5000, // Time in milliseconds before the notification disappears
-        'position' => 'top-center', // Where the notification appears on the screen
+        'timeout' => 4000, // Time in milliseconds before the notification disappears
+        'position' => 'top-right', // Coin haut-droit : moins intrusif, plus "pro"
+        'rtl' => false,
     ],
 
     // Automatically inject JavaScript and CSS assets into your HTML pages
@@ -39,10 +40,10 @@ return Configuration::from([
         'info' => ['info', 'notice', 'alert'],
     ],
 
-    // Set criteria to filter which notifications are displayed (optional)
-    // 'filter' => [
-    //     'limit' => 5, // Maximum number of notifications to show at once
-    // ],
+    // Limite le nombre de toasts affichés simultanément
+    'filter' => [
+        'limit' => 4,
+    ],
 
     // Define notification presets to simplify notification creation (optional)
     // 'presets' => [
