@@ -132,6 +132,32 @@ final class CarRequestForm extends Form
         $this->passenger_ids = $carRequest->passengers->pluck('user_id')->filter()->map(fn ($id) => (string) $id)->values()->all();
     }
 
+    /**
+     * Pré-remplit le formulaire de création à partir d'une demande existante
+     * (duplication). Les dates ne sont pas copiées (à re-choisir) et aucune
+     * donnée d'approbation/référence n'est reprise.
+     */
+    public function fillFromSource(CarRequest $source): void
+    {
+        $source->loadMissing('car_drivers', 'passengers');
+
+        $this->somisy_car = $source->somisy_car ?? '';
+        $this->resident = $source->resident ?? '';
+        $this->destination = $source->destination ?? '';
+        $this->car_type = $source->car_type ?? '';
+        $this->car_number = $source->car_number;
+        $this->depart_at = $source->depart_at ?? '';
+        $this->arrive_at = $source->arrive_at ?? '';
+        $this->reason = $source->reason ?? '';
+        $this->company = $source->company ?? 'Somisy';
+        $this->comment = $source->comment;
+
+        $this->stripCarNumberPrefix();
+
+        $this->driver_ids = $source->car_drivers->pluck('user_id')->filter()->map(fn ($id) => (string) $id)->values()->all();
+        $this->passenger_ids = $source->passengers->pluck('user_id')->filter()->map(fn ($id) => (string) $id)->values()->all();
+    }
+
     public function store(): void
     {
         $this->validate([

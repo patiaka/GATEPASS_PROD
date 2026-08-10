@@ -8,6 +8,7 @@ use const false;
 
 use App\Helper\RepeatInputAction;
 use App\Livewire\Forms\CarRequestForm;
+use App\Models\CarRequest;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -42,6 +43,14 @@ final class CarRequestCreate extends Component
     {
         $this->form->driver_ids = [];
         $this->form->passenger_ids = [];
+
+        // Duplication : ?from=<id> pré-remplit le formulaire depuis une demande visible
+        if ($from = request('from')) {
+            $source = CarRequest::visibleTo(Auth::user())->find($from);
+            if ($source) {
+                $this->form->fillFromSource($source);
+            }
+        }
     }
 
     public function save()
@@ -51,7 +60,17 @@ final class CarRequestCreate extends Component
 
     public function render()
     {
-        $users = User::select('name', 'id', 'badge_number', 'department_id')->where('department_id', Auth::user()->department_id)->get();
+        // Département courant + éventuels chauffeurs/passagers pré-remplis (duplication)
+        $prefilled = array_map('intval', array_merge($this->form->driver_ids, $this->form->passenger_ids));
+
+        $users = User::select('name', 'id', 'badge_number', 'department_id')
+            ->where(function ($q) use ($prefilled) {
+                $q->where('department_id', Auth::user()->department_id);
+                if ($prefilled !== []) {
+                    $q->orWhereIn('id', $prefilled);
+                }
+            })
+            ->get();
 
         return view('livewire.car-request.car-request-create', compact('users'));
     }

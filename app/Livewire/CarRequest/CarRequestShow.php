@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace App\Livewire\CarRequest;
 
-use App\Enum\MaterialRequestStatus;
-use App\Enum\RoleEnum;
 use App\Helper\ApproveAction;
 use App\Models\CarRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -37,39 +34,13 @@ final class CarRequestShow extends Component
     }
 
     /**
-     * Duplique la demande en une nouvelle demande "Pending" appartenant à
-     * l'utilisateur courant, puis redirige vers son édition.
+     * Duplication : ouvre le formulaire de création pré-rempli à partir de
+     * cette demande (aucun enregistrement n'est créé tant que l'utilisateur
+     * n'a pas soumis).
      */
     public function duplicate()
     {
-        $original = $this->carRequest->loadMissing('car_drivers', 'passengers');
-
-        $clone = $original->replicate([
-            'reference', 'status', 'expire_at',
-            'hod_approval_id', 'hod_comment', 'hod_approval_date',
-            'director_approval_id', 'director_comment', 'director_approval_date',
-            'gm_approval_id', 'gm_comment', 'gm_approval_date',
-            'next_approver_role',
-        ]);
-
-        $clone->user_id = Auth::id();
-        $clone->status = MaterialRequestStatus::Pending->value;
-        $clone->reference = null;
-        $clone->save();
-
-        $clone->generateId('VEH');
-        $clone->updateQuietly(['next_approver_role' => RoleEnum::HOD->value]);
-
-        foreach ($original->car_drivers as $driver) {
-            $clone->car_drivers()->create(['user_id' => $driver->user_id]);
-        }
-        foreach ($original->passengers as $passenger) {
-            $clone->passengers()->create(['user_id' => $passenger->user_id]);
-        }
-
-        flash()->success('Request duplicated — you can now review and submit the copy.');
-
-        return $this->redirectRoute('car.edit', ['CarRequest' => $clone]);
+        return $this->redirectRoute('car.create', ['from' => $this->carRequest->id]);
     }
 
     public function download_pdf(CarRequest $carRequest)
