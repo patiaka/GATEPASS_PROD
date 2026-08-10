@@ -91,7 +91,9 @@ final class MaterialRequestForm extends Form
                 $this->person_out_id ? $materialRequest->person_out()->associate($this->person_out_id)->save() : null;
 
 
-                $materialRequest->updateQuietly(['expire_at' => now()->addDay(7), 'next_approver_role' => RoleEnum::HOD->value]);
+                // expire_at n'est PAS fixé à la création : le décompte de validité
+                // ne démarre qu'à l'approbation du GM (voir ApproveAction::approveByGm).
+                $materialRequest->updateQuietly(['next_approver_role' => RoleEnum::HOD->value]);
 
                 if (! empty($this->photos)) {
                     foreach ($this->photos as $row) {
