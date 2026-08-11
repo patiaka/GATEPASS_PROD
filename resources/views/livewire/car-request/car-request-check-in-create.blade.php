@@ -1,10 +1,10 @@
 <div>
-    <div class="mx-auto p-6">
-        <div class="bg-gradient-to-b from-white to-slate-50 rounded-2xl shadow-lg border border-gray-100 p-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="mx-auto p-3 sm:p-6">
+        <div class="bg-gradient-to-b from-white to-slate-50 rounded-2xl shadow-lg border border-gray-100 p-3 sm:p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
 
                 {{-- LEFT COLUMN: FORM --}}
-                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-4 sm:p-6 lg:p-8">
 
                     {{-- Header --}}
                     <div class="text-center mb-6">

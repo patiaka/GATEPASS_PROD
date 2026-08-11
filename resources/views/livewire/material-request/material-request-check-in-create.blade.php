@@ -1,8 +1,8 @@
 <div>
-    <div class="card bg-white shadow-sm p-5">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="card bg-white shadow-sm p-3 sm:p-5">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-4 sm:p-6 lg:p-8">
 
                 {{-- Header --}}
                 <div class="text-center mb-6">
@@ -163,7 +163,7 @@
                         </div>
 
                         {{-- Request info --}}
-                        <dl class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+                        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 text-sm">
                             <div>
                                 <dt class="text-xs text-slate-500">Requester</dt>
                                 <dd class="text-slate-800 font-medium">{{ $materialRequest->user->name }}</dd>
