@@ -12,6 +12,8 @@ use App\Models\Recording;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -348,19 +350,28 @@ final class OffsiteReport extends Component
 
     public function exportPdf()
     {
-        $data = $this->data();
-        $filters = $this->filterLabel();
-        $html = view('reports.offsite-pdf', array_merge($data, ['filters' => $filters, 'generatedAt' => now()->format('d-m-Y H:i')]))->render();
+        try {
+            $data = $this->data();
+            $filters = $this->filterLabel();
+            $html = view('reports.offsite-pdf', array_merge($data, ['filters' => $filters, 'generatedAt' => now()->format('d-m-Y H:i')]))->render();
 
-        $path = storage_path('app/offsite-report-'.now()->format('Ymd-His').'.pdf');
+            $path = storage_path('app/offsite-report-'.now()->format('Ymd-His').'.pdf');
 
-        Browsershot::html($html)
-            ->margins(10, 10, 10, 10)
-            ->format('A4')
-            ->showBackground()
-            ->save($path);
+            Browsershot::html($html)
+                ->noSandbox()          // requis par Chrome headless sur Windows Server
+                ->timeout(120)         // laisse le temps à Chrome de démarrer/rendre
+                ->margins(10, 10, 10, 10)
+                ->format('A4')
+                ->showBackground()
+                ->save($path);
 
-        return response()->download($path)->deleteFileAfterSend(true);
+            return response()->download($path)->deleteFileAfterSend(true);
+        } catch (Throwable $e) {
+            // On journalise l'erreur réelle (Chrome/Node introuvable, timeout, permissions…)
+            // et on affiche un message plutôt qu'une 500.
+            Log::error('Offsite PDF export failed', ['error' => $e->getMessage()]);
+            flash()->error('PDF generation failed. Please try the Excel export, or contact IT (details logged).');
+        }
     }
 
     public function render()

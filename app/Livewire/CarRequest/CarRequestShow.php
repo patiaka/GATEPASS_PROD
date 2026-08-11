@@ -64,6 +64,8 @@ final class CarRequestShow extends Component
         $path = storage_path("app/request-{$carRequest->reference}.pdf");
 
         Browsershot::html($html)
+            ->noSandbox()
+            ->timeout(120)
             ->margins(10, 10, 10, 10)
             ->format('A4')
             ->showBackground()
