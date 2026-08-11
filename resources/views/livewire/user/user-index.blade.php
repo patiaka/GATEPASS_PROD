@@ -98,8 +98,8 @@
         </x-slot:filter>
 
         <!-- THEAD -->
-        <thead class="uppercase bg-slate-100 text-slate-700 text-[12px] sticky top-0 shadow-sm z-10">
-            <tr>
+        <thead class="sticky top-0 z-20">
+            <tr class="uppercase tracking-wide text-[12px] bg-slate-100 text-slate-700 border-b">
                 <th class="px-3 py-2 text-left font-semibold">ID</th>
                 <th class="px-3 py-2 text-left font-semibold">Department</th>
                 <th class="px-3 py-2 text-left font-semibold">Email / Name</th>
@@ -117,7 +117,7 @@
         <!-- TBODY -->
         <tbody class="divide-y divide-gray-100">
             @forelse ($this->rows as $row)
-            <tr wire:key="user-{{ $row->id }}" class="hover:bg-slate-50 transition even:bg-gray-50/40">
+            <tr wire:key="user-{{ $row->id }}" class="odd:bg-white even:bg-gray-50/40 hover:bg-slate-50 transition">
 
                 <td class="px-3 py-2 font-medium text-gray-700">
                     {{ $row->id }}
@@ -278,8 +278,13 @@
             </tr>
             @empty
             <tr>
-                <td colspan="11" class="px-3 py-6 text-center text-gray-400 text-sm">
-                    No result
+                <td colspan="11" class="px-4 py-12 text-center">
+                    <div class="flex flex-col items-center gap-3 text-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+                        </svg>
+                        <p class="text-sm">No user found</p>
+                    </div>
                 </td>
             </tr>
             @endforelse
