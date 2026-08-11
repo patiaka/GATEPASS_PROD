@@ -95,6 +95,7 @@
                     <span wire:loading wire:target="duplicate">Duplicating…</span>
                 </button>
 
+                {{-- Bouton « Download PDF » masqué (génération PDF désactivée)
                 @can('download-request', $MaterialRequest)
                 <button wire:click="download_pdf({{ $MaterialRequest->id }})" wire:loading.attr="disabled" wire:target="download_pdf"
                     class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0e3a61] text-white text-sm font-medium hover:bg-[#0c3252] disabled:opacity-60 disabled:cursor-not-allowed transition shadow-sm">
@@ -113,6 +114,7 @@
                     </span>
                 </button>
                 @endcan
+                --}}
 
                 @can('cancel-request', $MaterialRequest)
                     <button wire:click="cancel" wire:target="cancel" wire:loading.attr="disabled"
