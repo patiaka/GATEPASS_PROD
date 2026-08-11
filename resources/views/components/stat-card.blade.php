@@ -39,5 +39,5 @@
             <p class="text-[11px] text-slate-400 truncate">{{ $sublabel }}</p>
         </div>
     </div>
-    <span class="text-2xl font-bold text-slate-800 tabular-nums">{{ $value }}</span>
+    <span class="text-2xl font-semibold text-slate-500 tabular-nums">{{ $value }}</span>
 </a>
