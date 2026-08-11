@@ -65,16 +65,6 @@
             html.nav-mini #sidebar a,
             html.nav-mini #sidebar summary { justify-content: center; padding-left: .5rem; padding-right: .5rem; }
             html.nav-mini #sidebarCollapse svg { transform: rotate(180deg); }
-
-            /* Survol : ré-expansion pour accéder aux libellés & sous-menus */
-            html.nav-mini #sidebar:hover { width: 18rem !important; }
-            html.nav-mini #sidebar:hover > a,
-            html.nav-mini #sidebar:hover h2,
-            html.nav-mini #sidebar:hover span,
-            html.nav-mini #sidebar:hover details[open] > ul,
-            html.nav-mini #sidebar:hover summary > svg:last-of-type { display: revert; }
-            html.nav-mini #sidebar:hover a,
-            html.nav-mini #sidebar:hover summary { justify-content: flex-start; padding-left: .75rem; padding-right: .75rem; }
         }
     </style>
 
