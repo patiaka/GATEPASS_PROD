@@ -70,29 +70,35 @@
     <!-- Content -->
     {{-- Lucide (icônes) est servi en local via Vite : voir resources/js/app.js --}}
     <script>
-        // Délégation sur document : survit aux navigations SPA de Livewire.
-        (function() {
-            function sidebar() { return document.getElementById('sidebar'); }
-            function overlay() { return document.getElementById('overlay'); }
-            function open() { sidebar()?.classList.remove('-translate-x-full'); overlay()?.classList.remove('hidden'); }
-            function close() { sidebar()?.classList.add('-translate-x-full'); overlay()?.classList.add('hidden'); }
+        // IMPORTANT : garde sur window pour n'attacher les écouteurs QU'UNE SEULE FOIS.
+        // Sans ça, wire:navigate ré-exécute ce script à chaque page et empile les
+        // écouteurs -> le toggle se déclenche plusieurs fois et "refuse de s'ouvrir".
+        if (!window.__gpSidebarInit) {
+            window.__gpSidebarInit = true;
 
+            const gpSidebar = () => document.getElementById('sidebar');
+            const gpOverlay = () => document.getElementById('overlay');
+            const gpIsDrawer = () => window.innerWidth < 1280;
+            const gpOpen = () => { gpSidebar()?.classList.remove('-translate-x-full'); gpOverlay()?.classList.remove('hidden'); };
+            const gpClose = () => { gpSidebar()?.classList.add('-translate-x-full'); gpOverlay()?.classList.add('hidden'); };
+
+            // Délégation sur document : survit aux navigations SPA.
             document.addEventListener('click', function(e) {
                 if (e.target.closest('#sidebarToggle')) {
-                    sidebar()?.classList.contains('-translate-x-full') ? open() : close();
+                    e.preventDefault();
+                    gpSidebar()?.classList.contains('-translate-x-full') ? gpOpen() : gpClose();
                 } else if (e.target.closest('#overlay')) {
-                    close();
-                } else if (e.target.closest('#sidebar a') && window.innerWidth < 1280) {
-                    // Fermer le tiroir après un clic de navigation sur tablette/mobile
-                    close();
+                    gpClose();
+                } else if (e.target.closest('#sidebar a') && gpIsDrawer()) {
+                    gpClose(); // fermer le tiroir après un clic de navigation (tablette/mobile)
                 }
             });
 
-            // Sécurité : à chaque navigation SPA, on repart tiroir fermé sur petit écran.
+            // À chaque navigation SPA, on repart tiroir fermé sur petit écran.
             document.addEventListener('livewire:navigated', function() {
-                if (window.innerWidth < 1280) close();
+                if (gpIsDrawer()) gpClose();
             });
-        })();
+        }
     </script>
 
 
