@@ -124,9 +124,9 @@
         @include('layouts.sidebar')
 
 
-        <div class="main flex flex-col flex-1">
+        <div class="main flex flex-col flex-1 min-w-0">
             @include('layouts.header')
-            <div class="content flex-1 p-4 sm:p-6 lg:p-8 bg-[#f4f6f9] overflow-y-auto overflow-x-hidden">
+            <div class="content flex-1 p-4 sm:p-6 lg:p-8 bg-[#f4f6f9] overflow-y-auto overflow-x-hidden min-w-0">
 
                 {{ $slot }}
             </div>
