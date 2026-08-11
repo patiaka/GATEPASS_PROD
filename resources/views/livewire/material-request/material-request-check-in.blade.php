@@ -53,7 +53,10 @@
                     @forelse ($this->rows as $row)
                         <tr wire:key="row-{{ $row->id }}" class="hover:bg-slate-50">
 
-                            <td class="px-4 py-4">#{{ $row->requestable->reference }}</td>
+                            <td class="px-4 py-4">
+                                <a href="{{ route('material.show', ['MaterialRequest' => $row->requestable_id]) }}" wire:navigate
+                                    class="font-medium text-[#134169] hover:underline">{{ $row->requestable->reference }}</a>
+                            </td>
 
                             <td class="px-4 py-4 text-slate-600">
                                 {{ $row->created_at->format('d-m-Y H:i') }}

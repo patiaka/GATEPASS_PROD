@@ -6,6 +6,7 @@ namespace App\Livewire\CarRequest;
 
 use const false;
 
+use App\Events\RequestCreated;
 use App\Helper\RepeatInputAction;
 use App\Livewire\Forms\CarRequestForm;
 use App\Models\CarRequest;
@@ -27,6 +28,9 @@ final class CarRequestUpdate extends Component
     public CarRequestForm $form;
 
     public bool $date_long = false;
+
+    /** La demande était-elle rejetée à l'ouverture (⇒ « corriger & renvoyer ») ? */
+    public bool $wasRejected = false;
 
     public function getShowDestinationProperty(): bool
     {
@@ -54,6 +58,8 @@ final class CarRequestUpdate extends Component
 
         Gate::authorize('update-request', $this->carRequest);
 
+        $this->wasRejected = $CarRequest->isRejected();
+
         // setCarRequest charge aussi driver_ids / passenger_ids depuis les relations
         $this->form->setCarRequest($CarRequest);
     }
@@ -62,6 +68,13 @@ final class CarRequestUpdate extends Component
     {
         Gate::authorize('update-request', $this->carRequest);
         $this->form->update();
+
+        // Corriger & renvoyer : une demande rejetée repart pour un nouveau cycle.
+        if ($this->wasRejected) {
+            $this->carRequest->resetForResubmission();
+            RequestCreated::dispatch($this->carRequest->fresh());
+            flash()->success('Request corrected and resubmitted for approval.');
+        }
 
         return $this->redirectRoute('car.index');
     }

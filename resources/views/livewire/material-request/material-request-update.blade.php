@@ -18,6 +18,23 @@
             </a>
         </div>
         <div class="p-6">
+            @if ($materialRequest->isRejected())
+                <div class="mb-6 rounded-xl border border-rose-200 bg-rose-50 p-4">
+                    <div class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-rose-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                        </svg>
+                        <div class="text-sm">
+                            <p class="font-semibold text-rose-800">This request was rejected.</p>
+                            @if ($materialRequest->rejectionReason())
+                                <p class="text-rose-700 mt-0.5"><span class="font-medium">Reason:</span> {{ $materialRequest->rejectionReason() }}</p>
+                            @endif
+                            <p class="text-rose-700/80 mt-1">Correct it below and click <span class="font-semibold">Revise &amp; resubmit</span> — it will restart the approval process.</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <form wire:submit="save" enctype="multipart/form-data" method="post" class="space-y-6">
 
                 <div class="w-full">
@@ -164,7 +181,9 @@
                     @endif
                 </div>
                 <div class="flex justify-center gap-4 mt-6">
-                    <x-form-action cancel="material.index" target="save" />
+                    <x-form-action cancel="material.index" target="save"
+                        :label="$materialRequest->isRejected() ? 'Revise & resubmit' : 'Save changes'"
+                        :loadingLabel="$materialRequest->isRejected() ? 'Resubmitting…' : 'Saving…'" />
                 </div>
             </form>
         </div>

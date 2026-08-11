@@ -1,6 +1,8 @@
 @props([
     'cancel',
     'target' => 'save',
+    'label' => 'Save',
+    'loadingLabel' => 'Saving…',
 ])
 
 <a href="{{ route($cancel) }}" role="button"
@@ -8,4 +10,4 @@
     Cancel
 </a>
 
-<x-submit target="{{ $target }}" />
+<x-submit target="{{ $target }}" label="{{ $label }}" loadingLabel="{{ $loadingLabel }}" />

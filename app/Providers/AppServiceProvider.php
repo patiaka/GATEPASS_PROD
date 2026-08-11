@@ -47,7 +47,9 @@ final class AppServiceProvider extends ServiceProvider
                     return false;
                 }
 
-                if ((int) $Request->user_id === $user->id && $Request->isPending()) {
+                // Le propriétaire peut éditer tant que la demande est en attente,
+                // ou pour la corriger et la renvoyer si elle a été rejetée.
+                if ((int) $Request->user_id === $user->id && ($Request->isPending() || $Request->isRejected())) {
                     return true;
                 }
 

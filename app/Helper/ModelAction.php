@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Helper;
 
 use App\Enum\MaterialRequestStatus;
+use App\Enum\RoleEnum;
 use App\Models\Recording;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -68,6 +69,41 @@ trait ModelAction
     public function isExpired(): bool
     {
         return $this->status === MaterialRequestStatus::Expired;
+    }
+
+    /**
+     * « Corriger & renvoyer » : réinitialise une demande rejetée pour un nouveau
+     * cycle d'approbation — statut repassé en attente, toutes les décisions
+     * précédentes (HOD / Directeur / GM) effacées, circuit relancé au HOD.
+     * La référence et l'historique d'audit sont conservés.
+     */
+    public function resetForResubmission(): void
+    {
+        $this->update([
+            'status' => MaterialRequestStatus::Pending,
+            'next_approver_role' => RoleEnum::HOD->value,
+            'hod_approval_id' => null,
+            'hod_approval_date' => null,
+            'hod_comment' => null,
+            'director_approval_id' => null,
+            'director_approval_date' => null,
+            'director_comment' => null,
+            'gm_approval_id' => null,
+            'gm_approval_date' => null,
+            'gm_comment' => null,
+            'expire_at' => null,
+        ]);
+    }
+
+    /**
+     * Motif du rejet : commentaire de la dernière étape ayant statué
+     * (l'étape qui a rejeté arrête le circuit).
+     */
+    public function rejectionReason(): ?string
+    {
+        return $this->gm_approval_date ? $this->gm_comment
+            : ($this->director_approval_date ? $this->director_comment
+                : $this->hod_comment);
     }
 
     public function gm_approval_view(): string

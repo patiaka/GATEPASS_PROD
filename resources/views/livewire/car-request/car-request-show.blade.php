@@ -55,11 +55,15 @@
 
                 @can('update-request', $carRequest)
                     <a href="{{ route('car.edit', ['CarRequest' => $carRequest]) }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-blue-200 bg-blue-50 text-sm font-medium text-blue-700 hover:bg-blue-100 transition shadow-sm">
+                        @class([
+                            'inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm border',
+                            'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100' => $carRequest->isRejected(),
+                            'border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100' => ! $carRequest->isRejected(),
+                        ])>
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687 1.687M7 17l4-1 9-9a2.121 2.121 0 00-3-3l-9 9-1 4z" />
                         </svg>
-                        Edit
+                        {{ $carRequest->isRejected() ? 'Revise & resubmit' : 'Edit' }}
                     </a>
                 @endcan
 

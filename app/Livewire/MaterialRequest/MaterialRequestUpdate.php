@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\MaterialRequest;
 
+use App\Events\RequestCreated;
 use App\Helper\DeleteAction;
 use App\Helper\RepeatInputAction;
 use App\Livewire\Forms\MaterialRequestForm;
@@ -25,10 +26,14 @@ final class MaterialRequestUpdate extends Component
 
     public string $personOutMode = 'list';
 
+    /** La demande était-elle rejetée à l'ouverture (⇒ « corriger & renvoyer ») ? */
+    public bool $wasRejected = false;
+
     public function mount(MaterialRequest $MaterialRequest)
     {
         $this->materialRequest = $MaterialRequest;
         Gate::authorize('update-request', $this->materialRequest);
+        $this->wasRejected = $MaterialRequest->isRejected();
         $this->form->setMaterialRequest($MaterialRequest);
         $this->personOutMode = $MaterialRequest->person_out_id || ! $MaterialRequest->person_out_name ? 'list' : 'manual';
 
@@ -59,6 +64,15 @@ final class MaterialRequestUpdate extends Component
         Gate::authorize('update-request', $this->materialRequest);
 
         $this->form->update();
+
+        // Corriger & renvoyer : une demande rejetée repart pour un nouveau cycle.
+        if ($this->wasRejected) {
+            $this->materialRequest->resetForResubmission();
+            RequestCreated::dispatch($this->materialRequest->fresh());
+            flash()->success('Request corrected and resubmitted for approval.');
+
+            return $this->redirectRoute('material.index');
+        }
     }
 
 

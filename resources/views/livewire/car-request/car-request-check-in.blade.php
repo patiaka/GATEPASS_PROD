@@ -52,11 +52,14 @@
                 <tbody class="bg-white divide-y divide-gray-100 text-sm">
                     @forelse ($this->rows as $row)
                         <tr wire:key="row-{{ $row->id }}" class="hover:bg-slate-50">
-                            <td class="px-4 py-4">#{{ $row->requestable->reference }}</td>
+                            <td class="px-4 py-4">
+                                <a href="{{ route('car.show', ['CarRequest' => $row->requestable_id]) }}" wire:navigate
+                                    class="font-medium text-[#134169] hover:underline">{{ $row->requestable->reference }}</a>
+                            </td>
                             <td class="px-4 py-4 text-slate-600">{{ $row->created_at->format('d-m-Y H:i') }}</td>
                             <td class="px-4 py-4">{{ $row->user->name }}</td>
                             <td class="px-4 py-4">{{ $row->requestable->company }}</td>
-                            <td class="px-4 py-4">#{{ $row->requestable->car_number }}</td>
+                            <td class="px-4 py-4">{{ $row->requestable->car_number }}</td>
                             <td class="px-4 py-4">{{ $row->car_driver ? $row->car_driver->name : 'N/A' }}</td>
                             <td class="px-4 py-4">{{ $row->car_driver ? $row->car_driver->department->name : 'N/A' }}
                             </td>
