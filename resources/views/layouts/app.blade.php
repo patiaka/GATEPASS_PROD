@@ -42,7 +42,52 @@
         details>summary::-webkit-details-marker {
             display: none;
         }
+
+        /* ===== Sidebar réduite en rail d'icônes (grand écran uniquement) ===== */
+        @media (min-width: 1280px) {
+            #sidebar { transition: width .2s ease; }
+            html.sidebar-mini #sidebar { width: 4.75rem; }
+
+            /* Réduit & non survolé : on ne garde que les icônes */
+            html.sidebar-mini #sidebar > a,
+            html.sidebar-mini #sidebar h2,
+            html.sidebar-mini #sidebar span,
+            html.sidebar-mini #sidebar details > ul,
+            html.sidebar-mini #sidebar summary > svg:last-of-type {
+                display: none;
+            }
+            html.sidebar-mini #sidebar a,
+            html.sidebar-mini #sidebar summary {
+                justify-content: center;
+                padding-left: .5rem;
+                padding-right: .5rem;
+            }
+            html.sidebar-mini #sidebarCollapse svg { transform: rotate(180deg); }
+
+            /* Survol : ré-expansion (pousse le contenu) pour accéder aux libellés & sous-menus */
+            html.sidebar-mini #sidebar:hover { width: 18rem; }
+            html.sidebar-mini #sidebar:hover > a,
+            html.sidebar-mini #sidebar:hover h2,
+            html.sidebar-mini #sidebar:hover span,
+            html.sidebar-mini #sidebar:hover details[open] > ul,
+            html.sidebar-mini #sidebar:hover summary > svg:last-of-type {
+                display: revert;
+            }
+            html.sidebar-mini #sidebar:hover a,
+            html.sidebar-mini #sidebar:hover summary {
+                justify-content: flex-start;
+                padding-left: .75rem;
+                padding-right: .75rem;
+            }
+        }
     </style>
+
+    {{-- Applique la préférence "sidebar réduite" avant le rendu (évite le flash) --}}
+    <script>
+        if (localStorage.getItem('gp-sidebar-mini') === '1') {
+            document.documentElement.classList.add('sidebar-mini');
+        }
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 </head>
@@ -84,6 +129,12 @@
 
             // Délégation sur document : survit aux navigations SPA.
             document.addEventListener('click', function(e) {
+                if (e.target.closest('#sidebarCollapse')) {
+                    // Grand écran : réduire/étendre le rail d'icônes (préférence mémorisée)
+                    const mini = document.documentElement.classList.toggle('sidebar-mini');
+                    localStorage.setItem('gp-sidebar-mini', mini ? '1' : '0');
+                    return;
+                }
                 if (e.target.closest('#sidebarToggle')) {
                     e.preventDefault();
                     gpSidebar()?.classList.contains('-translate-x-full') ? gpOpen() : gpClose();
