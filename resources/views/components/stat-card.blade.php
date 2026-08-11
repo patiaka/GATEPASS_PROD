@@ -10,7 +10,7 @@
     // Icône toujours entourée de bleu marque ; la couleur de l'icône porte le statut.
     $tones = [
         'all' => 'text-white',
-        'movements' => 'text-sky-300',
+        'movements' => 'text-white',
         'approved' => 'text-emerald-300',
         'pending' => 'text-amber-300',
         'rejected' => 'text-rose-300',

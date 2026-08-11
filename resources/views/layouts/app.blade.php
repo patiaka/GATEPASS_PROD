@@ -126,7 +126,7 @@
 
         <div class="main flex flex-col flex-1">
             @include('layouts.header')
-            <div class="content flex-1 p-4 sm:p-6 lg:p-8 bg-slate-50 overflow-y-auto overflow-x-hidden">
+            <div class="content flex-1 p-4 sm:p-6 lg:p-8 bg-[#f4f6f9] overflow-y-auto overflow-x-hidden">
 
                 {{ $slot }}
             </div>
