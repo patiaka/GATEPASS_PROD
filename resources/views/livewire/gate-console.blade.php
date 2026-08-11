@@ -6,20 +6,6 @@
         <p class="text-sm text-slate-500">{{ __('Guard post — record entries & exits') }}</p>
     </div>
 
-    {{-- Gate selector (gros boutons) --}}
-    <div class="mb-3">
-        <span class="block text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1.5">{{ __('Gate') }}</span>
-        <div class="grid grid-cols-3 gap-2">
-            @foreach (['Front', 'Back', 'Airport'] as $g)
-                <button type="button" wire:click="setGate('{{ $g }}')" @class([
-                    'h-12 rounded-xl text-sm sm:text-base font-semibold border-2 transition',
-                    'bg-[#134169] text-white border-[#134169] shadow' => $gate === $g,
-                    'bg-white text-slate-600 border-gray-200 hover:border-[#134169]/40' => $gate !== $g,
-                ])>{{ __($g) }}</button>
-            @endforeach
-        </div>
-    </div>
-
     {{-- Search --}}
     <div class="relative mb-5">
         <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
@@ -66,26 +52,22 @@
                 @endif
 
                 {{-- Gros bouton d'action (mouvement opposé au dernier) --}}
-                <button wire:click="record({{ $r->id }})" wire:loading.attr="disabled" wire:target="record({{ $r->id }})"
+                {{-- Ouvre le formulaire de check-in pré-rempli (le mouvement inverse y est présélectionné) --}}
+                <a href="{{ route('car.check_create', ['request' => $r->id]) }}"
                     @class([
-                        'mt-4 h-14 rounded-xl text-base font-bold text-white flex items-center justify-center gap-2 shadow-sm transition disabled:opacity-60',
+                        'mt-4 h-14 rounded-xl text-base font-bold text-white flex items-center justify-center gap-2 shadow-sm transition',
                         'bg-emerald-600 hover:bg-emerald-700' => $isOut,
                         'bg-amber-600 hover:bg-amber-700' => ! $isOut,
                     ])>
-                    <span wire:loading.remove wire:target="record({{ $r->id }})" class="inline-flex items-center gap-2">
-                        @if ($isOut)
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14" /></svg>
-                            {{ __('Record ENTRY') }}
-                        @else
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                            {{ __('Record EXIT') }}
-                        @endif
-                    </span>
-                    <span wire:loading wire:target="record({{ $r->id }})" class="inline-flex items-center gap-2">
-                        <svg class="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="4" /><path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="4" stroke-linecap="round" /></svg>
-                        {{ __('Recording…') }}
-                    </span>
-                </button>
+                    @if ($isOut)
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14" /></svg>
+                        {{ __('Record ENTRY') }}
+                    @else
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                        {{ __('Record EXIT') }}
+                    @endif
+                    <svg class="w-4 h-4 opacity-80" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                </a>
             </div>
         @empty
             <div class="col-span-full flex flex-col items-center justify-center py-16 text-slate-400">

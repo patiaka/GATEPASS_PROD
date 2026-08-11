@@ -48,7 +48,7 @@
 </head>
 
 <body class="relative text-slate-600">
-    <div class="lg:hidden flex items-center justify-between p-4 bg-white shadow">
+    <div class="xl:hidden flex items-center justify-between p-4 bg-white shadow">
         <button id="sidebarToggle" class="text-[#0e3a61] text-2xl focus:outline-none" aria-label="Open menu">
             ☰
         </button>
@@ -82,7 +82,7 @@
                     sidebar()?.classList.contains('-translate-x-full') ? open() : close();
                 } else if (e.target.closest('#overlay')) {
                     close();
-                } else if (e.target.closest('#sidebar a') && window.innerWidth < 1024) {
+                } else if (e.target.closest('#sidebar a') && window.innerWidth < 1280) {
                     // Fermer le tiroir après un clic de navigation sur tablette/mobile
                     close();
                 }
@@ -90,7 +90,7 @@
 
             // Sécurité : à chaque navigation SPA, on repart tiroir fermé sur petit écran.
             document.addEventListener('livewire:navigated', function() {
-                if (window.innerWidth < 1024) close();
+                if (window.innerWidth < 1280) close();
             });
         })();
     </script>
