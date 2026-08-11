@@ -91,7 +91,7 @@
                 <!-- Drivers (multi-select) -->
                 <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
                     <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Drivers</label>
-                    <div class="md:col-span-9 md:w-2/3">
+                    <div class="md:col-span-9 md:w-1/2">
                         <x-select2-multiple :options="$users" optionLabel="full_name" wire:model="form.driver_ids"
                             placeholder="Select one or more drivers" />
                         @error('form.driver_ids')
@@ -161,7 +161,7 @@
                 <!-- Passengers (multi-select) -->
                 <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
                     <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Residents</label>
-                    <div class="md:col-span-9 md:w-2/3">
+                    <div class="md:col-span-9 md:w-1/2">
                         <x-select2-multiple :options="$users" optionLabel="full_name" wire:model="form.passenger_ids"
                             placeholder="Select one or more residents" />
                         @error('form.passenger_ids')
