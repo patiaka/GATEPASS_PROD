@@ -106,13 +106,14 @@
            Bloc non-layered : il prime sur les utilitaires Tailwind (layered).
            Scopé à .main (en-tête + contenu) pour préserver le sidebar déjà sombre. */
         html.dark {
-            --dk-bg: #0f172a;        /* fond page (le plus foncé) */
-            --dk-surface: #1e293b;   /* cartes / panneaux */
-            --dk-surface-2: #172033; /* zones douces (slate-50 / gray-50) */
-            --dk-border: #334155;
-            --dk-ink: #e2e8f0;       /* texte fort */
-            --dk-muted: #94a3b8;     /* texte discret */
-            --dk-brand: #7fb0e0;     /* bleu marque éclairci (contraste sur foncé) */
+            /* Palette « dimmed » : douce pour les yeux (faible contraste, gris tièdes) */
+            --dk-bg: #1c2128;        /* fond page (le plus foncé) */
+            --dk-surface: #22272e;   /* cartes / panneaux */
+            --dk-surface-2: #2d333b; /* zones douces (slate-50 / gray-50, en-têtes de table) */
+            --dk-border: #373e47;
+            --dk-ink: #adbac7;       /* texte principal (adouci, pas blanc pur) */
+            --dk-muted: #768390;     /* texte discret */
+            --dk-brand: #6cb6ff;     /* bleu marque éclairci (contraste sur foncé) */
             color-scheme: dark;
         }
         html.dark body { background-color: var(--dk-bg); color: var(--dk-ink); }
@@ -160,7 +161,7 @@
 
         /* Survols */
         html.dark .main .hover\:bg-gray-50:hover, html.dark .main .hover\:bg-slate-50:hover,
-        html.dark .main .hover\:bg-gray-100:hover, html.dark .main .hover\:bg-slate-100:hover { background-color: #334155 !important; }
+        html.dark .main .hover\:bg-gray-100:hover, html.dark .main .hover\:bg-slate-100:hover { background-color: #363e48 !important; }
 
         /* Pastilles de statut (-50) : teinte translucide, la couleur du texte est conservée */
         html.dark .main .bg-emerald-50 { background-color: rgba(16,185,129,.15) !important; }
@@ -223,6 +224,16 @@
             window.__gpNavInit = true;
             document.addEventListener('livewire:navigated', function () {
                 document.documentElement.classList.remove('nav-open');
+                // Réapplique le thème après une navigation SPA (au cas où <html> serait réinitialisé)
+                try {
+                    var t = localStorage.getItem('gp-theme');
+                    var dark = (t === 'dark') || (t === null && window.matchMedia
+                        && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                    document.documentElement.classList.toggle('dark', dark);
+                    if (localStorage.getItem('gp-sidebar-mini') === '1') {
+                        document.documentElement.classList.add('nav-mini');
+                    }
+                } catch (e) {}
             });
         }
     </script>
