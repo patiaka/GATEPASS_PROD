@@ -43,6 +43,7 @@ final class MaterialRequestShow extends Component
     {
         Gate::authorize('cancel-request', $this->MaterialRequest);
         $this->MaterialRequest->cancel();
+        \App\Events\RequestCancelled::dispatch($this->MaterialRequest->fresh());
         flash()->success('Request cancelled.');
 
         return $this->redirectRoute('material.index');

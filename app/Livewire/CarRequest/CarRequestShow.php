@@ -50,6 +50,7 @@ final class CarRequestShow extends Component
     {
         Gate::authorize('cancel-request', $this->carRequest);
         $this->carRequest->cancel();
+        \App\Events\RequestCancelled::dispatch($this->carRequest->fresh());
         flash()->success('Request cancelled.');
 
         return $this->redirectRoute('car.index');

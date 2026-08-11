@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Enum\RoleEnum;
 use App\Events\RequestApprovalSubmitted;
+use App\Events\RequestCancelled;
 use App\Events\RequestCreated;
 use App\Models\CarRequest;
 use App\Models\MaterialRequest;
@@ -81,6 +82,25 @@ class RequestEventSubscriber
         );
     }
 
+    public function handleRequestCancelled(RequestCancelled $event): void
+    {
+        $model = $event->model;
+        $model->loadMissing('user');
+
+        // Notifie le(s) HOD du département du demandeur que la demande a été annulée.
+        Notification::send(
+            $this->getHodUsers($model->user->department_id),
+            new UserRequestNotification(
+                $this->getRoute($model),
+                sprintf(
+                    'A %s gate pass request has been cancelled. Reference: %s',
+                    $model instanceof MaterialRequest ? 'material' : 'vehicle',
+                    $model->reference
+                )
+            )
+        );
+    }
+
     private function getHodUsers(int $departmentId): Collection
     {
         return User::where('department_id', $departmentId)
@@ -109,6 +129,7 @@ class RequestEventSubscriber
         return [
             RequestCreated::class => 'handleRequestCreated',
             RequestApprovalSubmitted::class => 'handleRequestApprovalSubmitted',
+            RequestCancelled::class => 'handleRequestCancelled',
         ];
     }
 }

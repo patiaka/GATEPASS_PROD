@@ -61,9 +61,12 @@ final class AppServiceProvider extends ServiceProvider
             }
         });
         Gate::define('cancel-request', function (User $user, MaterialRequest|CarRequest $request) {
-            // Seul l'administrateur peut annuler, et seulement une demande qui ne
-            // l'est pas déjà (ou expirée).
-            return $user->isAdmin() && ! $request->isCancelled() && ! $request->isExpired();
+            // Seul l'administrateur peut annuler. Une demande approuvée n'est plus
+            // annulable ; ni une demande déjà annulée ou expirée.
+            return $user->isAdmin()
+                && ! $request->isApproved()
+                && ! $request->isCancelled()
+                && ! $request->isExpired();
         });
 
         Gate::define('download-request', function (User $user, MaterialRequest|CarRequest $request) {
@@ -91,10 +94,15 @@ final class AppServiceProvider extends ServiceProvider
 
        Gate::define('delete-request', function (User $user, MaterialRequest|CarRequest $Request) {
             if ($Request instanceof CarRequest || $Request instanceof MaterialRequest) {
+                // Une demande approuvée n'est plus supprimable (personne, admin inclus)
+                if ($Request->isApproved()) {
+                    return false;
+                }
+
                 if ($user->isAdmin()) {
                     return true;
                 }
-                
+
                 if ((int) $Request->user_id === (int) $user->id && $Request->isPending()) {
                     return true;
                 }
