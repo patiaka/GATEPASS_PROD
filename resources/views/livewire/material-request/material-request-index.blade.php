@@ -37,6 +37,17 @@
                         @endforeach
                     </x-select>
                 </div>
+
+                {{-- Filtre période --}}
+                <div class="inline-flex items-center rounded-lg border border-gray-300 bg-gray-50 p-0.5 self-end">
+                    @foreach (['all' => 'All', 'today' => 'Today', 'week' => 'Week', 'month' => 'Month'] as $key => $label)
+                        <button type="button" wire:click="setPeriod('{{ $key }}')" @class([
+                            'px-3 py-1.5 rounded-md text-xs font-medium transition whitespace-nowrap',
+                            'bg-[#134169] text-white shadow-sm' => $period === $key,
+                            'text-slate-600 hover:text-slate-900' => $period !== $key,
+                        ])>{{ $label }}</button>
+                    @endforeach
+                </div>
             </div>
         </x-slot:filter>
 

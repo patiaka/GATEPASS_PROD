@@ -28,7 +28,7 @@ final class CarRequestIndex extends Component
 
     public function ResetFilter(): void
     {
-        $this->reset('department', 'status', 'search');
+        $this->reset('department', 'status', 'search', 'by_status', 'period', 'debut', 'fin');
     }
 
     #[Computed]
@@ -50,6 +50,7 @@ final class CarRequestIndex extends Component
             ->when($this->search, function ($query) {
                 $query->whereAny(['reference', 'status'], 'like', '%'.$this->search.'%');
             })
+            ->tap(fn ($query) => $this->applyPeriod($query))
             ->latest('id')
             ->paginate(10)
         ;

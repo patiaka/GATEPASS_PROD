@@ -30,7 +30,7 @@ final class MaterialRequestIndex extends Component
 
     public function ResetFilter(): void
     {
-        $this->reset('department', 'status', 'search', 'compagny');
+        $this->reset('department', 'status', 'search', 'by_status', 'period', 'debut', 'fin');
     }
 
     #[Computed]
@@ -56,6 +56,7 @@ final class MaterialRequestIndex extends Component
                         ->orWhere('status', 'like', '%'.$this->search.'%');
                 });
             })
+            ->tap(fn ($query) => $this->applyPeriod($query))
         ;
 
         return $query->orderByDesc('id')->paginate(10);

@@ -35,7 +35,12 @@
                 </div>
             @endif
 
-            <form wire:submit="save" enctype="multipart/form-data" method="post" class="space-y-6">
+            <form wire:submit="save" enctype="multipart/form-data" method="post" class="space-y-6"
+                x-data="{ uploading: false, progress: 0 }"
+                x-on:livewire-upload-start="uploading = true"
+                x-on:livewire-upload-finish="uploading = false; progress = 0"
+                x-on:livewire-upload-error="uploading = false"
+                x-on:livewire-upload-progress="progress = $event.detail.progress">
 
                 <p class="text-xs text-slate-400">Fields marked <span class="text-red-500 font-semibold">*</span> are required.</p>
 
@@ -157,40 +162,101 @@
                         </button>
                     </div>
 
-                    <!-- File upload -->
+                    <!-- Images upload -->
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Request document (Image)</label>
-                        <input type="file" wire:model="form.photos" onchange="previewImages(event)" multiple
-                            class="block w-full text-sm text-gray-500
-                                file:mr-4 file:py-2 file:px-4
-                                file:rounded-md file:border-0
-                                file:text-sm file:font-semibold
-                                file:bg-blue-50 file:text-blue-700
-                                hover:file:bg-blue-100">
-                    </div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Add document(s) (images)</label>
 
-                    <div class="my-4">
-                        <div wire:ignore>
-                            <div id="preview" class="flex gap-4 mt-4"></div>
+                        {{-- Dropzone (clic OU glisser-déposer) --}}
+                        <label for="material-photos"
+                            x-data="{ over: false }"
+                            x-on:dragover.prevent="over = true"
+                            x-on:dragenter.prevent="over = true"
+                            x-on:dragleave.prevent="over = false"
+                            x-on:drop.prevent="
+                                over = false;
+                                const input = document.getElementById('material-photos');
+                                if ($event.dataTransfer && $event.dataTransfer.files.length) {
+                                    input.files = $event.dataTransfer.files;
+                                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                                }
+                            "
+                            :class="over ? 'border-[#134169] bg-blue-50/60' : 'border-gray-300 bg-gray-50'"
+                            class="flex flex-col items-center justify-center w-full border-2 border-dashed rounded-xl px-4 py-6 cursor-pointer hover:border-[#134169] hover:bg-blue-50/40 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                            </svg>
+                            <span class="text-sm text-slate-600 mt-2 pointer-events-none"><span class="font-medium text-[#134169]">Click to upload</span> or drag &amp; drop</span>
+                            <span class="text-xs text-slate-400 mt-1 pointer-events-none">JPEG, PNG · max 4 MB each · up to 5 images</span>
+                            <input id="material-photos" type="file" wire:model="form.photos"
+                                accept="image/jpeg,image/png,image/jpg" multiple class="hidden">
+                        </label>
+
+                        {{-- Progress bar (pendant l'upload) --}}
+                        <div x-show="uploading" x-cloak class="mt-3">
+                            <div class="flex items-center justify-between text-xs text-slate-500 mb-1">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
+                                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="4" />
+                                        <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+                                    </svg>
+                                    Uploading…
+                                </span>
+                                <span x-text="progress + '%'"></span>
+                            </div>
+                            <div class="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+                                <div class="h-full bg-[#134169] transition-all" :style="`width: ${progress}%`"></div>
+                            </div>
                         </div>
-                    </div>
 
-                    @error('form.photos.*')
-                        <small class="text-red-500 text-sm">{{ $message }}</small>
-                    @enderror
+                        @error('form.photos')
+                            <small class="text-red-500 text-sm">{{ $message }}</small>
+                        @enderror
+                        @error('form.photos.*')
+                            <small class="text-red-500 text-sm">{{ $message }}</small>
+                        @enderror
+
+                        {{-- Aperçus des nouveaux fichiers téléversés (avec suppression) --}}
+                        @if (! empty($form->photos))
+                            <div class="grid grid-cols-3 sm:grid-cols-5 gap-3 mt-3">
+                                @foreach ($form->photos as $index => $photo)
+                                    <div class="relative group aspect-square rounded-xl border border-gray-200 bg-white overflow-hidden"
+                                        wire:key="photo-{{ $index }}">
+                                        @if (is_object($photo) && method_exists($photo, 'isPreviewable') && $photo->isPreviewable())
+                                            <img src="{{ $photo->temporaryUrl() }}" class="w-full h-full object-cover" alt="preview">
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center text-slate-300">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                                                </svg>
+                                            </div>
+                                        @endif
+                                        <button type="button" wire:click="removePhoto({{ $index }})"
+                                            class="absolute top-1 right-1 inline-flex items-center justify-center w-6 h-6 rounded-full bg-black/50 text-white hover:bg-red-600 transition"
+                                            title="Remove image">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
                 </div>
 
 
-                <div class="mt-6">
-                    @if ($materialRequest->documents)
+                {{-- Documents déjà enregistrés --}}
+                @if ($materialRequest->documents && $materialRequest->documents->isNotEmpty())
+                    <div class="mt-2">
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Existing documents</p>
                         <div class="flex flex-wrap gap-4">
                             @foreach ($materialRequest->documents as $row)
                                 <img class="max-w-[300px] h-auto rounded-md border border-gray-200"
                                     src="{{ $row->DocLink() }}" alt="Image">
                             @endforeach
                         </div>
-                    @endif
-                </div>
+                    </div>
+                @endif
                 <div class="flex justify-center gap-4 mt-6">
                     <x-form-action cancel="material.index" target="save"
                         :label="$materialRequest->isRejected() ? 'Revise & resubmit' : 'Save changes'"
@@ -199,17 +265,4 @@
             </form>
         </div>
     </div>
-    <script>
-        function previewImages(event) {
-            const preview = document.getElementById('preview');
-            preview.innerHTML = '';
-
-            Array.from(event.target.files).forEach(file => {
-                const img = document.createElement('img');
-                img.src = URL.createObjectURL(file);
-                img.className = 'max-w-[100px] h-100 rounded border';
-                preview.appendChild(img);
-            });
-        }
-    </script>
 </div>
