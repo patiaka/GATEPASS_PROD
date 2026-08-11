@@ -2,7 +2,7 @@
     <div class="bg-white rounded-lg shadow-md">
 
         <div class="flex justify-between items-center border-b border-gray-200 p-4">
-            <h1 class="text-xl font-semibold text-gray-800">Material Off Site Request Form</h1>
+            <h1 class="text-2xl font-bold text-[#0e3a61] tracking-tight">Edit Material Off Site Request</h1>
             <a href="{{ route('material.index') }}"
             class="inline-flex items-center gap-2 px-4 py-2 rounded-lg
             bg-[#0e3a61] text-white text-sm font-medium
@@ -37,8 +37,10 @@
 
             <form wire:submit="save" enctype="multipart/form-data" method="post" class="space-y-6">
 
+                <p class="text-xs text-slate-400">Fields marked <span class="text-red-500 font-semibold">*</span> are required.</p>
+
                 <div class="w-full">
-                    <x-input type="text" wire:model="form.company" name="company" label="company" place="company" />
+                    <x-input type="text" wire:model="form.company" name="company" label="Company" place="company" />
                     @error('form.company')
                         <small class="text-red-500 text-sm">{{ $message }}</small>
                     @enderror
@@ -48,11 +50,11 @@
 
                         <div class="inline-flex items-center gap-2 mb-2">
                             <button type="button" wire:click="setPersonOutMode('list')"
-                                class="px-3 py-1 text-xs font-medium rounded-md border {{ $personOutMode === 'list' ? 'bg-[#0e3a61] text-white border-[#0e3a61]' : 'bg-white text-gray-700 border-gray-300' }}">
+                                class="px-3 py-1.5 text-xs font-medium rounded-lg border transition {{ $personOutMode === 'list' ? 'bg-[#0e3a61] text-white border-[#0e3a61]' : 'bg-white text-gray-700 border-gray-300' }}">
                                 From list
                             </button>
                             <button type="button" wire:click="setPersonOutMode('manual')"
-                                class="px-3 py-1 text-xs font-medium rounded-md border {{ $personOutMode === 'manual' ? 'bg-[#0e3a61] text-white border-[#0e3a61]' : 'bg-white text-gray-700 border-gray-300' }}">
+                                class="px-3 py-1.5 text-xs font-medium rounded-lg border transition {{ $personOutMode === 'manual' ? 'bg-[#0e3a61] text-white border-[#0e3a61]' : 'bg-white text-gray-700 border-gray-300' }}">
                                 Enter manually
                             </button>
                         </div>
@@ -68,7 +70,7 @@
                         @else
                             <div wire:key="person-out-manual">
                                 <input type="text" wire:model="form.person_out_name" placeholder="Enter full name"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] transition">
                                 @error('form.person_out_name')
                                     <small class="text-red-500 text-sm">{{ $message }}</small>
                                 @enderror
@@ -78,16 +80,23 @@
 
                     <!-- Liste des matériels -->
                     <div class="my-6">
-                        <h5 class="mb-4 text-lg font-medium">Matérial infos</h5>
+                        <h5 class="mb-4 text-base font-semibold text-[#0e3a61] flex items-center gap-2">
+                            <span class="inline-flex items-center justify-center h-7 w-7 rounded-full bg-[#0e3a61]/10 text-[#0e3a61]">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4" />
+                                </svg>
+                            </span>
+                            Materials <span class="text-red-500 text-sm">*</span>
+                        </h5>
                         @foreach ($form->materials as $index => $material)
                             <div class="grid grid-cols-12 gap-4 mb-3 items-start">
                                 <!-- Désignation -->
                                 <div class="col-span-3">
                                     <label for="designation"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Designation</label>
+                                        class="block text-sm font-medium text-gray-700 mb-1">Designation <span class="text-red-500">*</span></label>
                                     <input type="text" wire:model="form.materials.{{ $index }}.designation"
                                         placeholder="Designation"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] transition">
                                     @error("form.materials.$index.designation")
                                         <small class="text-red-500 text-sm">{{ $message }}</small>
                                     @enderror
@@ -96,10 +105,10 @@
                                 <!-- Quantité -->
                                 <div class="col-span-3">
                                     <label for="quantity"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                                        class="block text-sm font-medium text-gray-700 mb-1">Quantity <span class="text-red-500">*</span></label>
                                     <input type="number" wire:model="form.materials.{{ $index }}.quantity"
                                         placeholder="Quantity"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] transition"
                                         min="1">
                                     @error("form.materials.$index.quantity")
                                         <small class="text-red-500 text-sm">{{ $message }}</small>
@@ -111,22 +120,24 @@
                                         Number</label>
                                     <input type="text" wire:model="form.materials.{{ $index }}.serial_number"
                                         placeholder="serial_number"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] transition">
                                     @error("form.materials.$index.serial_number")
                                         <small class="text-red-500 text-sm">{{ $message }}</small>
                                     @enderror
                                 </div>
 
                                 <!-- Bouton supprimer -->
-                                <div class="col-span-2 mt-6">
+                                <div class="col-span-3 mt-6 flex md:justify-start">
                                     <button type="button" wire:click="removeMaterial({{ $index }})"
-                                        class="w-full flex items-center justify-center px-4 py-2 border border-transparent font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        @disabled(count($form->materials) <= 1)
+                                        class="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-md text-sm font-medium text-red-600 border border-red-200 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-red-500 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                                        title="Remove this material">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
-                                        Delete
+                                        Remove
                                     </button>
                                 </div>
                             </div>
