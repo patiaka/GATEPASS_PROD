@@ -47,7 +47,12 @@
 <body class="text-[12px] text-gray-900 leading-relaxed">
 
     <!-- Header -->
-    <header class="relative h-24 bg-[#0F3369] text-white flex items-center justify-center">
+    @php $logoPath = public_path('assets/img/logo.jpg'); @endphp
+    <header class="relative h-24 bg-[#0F3369] text-white flex items-center justify-center px-6">
+        @if (is_file($logoPath))
+            <img src="data:image/jpeg;base64,{{ base64_encode(file_get_contents($logoPath)) }}"
+                alt="Somisy" class="absolute left-6 h-16 w-auto bg-white rounded p-1" />
+        @endif
         <h1 class="text-xl font-bold uppercase tracking-wider text-center">
             Gate Pass / Bon de Sortie
         </h1>

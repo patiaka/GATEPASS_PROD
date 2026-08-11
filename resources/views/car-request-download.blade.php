@@ -100,11 +100,16 @@
 
 <body class="leading-snug">
     {{-- Header with Title (keeps backend data as-is) --}}
+    @php $logoPath = public_path('assets/img/logo.jpg'); @endphp
     <div class="flex justify-between items-start mb-2">
         <div class="flex items-center gap-3">
-            {{-- <img src="/assets/img/logo.jpg" alt="Logo" style="height: 48px; width: auto;" /> --}}
+            @if (is_file($logoPath))
+                <img src="data:image/jpeg;base64,{{ base64_encode(file_get_contents($logoPath)) }}"
+                    alt="Somisy" style="height: 52px; width: auto;" />
+            @endif
             <div>
                 <div class="text-lg font-bold brand-text">Resident and Vehicle Off Site Form</div>
+                <div class="text-xs text-gray-500">Somisy — Gate Pass</div>
             </div>
         </div>
         <div class="text-right text-xs">
