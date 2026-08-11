@@ -47,7 +47,7 @@
 
             @if (Auth::user()->isAdmin())
                 <li>
-                    @php $dbOpen = request()->routeIs('user.*') || request()->routeIs('department.*'); @endphp
+                    @php $dbOpen = request()->routeIs('user.*') || request()->routeIs('department.*') || request()->routeIs('audit.*'); @endphp
                     <details class="group" {{ $dbOpen ? 'open' : '' }}>
                         <summary
                             class="flex items-center gap-3 px-3 py-2 rounded transition-colors group-open:bg-white/5 group-open:text-white hover:bg-white/10 hover:text-white cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
@@ -86,6 +86,17 @@
                                             d="M3 21v-8a4 4 0 014-4h10a4 4 0 014 4v8M7 21v-4h10v4M7 10V7a4 4 0 018 0v3" />
                                     </svg>
                                     <span class="text-sm">{{ __('Department Database') }}</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a wire:navigate href="{{ route('audit.index') }}"
+                                    class="flex items-center gap-3 px-3 py-2 rounded transition-colors text-xs
+                                      {{ request()->routeIs('audit.*') ? 'bg-white/15 text-white font-semibold shadow-[inset_3px_0_0_0_#ffd324]' : 'hover:bg-white/10 hover:text-white' }}">
+                                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('audit.*') ? 'text-white' : 'text-white/80' }}"
+                                        fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2Z" />
+                                    </svg>
+                                    <span class="text-sm">{{ __('Audit log') }}</span>
                                 </a>
                             </li>
                         </ul>

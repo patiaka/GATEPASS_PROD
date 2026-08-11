@@ -11,6 +11,7 @@ use App\Livewire\CarRequest\CarRequestIndex;
 use App\Livewire\CarRequest\CarRequestPending;
 use App\Livewire\CarRequest\CarRequestShow;
 use App\Livewire\CarRequest\CarRequestUpdate;
+use App\Livewire\Audit\AuditLog;
 use App\Livewire\Dashboard;
 use App\Livewire\GateConsole;
 use App\Livewire\Department\DepartmentCreate;
@@ -57,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('department/create', DepartmentCreate::class)->name('department.create');
         Route::get('department/{department}/edit', DepartmentEdit::class)->name('department.edit');
         Route::get('settings', SettingsIndex::class)->name('settings.index');
+        Route::get('audit/log', AuditLog::class)->name('audit.index');
     });
 
     // Check-in : listes visibles par Admin, GM, Security (lecture)

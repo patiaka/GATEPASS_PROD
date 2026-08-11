@@ -72,5 +72,23 @@
     "Exit": "Sortie",
     ":action recorded for :ref (:gate gate)": ":action enregistré pour :ref (porte :gate)",
     "This request has expired.": "Cette demande a expiré.",
-    "This request is not available.": "Cette demande n'est pas disponible."
+    "This request is not available.": "Cette demande n'est pas disponible.",
+
+    "Audit log": "Journal d'audit",
+    "Logins and changes to requests": "Connexions et modifications des demandes",
+    "Request changes": "Modifs des demandes",
+    "Logins": "Connexions",
+    "Search…": "Rechercher…",
+    "Date": "Date",
+    "IP address": "Adresse IP",
+    "Device": "Appareil",
+    "Type": "Type",
+    "Reference": "Référence",
+    "Event": "Événement",
+    "Changes": "Modifications",
+    "System": "Système",
+    "Created": "Créée",
+    "Updated": "Modifiée",
+    "Deleted": "Supprimée",
+    "No entry.": "Aucune entrée."
 }

@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Listeners\LogSuccessfulLogin;
 use App\Models\CarRequest;
 use App\Models\MaterialRequest;
 use App\Models\User;
+use App\Observers\RequestAuditObserver;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -30,6 +34,11 @@ final class AppServiceProvider extends ServiceProvider
         Model::automaticallyEagerLoadRelationships();
         Model::shouldBeStrict(! app()->isProduction());
         // URL::forceHttps(app()->isProduction());
+
+        // Audit : connexions + modifications des demandes
+        Event::listen(Login::class, LogSuccessfulLogin::class);
+        CarRequest::observe(RequestAuditObserver::class);
+        MaterialRequest::observe(RequestAuditObserver::class);
 
         Gate::define('update-request', function (User $user, MaterialRequest|CarRequest $Request) {
             if ($Request instanceof CarRequest || $Request instanceof MaterialRequest) {
