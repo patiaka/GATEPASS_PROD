@@ -48,7 +48,19 @@
         </tbody>
     </table>
 
-    <h2>Exits by department</h2>
+    <h2>Top companies by check-outs (vehicle + material)</h2>
+    <table>
+        <thead><tr><th>Company</th><th class="num">Check-outs</th></tr></thead>
+        <tbody>
+            @forelse ($topCompanies as $r)
+                <tr><td>{{ $r->label }}</td><td class="num">{{ $r->total }}</td></tr>
+            @empty
+                <tr><td colspan="2" class="empty">No check-out recorded for this filter.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    <h2>Exits by department (vehicle + material)</h2>
     <table>
         <thead><tr><th>Department</th><th class="num">Exits</th></tr></thead>
         <tbody>

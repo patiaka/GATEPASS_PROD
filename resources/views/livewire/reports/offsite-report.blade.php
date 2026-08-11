@@ -4,7 +4,7 @@
     <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 border-b pb-4">
         <div>
             <h1 class="text-2xl font-bold text-[#134169]">Offsite Records</h1>
-            <p class="text-sm text-slate-500 mt-1">Vehicle exits analytics — busiest vehicles and departments</p>
+            <p class="text-sm text-slate-500 mt-1">Check-out analytics — busiest companies, vehicles and departments</p>
         </div>
 
         {{-- Export buttons --}}
@@ -117,7 +117,7 @@
         <section class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="font-semibold text-sm text-[#134169]">Exits by department</h2>
-                <span class="text-xs text-slate-400">All departments</span>
+                <span class="text-xs text-slate-400">Vehicle + material</span>
             </div>
 
             @php $maxD = $byDepartment->max('total') ?: 1; @endphp
@@ -134,6 +134,27 @@
             @endforelse
         </section>
     </div>
+
+    {{-- Top companies (vehicle + material) --}}
+    <section class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="font-semibold text-sm text-[#134169]">Top companies by check-outs</h2>
+            <span class="text-xs text-slate-400">Vehicle + material · Top 10</span>
+        </div>
+
+        @php $maxC = $topCompanies->max('total') ?: 1; @endphp
+        @forelse ($topCompanies as $row)
+            <div class="flex items-center gap-3 py-1.5" title="{{ $row->label }} — {{ $row->total }} check-outs">
+                <span class="w-40 shrink-0 text-xs font-medium text-slate-600 truncate">{{ $row->label }}</span>
+                <div class="flex-1 h-4 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-4 rounded-full bg-[#134169]" style="width: {{ max(4, round($row->total / $maxC * 100)) }}%"></div>
+                </div>
+                <span class="w-8 text-right text-xs font-bold text-slate-700">{{ $row->total }}</span>
+            </div>
+        @empty
+            <p class="text-sm text-slate-400 italic py-6 text-center">No check-out recorded for this filter.</p>
+        @endforelse
+    </section>
 
     {{-- Over time --}}
     <section class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">

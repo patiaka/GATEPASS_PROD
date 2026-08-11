@@ -7,7 +7,9 @@ namespace App\Livewire\Reports;
 use App\Exports\OffsiteReportExport;
 use App\Models\CarRequest;
 use App\Models\Department;
+use App\Models\MaterialRequest;
 use App\Models\Recording;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Title;
@@ -62,6 +64,41 @@ final class OffsiteReport extends Component
             ->when($withDepartment && $this->department !== '', fn ($q) => $q->where('users.department_id', $this->department));
     }
 
+    /**
+     * Sorties (check-out) groupées par société ou par département, en combinant
+     * VÉHICULE + MATÉRIEL. La société vient du champ « company » saisi
+     * manuellement sur la demande.
+     *
+     * @param  'company'|'department'  $by
+     */
+    private function exitsGrouped(string $by, ?Carbon $since, bool $applyDeptFilter = true): Collection
+    {
+        $build = function (string $table, string $type) use ($by, $since, $applyDeptFilter) {
+            $q = DB::table('recordings')
+                ->join($table, 'recordings.requestable_id', '=', "$table.id")
+                ->join('users', "$table.user_id", '=', 'users.id')
+                ->leftJoin('departments', 'users.department_id', '=', 'departments.id')
+                ->where('recordings.action', 'Exit')
+                ->where('recordings.requestable_type', $type)
+                ->when($since, fn ($x) => $x->where('recordings.created_at', '>=', $since))
+                ->when($this->gate !== '', fn ($x) => $x->where('recordings.gate', $this->gate))
+                ->when($applyDeptFilter && $this->department !== '', fn ($x) => $x->where('users.department_id', $this->department));
+
+            return $by === 'company'
+                ? $q->groupBy("$table.company")
+                    ->selectRaw("COALESCE(NULLIF(LTRIM(RTRIM($table.company)), ''), 'Unknown') as label, COUNT(*) as total")
+                : $q->groupBy('departments.name')
+                    ->selectRaw("COALESCE(departments.name, 'Unassigned') as label, COUNT(*) as total");
+        };
+
+        return $build('car_requests', CarRequest::class)->get()
+            ->concat($build('material_requests', MaterialRequest::class)->get())
+            ->groupBy('label')
+            ->map(fn ($g) => (object) ['label' => $g->first()->label, 'total' => (int) $g->sum('total')])
+            ->sortByDesc('total')
+            ->values();
+    }
+
     /** Toutes les données du rapport, partagées par l'affichage et les exports. */
     private function data(): array
     {
@@ -83,12 +120,11 @@ final class OffsiteReport extends Component
             ->limit(10)
             ->get();
 
-        // Vue d'ensemble par département (ignore le filtre département)
-        $byDepartment = (clone $this->movementsBase('Exit', $since, withDepartment: false))
-            ->groupBy('departments.name')
-            ->selectRaw("COALESCE(departments.name, 'Unassigned') as label, COUNT(*) as total")
-            ->orderByDesc('total')
-            ->get();
+        // Top sociétés (véhicule + matériel), regroupées par nom saisi manuellement
+        $topCompanies = $this->exitsGrouped('company', $since)->take(10);
+
+        // Vue d'ensemble par département (véhicule + matériel), ignore le filtre département
+        $byDepartment = $this->exitsGrouped('department', $since, applyDeptFilter: false);
 
         $timeSince = $since ?? Carbon::now()->subDays(29)->startOfDay();
         $overTime = (clone $this->movementsBase('Exit', $timeSince))
@@ -97,7 +133,7 @@ final class OffsiteReport extends Component
             ->orderBy('d')
             ->get();
 
-        return compact('exitsCount', 'entriesCount', 'currentlyOut', 'distinctVehicles', 'topVehicles', 'byDepartment', 'overTime');
+        return compact('exitsCount', 'entriesCount', 'currentlyOut', 'distinctVehicles', 'topVehicles', 'topCompanies', 'byDepartment', 'overTime');
     }
 
     /** Libellé lisible des filtres actifs (pour l'en-tête d'export). */
@@ -123,6 +159,10 @@ final class OffsiteReport extends Component
             'Top vehicles' => [
                 'headings' => ['Vehicle', 'Exits'],
                 'rows' => $d['topVehicles']->map(fn ($r) => [$r->label, $r->total])->all(),
+            ],
+            'Top companies' => [
+                'headings' => ['Company', 'Exits'],
+                'rows' => $d['topCompanies']->map(fn ($r) => [$r->label, $r->total])->all(),
             ],
             'By department' => [
                 'headings' => ['Department', 'Exits'],
