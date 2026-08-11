@@ -73,13 +73,7 @@ final class MaterialRequestShow extends Component
 
         $path = storage_path("app/request-{$MaterialRequest->reference}.pdf");
 
-        Browsershot::html($html)
-            ->noSandbox()
-            ->timeout(120)
-            ->margins(10, 10, 10, 10)
-            ->format('A4')
-            ->showBackground()
-            ->save($path);
+        \App\Support\Pdf::make($html)->save($path);
 
         return response()->download($path)->deleteFileAfterSend(true);
     }

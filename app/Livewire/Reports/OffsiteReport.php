@@ -357,13 +357,7 @@ final class OffsiteReport extends Component
 
             $path = storage_path('app/offsite-report-'.now()->format('Ymd-His').'.pdf');
 
-            Browsershot::html($html)
-                ->noSandbox()          // requis par Chrome headless sur Windows Server
-                ->timeout(120)         // laisse le temps à Chrome de démarrer/rendre
-                ->margins(10, 10, 10, 10)
-                ->format('A4')
-                ->showBackground()
-                ->save($path);
+            \App\Support\Pdf::make($html)->save($path);
 
             return response()->download($path)->deleteFileAfterSend(true);
         } catch (Throwable $e) {
