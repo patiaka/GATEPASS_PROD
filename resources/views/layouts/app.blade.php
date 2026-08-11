@@ -56,7 +56,7 @@
         /* Grand écran : sidebar fixe ; rail d'icônes via .nav-mini */
         @media (min-width: 1280px) {
             #sidebar { position: static; transform: none; transition: width .2s ease; }
-            html.nav-mini #sidebar { width: 4.75rem; }
+            html.nav-mini #sidebar { width: 4.75rem !important; }
             html.nav-mini #sidebar > a,
             html.nav-mini #sidebar h2,
             html.nav-mini #sidebar span,
@@ -67,7 +67,7 @@
             html.nav-mini #sidebarCollapse svg { transform: rotate(180deg); }
 
             /* Survol : ré-expansion pour accéder aux libellés & sous-menus */
-            html.nav-mini #sidebar:hover { width: 18rem; }
+            html.nav-mini #sidebar:hover { width: 18rem !important; }
             html.nav-mini #sidebar:hover > a,
             html.nav-mini #sidebar:hover h2,
             html.nav-mini #sidebar:hover span,
