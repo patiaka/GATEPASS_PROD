@@ -12,6 +12,7 @@ use App\Livewire\CarRequest\CarRequestPending;
 use App\Livewire\CarRequest\CarRequestShow;
 use App\Livewire\CarRequest\CarRequestUpdate;
 use App\Livewire\Dashboard;
+use App\Livewire\GateConsole;
 use App\Livewire\Department\DepartmentCreate;
 use App\Livewire\Department\DepartmentEdit;
 use App\Livewire\Department\DepartmentIndex;
@@ -68,6 +69,9 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:' . RoleEnum::Security->value . ',' . RoleEnum::ADMIN->value)->group(function () {
         Route::get('car/request/check/in/create', CarRequestCheckInCreate::class)->name('car.check_create');
         Route::get('material/request/check/in/create', MaterialRequestCheckInCreate::class)->name('material.check_create');
+
+        // Poste de garde : check-in express (tablette)
+        Route::get('gate/console', GateConsole::class)->name('gate.console');
     });
 
     // Rapports : Admin, GM, Security

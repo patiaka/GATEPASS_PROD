@@ -199,6 +199,20 @@
                 </details>
             </li>
 
+            @if (Auth::user()->isAdmin() || Auth::user()->isSecurity())
+                <li>
+                    <a wire:navigate href="{{ route('gate.console') }}"
+                        class="group flex items-center gap-3 py-2 px-3 rounded-md transition-colors
+                          {{ request()->routeIs('gate.console') ? 'bg-white/15 text-white font-semibold shadow-[inset_3px_0_0_0_#ffd324]' : 'text-white/90 hover:bg-white/10 hover:text-white' }}">
+                        <svg class="w-6 h-6 shrink-0 {{ request()->routeIs('gate.console') ? 'text-white' : 'text-white/80 group-hover:text-white' }}"
+                            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                        </svg>
+                        <span class="text-sm font-normal">{{ __('Gate console') }}</span>
+                    </a>
+                </li>
+            @endif
+
             @if (Auth::user()->isApprover())
                 <li>
                     @php $apprOpen = request()->routeIs('material.pending') || request()->routeIs('car.pending'); @endphp

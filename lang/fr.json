@@ -52,5 +52,25 @@
     "Long duration": "Longue durée",
     "A vehicle request's validity end date is computed from its start date. « Long duration » applies when the requester ticks the long-duration option.": "La date de fin de validité d'une demande véhicule est calculée à partir de sa date de début. « Longue durée » s'applique quand le demandeur coche l'option longue durée.",
     "Save changes": "Enregistrer",
-    "Saving…": "Enregistrement…"
+    "Saving…": "Enregistrement…",
+
+    "Gate console": "Poste de garde",
+    "Guard post — record entries & exits": "Poste de garde — enregistrer entrées & sorties",
+    "Gate": "Porte",
+    "Front": "Avant",
+    "Back": "Arrière",
+    "Airport": "Aéroport",
+    "Search a vehicle — reference, plate, company, driver…": "Rechercher un véhicule — référence, plaque, société, chauffeur…",
+    "Currently out": "Dehors",
+    "On site": "Sur site",
+    "Driver": "Chauffeur",
+    "Record ENTRY": "Enregistrer ENTRÉE",
+    "Record EXIT": "Enregistrer SORTIE",
+    "Recording…": "Enregistrement…",
+    "No approved vehicle found.": "Aucun véhicule approuvé trouvé.",
+    "Entry": "Entrée",
+    "Exit": "Sortie",
+    ":action recorded for :ref (:gate gate)": ":action enregistré pour :ref (porte :gate)",
+    "This request has expired.": "Cette demande a expiré.",
+    "This request is not available.": "Cette demande n'est pas disponible."
 }
