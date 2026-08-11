@@ -99,6 +99,36 @@ final class OffsiteReport extends Component
             ->values();
     }
 
+    /**
+     * Demandes CRÉÉES groupées par société ou par département, en combinant
+     * véhicule + matériel (compte les demandes, pas les mouvements).
+     *
+     * @param  'company'|'department'  $by
+     */
+    private function requestsGrouped(string $by, ?Carbon $since, bool $applyDeptFilter = true): Collection
+    {
+        $build = function (string $table) use ($by, $since, $applyDeptFilter) {
+            $q = DB::table($table)
+                ->join('users', "$table.user_id", '=', 'users.id')
+                ->leftJoin('departments', 'users.department_id', '=', 'departments.id')
+                ->when($since, fn ($x) => $x->where("$table.created_at", '>=', $since))
+                ->when($applyDeptFilter && $this->department !== '', fn ($x) => $x->where('users.department_id', $this->department));
+
+            return $by === 'company'
+                ? $q->groupBy("$table.company")
+                    ->selectRaw("COALESCE(NULLIF(LTRIM(RTRIM($table.company)), ''), 'Unknown') as label, COUNT(*) as total")
+                : $q->groupBy('departments.name')
+                    ->selectRaw("COALESCE(departments.name, 'Unassigned') as label, COUNT(*) as total");
+        };
+
+        return $build('car_requests')->get()
+            ->concat($build('material_requests')->get())
+            ->groupBy('label')
+            ->map(fn ($g) => (object) ['label' => $g->first()->label, 'total' => (int) $g->sum('total')])
+            ->sortByDesc('total')
+            ->values();
+    }
+
     /** Toutes les données du rapport, partagées par l'affichage et les exports. */
     private function data(): array
     {
@@ -126,6 +156,10 @@ final class OffsiteReport extends Component
         // Vue d'ensemble par département (véhicule + matériel), ignore le filtre département
         $byDepartment = $this->exitsGrouped('department', $since, applyDeptFilter: false);
 
+        // Classements par CRÉATION de demande (véhicule + matériel)
+        $topCompaniesReq = $this->requestsGrouped('company', $since)->take(10);
+        $byDepartmentReq = $this->requestsGrouped('department', $since, applyDeptFilter: false);
+
         $timeSince = $since ?? Carbon::now()->subDays(29)->startOfDay();
         $overTime = (clone $this->movementsBase('Exit', $timeSince))
             ->selectRaw('CAST(recordings.created_at AS DATE) as d, COUNT(*) as total')
@@ -133,7 +167,7 @@ final class OffsiteReport extends Component
             ->orderBy('d')
             ->get();
 
-        return compact('exitsCount', 'entriesCount', 'currentlyOut', 'distinctVehicles', 'topVehicles', 'topCompanies', 'byDepartment', 'overTime');
+        return compact('exitsCount', 'entriesCount', 'currentlyOut', 'distinctVehicles', 'topVehicles', 'topCompanies', 'byDepartment', 'topCompaniesReq', 'byDepartmentReq', 'overTime');
     }
 
     /** Libellé lisible des filtres actifs (pour l'en-tête d'export). */
@@ -160,13 +194,21 @@ final class OffsiteReport extends Component
                 'headings' => ['Vehicle', 'Exits'],
                 'rows' => $d['topVehicles']->map(fn ($r) => [$r->label, $r->total])->all(),
             ],
-            'Top companies' => [
-                'headings' => ['Company', 'Exits'],
+            'Top companies (check-outs)' => [
+                'headings' => ['Company', 'Check-outs'],
                 'rows' => $d['topCompanies']->map(fn ($r) => [$r->label, $r->total])->all(),
             ],
-            'By department' => [
-                'headings' => ['Department', 'Exits'],
+            'Top companies (requests)' => [
+                'headings' => ['Company', 'Requests'],
+                'rows' => $d['topCompaniesReq']->map(fn ($r) => [$r->label, $r->total])->all(),
+            ],
+            'By department (check-outs)' => [
+                'headings' => ['Department', 'Check-outs'],
                 'rows' => $d['byDepartment']->map(fn ($r) => [$r->label, $r->total])->all(),
+            ],
+            'By department (requests)' => [
+                'headings' => ['Department', 'Requests'],
+                'rows' => $d['byDepartmentReq']->map(fn ($r) => [$r->label, $r->total])->all(),
             ],
             'Daily exits' => [
                 'headings' => ['Date', 'Exits'],

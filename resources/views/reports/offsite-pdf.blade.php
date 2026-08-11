@@ -72,6 +72,30 @@
         </tbody>
     </table>
 
+    <h2>Top companies by requests (vehicle + material)</h2>
+    <table>
+        <thead><tr><th>Company</th><th class="num">Requests</th></tr></thead>
+        <tbody>
+            @forelse ($topCompaniesReq as $r)
+                <tr><td>{{ $r->label }}</td><td class="num">{{ $r->total }}</td></tr>
+            @empty
+                <tr><td colspan="2" class="empty">No request for this filter.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    <h2>Requests by department (vehicle + material)</h2>
+    <table>
+        <thead><tr><th>Department</th><th class="num">Requests</th></tr></thead>
+        <tbody>
+            @forelse ($byDepartmentReq as $r)
+                <tr><td>{{ $r->label }}</td><td class="num">{{ $r->total }}</td></tr>
+            @empty
+                <tr><td colspan="2" class="empty">No request for this filter.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
+
     <h2>Daily exits</h2>
     <table>
         <thead><tr><th>Date</th><th class="num">Exits</th></tr></thead>

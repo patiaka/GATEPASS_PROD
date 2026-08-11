@@ -156,6 +156,51 @@
         @endforelse
     </section>
 
+    {{-- Rankings by requests created (vehicle + material) --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {{-- Top companies by requests --}}
+        <section class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="font-semibold text-sm text-[#134169]">Top companies by requests</h2>
+                <span class="text-xs text-slate-400">Vehicle + material · Top 10</span>
+            </div>
+
+            @php $maxCR = $topCompaniesReq->max('total') ?: 1; @endphp
+            @forelse ($topCompaniesReq as $row)
+                <div class="flex items-center gap-3 py-1.5" title="{{ $row->label }} — {{ $row->total }} requests">
+                    <span class="w-40 shrink-0 text-xs font-medium text-slate-600 truncate">{{ $row->label }}</span>
+                    <div class="flex-1 h-4 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-4 rounded-full bg-emerald-600" style="width: {{ max(4, round($row->total / $maxCR * 100)) }}%"></div>
+                    </div>
+                    <span class="w-8 text-right text-xs font-bold text-slate-700">{{ $row->total }}</span>
+                </div>
+            @empty
+                <p class="text-sm text-slate-400 italic py-6 text-center">No request for this filter.</p>
+            @endforelse
+        </section>
+
+        {{-- Requests by department --}}
+        <section class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="font-semibold text-sm text-[#134169]">Requests by department</h2>
+                <span class="text-xs text-slate-400">Vehicle + material</span>
+            </div>
+
+            @php $maxDR = $byDepartmentReq->max('total') ?: 1; @endphp
+            @forelse ($byDepartmentReq as $row)
+                <div class="flex items-center gap-3 py-1.5" title="{{ $row->label }} — {{ $row->total }} requests">
+                    <span class="w-28 shrink-0 text-xs font-medium text-slate-600 truncate">{{ $row->label }}</span>
+                    <div class="flex-1 h-4 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-4 rounded-full bg-emerald-600" style="width: {{ max(4, round($row->total / $maxDR * 100)) }}%"></div>
+                    </div>
+                    <span class="w-8 text-right text-xs font-bold text-slate-700">{{ $row->total }}</span>
+                </div>
+            @empty
+                <p class="text-sm text-slate-400 italic py-6 text-center">No request for this filter.</p>
+            @endforelse
+        </section>
+    </div>
+
     {{-- Over time --}}
     <section class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
         <div class="flex items-center justify-between mb-4">
