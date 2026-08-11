@@ -65,6 +65,31 @@
             html.nav-mini #sidebar a,
             html.nav-mini #sidebar summary { justify-content: center; padding-left: .5rem; padding-right: .5rem; }
             html.nav-mini #sidebarCollapse svg { transform: rotate(180deg); }
+
+            /* Sous-menus & profil : apparaissent en flyout à droite de l'icône au survol */
+            html.nav-mini #sidebar .overflow-y-auto { overflow: visible; }
+            html.nav-mini #sidebar li,
+            html.nav-mini #sidebar .mt-auto { position: relative; }
+
+            html.nav-mini #sidebar details:hover > ul {
+                display: block !important;
+                position: absolute;
+                left: 100%;
+                top: 0;
+                width: 14rem;
+                margin: 0;
+                padding: .4rem;
+                background: #0e3a61;
+                border: 1px solid rgba(255, 255, 255, .14);
+                border-radius: .6rem;
+                box-shadow: 0 16px 50px rgba(0, 0, 0, .55);
+                z-index: 70;
+            }
+            /* Profil (en bas) : le flyout s'ancre vers le haut */
+            html.nav-mini #sidebar .mt-auto details:hover > ul { top: auto; bottom: 0; }
+
+            html.nav-mini #sidebar details:hover > ul span { display: inline; }
+            html.nav-mini #sidebar details:hover > ul a { justify-content: flex-start; padding-left: .6rem; padding-right: .6rem; }
         }
     </style>
 
