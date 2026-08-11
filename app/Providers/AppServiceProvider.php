@@ -59,22 +59,13 @@ final class AppServiceProvider extends ServiceProvider
             }
         });
         Gate::define('download-request', function (User $user, MaterialRequest|CarRequest $request) {
-            // Seul un request approuvé peut être téléchargé
+            // Un laissez-passer ne s'imprime que s'il est approuvé…
             if (! $request->isApproved()) {
                 return false;
             }
 
-            // L'auteur de la demande peut télécharger
-            if ((int) $user->id === (int) $request->user_id) {
-                return true;
-            }
-
-            // Admin et Sécurité peuvent télécharger
-            if ($user->isAdmin() || $user->isSecurity()) {
-                return true;
-            }
-
-            return false;
+            // …et seul l'administrateur peut l'imprimer.
+            return $user->isAdmin();
         });
 
         Gate::define('show-request', function (User $user, MaterialRequest|CarRequest $Request) {

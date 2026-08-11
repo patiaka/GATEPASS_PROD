@@ -70,6 +70,7 @@
                     Back
                 </a>
 
+                @can('download-request', $MaterialRequest)
                 <button wire:click="download_pdf({{ $MaterialRequest->id }})" wire:loading.attr="disabled" wire:target="download_pdf"
                     class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0e3a61] text-white text-sm font-medium hover:bg-[#0c3252] disabled:opacity-60 disabled:cursor-not-allowed transition shadow-sm">
                     <span wire:loading.remove wire:target="download_pdf" class="inline-flex items-center gap-2">
@@ -86,6 +87,7 @@
                         Generating…
                     </span>
                 </button>
+                @endcan
             </div>
         </div>
 

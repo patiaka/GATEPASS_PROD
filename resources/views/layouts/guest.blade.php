@@ -24,6 +24,26 @@
 
     <p class="text-center text-xs text-white mt-4">&copy; 2026 Somisy - GPR Management App</p>
 
+    <script>
+        // Anti double-soumission pour les formulaires natifs (login, mot de passe…).
+        // L'événement 'submit' ne se déclenche qu'après validation HTML5 : on désactive
+        // alors le(s) bouton(s) d'envoi pour bloquer tout second clic. La soumission
+        // courante, elle, se poursuit normalement.
+        document.addEventListener('submit', function (e) {
+            var form = e.target;
+            if (!form || e.defaultPrevented) return;
+            var isLivewire = Array.prototype.some.call(form.attributes, function (a) {
+                return a.name.indexOf('wire:submit') === 0;
+            });
+            if (isLivewire) return; // Livewire gère déjà le verrouillage
+            form.querySelectorAll('button[type=submit], input[type=submit]').forEach(function (b) {
+                if (b.disabled) return;
+                b.disabled = true;
+                b.classList.add('opacity-70', 'cursor-not-allowed');
+            });
+        }, true);
+    </script>
+
 </body>
 
 </html>
