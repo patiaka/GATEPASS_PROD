@@ -97,8 +97,6 @@ final class Dashboard extends Component
         $mat_check_out = $matCheckouts->count();
 
         $canSeeCheckouts = $auth->isGm() || $auth->isDirector() || $auth->isHod() || $auth->isAdmin() || $auth->isSecurity();
-        $car_check_latest = $canSeeCheckouts ? $carCheckouts->latest()->limit(10)->get() : [];
-        $mat_check_latest = $canSeeCheckouts ? $matCheckouts->latest()->limit(10)->get() : [];
 
         // Véhicules actuellement dehors : dernier mouvement = Exit (pas encore rentrés)
         $vehicles_out = $canSeeCheckouts ? $this->vehiclesCurrentlyOut() : collect();
@@ -159,8 +157,6 @@ final class Dashboard extends Component
             'mat_request_approved',
             'mat_check_out',
             'car_check_out',
-            'car_check_latest',
-            'mat_check_latest',
             'gate_traffic',
             'daily_traffic',
             'periodLabel',
