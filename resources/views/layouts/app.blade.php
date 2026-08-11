@@ -57,13 +57,23 @@
         @media (min-width: 1280px) {
             #sidebar { position: static; transform: none; transition: width .2s ease; }
             html.nav-mini #sidebar { width: 4.75rem !important; }
-            html.nav-mini #sidebar > a,
+            html.nav-mini #sidebar > a:first-of-type,
             html.nav-mini #sidebar h2,
             html.nav-mini #sidebar span,
             html.nav-mini #sidebar details > ul,
             html.nav-mini #sidebar summary > svg:last-of-type { display: none; }
             html.nav-mini #sidebar a,
             html.nav-mini #sidebar summary { justify-content: center; padding-left: .5rem; padding-right: .5rem; }
+
+            /* Garder l'emblème (2e bloc logo) : compact, centré, sans le texte */
+            html.nav-mini #sidebar > a.logo-wrapper {
+                background: transparent;
+                border-color: transparent;
+                box-shadow: none;
+                justify-content: center;
+                padding: .3rem;
+            }
+            html.nav-mini #sidebar > a.logo-wrapper > div:last-child { display: none; }
             html.nav-mini #sidebarCollapse svg { transform: rotate(180deg); }
 
             /* Sous-menus & profil : apparaissent en flyout à droite de l'icône au survol */
