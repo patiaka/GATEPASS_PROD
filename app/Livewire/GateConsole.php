@@ -46,7 +46,11 @@ final class GateConsole extends Component
                         ->orWhereHas('car_drivers.user', fn ($u) => $u->where('name', 'like', $term));
                 });
             })
-            ->with('car_drivers.user:id,name,contact')
+            ->with([
+                'car_drivers.user:id,name,contact',
+                'user:id,name,department_id',
+                'user.department:id,name',
+            ])
             ->latest('car_requests.id')
             ->take(24)
             ->get();

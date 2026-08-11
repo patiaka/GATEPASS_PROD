@@ -110,8 +110,13 @@ final class Dashboard extends Component
         */
         $scope = $this->resolveScope($auth);
 
-        $days = in_array($this->stat_period, [7, 14, 30], true) ? $this->stat_period : 14;
-        $since = Carbon::today()->subDays($days - 1);
+        // Période : 7 / 14 / 30 jours (granularité jour) ou 1 an (granularité mois).
+        $isYear = (int) $this->stat_period === 365;
+        $days = in_array($this->stat_period, [7, 14, 30, 365], true) ? $this->stat_period : 14;
+        $since = $isYear
+            ? Carbon::today()->startOfMonth()->subMonthsNoOverflow(11)
+            : Carbon::today()->subDays($days - 1);
+        $periodLabel = $isYear ? '12 months' : $days.' days';
 
         $typeClasses = match ($this->stat_type) {
             'material' => [MaterialRequest::class],
@@ -125,7 +130,9 @@ final class Dashboard extends Component
         };
 
         $gate_traffic = $this->gateTraffic($scope['userIds'], $since, $typeClasses);
-        $daily_traffic = $this->dailyTraffic($scope['userIds'], $since, $days, $typeClasses);
+        $daily_traffic = $isYear
+            ? $this->monthlyTraffic($scope['userIds'], $since, $typeClasses)
+            : $this->dailyTraffic($scope['userIds'], $since, $days, $typeClasses);
         // Les demandes sont cumulatives/rares : pas de filtre période (sinon presque
         // tout est masqué). Seuls le périmètre et le type s'appliquent ici.
         $dept_requests = $this->requestsByDepartment($scope['deptIds'], $models);
@@ -153,6 +160,7 @@ final class Dashboard extends Component
             'mat_check_latest',
             'gate_traffic',
             'daily_traffic',
+            'periodLabel',
             'dept_requests',
             'canFilterDepartment',
             'filterDepartments',
@@ -254,6 +262,39 @@ final class Dashboard extends Component
             return [
                 'label' => $date->format('d/m'),
                 'date' => $key,
+                'total' => (int) ($raw[$key] ?? 0),
+            ];
+        });
+    }
+
+    /**
+     * Passages par mois sur 12 mois (séries complètes, zéros inclus).
+     * Utilisé pour la période « 1 an » — 12 barres au lieu de 365.
+     *
+     * @param  array<int,int>|null  $userIds
+     * @param  array<int,string>  $typeClasses
+     */
+    private function monthlyTraffic(?array $userIds, Carbon $since, array $typeClasses)
+    {
+        $raw = Recording::query()
+            ->where('created_at', '>=', $since)
+            ->whereHasMorph('requestable', $typeClasses, function ($q) use ($userIds) {
+                if ($userIds !== null) {
+                    $q->whereIn('user_id', $userIds);
+                }
+            })
+            ->selectRaw("CONVERT(char(7), created_at, 126) as ym, COUNT(*) as total")
+            ->groupBy(DB::raw("CONVERT(char(7), created_at, 126)"))
+            ->get()
+            ->mapWithKeys(fn ($row) => [$row->ym => (int) $row->total]);
+
+        return collect(range(0, 11))->map(function ($i) use ($since, $raw) {
+            $date = $since->copy()->addMonthsNoOverflow($i);
+            $key = $date->format('Y-m');
+
+            return [
+                'label' => $date->format('M'),
+                'date' => $date->format('m/Y'),
                 'total' => (int) ($raw[$key] ?? 0),
             ];
         });

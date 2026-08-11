@@ -7,7 +7,9 @@ namespace App\Livewire\MaterialRequest;
 use App\Helper\DeleteAction;
 use App\Helper\RepeatInputAction;
 use App\Livewire\Forms\MaterialRequestForm;
+use App\Models\MaterialRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -26,6 +28,17 @@ final class MaterialRequestCreate extends Component
         $this->form->materials = [
             ['designation' => '', 'quantity' => 1, 'serial_number' => ''],
         ];
+
+        // Duplication : ?from=<id> pré-remplit le formulaire depuis une demande visible.
+        if ($from = request('from')) {
+            $source = MaterialRequest::visibleTo(Auth::user())->find($from);
+            if ($source) {
+                $this->form->fillFromSource($source);
+                if ($this->form->person_out_name && ! $this->form->person_out_id) {
+                    $this->personOutMode = 'manual';
+                }
+            }
+        }
     }
 
     public function setPersonOutMode(string $mode): void

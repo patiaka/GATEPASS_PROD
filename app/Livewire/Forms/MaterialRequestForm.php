@@ -61,6 +61,30 @@ final class MaterialRequestForm extends Form
         $this->fill($materialRequest);
     }
 
+    /**
+     * Duplication : pré-remplit le formulaire à partir d'une demande existante.
+     * Les documents (photos) ne sont pas repris — l'utilisateur les re-téléverse.
+     */
+    public function fillFromSource(MaterialRequest $source): void
+    {
+        $source->loadMissing('material_request_items');
+
+        $this->company = $source->company ?: 'Somisy';
+        $this->person_out_id = $source->person_out_id ? (string) $source->person_out_id : '';
+        $this->person_out_name = $source->person_out_name ?? '';
+
+        $this->materials = $source->material_request_items
+            ->map(fn ($i) => [
+                'designation' => $i->designation,
+                'quantity' => $i->quantity,
+                'serial_number' => $i->serial_number ?? '',
+            ])->values()->all();
+
+        if ($this->materials === []) {
+            $this->materials = [['designation' => '', 'quantity' => 1, 'serial_number' => '']];
+        }
+    }
+
     public function store(): void
     {
         $this->validate([

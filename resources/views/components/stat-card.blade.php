@@ -29,7 +29,7 @@
 <a wire:navigate href="{{ $href }}"
     {{ $attributes->merge(['class' => 'group relative p-4 flex items-center justify-between gap-3 bg-white border border-gray-200 rounded-xl hover:shadow-md hover:-translate-y-0.5 hover:border-[#134169]/30 transition-all duration-200']) }}>
     <div class="flex items-center gap-3 min-w-0">
-        <span class="flex items-center justify-center h-11 w-11 rounded-xl bg-[#134169] {{ $tx }} shrink-0 shadow-sm">
+        <span class="flex items-center justify-center h-11 w-11 rounded-full bg-[#134169] {{ $tx }} shrink-0 shadow-sm">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 {!! $icon !!}
             </svg>

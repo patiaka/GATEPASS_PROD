@@ -70,6 +70,16 @@
                     Back
                 </a>
 
+                <button wire:click="duplicate" wire:loading.attr="disabled" wire:target="duplicate"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 bg-white text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition shadow-sm disabled:opacity-60">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8a2 2 0 012 2v8a2 2 0 01-2 2H8a2 2 0 01-2-2V9a2 2 0 012-2z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7V5a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2" />
+                    </svg>
+                    <span wire:loading.remove wire:target="duplicate">Duplicate</span>
+                    <span wire:loading wire:target="duplicate">Duplicating…</span>
+                </button>
+
                 @can('download-request', $MaterialRequest)
                 <button wire:click="download_pdf({{ $MaterialRequest->id }})" wire:loading.attr="disabled" wire:target="download_pdf"
                     class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0e3a61] text-white text-sm font-medium hover:bg-[#0c3252] disabled:opacity-60 disabled:cursor-not-allowed transition shadow-sm">

@@ -73,6 +73,7 @@
                     <option value="7">7 days</option>
                     <option value="14">14 days</option>
                     <option value="30">30 days</option>
+                    <option value="365">1 year</option>
                 </select>
 
                 <select wire:model.live="stat_type"
@@ -147,13 +148,13 @@
 
         {{-- Gate traffic over time --}}
         <div class="bg-white border border-gray-200 rounded-xl shadow-md p-5 mt-6">
-            <h3 class="text-sm font-semibold text-slate-700 mb-4">Gate traffic — last {{ $this->stat_period }} days</h3>
+            <h3 class="text-sm font-semibold text-slate-700 mb-4">Gate traffic — last {{ $periodLabel }}</h3>
             @php
                 $dailyMax = max(collect($daily_traffic)->max('total') ?: 0, 1);
                 $dailyTotal = collect($daily_traffic)->sum('total');
             @endphp
             @if ($dailyTotal === 0)
-                <p class="text-sm text-slate-400">No movements in the last {{ $this->stat_period }} days</p>
+                <p class="text-sm text-slate-400">No movements in the last {{ $periodLabel }}</p>
             @else
                 <div class="flex items-end gap-1" style="height: 160px;">
                     @foreach ($daily_traffic as $d)

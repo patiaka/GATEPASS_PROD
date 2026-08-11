@@ -32,8 +32,11 @@
             <div wire:key="gc-{{ $r->id }}" class="bg-white border border-gray-200 rounded-2xl shadow-sm p-4 flex flex-col">
                 <div class="flex items-start justify-between gap-2">
                     <div class="min-w-0">
-                        <p class="text-lg font-bold text-[#134169] truncate">#{{ $r->reference }}</p>
-                        <p class="text-sm text-slate-600 truncate">{{ $r->car_number ?: '—' }}@if ($r->company) · {{ $r->company }}@endif</p>
+                        {{-- Plaque (LV-…) en gros caractères : identifiant principal pour le gardien --}}
+                        <p class="text-2xl sm:text-3xl font-extrabold text-[#134169] tracking-tight leading-none truncate">
+                            {{ $r->car_number ?: '—' }}
+                        </p>
+                        <p class="text-xs text-slate-500 mt-1 truncate">#{{ $r->reference }}@if ($r->company) · {{ $r->company }}@endif</p>
                     </div>
                     <span @class([
                         'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ring-1 whitespace-nowrap',
@@ -44,6 +47,16 @@
                         {{ $isOut ? __('Currently out') : __('On site') }}
                     </span>
                 </div>
+
+                {{-- Département du demandeur --}}
+                @if ($r->user?->department?->name)
+                    <span class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs font-medium self-start">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-8a4 4 0 014-4h10a4 4 0 014 4v8M7 21v-4h10v4M7 10V7a4 4 0 018 0v3" />
+                        </svg>
+                        {{ $r->user->department->name }}
+                    </span>
+                @endif
 
                 @if ($r->car_drivers->isNotEmpty())
                     <p class="text-xs text-slate-500 mt-1.5 truncate">

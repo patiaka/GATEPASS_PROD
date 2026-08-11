@@ -27,6 +27,15 @@ final class MaterialRequestShow extends Component
         $this->MaterialRequest->loadMissing('user:id,name,email,department_id,poste', 'user.department:id,name', 'gmApproval.department:id,name', 'hodApproval.department:id,name', 'documents', 'person_out:id,name,badge_number');
     }
 
+    /**
+     * Duplication : ouvre le formulaire de création pré-rempli à partir de cette
+     * demande (rien n'est enregistré tant que l'utilisateur n'a pas soumis).
+     */
+    public function duplicate()
+    {
+        return $this->redirectRoute('material.create', ['from' => $this->MaterialRequest->id]);
+    }
+
     public function delete(int $id): void
     {
         $row = Document::find($id);
