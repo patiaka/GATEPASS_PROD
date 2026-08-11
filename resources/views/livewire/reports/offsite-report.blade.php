@@ -102,80 +102,24 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {{-- Exits over time (area chart) --}}
+            {{-- Exits over time (line chart) --}}
             <section class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm lg:col-span-2">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="font-semibold text-sm text-[#134169]">Exits over time</h2>
                     <span class="text-xs text-slate-400">Daily{{ $period === 'all' ? ' — last 30 days' : '' }}</span>
                 </div>
-
                 @if ($overTime->isNotEmpty())
-                    @php
-                        $otN = $overTime->count();
-                        $otMax = $overTime->max('total') ?: 1;
-                        $padX = 12; $padTop = 14; $padBot = 10; $W = 620; $H = 200;
-                        $plotW = $W - 2 * $padX; $plotH = $H - $padTop - $padBot;
-                        $pts = [];
-                        foreach ($overTime->values() as $i => $pt) {
-                            $x = $padX + ($otN <= 1 ? $plotW / 2 : $i / ($otN - 1) * $plotW);
-                            $y = $padTop + $plotH - ($pt->total / $otMax) * $plotH;
-                            $pts[] = [round($x, 1), round($y, 1)];
-                        }
-                        $line = collect($pts)->map(fn ($p) => $p[0] . ',' . $p[1])->implode(' ');
-                        $base = $padTop + $plotH;
-                        $area = $pts[0][0] . ',' . $base . ' ' . $line . ' ' . end($pts)[0] . ',' . $base;
-                    @endphp
-                    <svg viewBox="0 0 {{ $W }} {{ $H }}" style="width:100%;aspect-ratio:{{ $W }}/{{ $H }}">
-                        <defs>
-                            <linearGradient id="areaGrad" x1="0" x2="0" y1="0" y2="1">
-                                <stop offset="0%" stop-color="#134169" stop-opacity="0.22" />
-                                <stop offset="100%" stop-color="#134169" stop-opacity="0" />
-                            </linearGradient>
-                        </defs>
-                        <polygon points="{{ $area }}" fill="url(#areaGrad)" />
-                        <polyline points="{{ $line }}" fill="none" stroke="#134169" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
-                        @foreach ($pts as $p)
-                            <circle cx="{{ $p[0] }}" cy="{{ $p[1] }}" r="2.4" fill="#fff" stroke="#134169" stroke-width="1.5" />
-                        @endforeach
-                    </svg>
-                    <div class="flex justify-between mt-1 text-[11px] text-slate-400">
-                        <span>{{ \Illuminate\Support\Carbon::parse($overTime->first()->d)->format('d/m/Y') }}</span>
-                        <span>Peak: {{ $otMax }}</span>
-                        <span>{{ \Illuminate\Support\Carbon::parse($overTime->last()->d)->format('d/m/Y') }}</span>
-                    </div>
+                    @include('livewire.reports.partials.chart', ['config' => $charts['overTime'], 'key' => 'overtime', 'height' => '260px'])
                 @else
                     <p class="text-sm text-slate-400 italic py-10 text-center">No exit recorded for this period.</p>
                 @endif
             </section>
 
-            {{-- Exits by department (donut) --}}
+            {{-- Exits by department (doughnut) --}}
             <section class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
                 <h2 class="font-semibold text-sm text-[#134169] mb-4">Exits share by department</h2>
-
                 @if (!empty($deptDonut))
-                    <div class="flex items-center gap-4">
-                        <svg viewBox="0 0 42 42" class="w-28 h-28 shrink-0">
-                            <circle cx="21" cy="21" r="15.915" fill="none" stroke="#eef2f7" stroke-width="6" />
-                            @php $cum = 0; @endphp
-                            @foreach ($deptDonut as $seg)
-                                <circle cx="21" cy="21" r="15.915" fill="none" stroke="{{ $seg['color'] }}" stroke-width="6"
-                                    stroke-dasharray="{{ $seg['percent'] }} {{ 100 - $seg['percent'] }}"
-                                    stroke-dashoffset="{{ 25 - $cum }}" />
-                                @php $cum += $seg['percent']; @endphp
-                            @endforeach
-                            <text x="21" y="20.5" text-anchor="middle" font-size="5" font-weight="700" fill="#0f172a">{{ $exitsCount }}</text>
-                            <text x="21" y="25.5" text-anchor="middle" font-size="2.8" fill="#64748b">exits</text>
-                        </svg>
-                        <ul class="flex-1 space-y-1.5 min-w-0">
-                            @foreach ($deptDonut as $seg)
-                                <li class="flex items-center gap-2 text-xs">
-                                    <span class="w-2.5 h-2.5 rounded-sm shrink-0" style="background: {{ $seg['color'] }}"></span>
-                                    <span class="text-slate-600 truncate flex-1">{{ $seg['label'] }}</span>
-                                    <span class="text-slate-400">{{ $seg['percent'] }}%</span>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
+                    @include('livewire.reports.partials.chart', ['config' => $charts['deptDonut'], 'key' => 'deptdonut', 'height' => '260px'])
                 @else
                     <p class="text-sm text-slate-400 italic py-10 text-center">No exit recorded for this filter.</p>
                 @endif
@@ -191,7 +135,11 @@
                     <h2 class="font-semibold text-sm text-[#134169]">Top vehicles by exits</h2>
                     <span class="text-xs text-slate-400">Top 10</span>
                 </div>
-                @include('livewire.reports.partials.bars', ['rows' => $topVehicles, 'color' => '#134169', 'unit' => 'exits', 'labelWidth' => 'w-24', 'empty' => 'No exit recorded for this filter.'])
+                @if ($topVehicles->isNotEmpty())
+                    @include('livewire.reports.partials.chart', ['config' => $charts['topVehicles'], 'key' => 'topvehicles', 'height' => '320px'])
+                @else
+                    <p class="text-sm text-slate-400 italic py-10 text-center">No exit recorded for this filter.</p>
+                @endif
             </section>
 
             <section class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
@@ -199,7 +147,11 @@
                     <h2 class="font-semibold text-sm text-[#134169]">Exits by department</h2>
                     <span class="text-xs text-slate-400">Vehicle + material</span>
                 </div>
-                @include('livewire.reports.partials.bars', ['rows' => $byDepartment, 'color' => '#134169', 'unit' => 'exits', 'labelWidth' => 'w-28', 'empty' => 'No exit recorded for this filter.'])
+                @if ($byDepartment->isNotEmpty())
+                    @include('livewire.reports.partials.chart', ['config' => $charts['byDepartment'], 'key' => 'bydept', 'height' => '320px'])
+                @else
+                    <p class="text-sm text-slate-400 italic py-10 text-center">No exit recorded for this filter.</p>
+                @endif
             </section>
         </div>
 
@@ -208,7 +160,11 @@
                 <h2 class="font-semibold text-sm text-[#134169]">Top companies by check-outs</h2>
                 <span class="text-xs text-slate-400">Vehicle + material · Top 10</span>
             </div>
-            @include('livewire.reports.partials.bars', ['rows' => $topCompanies, 'color' => '#134169', 'unit' => 'check-outs', 'labelWidth' => 'w-40', 'empty' => 'No check-out recorded for this filter.'])
+            @if ($topCompanies->isNotEmpty())
+                @include('livewire.reports.partials.chart', ['config' => $charts['topCompanies'], 'key' => 'topcompanies', 'height' => '320px'])
+            @else
+                <p class="text-sm text-slate-400 italic py-10 text-center">No check-out recorded for this filter.</p>
+            @endif
         </section>
     @endif
 
@@ -220,7 +176,11 @@
                     <h2 class="font-semibold text-sm text-[#134169]">Top companies by requests</h2>
                     <span class="text-xs text-slate-400">Vehicle + material · Top 10</span>
                 </div>
-                @include('livewire.reports.partials.bars', ['rows' => $topCompaniesReq, 'color' => '#059669', 'unit' => 'requests', 'labelWidth' => 'w-40', 'empty' => 'No request for this filter.'])
+                @if ($topCompaniesReq->isNotEmpty())
+                    @include('livewire.reports.partials.chart', ['config' => $charts['topCompaniesReq'], 'key' => 'topcompaniesreq', 'height' => '320px'])
+                @else
+                    <p class="text-sm text-slate-400 italic py-10 text-center">No request for this filter.</p>
+                @endif
             </section>
 
             <section class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
@@ -228,7 +188,11 @@
                     <h2 class="font-semibold text-sm text-[#134169]">Requests by department</h2>
                     <span class="text-xs text-slate-400">Vehicle + material</span>
                 </div>
-                @include('livewire.reports.partials.bars', ['rows' => $byDepartmentReq, 'color' => '#059669', 'unit' => 'requests', 'labelWidth' => 'w-28', 'empty' => 'No request for this filter.'])
+                @if ($byDepartmentReq->isNotEmpty())
+                    @include('livewire.reports.partials.chart', ['config' => $charts['byDepartmentReq'], 'key' => 'bydeptreq', 'height' => '320px'])
+                @else
+                    <p class="text-sm text-slate-400 italic py-10 text-center">No request for this filter.</p>
+                @endif
             </section>
         </div>
     @endif

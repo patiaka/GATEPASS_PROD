@@ -164,6 +164,86 @@ final class OffsiteReport extends Component
             ->values();
     }
 
+    /** Config Chart.js : barres horizontales (classement). */
+    private function barConfig(Collection $rows, string $color): array
+    {
+        return [
+            'type' => 'bar',
+            'data' => [
+                'labels' => $rows->pluck('label')->all(),
+                'datasets' => [[
+                    'data' => $rows->pluck('total')->map(fn ($v) => (int) $v)->all(),
+                    'backgroundColor' => $color,
+                    'borderRadius' => 4,
+                    'maxBarThickness' => 20,
+                ]],
+            ],
+            'options' => [
+                'indexAxis' => 'y',
+                'responsive' => true,
+                'maintainAspectRatio' => false,
+                'plugins' => ['legend' => ['display' => false]],
+                'scales' => [
+                    'x' => ['beginAtZero' => true, 'ticks' => ['precision' => 0], 'grid' => ['color' => '#f1f5f9']],
+                    'y' => ['grid' => ['display' => false]],
+                ],
+            ],
+        ];
+    }
+
+    /** Config Chart.js : courbe d'aire (évolution). */
+    private function lineConfig(Collection $overTime): array
+    {
+        return [
+            'type' => 'line',
+            'data' => [
+                'labels' => $overTime->map(fn ($r) => Carbon::parse($r->d)->format('d/m'))->all(),
+                'datasets' => [[
+                    'label' => 'Exits',
+                    'data' => $overTime->pluck('total')->map(fn ($v) => (int) $v)->all(),
+                    'borderColor' => '#134169',
+                    'backgroundColor' => 'rgba(19,65,105,0.15)',
+                    'fill' => true,
+                    'tension' => 0.35,
+                    'pointRadius' => 2,
+                    'pointBackgroundColor' => '#134169',
+                ]],
+            ],
+            'options' => [
+                'responsive' => true,
+                'maintainAspectRatio' => false,
+                'plugins' => ['legend' => ['display' => false]],
+                'scales' => [
+                    'y' => ['beginAtZero' => true, 'ticks' => ['precision' => 0], 'grid' => ['color' => '#f1f5f9']],
+                    'x' => ['grid' => ['display' => false]],
+                ],
+            ],
+        ];
+    }
+
+    /** Config Chart.js : donut (répartition). */
+    private function doughnutConfig(array $segments): array
+    {
+        return [
+            'type' => 'doughnut',
+            'data' => [
+                'labels' => array_column($segments, 'label'),
+                'datasets' => [[
+                    'data' => array_map('intval', array_column($segments, 'total')),
+                    'backgroundColor' => array_column($segments, 'color'),
+                    'borderWidth' => 2,
+                    'borderColor' => '#ffffff',
+                ]],
+            ],
+            'options' => [
+                'responsive' => true,
+                'maintainAspectRatio' => false,
+                'cutout' => '60%',
+                'plugins' => ['legend' => ['position' => 'right', 'labels' => ['boxWidth' => 12, 'font' => ['size' => 11]]]],
+            ],
+        ];
+    }
+
     /** Toutes les données du rapport, partagées par l'affichage et les exports. */
     private function data(): array
     {
@@ -205,7 +285,18 @@ final class OffsiteReport extends Component
             ->orderBy('d')
             ->get();
 
-        return compact('exitsCount', 'entriesCount', 'currentlyOut', 'distinctVehicles', 'topVehicles', 'topCompanies', 'byDepartment', 'topCompaniesReq', 'byDepartmentReq', 'deptDonut', 'overTime');
+        // Configs Chart.js (JSON passé aux canvas)
+        $charts = [
+            'overTime' => $this->lineConfig($overTime),
+            'deptDonut' => $this->doughnutConfig($deptDonut),
+            'topVehicles' => $this->barConfig($topVehicles, '#134169'),
+            'topCompanies' => $this->barConfig($topCompanies, '#134169'),
+            'byDepartment' => $this->barConfig($byDepartment, '#134169'),
+            'topCompaniesReq' => $this->barConfig($topCompaniesReq, '#059669'),
+            'byDepartmentReq' => $this->barConfig($byDepartmentReq, '#059669'),
+        ];
+
+        return compact('exitsCount', 'entriesCount', 'currentlyOut', 'distinctVehicles', 'topVehicles', 'topCompanies', 'byDepartment', 'topCompaniesReq', 'byDepartmentReq', 'deptDonut', 'overTime', 'charts');
     }
 
     /** Libellé lisible des filtres actifs (pour l'en-tête d'export). */
