@@ -8,7 +8,6 @@
         <!-- THEAD -->
         <thead class="sticky top-0 z-20">
             <tr class="uppercase tracking-wide text-[12px] bg-slate-100 text-slate-700 border-b">
-                <th scope="col" class="px-4 py-2 text-left font-semibold">ID</th>
                 <th scope="col" class="px-4 py-2 text-left font-semibold">Name</th>
                 <th scope="col" class="px-4 py-2 text-left font-semibold">Director</th>
                 <th scope="col" class="px-4 py-2 text-left font-semibold">Date</th>
@@ -21,10 +20,6 @@
             @forelse ($this->rows as $row)
                 <tr wire:key="dept-{{ $row->id }}"
                     class="odd:bg-white even:bg-gray-50/40 hover:bg-slate-50 transition">
-
-                    <td class="px-4 py-2 font-medium text-gray-700">
-                        {{ $row->id }}
-                    </td>
 
                     <td class="px-4 py-2 text-gray-700">
                         <span class="truncate block max-w-[360px]" title="{{ $row->name }}">
@@ -82,7 +77,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="px-4 py-12 text-center">
+                    <td colspan="4" class="px-4 py-12 text-center">
                         <div class="flex flex-col items-center gap-3 text-slate-400">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
