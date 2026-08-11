@@ -218,27 +218,35 @@ final class Dashboard extends Component
                 ],
             ],
             'daily' => [
-                'type' => 'line',
+                'type' => 'bar',
                 'data' => [
                     'labels' => $daily->pluck('label')->all(),
-                    'datasets' => [[
-                        'label' => 'Movements',
-                        'data' => $daily->pluck('total')->map(fn ($v) => (int) $v)->all(),
-                        'borderColor' => '#134169',
-                        'backgroundColor' => 'rgba(19,65,105,0.15)',
-                        'fill' => true,
-                        'tension' => 0.35,
-                        'pointRadius' => 2,
-                        'pointBackgroundColor' => '#134169',
-                    ]],
+                    'datasets' => [
+                        [
+                            'label' => 'Exits',
+                            'data' => $daily->pluck('exits')->map(fn ($v) => (int) $v)->all(),
+                            'backgroundColor' => '#f59e0b',
+                            'stack' => 'movements',
+                            'borderRadius' => 3,
+                            'maxBarThickness' => 28,
+                        ],
+                        [
+                            'label' => 'Entries',
+                            'data' => $daily->pluck('entries')->map(fn ($v) => (int) $v)->all(),
+                            'backgroundColor' => '#10b981',
+                            'stack' => 'movements',
+                            'borderRadius' => 3,
+                            'maxBarThickness' => 28,
+                        ],
+                    ],
                 ],
                 'options' => [
                     'responsive' => true,
                     'maintainAspectRatio' => false,
-                    'plugins' => ['legend' => ['display' => false]],
+                    'plugins' => ['legend' => ['display' => true, 'position' => 'bottom', 'labels' => ['boxWidth' => 12, 'font' => ['size' => 11]]]],
                     'scales' => [
-                        'y' => ['beginAtZero' => true, 'ticks' => ['precision' => 0], 'grid' => ['color' => '#f1f5f9']],
-                        'x' => ['grid' => ['display' => false]],
+                        'x' => ['stacked' => true, 'grid' => ['display' => false]],
+                        'y' => ['stacked' => true, 'beginAtZero' => true, 'ticks' => ['precision' => 0], 'grid' => ['color' => '#f1f5f9']],
                     ],
                 ],
             ],
@@ -327,19 +335,27 @@ final class Dashboard extends Component
                     $q->whereIn('user_id', $userIds);
                 }
             })
-            ->selectRaw('CAST(created_at AS DATE) as day, COUNT(*) as total')
-            ->groupBy(DB::raw('CAST(created_at AS DATE)'))
-            ->get()
-            ->mapWithKeys(fn ($row) => [Carbon::parse($row->day)->format('Y-m-d') => (int) $row->total]);
+            ->selectRaw('CAST(created_at AS DATE) as day, action, COUNT(*) as total')
+            ->groupBy(DB::raw('CAST(created_at AS DATE)'), DB::raw('action'))
+            ->get();
 
-        return collect(range(0, $days - 1))->map(function ($i) use ($since, $raw) {
+        $byDay = [];
+        foreach ($raw as $row) {
+            $byDay[Carbon::parse($row->day)->format('Y-m-d')][$row->action] = (int) $row->total;
+        }
+
+        return collect(range(0, $days - 1))->map(function ($i) use ($since, $byDay) {
             $date = $since->copy()->addDays($i);
             $key = $date->format('Y-m-d');
+            $entries = $byDay[$key]['Entry'] ?? 0;
+            $exits = $byDay[$key]['Exit'] ?? 0;
 
             return [
                 'label' => $date->format('d/m'),
                 'date' => $key,
-                'total' => (int) ($raw[$key] ?? 0),
+                'entries' => $entries,
+                'exits' => $exits,
+                'total' => $entries + $exits,
             ];
         });
     }
@@ -360,19 +376,27 @@ final class Dashboard extends Component
                     $q->whereIn('user_id', $userIds);
                 }
             })
-            ->selectRaw("CONVERT(char(7), created_at, 126) as ym, COUNT(*) as total")
-            ->groupBy(DB::raw("CONVERT(char(7), created_at, 126)"))
-            ->get()
-            ->mapWithKeys(fn ($row) => [$row->ym => (int) $row->total]);
+            ->selectRaw("CONVERT(char(7), created_at, 126) as ym, action, COUNT(*) as total")
+            ->groupBy(DB::raw("CONVERT(char(7), created_at, 126)"), DB::raw('action'))
+            ->get();
 
-        return collect(range(0, 11))->map(function ($i) use ($since, $raw) {
+        $byMonth = [];
+        foreach ($raw as $row) {
+            $byMonth[$row->ym][$row->action] = (int) $row->total;
+        }
+
+        return collect(range(0, 11))->map(function ($i) use ($since, $byMonth) {
             $date = $since->copy()->addMonthsNoOverflow($i);
             $key = $date->format('Y-m');
+            $entries = $byMonth[$key]['Entry'] ?? 0;
+            $exits = $byMonth[$key]['Exit'] ?? 0;
 
             return [
                 'label' => $date->format('M'),
                 'date' => $date->format('m/Y'),
-                'total' => (int) ($raw[$key] ?? 0),
+                'entries' => $entries,
+                'exits' => $exits,
+                'total' => $entries + $exits,
             ];
         });
     }
