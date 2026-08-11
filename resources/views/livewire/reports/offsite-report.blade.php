@@ -6,26 +6,6 @@
             <h1 class="text-2xl font-bold text-[#134169]">Offsite Records</h1>
             <p class="text-sm text-slate-500 mt-1">Check-out analytics — busiest companies, vehicles and departments</p>
         </div>
-
-        {{-- Export buttons --}}
-        <div class="flex items-center gap-2">
-            <button wire:click="exportExcel" wire:loading.attr="disabled" wire:target="exportExcel"
-                class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 shadow-sm transition disabled:opacity-60">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
-                </svg>
-                <span wire:loading.remove wire:target="exportExcel">Excel</span>
-                <span wire:loading wire:target="exportExcel">…</span>
-            </button>
-            <button wire:click="exportPdf" wire:loading.attr="disabled" wire:target="exportPdf"
-                class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#0e3a61] text-white text-sm font-medium hover:bg-[#0c3253] shadow-sm transition disabled:opacity-60">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 4v12" />
-                </svg>
-                <span wire:loading.remove wire:target="exportPdf">PDF</span>
-                <span wire:loading wire:target="exportPdf">…</span>
-            </button>
-        </div>
     </div>
 
     {{-- Filters bar --}}

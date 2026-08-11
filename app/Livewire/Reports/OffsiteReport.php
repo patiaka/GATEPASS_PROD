@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Livewire\Reports;
 
-use App\Exports\OffsiteReportExport;
 use App\Models\CarRequest;
 use App\Models\Department;
 use App\Models\MaterialRequest;
@@ -12,12 +11,9 @@ use App\Models\Recording;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Throwable;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
-use Spatie\Browsershot\Browsershot;
 
 use function compact;
 
@@ -299,73 +295,6 @@ final class OffsiteReport extends Component
         ];
 
         return compact('exitsCount', 'entriesCount', 'currentlyOut', 'distinctVehicles', 'topVehicles', 'topCompanies', 'byDepartment', 'topCompaniesReq', 'byDepartmentReq', 'deptDonut', 'overTime', 'charts');
-    }
-
-    /** Libellé lisible des filtres actifs (pour l'en-tête d'export). */
-    private function filterLabel(): string
-    {
-        $periodLabels = ['all' => 'All time', 'today' => 'Today', '24h' => 'Last 24h', 'week' => 'This week', 'month' => 'This month'];
-        $parts = ['Period: '.($periodLabels[$this->period] ?? $this->period)];
-        if ($this->department !== '') {
-            $parts[] = 'Department: '.(Department::find($this->department)?->name ?? $this->department);
-        }
-        if ($this->gate !== '') {
-            $parts[] = 'Gate: '.$this->gate;
-        }
-
-        return implode('  |  ', $parts);
-    }
-
-    public function exportExcel()
-    {
-        $d = $this->data();
-
-        return (new OffsiteReportExport([
-            'Top vehicles' => [
-                'headings' => ['Vehicle', 'Exits'],
-                'rows' => $d['topVehicles']->map(fn ($r) => [$r->label, $r->total])->all(),
-            ],
-            'Top companies (check-outs)' => [
-                'headings' => ['Company', 'Check-outs'],
-                'rows' => $d['topCompanies']->map(fn ($r) => [$r->label, $r->total])->all(),
-            ],
-            'Top companies (requests)' => [
-                'headings' => ['Company', 'Requests'],
-                'rows' => $d['topCompaniesReq']->map(fn ($r) => [$r->label, $r->total])->all(),
-            ],
-            'By department (check-outs)' => [
-                'headings' => ['Department', 'Check-outs'],
-                'rows' => $d['byDepartment']->map(fn ($r) => [$r->label, $r->total])->all(),
-            ],
-            'By department (requests)' => [
-                'headings' => ['Department', 'Requests'],
-                'rows' => $d['byDepartmentReq']->map(fn ($r) => [$r->label, $r->total])->all(),
-            ],
-            'Daily exits' => [
-                'headings' => ['Date', 'Exits'],
-                'rows' => $d['overTime']->map(fn ($r) => [Carbon::parse($r->d)->format('d-m-Y'), $r->total])->all(),
-            ],
-        ]))->download('offsite-report-'.now()->format('Ymd-His').'.xlsx');
-    }
-
-    public function exportPdf()
-    {
-        try {
-            $data = $this->data();
-            $filters = $this->filterLabel();
-            $html = view('reports.offsite-pdf', array_merge($data, ['filters' => $filters, 'generatedAt' => now()->format('d-m-Y H:i')]))->render();
-
-            $path = storage_path('app/offsite-report-'.now()->format('Ymd-His').'.pdf');
-
-            \App\Support\Pdf::make($html)->save($path);
-
-            return response()->download($path)->deleteFileAfterSend(true);
-        } catch (Throwable $e) {
-            // On journalise l'erreur réelle (Chrome/Node introuvable, timeout, permissions…)
-            // et on affiche un message plutôt qu'une 500.
-            Log::error('Offsite PDF export failed', ['error' => $e->getMessage()]);
-            flash()->error('PDF generation failed. Please try the Excel export, or contact IT (details logged).');
-        }
     }
 
     public function render()
