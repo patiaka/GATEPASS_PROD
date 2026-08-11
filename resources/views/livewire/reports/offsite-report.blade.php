@@ -109,7 +109,7 @@
                     <span class="text-xs text-slate-400">Daily{{ $period === 'all' ? ' — last 30 days' : '' }}</span>
                 </div>
                 @if ($overTime->isNotEmpty())
-                    @include('livewire.reports.partials.chart', ['config' => $charts['overTime'], 'key' => 'overtime', 'height' => '260px'])
+                    @include('livewire.reports.partials.chart', ['config' => $charts['overTime'], 'key' => 'overtime-'.$period.$department.$gate, 'height' => '260px'])
                 @else
                     <p class="text-sm text-slate-400 italic py-10 text-center">No exit recorded for this period.</p>
                 @endif
@@ -119,7 +119,7 @@
             <section class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
                 <h2 class="font-semibold text-sm text-[#134169] mb-4">Exits share by department</h2>
                 @if (!empty($deptDonut))
-                    @include('livewire.reports.partials.chart', ['config' => $charts['deptDonut'], 'key' => 'deptdonut', 'height' => '260px'])
+                    @include('livewire.reports.partials.chart', ['config' => $charts['deptDonut'], 'key' => 'deptdonut-'.$period.$department.$gate, 'height' => '260px'])
                 @else
                     <p class="text-sm text-slate-400 italic py-10 text-center">No exit recorded for this filter.</p>
                 @endif
@@ -136,7 +136,7 @@
                     <span class="text-xs text-slate-400">Top 10</span>
                 </div>
                 @if ($topVehicles->isNotEmpty())
-                    @include('livewire.reports.partials.chart', ['config' => $charts['topVehicles'], 'key' => 'topvehicles', 'height' => '320px'])
+                    @include('livewire.reports.partials.chart', ['config' => $charts['topVehicles'], 'key' => 'topvehicles-'.$period.$department.$gate, 'height' => '320px'])
                 @else
                     <p class="text-sm text-slate-400 italic py-10 text-center">No exit recorded for this filter.</p>
                 @endif
@@ -148,7 +148,7 @@
                     <span class="text-xs text-slate-400">Vehicle + material</span>
                 </div>
                 @if ($byDepartment->isNotEmpty())
-                    @include('livewire.reports.partials.chart', ['config' => $charts['byDepartment'], 'key' => 'bydept', 'height' => '320px'])
+                    @include('livewire.reports.partials.chart', ['config' => $charts['byDepartment'], 'key' => 'bydept-'.$period.$department.$gate, 'height' => '320px'])
                 @else
                     <p class="text-sm text-slate-400 italic py-10 text-center">No exit recorded for this filter.</p>
                 @endif
@@ -161,7 +161,7 @@
                 <span class="text-xs text-slate-400">Vehicle + material · Top 10</span>
             </div>
             @if ($topCompanies->isNotEmpty())
-                @include('livewire.reports.partials.chart', ['config' => $charts['topCompanies'], 'key' => 'topcompanies', 'height' => '320px'])
+                @include('livewire.reports.partials.chart', ['config' => $charts['topCompanies'], 'key' => 'topcompanies-'.$period.$department.$gate, 'height' => '320px'])
             @else
                 <p class="text-sm text-slate-400 italic py-10 text-center">No check-out recorded for this filter.</p>
             @endif
@@ -177,7 +177,7 @@
                     <span class="text-xs text-slate-400">Vehicle + material · Top 10</span>
                 </div>
                 @if ($topCompaniesReq->isNotEmpty())
-                    @include('livewire.reports.partials.chart', ['config' => $charts['topCompaniesReq'], 'key' => 'topcompaniesreq', 'height' => '320px'])
+                    @include('livewire.reports.partials.chart', ['config' => $charts['topCompaniesReq'], 'key' => 'topcompaniesreq-'.$period.$department.$gate, 'height' => '320px'])
                 @else
                     <p class="text-sm text-slate-400 italic py-10 text-center">No request for this filter.</p>
                 @endif
@@ -189,7 +189,7 @@
                     <span class="text-xs text-slate-400">Vehicle + material</span>
                 </div>
                 @if ($byDepartmentReq->isNotEmpty())
-                    @include('livewire.reports.partials.chart', ['config' => $charts['byDepartmentReq'], 'key' => 'bydeptreq', 'height' => '320px'])
+                    @include('livewire.reports.partials.chart', ['config' => $charts['byDepartmentReq'], 'key' => 'bydeptreq-'.$period.$department.$gate, 'height' => '320px'])
                 @else
                     <p class="text-sm text-slate-400 italic py-10 text-center">No request for this filter.</p>
                 @endif

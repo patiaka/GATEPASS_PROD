@@ -97,80 +97,35 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-            {{-- Traffic by gate --}}
+            {{-- Traffic by gate (doughnut) --}}
             <div class="bg-white border border-gray-200 rounded-xl shadow-md p-5">
                 <h3 class="text-sm font-semibold text-slate-700 mb-4">Traffic by gate</h3>
-                @php $gateMax = max($gate_traffic->max() ?: 0, 1); $gateTotal = $gate_traffic->sum(); @endphp
-                <div class="space-y-4">
-                    @foreach ($gate_traffic as $gate => $count)
-                        <div>
-                            <div class="flex items-baseline justify-between mb-1">
-                                <span class="text-xs font-medium text-slate-600">{{ $gate }}</span>
-                                <span class="text-xs text-slate-500">
-                                    {{ $count }}@if ($gateTotal > 0)<span class="text-slate-400"> · {{ round($count / $gateTotal * 100) }}%</span>@endif
-                                </span>
-                            </div>
-                            <div class="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
-                                <div class="h-full rounded-full bg-[#134169] transition-all"
-                                    style="width: {{ $count > 0 ? max($count / $gateMax * 100, 3) : 0 }}%"
-                                    title="{{ $gate }} : {{ $count }} passages"></div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
+                @if ($gate_traffic->sum() > 0)
+                    @include('livewire.reports.partials.chart', ['config' => $stat_charts['gate'], 'key' => 'dash-gate-'.$stat_period.$stat_type.$stat_department, 'height' => '260px'])
+                @else
+                    <p class="text-sm text-slate-400">No movements for this period</p>
+                @endif
             </div>
 
-            {{-- Requests by department --}}
+            {{-- Requests by department (bar) --}}
             <div class="bg-white border border-gray-200 rounded-xl shadow-md p-5">
                 <h3 class="text-sm font-semibold text-slate-700 mb-4">Requests by department <span class="text-[10px] font-normal text-slate-400">· all time</span></h3>
-                @php $deptMax = max($dept_requests->max() ?: 0, 1); @endphp
                 @if ($dept_requests->isEmpty())
                     <p class="text-sm text-slate-400">No data for this period</p>
                 @else
-                    <div class="space-y-4">
-                        @foreach ($dept_requests as $dept => $count)
-                            <div>
-                                <div class="flex items-baseline justify-between mb-1 gap-2">
-                                    <span class="text-xs font-medium text-slate-600 truncate" title="{{ $dept }}">{{ $dept }}</span>
-                                    <span class="text-xs text-slate-500 shrink-0">{{ $count }}</span>
-                                </div>
-                                <div class="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
-                                    <div class="h-full rounded-full bg-[#134169] transition-all"
-                                        style="width: {{ max($count / $deptMax * 100, 3) }}%"
-                                        title="{{ $dept }} : {{ $count }} demandes"></div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
+                    @include('livewire.reports.partials.chart', ['config' => $stat_charts['dept'], 'key' => 'dash-dept-'.$stat_type.$stat_department, 'height' => '260px'])
                 @endif
             </div>
         </div>
 
-        {{-- Gate traffic over time --}}
+        {{-- Gate traffic over time (line chart) --}}
         <div class="bg-white border border-gray-200 rounded-xl shadow-md p-5 mt-6">
             <h3 class="text-sm font-semibold text-slate-700 mb-4">Gate traffic — last {{ $periodLabel }}</h3>
-            @php
-                $dailyMax = max(collect($daily_traffic)->max('total') ?: 0, 1);
-                $dailyTotal = collect($daily_traffic)->sum('total');
-            @endphp
+            @php $dailyTotal = collect($daily_traffic)->sum('total'); @endphp
             @if ($dailyTotal === 0)
                 <p class="text-sm text-slate-400">No movements in the last {{ $periodLabel }}</p>
             @else
-                <div class="flex items-end gap-1" style="height: 160px;">
-                    @foreach ($daily_traffic as $d)
-                        <div class="flex-1 h-full flex flex-col items-center justify-end group">
-                            <span class="text-[10px] font-medium text-slate-600 mb-1 {{ $d['total'] === 0 ? 'invisible' : '' }}">{{ $d['total'] }}</span>
-                            <div class="w-full rounded-t bg-[#134169] group-hover:bg-[#0e3457] transition-colors"
-                                style="height: {{ $d['total'] > 0 ? max($d['total'] / $dailyMax * 90, 2) : 0 }}%"
-                                title="{{ $d['date'] }} : {{ $d['total'] }} passages"></div>
-                        </div>
-                    @endforeach
-                </div>
-                <div class="flex gap-1 mt-1.5">
-                    @foreach ($daily_traffic as $d)
-                        <span class="flex-1 text-center text-[9px] text-slate-400 whitespace-nowrap overflow-hidden">{{ $d['label'] }}</span>
-                    @endforeach
-                </div>
+                @include('livewire.reports.partials.chart', ['config' => $stat_charts['daily'], 'key' => 'dash-daily-'.$stat_period.$stat_type.$stat_department, 'height' => '280px'])
             @endif
         </div>
     </div>

@@ -145,6 +145,9 @@ final class Dashboard extends Component
                 ? Department::orderBy('name')->get(['id', 'name'])
                 : Department::where('director_id', $auth->id)->orderBy('name')->get(['id', 'name']));
 
+        // Configs Chart.js pour la section Statistics
+        $stat_charts = $this->statCharts($gate_traffic, $dept_requests, $daily_traffic);
+
         return view('livewire.dashboard', compact(
             'car_request_all',
             'car_request_rejected',
@@ -162,10 +165,88 @@ final class Dashboard extends Component
             'daily_traffic',
             'periodLabel',
             'dept_requests',
+            'stat_charts',
             'canFilterDepartment',
             'filterDepartments',
             'vehicles_out'
         ));
+    }
+
+    /**
+     * Configs Chart.js pour la section Statistics (donut portes, barres
+     * départements, courbe trafic).
+     */
+    private function statCharts($gateTraffic, $deptRequests, $dailyTraffic): array
+    {
+        $daily = collect($dailyTraffic);
+
+        return [
+            'gate' => [
+                'type' => 'doughnut',
+                'data' => [
+                    'labels' => $gateTraffic->keys()->all(),
+                    'datasets' => [[
+                        'data' => $gateTraffic->values()->map(fn ($v) => (int) $v)->all(),
+                        'backgroundColor' => ['#134169', '#2b7fbf', '#6cc0a0'],
+                        'borderWidth' => 2,
+                        'borderColor' => '#ffffff',
+                    ]],
+                ],
+                'options' => [
+                    'responsive' => true,
+                    'maintainAspectRatio' => false,
+                    'cutout' => '60%',
+                    'plugins' => ['legend' => ['position' => 'bottom', 'labels' => ['boxWidth' => 12, 'font' => ['size' => 11]]]],
+                ],
+            ],
+            'dept' => [
+                'type' => 'bar',
+                'data' => [
+                    'labels' => $deptRequests->keys()->all(),
+                    'datasets' => [[
+                        'data' => $deptRequests->values()->map(fn ($v) => (int) $v)->all(),
+                        'backgroundColor' => '#134169',
+                        'borderRadius' => 4,
+                        'maxBarThickness' => 20,
+                    ]],
+                ],
+                'options' => [
+                    'indexAxis' => 'y',
+                    'responsive' => true,
+                    'maintainAspectRatio' => false,
+                    'plugins' => ['legend' => ['display' => false]],
+                    'scales' => [
+                        'x' => ['beginAtZero' => true, 'ticks' => ['precision' => 0], 'grid' => ['color' => '#f1f5f9']],
+                        'y' => ['grid' => ['display' => false]],
+                    ],
+                ],
+            ],
+            'daily' => [
+                'type' => 'line',
+                'data' => [
+                    'labels' => $daily->pluck('label')->all(),
+                    'datasets' => [[
+                        'label' => 'Movements',
+                        'data' => $daily->pluck('total')->map(fn ($v) => (int) $v)->all(),
+                        'borderColor' => '#134169',
+                        'backgroundColor' => 'rgba(19,65,105,0.15)',
+                        'fill' => true,
+                        'tension' => 0.35,
+                        'pointRadius' => 2,
+                        'pointBackgroundColor' => '#134169',
+                    ]],
+                ],
+                'options' => [
+                    'responsive' => true,
+                    'maintainAspectRatio' => false,
+                    'plugins' => ['legend' => ['display' => false]],
+                    'scales' => [
+                        'y' => ['beginAtZero' => true, 'ticks' => ['precision' => 0], 'grid' => ['color' => '#f1f5f9']],
+                        'x' => ['grid' => ['display' => false]],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
