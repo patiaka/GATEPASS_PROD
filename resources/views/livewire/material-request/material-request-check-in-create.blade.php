@@ -5,14 +5,21 @@
             <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-4 sm:p-6 lg:p-8">
 
                 {{-- Header --}}
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-bold text-[#0f4b73] tracking-tight">
-                        Material Request Check-In / Check-Out
-                    </h2>
-                    <p class="text-sm text-slate-500 mt-1">
-                        Material gate movement record
-                    </p>
+                <div class="flex items-center gap-3 mb-6 pb-5 border-b border-gray-100">
+                    <span class="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-[#134169]/10 text-[#134169] shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+                    </span>
+                    <div>
+                        <h2 class="text-xl font-bold text-[#0f4b73] tracking-tight leading-tight">Material Check-In / Check-Out</h2>
+                        <p class="text-sm text-slate-500">Gate movement record</p>
+                    </div>
                 </div>
+
+                @php
+                    $radioCard = 'relative flex items-center justify-center text-center gap-2 px-3 py-3 rounded-xl border border-gray-200 bg-gray-50 cursor-pointer transition hover:border-[#134169]/50 has-[:checked]:border-[#134169] has-[:checked]:bg-[#134169]/5 has-[:checked]:ring-1 has-[:checked]:ring-[#134169]';
+                @endphp
 
                 <form wire:submit.prevent="recordSecurityCheck" class="space-y-6">
 
@@ -51,16 +58,9 @@
 
                         <div class="grid grid-cols-3 gap-3">
                             @foreach (['Front', 'Back', 'Airport'] as $g)
-                                <label
-                                    class="flex items-start gap-3 p-4 rounded-xl border border-gray-200 bg-gray-50
-                              hover:bg-blue-50 hover:border-[#134169] cursor-pointer transition">
-                                    <input type="radio" wire:model="gate" value="{{ $g }}"
-                                        class="mt-1 text-[#134169] focus:ring-[#134169]">
-
-                                    <div>
-                                        <div class="font-semibold text-slate-800">{{ $g }}</div>
-                                        <div class="text-xs text-slate-500">Security gate</div>
-                                    </div>
+                                <label class="{{ $radioCard }}">
+                                    <input type="radio" wire:model="gate" value="{{ $g }}" class="sr-only">
+                                    <span class="font-semibold text-slate-700">{{ $g }}</span>
                                 </label>
                             @endforeach
                         </div>
@@ -73,16 +73,21 @@
                     {{-- Action --}}
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">
-                            Action <span class="text-red-500">*</span>
+                            Movement <span class="text-red-500">*</span>
                         </label>
 
-                        <select wire:model="action"
-                            class="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-2
-                       focus:ring-2 focus:ring-[#134169] focus:border-transparent outline-none">
-                            <option value="">Select action</option>
-                            <option value="Exit">Exit</option>
-                            <option value="Entry">Entry</option>
-                        </select>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="relative flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl border border-gray-200 bg-gray-50 cursor-pointer transition font-semibold text-slate-700 hover:border-amber-400 has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50 has-[:checked]:text-amber-700 has-[:checked]:ring-1 has-[:checked]:ring-amber-500">
+                                <input type="radio" wire:model="action" value="Exit" class="sr-only">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                Exit
+                            </label>
+                            <label class="relative flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl border border-gray-200 bg-gray-50 cursor-pointer transition font-semibold text-slate-700 hover:border-emerald-400 has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50 has-[:checked]:text-emerald-700 has-[:checked]:ring-1 has-[:checked]:ring-emerald-500">
+                                <input type="radio" wire:model="action" value="Entry" class="sr-only">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14" /></svg>
+                                Entry
+                            </label>
+                        </div>
 
                         @error('action')
                             <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
