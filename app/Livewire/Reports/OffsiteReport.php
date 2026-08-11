@@ -34,9 +34,44 @@ final class OffsiteReport extends Component
     #[Url]
     public string $gate = '';
 
+    /** Onglet actif : overview | checkouts | requests */
+    #[Url]
+    public string $tab = 'overview';
+
     public function setPeriod(string $period): void
     {
         $this->period = in_array($period, ['all', 'today', '24h', 'week', 'month'], true) ? $period : 'month';
+    }
+
+    public function setTab(string $tab): void
+    {
+        $this->tab = in_array($tab, ['overview', 'checkouts', 'requests'], true) ? $tab : 'overview';
+    }
+
+    /**
+     * Prépare les segments d'un donut (top N + « Other ») avec pourcentage et couleur.
+     *
+     * @return array<int, array{label:string,total:int,percent:float,color:string}>
+     */
+    private function donut(Collection $data, int $top = 6): array
+    {
+        $sorted = $data->sortByDesc('total')->values();
+        $segments = $sorted->take($top)->map(fn ($r) => ['label' => $r->label, 'total' => (int) $r->total])->all();
+
+        $rest = $sorted->slice($top);
+        if ($rest->isNotEmpty()) {
+            $segments[] = ['label' => 'Other', 'total' => (int) $rest->sum('total')];
+        }
+
+        $sum = array_sum(array_column($segments, 'total')) ?: 1;
+        $palette = ['#134169', '#2b7fbf', '#4aa3df', '#6cc0a0', '#f0a500', '#e0663f', '#64748b'];
+
+        foreach ($segments as $i => &$s) {
+            $s['percent'] = round($s['total'] / $sum * 100, 1);
+            $s['color'] = $palette[$i % count($palette)];
+        }
+
+        return $segments;
     }
 
     private function periodStart(): ?Carbon
@@ -160,6 +195,9 @@ final class OffsiteReport extends Component
         $topCompaniesReq = $this->requestsGrouped('company', $since)->take(10);
         $byDepartmentReq = $this->requestsGrouped('department', $since, applyDeptFilter: false);
 
+        // Répartition (donut) des sorties par département
+        $deptDonut = $this->donut($byDepartment);
+
         $timeSince = $since ?? Carbon::now()->subDays(29)->startOfDay();
         $overTime = (clone $this->movementsBase('Exit', $timeSince))
             ->selectRaw('CAST(recordings.created_at AS DATE) as d, COUNT(*) as total')
@@ -167,7 +205,7 @@ final class OffsiteReport extends Component
             ->orderBy('d')
             ->get();
 
-        return compact('exitsCount', 'entriesCount', 'currentlyOut', 'distinctVehicles', 'topVehicles', 'topCompanies', 'byDepartment', 'topCompaniesReq', 'byDepartmentReq', 'overTime');
+        return compact('exitsCount', 'entriesCount', 'currentlyOut', 'distinctVehicles', 'topVehicles', 'topCompanies', 'byDepartment', 'topCompaniesReq', 'byDepartmentReq', 'deptDonut', 'overTime');
     }
 
     /** Libellé lisible des filtres actifs (pour l'en-tête d'export). */
