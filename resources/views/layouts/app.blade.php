@@ -43,49 +43,45 @@
             display: none;
         }
 
-        /* ===== Sidebar réduite en rail d'icônes (grand écran uniquement) ===== */
+        /* ===== Navigation latérale — 100% CSS, pilotée par des classes sur <html> ===== */
+        #overlay { display: none; }
+
+        /* Tablette / mobile : tiroir (caché par défaut, ouvert via .nav-open) */
+        @media (max-width: 1279.98px) {
+            #sidebar { position: fixed; transform: translateX(-100%); transition: transform .22s ease; }
+            html.nav-open #sidebar { transform: translateX(0); }
+            html.nav-open #overlay { display: block; }
+        }
+
+        /* Grand écran : sidebar fixe ; rail d'icônes via .nav-mini */
         @media (min-width: 1280px) {
-            #sidebar { transition: width .2s ease; }
-            html.sidebar-mini #sidebar { width: 4.75rem; }
+            #sidebar { position: static; transform: none; transition: width .2s ease; }
+            html.nav-mini #sidebar { width: 4.75rem; }
+            html.nav-mini #sidebar > a,
+            html.nav-mini #sidebar h2,
+            html.nav-mini #sidebar span,
+            html.nav-mini #sidebar details > ul,
+            html.nav-mini #sidebar summary > svg:last-of-type { display: none; }
+            html.nav-mini #sidebar a,
+            html.nav-mini #sidebar summary { justify-content: center; padding-left: .5rem; padding-right: .5rem; }
+            html.nav-mini #sidebarCollapse svg { transform: rotate(180deg); }
 
-            /* Réduit & non survolé : on ne garde que les icônes */
-            html.sidebar-mini #sidebar > a,
-            html.sidebar-mini #sidebar h2,
-            html.sidebar-mini #sidebar span,
-            html.sidebar-mini #sidebar details > ul,
-            html.sidebar-mini #sidebar summary > svg:last-of-type {
-                display: none;
-            }
-            html.sidebar-mini #sidebar a,
-            html.sidebar-mini #sidebar summary {
-                justify-content: center;
-                padding-left: .5rem;
-                padding-right: .5rem;
-            }
-            html.sidebar-mini #sidebarCollapse svg { transform: rotate(180deg); }
-
-            /* Survol : ré-expansion (pousse le contenu) pour accéder aux libellés & sous-menus */
-            html.sidebar-mini #sidebar:hover { width: 18rem; }
-            html.sidebar-mini #sidebar:hover > a,
-            html.sidebar-mini #sidebar:hover h2,
-            html.sidebar-mini #sidebar:hover span,
-            html.sidebar-mini #sidebar:hover details[open] > ul,
-            html.sidebar-mini #sidebar:hover summary > svg:last-of-type {
-                display: revert;
-            }
-            html.sidebar-mini #sidebar:hover a,
-            html.sidebar-mini #sidebar:hover summary {
-                justify-content: flex-start;
-                padding-left: .75rem;
-                padding-right: .75rem;
-            }
+            /* Survol : ré-expansion pour accéder aux libellés & sous-menus */
+            html.nav-mini #sidebar:hover { width: 18rem; }
+            html.nav-mini #sidebar:hover > a,
+            html.nav-mini #sidebar:hover h2,
+            html.nav-mini #sidebar:hover span,
+            html.nav-mini #sidebar:hover details[open] > ul,
+            html.nav-mini #sidebar:hover summary > svg:last-of-type { display: revert; }
+            html.nav-mini #sidebar:hover a,
+            html.nav-mini #sidebar:hover summary { justify-content: flex-start; padding-left: .75rem; padding-right: .75rem; }
         }
     </style>
 
-    {{-- Applique la préférence "sidebar réduite" avant le rendu (évite le flash) --}}
+    {{-- Applique la préférence "rail réduit" avant le rendu (évite le flash) --}}
     <script>
         if (localStorage.getItem('gp-sidebar-mini') === '1') {
-            document.documentElement.classList.add('sidebar-mini');
+            document.documentElement.classList.add('nav-mini');
         }
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -94,7 +90,8 @@
 
 <body class="relative text-slate-600">
     <div class="xl:hidden flex items-center justify-between p-4 bg-white shadow">
-        <button id="sidebarToggle" class="text-[#0e3a61] text-2xl focus:outline-none" aria-label="Open menu">
+        <button id="sidebarToggle" type="button" onclick="document.documentElement.classList.toggle('nav-open')"
+            class="text-[#0e3a61] text-2xl focus:outline-none" aria-label="Open menu">
             ☰
         </button>
     </div>
@@ -115,33 +112,13 @@
     <!-- Content -->
     {{-- Lucide (icônes) est servi en local via Vite : voir resources/js/app.js --}}
     <script>
-        // IMPORTANT : garde sur window pour n'attacher les écouteurs QU'UNE SEULE FOIS.
-        // Sans ça, wire:navigate ré-exécute ce script à chaque page et empile les
-        // écouteurs -> le toggle se déclenche plusieurs fois et "refuse de s'ouvrir".
-        if (!window.__gpSidebarInit) {
-            window.__gpSidebarInit = true;
-
-            const gpSidebar = () => document.getElementById('sidebar');
-            const gpOverlay = () => document.getElementById('overlay');
-            const gpIsDrawer = () => window.innerWidth < 1280;
-            const gpOpen = () => { gpSidebar()?.classList.remove('-translate-x-full'); gpOverlay()?.classList.remove('hidden'); };
-            const gpClose = () => { gpSidebar()?.classList.add('-translate-x-full'); gpOverlay()?.classList.add('hidden'); };
-
-            // Délégation sur document : survit aux navigations SPA.
-            document.addEventListener('click', function(e) {
-                if (e.target.closest('#sidebarToggle')) {
-                    e.preventDefault();
-                    gpSidebar()?.classList.contains('-translate-x-full') ? gpOpen() : gpClose();
-                } else if (e.target.closest('#overlay')) {
-                    gpClose();
-                } else if (e.target.closest('#sidebar a') && gpIsDrawer()) {
-                    gpClose(); // fermer le tiroir après un clic de navigation (tablette/mobile)
-                }
-            });
-
-            // À chaque navigation SPA, on repart tiroir fermé sur petit écran.
-            document.addEventListener('livewire:navigated', function() {
-                if (gpIsDrawer()) gpClose();
+        // Le toggle (☰) et le rail (bouton réduire) sont des onclick inline pilotant des classes
+        // sur <html> + du CSS -> déterministe, aucune lecture d'état, robuste au wire:navigate.
+        // Ici, on ferme juste le tiroir après une navigation SPA (écouteur toujours correct).
+        if (!window.__gpNavInit) {
+            window.__gpNavInit = true;
+            document.addEventListener('livewire:navigated', function () {
+                document.documentElement.classList.remove('nav-open');
             });
         }
     </script>
