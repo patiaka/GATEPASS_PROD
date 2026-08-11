@@ -60,7 +60,7 @@
                         <select class="w-full border border-gray-300 rounded-lg px-3 py-2" wire:model="status">
                             <option value="" selected>select</option>
                             @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
-                            @continue(in_array($row->value, ["Progress", "Pending", "Expired"]))
+                            @continue(in_array($row->value, ["Progress", "Pending", "Expired", "Cancelled"]))
                             <option value="{{ $row }}">{{ $row }}</option>
                             @endforeach
                         </select>

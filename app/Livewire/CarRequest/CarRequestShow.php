@@ -43,6 +43,18 @@ final class CarRequestShow extends Component
         return $this->redirectRoute('car.create', ['from' => $this->carRequest->id]);
     }
 
+    /**
+     * Annulation (admin) : marque la demande comme Annulée.
+     */
+    public function cancel()
+    {
+        Gate::authorize('cancel-request', $this->carRequest);
+        $this->carRequest->cancel();
+        flash()->success('Request cancelled.');
+
+        return $this->redirectRoute('car.index');
+    }
+
     public function download_pdf(CarRequest $carRequest)
     {
         Gate::authorize('download-request', $carRequest);

@@ -4,6 +4,7 @@
     'bg-red-700' => $row->isExpired(),
     'bg-sky-500' => $row->isPending(),
     'bg-yellow-500' => $row->isProgress(),
+    'bg-gray-500' => $row->isCancelled(),
     ])>
     {{ $row->status }}
 </span>

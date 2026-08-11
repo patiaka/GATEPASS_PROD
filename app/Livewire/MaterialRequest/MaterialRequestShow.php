@@ -36,6 +36,18 @@ final class MaterialRequestShow extends Component
         return $this->redirectRoute('material.create', ['from' => $this->MaterialRequest->id]);
     }
 
+    /**
+     * Annulation (admin) : marque la demande comme Annulée.
+     */
+    public function cancel()
+    {
+        Gate::authorize('cancel-request', $this->MaterialRequest);
+        $this->MaterialRequest->cancel();
+        flash()->success('Request cancelled.');
+
+        return $this->redirectRoute('material.index');
+    }
+
     public function delete(int $id): void
     {
         $row = Document::find($id);

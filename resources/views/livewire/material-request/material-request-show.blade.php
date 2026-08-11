@@ -7,6 +7,7 @@
             'Approved' => ['bg-emerald-50 text-emerald-700 ring-emerald-200', 'bg-emerald-500'],
             'Rejected' => ['bg-rose-50 text-rose-700 ring-rose-200', 'bg-rose-500'],
             'Expired' => ['bg-slate-100 text-slate-600 ring-slate-200', 'bg-slate-400'],
+            'Cancelled' => ['bg-gray-200 text-gray-600 ring-gray-300', 'bg-gray-500'],
         ];
         [$statusBadge, $statusDot] = $statusStyles[$statusValue] ?? $statusStyles['Pending'];
 
@@ -111,6 +112,18 @@
                         Generating…
                     </span>
                 </button>
+                @endcan
+
+                @can('cancel-request', $MaterialRequest)
+                    <button wire:click="cancel" wire:target="cancel" wire:loading.attr="disabled"
+                        wire:confirm="Cancel this request? It will no longer be valid."
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-rose-200 bg-rose-50 text-sm font-medium text-rose-700 hover:bg-rose-100 disabled:opacity-60 transition shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 9v6m4-6v6M5 7h14M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m1 0v12a2 2 0 01-2 2H8a2 2 0 01-2-2V7" />
+                        </svg>
+                        <span wire:loading.remove wire:target="cancel">Cancel request</span>
+                        <span wire:loading wire:target="cancel">Cancelling…</span>
+                    </button>
                 @endcan
             </div>
         </div>

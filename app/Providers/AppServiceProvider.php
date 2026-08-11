@@ -42,8 +42,8 @@ final class AppServiceProvider extends ServiceProvider
 
         Gate::define('update-request', function (User $user, MaterialRequest|CarRequest $Request) {
             if ($Request instanceof CarRequest || $Request instanceof MaterialRequest) {
-                // Une demande approuvée ou expirée n'est plus modifiable (personne, admin inclus)
-                if ($Request->isApproved() || $Request->isExpired()) {
+                // Une demande approuvée, expirée ou annulée n'est plus modifiable (personne, admin inclus)
+                if ($Request->isApproved() || $Request->isExpired() || $Request->isCancelled()) {
                     return false;
                 }
 
@@ -60,6 +60,12 @@ final class AppServiceProvider extends ServiceProvider
                 return false;
             }
         });
+        Gate::define('cancel-request', function (User $user, MaterialRequest|CarRequest $request) {
+            // Seul l'administrateur peut annuler, et seulement une demande qui ne
+            // l'est pas déjà (ou expirée).
+            return $user->isAdmin() && ! $request->isCancelled() && ! $request->isExpired();
+        });
+
         Gate::define('download-request', function (User $user, MaterialRequest|CarRequest $request) {
             // Un laissez-passer ne s'imprime que s'il est approuvé…
             if (! $request->isApproved()) {

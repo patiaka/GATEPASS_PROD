@@ -71,6 +71,23 @@ trait ModelAction
         return $this->status === MaterialRequestStatus::Expired;
     }
 
+    public function isCancelled(): bool
+    {
+        return $this->status === MaterialRequestStatus::Cancelled;
+    }
+
+    /**
+     * Annulation (admin) : la demande est marquée Annulée et sort de tout circuit
+     * (plus approuvable, plus imprimable). Référence + historique conservés.
+     */
+    public function cancel(): void
+    {
+        $this->update([
+            'status' => MaterialRequestStatus::Cancelled,
+            'next_approver_role' => null,
+        ]);
+    }
+
     /**
      * « Corriger & renvoyer » : réinitialise une demande rejetée pour un nouveau
      * cycle d'approbation — statut repassé en attente, toutes les décisions
