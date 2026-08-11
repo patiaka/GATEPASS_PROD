@@ -101,13 +101,92 @@
             html.nav-mini #sidebar details:hover > ul span { display: inline; }
             html.nav-mini #sidebar details:hover > ul a { justify-content: flex-start; padding-left: .6rem; padding-right: .6rem; }
         }
+
+        /* ===== Thème sombre — retrofit global piloté par html.dark =====
+           Bloc non-layered : il prime sur les utilitaires Tailwind (layered).
+           Scopé à .main (en-tête + contenu) pour préserver le sidebar déjà sombre. */
+        html.dark {
+            --dk-bg: #0f172a;        /* fond page (le plus foncé) */
+            --dk-surface: #1e293b;   /* cartes / panneaux */
+            --dk-surface-2: #172033; /* zones douces (slate-50 / gray-50) */
+            --dk-border: #334155;
+            --dk-ink: #e2e8f0;       /* texte fort */
+            --dk-muted: #94a3b8;     /* texte discret */
+            --dk-brand: #7fb0e0;     /* bleu marque éclairci (contraste sur foncé) */
+            color-scheme: dark;
+        }
+        html.dark body { background-color: var(--dk-bg); color: var(--dk-ink); }
+        html.dark .flex.w-full.h-screen { background-color: var(--dk-bg); }
+        html.dark > body > .xl\:hidden { background-color: var(--dk-surface) !important; border-color: var(--dk-border) !important; }
+
+        /* Surfaces */
+        html.dark .main .bg-white { background-color: var(--dk-surface) !important; }
+        html.dark .main .bg-gray-50,
+        html.dark .main .bg-slate-50 { background-color: var(--dk-surface-2) !important; }
+        html.dark .main .bg-gray-100,
+        html.dark .main .bg-slate-100 { background-color: var(--dk-bg) !important; }
+        html.dark header { background-color: var(--dk-surface) !important; }
+
+        /* Bordures (couleurs grises/ardoise explicites uniquement — on ne touche pas
+           aux bordures de marque type border-[#134169]) */
+        html.dark .main .border-gray-200,
+        html.dark .main .border-gray-100,
+        html.dark .main .border-gray-300,
+        html.dark .main .border-slate-200,
+        html.dark .main .border-slate-100,
+        html.dark .main .border-slate-300 { border-color: var(--dk-border) !important; }
+        html.dark .main .divide-gray-200 > :not([hidden]) ~ :not([hidden]),
+        html.dark .main .divide-slate-200 > :not([hidden]) ~ :not([hidden]),
+        html.dark .main .divide-gray-100 > :not([hidden]) ~ :not([hidden]) { border-color: var(--dk-border) !important; }
+
+        /* Texte */
+        html.dark .main .text-slate-900, html.dark .main .text-slate-800, html.dark .main .text-slate-700,
+        html.dark .main .text-gray-900,  html.dark .main .text-gray-800,  html.dark .main .text-gray-700,
+        html.dark .main .text-black { color: var(--dk-ink) !important; }
+        html.dark .main .text-slate-600, html.dark .main .text-slate-500, html.dark .main .text-slate-400,
+        html.dark .main .text-gray-600,  html.dark .main .text-gray-500,  html.dark .main .text-gray-400 { color: var(--dk-muted) !important; }
+        html.dark .main .text-\[\#134169\] { color: var(--dk-brand) !important; }
+
+        /* Champs de saisie */
+        html.dark .main input:not([type=checkbox]):not([type=radio]),
+        html.dark .main select,
+        html.dark .main textarea {
+            background-color: var(--dk-bg) !important;
+            border-color: var(--dk-border) !important;
+            color: var(--dk-ink) !important;
+        }
+        html.dark .main input::placeholder,
+        html.dark .main textarea::placeholder { color: #64748b !important; }
+
+        /* Survols */
+        html.dark .main .hover\:bg-gray-50:hover, html.dark .main .hover\:bg-slate-50:hover,
+        html.dark .main .hover\:bg-gray-100:hover, html.dark .main .hover\:bg-slate-100:hover { background-color: #334155 !important; }
+
+        /* Pastilles de statut (-50) : teinte translucide, la couleur du texte est conservée */
+        html.dark .main .bg-emerald-50 { background-color: rgba(16,185,129,.15) !important; }
+        html.dark .main .bg-amber-50   { background-color: rgba(245,158,11,.15) !important; }
+        html.dark .main .bg-rose-50    { background-color: rgba(244,63,94,.15) !important; }
+        html.dark .main .bg-red-50     { background-color: rgba(239,68,68,.15) !important; }
+        html.dark .main .bg-sky-50, html.dark .main .bg-blue-50 { background-color: rgba(56,189,248,.15) !important; }
+
+        /* Icône du bouton thème */
+        html.dark .theme-icon-moon { display: none; }
+        html:not(.dark) .theme-icon-sun { display: none; }
     </style>
 
-    {{-- Applique la préférence "rail réduit" avant le rendu (évite le flash) --}}
+    {{-- Applique les préférences (rail réduit + thème) avant le rendu (évite le flash) --}}
     <script>
         if (localStorage.getItem('gp-sidebar-mini') === '1') {
             document.documentElement.classList.add('nav-mini');
         }
+        (function () {
+            try {
+                var t = localStorage.getItem('gp-theme');
+                var dark = (t === 'dark') || (t === null && window.matchMedia
+                    && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                if (dark) document.documentElement.classList.add('dark');
+            } catch (e) {}
+        })();
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 

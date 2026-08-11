@@ -92,6 +92,23 @@
         </div>
 
 
+        <!-- Bascule thème clair / sombre -->
+        <button type="button"
+            onclick="var d=document.documentElement.classList.toggle('dark');try{localStorage.setItem('gp-theme',d?'dark':'light')}catch(e){}"
+            title="{{ __('Toggle theme') }}" aria-label="{{ __('Toggle theme') }}"
+            class="border rounded-md p-1 shadow-sm flex items-center justify-center bg-white text-slate-800 hover:bg-slate-50 transition">
+            <!-- Lune (mode clair actif → propose le sombre) -->
+            <svg class="theme-icon-moon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+            </svg>
+            <!-- Soleil (mode sombre actif → propose le clair) -->
+            <svg class="theme-icon-sun w-6 h-6 text-amber-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="4" />
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32 1.41-1.41" />
+            </svg>
+        </button>
+
         <!-- Réglages (Admin) -->
         @if (Auth::user()->isAdmin())
             <a href="{{ route('settings.index') }}" wire:navigate title="{{ __('Settings') }}"
