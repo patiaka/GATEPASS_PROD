@@ -22,7 +22,13 @@
     </div>
 
     <form wire:submit="save" class="mt-6">
+        @php
+            $pill = 'inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-gray-50 cursor-pointer text-sm font-medium text-slate-700 transition hover:border-[#134169]/50 has-[:checked]:border-[#134169] has-[:checked]:bg-[#134169]/5 has-[:checked]:text-[#134169] has-[:checked]:ring-1 has-[:checked]:ring-[#134169]';
+            $reqStar = 'after:content-[\'*\'] after:ml-0.5 after:text-red-500';
+        @endphp
         <div class="bg-white rounded-2xl shadow-md border border-gray-200 p-8 space-y-8">
+
+            <p class="text-xs text-slate-400 -mt-2">Fields marked <span class="text-red-500 font-semibold">*</span> are required.</p>
 
             <!-- Company -->
             <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
@@ -31,7 +37,7 @@
                     Company</label>
                 <div class="md:col-span-9">
                     <input type="text" name="form.company" required wire:model="form.company"
-                        class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 ">
+                        class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition ">
                     @error('form.company')
                         <small class="text-red-500 text-sm">{{ $message }}</small>
                     @enderror
@@ -44,18 +50,15 @@
                     class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 after:content-['*'] after:ml-0.5 after:text-red-500">Somisy
                     Vehicle</label>
                 <div class="md:col-span-9">
-                    <div class="flex flex-col gap-2 md:w-1/2">
-                        <label class="inline-flex items-center gap-2">
-                            <input type="radio" name="form.somisy_car" wire:model.live="form.somisy_car"
-                                value="yes" class="form-radio"> <span>Yes</span>
+                    <div class="flex flex-wrap gap-2">
+                        <label class="{{ $pill }}">
+                            <input type="radio" name="somisy_car" wire:model.live="form.somisy_car" value="yes" class="sr-only"> Yes
                         </label>
-                        <label class="inline-flex items-center gap-2">
-                            <input type="radio" name="form.somisy_car" wire:model.live="form.somisy_car"
-                                value="no" class="form-radio"> <span>No</span>
+                        <label class="{{ $pill }}">
+                            <input type="radio" name="somisy_car" wire:model.live="form.somisy_car" value="no" class="sr-only"> No
                         </label>
-                        <label class="inline-flex items-center gap-2">
-                            <input type="radio" name="form.somisy_car" wire:model.live="form.somisy_car"
-                                value="no_vehicle" class="form-radio"> <span>No Vehicle</span>
+                        <label class="{{ $pill }}">
+                            <input type="radio" name="somisy_car" wire:model.live="form.somisy_car" value="no_vehicle" class="sr-only"> No Vehicle
                         </label>
                     </div>
                     @error('form.somisy_car')
@@ -70,14 +73,12 @@
                     class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 after:content-['*'] after:ml-0.5 after:text-red-500">Camp
                     Resident</label>
                 <div class="md:col-span-9">
-                    <div class="flex flex-col gap-2 md:w-1/2">
-                        <label class="inline-flex items-center gap-2">
-                            <input type="radio" name="form.resident" wire:model="form.resident" value="yes"
-                                class="form-radio"> <span>Yes</span>
+                    <div class="flex flex-wrap gap-2">
+                        <label class="{{ $pill }}">
+                            <input type="radio" name="resident" wire:model="form.resident" value="yes" class="sr-only"> Yes
                         </label>
-                        <label class="inline-flex items-center gap-2">
-                            <input type="radio" name="form.resident" wire:model="form.resident" value="no"
-                                class="form-radio"> <span>No</span>
+                        <label class="{{ $pill }}">
+                            <input type="radio" name="resident" wire:model="form.resident" value="no" class="sr-only"> No
                         </label>
                     </div>
                     @error('form.resident')
@@ -89,7 +90,7 @@
 
                 <!-- Drivers (multi-select) -->
                 <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
-                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Drivers</label>
+                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Drivers</label>
                     <div class="md:col-span-9 md:w-2/3">
                         <x-select2-multiple :options="$users" optionLabel="full_name" wire:model="form.driver_ids"
                             placeholder="Select one or more drivers" />
@@ -101,36 +102,36 @@
 
                 <!-- Vehicle Type -->
                 <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
-                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Vehicle
+                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Vehicle
                         Type</label>
 
                     <div class="md:col-span-9">
 
                         <div x-data="{ show: @entangle('form.car_type').live === 'Other' }" x-effect="show = $wire.form.car_type === 'Other'">
 
-                            <div class="flex flex-col gap-2 md:w-1/2">
+                            <div class="flex flex-wrap gap-2">
 
-                                <label class="inline-flex items-center gap-2">
-                                    <input type="radio" wire:model.live="form.car_type" value="Lv"> LV
+                                <label class="{{ $pill }}">
+                                    <input type="radio" name="car_type" wire:model.live="form.car_type" value="Lv" class="sr-only"> LV
                                 </label>
 
-                                <label class="inline-flex items-center gap-2">
-                                    <input type="radio" wire:model.live="form.car_type" value="Bus"> Bus
+                                <label class="{{ $pill }}">
+                                    <input type="radio" name="car_type" wire:model.live="form.car_type" value="Bus" class="sr-only"> Bus
                                 </label>
 
-                                <label class="inline-flex items-center gap-2">
-                                    <input type="radio" wire:model.live="form.car_type" value="Truck"> Truck
+                                <label class="{{ $pill }}">
+                                    <input type="radio" name="car_type" wire:model.live="form.car_type" value="Truck" class="sr-only"> Truck
                                 </label>
 
-                                <label class="inline-flex items-center gap-2">
-                                    <input type="radio" wire:model.live="form.car_type" value="Other"> Other
+                                <label class="{{ $pill }}">
+                                    <input type="radio" name="car_type" wire:model.live="form.car_type" value="Other" class="sr-only"> Other
                                 </label>
 
                             </div>
 
                             <div x-show="show" x-transition.opacity.duration.200ms class="mt-2">
                                 <input type="text" wire:model.defer="form.type_other" placeholder="Enter type"
-                                    class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
+                                    class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition">
                             </div>
 
                         </div>
@@ -140,7 +141,7 @@
 
                 <!-- Vehicle Number -->
                 <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
-                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Vehicle
+                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Vehicle
                         Number</label>
                     <div class="md:col-span-9" x-data="{}">
                         <div class="flex w-full md:w-1/2 rounded-lg border border-gray-300 bg-gray-50 overflow-hidden focus-within:ring-2 focus-within:ring-[#134169]/20 focus-within:border-[#134169]">
@@ -159,7 +160,7 @@
             @else
                 <!-- Passengers (multi-select) -->
                 <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
-                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Residents</label>
+                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Residents</label>
                     <div class="md:col-span-9 md:w-2/3">
                         <x-select2-multiple :options="$users" optionLabel="full_name" wire:model="form.passenger_ids"
                             placeholder="Select one or more residents" />
@@ -181,12 +182,12 @@
             <!-- Dates -->
             <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
 
-                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Date Valid
+                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Date Valid
                     From</label>
                 <div class="md:col-span-9">
                     <input type="date" name="date_from" wire:model.live="form.start"
                         min="{{ now()->format('Y-m-d') }}"
-                        class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
+                        class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition">
                     @error('form.start')
                         <small class="text-red-500 text-sm">{{ $message }}</small>
                     @enderror
@@ -197,7 +198,7 @@
                 <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Date Until</label>
                 <div class="md:col-span-9">
                     <input type="date" name="date_to" wire:model.live="form.end" readonly
-                        class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
+                        class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition">
 
                 </div>
             </div>
@@ -210,7 +211,7 @@
                         class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Justification</label>
                     <div class="md:col-span-9">
                         <input type="text" name="comment" wire:model="form.comment"
-                            class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
+                            class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition">
                         @error('form.comment')
                             <small class="text-red-500 text-sm">{{ $message }}</small>
                         @enderror
@@ -220,11 +221,11 @@
 
             <!-- Time -->
             <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
-                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Departure
+                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Departure
                     Time</label>
                 <div class="md:col-span-9">
                     <input type="time" name="time_out" wire:model="form.depart_at"
-                        class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
+                        class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition">
                     @error('form.depart_at')
                         <small class="text-red-500 text-sm">{{ $message }}</small>
                     @enderror
@@ -232,10 +233,10 @@
             </div>
 
             <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
-                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Arrival Time</label>
+                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Arrival Time</label>
                 <div class="md:col-span-9">
                     <input type="time" name="time_in" wire:model="form.arrive_at"
-                        class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
+                        class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition">
                     @error('form.arrive_at')
                         <small class="text-red-500 text-sm">{{ $message }}</small>
                     @enderror
@@ -252,31 +253,23 @@
                 <div class="md:col-span-9" x-data="{ show: @entangle('form.destination').live === 'Other' }"
                     x-effect="show = $wire.form.destination === 'Other'">
 
-                    {{-- radios — même largeur que Vehicle Type --}}
-                    <div class="flex flex-col gap-2 md:w-1/2">
+                    {{-- radios en pastilles --}}
+                    <div class="flex flex-wrap gap-2">
 
-                        <label class="inline-flex items-center gap-2">
-                            <input type="radio" wire:model.live="form.destination" value="Paysan"
-                                class="form-radio">
-                            <span>Paysan</span>
+                        <label class="{{ $pill }}">
+                            <input type="radio" name="destination" wire:model.live="form.destination" value="Paysan" class="sr-only"> Paysan
                         </label>
 
-                        <label class="inline-flex items-center gap-2">
-                            <input type="radio" wire:model.live="form.destination" value="Taba"
-                                class="form-radio">
-                            <span>Taba</span>
+                        <label class="{{ $pill }}">
+                            <input type="radio" name="destination" wire:model.live="form.destination" value="Taba" class="sr-only"> Taba
                         </label>
 
-                        <label class="inline-flex items-center gap-2">
-                            <input type="radio" wire:model.live="form.destination" value="A21"
-                                class="form-radio">
-                            <span>A21</span>
+                        <label class="{{ $pill }}">
+                            <input type="radio" name="destination" wire:model.live="form.destination" value="A21" class="sr-only"> A21
                         </label>
 
-                        <label class="inline-flex items-center gap-2">
-                            <input type="radio" wire:model.live="form.destination" value="Other"
-                                class="form-radio">
-                            <span>Other</span>
+                        <label class="{{ $pill }}">
+                            <input type="radio" name="destination" wire:model.live="form.destination" value="Other" class="sr-only"> Other
                         </label>
 
                     </div>
@@ -285,7 +278,7 @@
                     <div x-show="show" x-transition.opacity.duration.200ms class="mt-2">
                         <input type="text" wire:model.defer="form.destination_other"
                             placeholder="Enter destination"
-                            class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
+                            class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition">
                     </div>
 
 
@@ -300,11 +293,11 @@
 
             <!-- Reason -->
             <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
-                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Reason for
+                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Reason for
                     Travel</label>
                 <div class="md:col-span-9">
                     <input type="text" name="reason" wire:model="form.reason"
-                        class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2">
+                        class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition">
                     @error('form.reason')
                         <small class="text-red-500 text-sm">{{ $message }}</small>
                     @enderror
