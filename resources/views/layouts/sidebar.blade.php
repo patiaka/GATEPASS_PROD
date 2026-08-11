@@ -29,6 +29,7 @@
         <div class="flex items-center justify-between mb-2 pr-1">
             <h2 class="ml-3 uppercase tracking-wider text-sm font-medium text-white/70">{{ __('Menu') }}</h2>
             <button id="sidebarCollapse" type="button" title="{{ __('Collapse sidebar') }}" aria-label="{{ __('Collapse sidebar') }}"
+                onclick="var m=document.documentElement.classList.toggle('sidebar-mini');try{localStorage.setItem('gp-sidebar-mini',m?'1':'0')}catch(e){}"
                 class="hidden xl:inline-flex items-center justify-center w-7 h-7 rounded-md text-white/70 hover:bg-white/10 hover:text-white transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7M18 19l-7-7 7-7" />

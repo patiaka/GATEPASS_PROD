@@ -129,12 +129,6 @@
 
             // Délégation sur document : survit aux navigations SPA.
             document.addEventListener('click', function(e) {
-                if (e.target.closest('#sidebarCollapse')) {
-                    // Grand écran : réduire/étendre le rail d'icônes (préférence mémorisée)
-                    const mini = document.documentElement.classList.toggle('sidebar-mini');
-                    localStorage.setItem('gp-sidebar-mini', mini ? '1' : '0');
-                    return;
-                }
                 if (e.target.closest('#sidebarToggle')) {
                     e.preventDefault();
                     gpSidebar()?.classList.contains('-translate-x-full') ? gpOpen() : gpClose();
