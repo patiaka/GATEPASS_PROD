@@ -1,10 +1,10 @@
 <div class="mx-auto">
     <div class="flex items-center justify-between pb-6 border-b border-gray-200">
         <h1 class="text-2xl font-bold text-[#0e3a61] tracking-tight flex items-center gap-2">
-            Resident & Vehicle Off Site Form
+            {{ __('Resident & Vehicle Off Site Form') }}
             <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1
                 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200">
-                New
+                {{ __('New') }}
             </span>
         </h1>
 
@@ -17,7 +17,7 @@
                 stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
-            Back to list
+            {{ __('Back to list') }}
         </a>
     </div>
 
@@ -28,13 +28,12 @@
         @endphp
         <div class="bg-white rounded-2xl shadow-md border border-gray-200 p-8 space-y-8">
 
-            <p class="text-xs text-slate-400 -mt-2">Fields marked <span class="text-red-500 font-semibold">*</span> are required.</p>
+            <p class="text-xs text-slate-400 -mt-2">{{ __('Fields marked') }} <span class="text-red-500 font-semibold">*</span> {{ __('are required.') }}</p>
 
             <!-- Company -->
             <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
                 <label
-                    class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 after:content-['*'] after:ml-0.5 after:text-red-500">Requestor
-                    Company</label>
+                    class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 after:content-['*'] after:ml-0.5 after:text-red-500">{{ __('Requestor Company') }}</label>
                 <div class="md:col-span-9">
                     <input type="text" name="form.company" required wire:model="form.company"
                         class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition ">
@@ -47,18 +46,17 @@
             <!-- Somisy Vehicle -->
             <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
                 <label
-                    class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 after:content-['*'] after:ml-0.5 after:text-red-500">Somisy
-                    Vehicle</label>
+                    class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 after:content-['*'] after:ml-0.5 after:text-red-500">{{ __('Somisy Vehicle') }}</label>
                 <div class="md:col-span-9">
                     <div class="flex flex-wrap gap-2">
                         <label class="{{ $pill }}">
-                            <input type="radio" name="somisy_car" wire:model.live="form.somisy_car" value="yes" class="sr-only"> Yes
+                            <input type="radio" name="somisy_car" wire:model.live="form.somisy_car" value="yes" class="sr-only"> {{ __('Yes') }}
                         </label>
                         <label class="{{ $pill }}">
-                            <input type="radio" name="somisy_car" wire:model.live="form.somisy_car" value="no" class="sr-only"> No
+                            <input type="radio" name="somisy_car" wire:model.live="form.somisy_car" value="no" class="sr-only"> {{ __('No') }}
                         </label>
                         <label class="{{ $pill }}">
-                            <input type="radio" name="somisy_car" wire:model.live="form.somisy_car" value="no_vehicle" class="sr-only"> No Vehicle
+                            <input type="radio" name="somisy_car" wire:model.live="form.somisy_car" value="no_vehicle" class="sr-only"> {{ __('No Vehicle') }}
                         </label>
                     </div>
                     @error('form.somisy_car')
@@ -70,15 +68,14 @@
             <!-- Camp Resident -->
             <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
                 <label
-                    class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 after:content-['*'] after:ml-0.5 after:text-red-500">Camp
-                    Resident</label>
+                    class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 after:content-['*'] after:ml-0.5 after:text-red-500">{{ __('Camp Resident') }}</label>
                 <div class="md:col-span-9">
                     <div class="flex flex-wrap gap-2">
                         <label class="{{ $pill }}">
-                            <input type="radio" name="resident" wire:model="form.resident" value="yes" class="sr-only"> Yes
+                            <input type="radio" name="resident" wire:model="form.resident" value="yes" class="sr-only"> {{ __('Yes') }}
                         </label>
                         <label class="{{ $pill }}">
-                            <input type="radio" name="resident" wire:model="form.resident" value="no" class="sr-only"> No
+                            <input type="radio" name="resident" wire:model="form.resident" value="no" class="sr-only"> {{ __('No') }}
                         </label>
                     </div>
                     @error('form.resident')
@@ -90,10 +87,10 @@
 
                 <!-- Drivers (multi-select) -->
                 <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
-                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Drivers</label>
+                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">{{ __('Drivers') }}</label>
                     <div class="md:col-span-9 md:w-1/2">
                         <x-select2-multiple :options="$users" optionLabel="full_name" wire:model="form.driver_ids"
-                            placeholder="Select one or more drivers" />
+                            :placeholder="__('Select one or more drivers')" />
                         @error('form.driver_ids')
                             <small class="text-red-500 text-sm">{{ $message }}</small>
                         @enderror
@@ -102,8 +99,7 @@
 
                 <!-- Vehicle Type -->
                 <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
-                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Vehicle
-                        Type</label>
+                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">{{ __('Vehicle Type') }}</label>
 
                     <div class="md:col-span-9">
 
@@ -120,17 +116,17 @@
                                 </label>
 
                                 <label class="{{ $pill }}">
-                                    <input type="radio" name="car_type" wire:model.live="form.car_type" value="Truck" class="sr-only"> Truck
+                                    <input type="radio" name="car_type" wire:model.live="form.car_type" value="Truck" class="sr-only"> {{ __('Truck') }}
                                 </label>
 
                                 <label class="{{ $pill }}">
-                                    <input type="radio" name="car_type" wire:model.live="form.car_type" value="Other" class="sr-only"> Other
+                                    <input type="radio" name="car_type" wire:model.live="form.car_type" value="Other" class="sr-only"> {{ __('Other') }}
                                 </label>
 
                             </div>
 
                             <div x-show="show" x-transition.opacity.duration.200ms class="mt-2">
-                                <input type="text" wire:model.defer="form.type_other" placeholder="Enter type"
+                                <input type="text" wire:model.defer="form.type_other" placeholder="{{ __('Enter type') }}"
                                     class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition">
                             </div>
 
@@ -141,8 +137,7 @@
 
                 <!-- Vehicle Number -->
                 <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
-                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Vehicle
-                        Number</label>
+                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">{{ __('Vehicle Number') }}</label>
                     <div class="md:col-span-9" x-data="{}">
                         <div class="flex w-full md:w-1/2 rounded-lg border border-gray-300 bg-gray-50 overflow-hidden focus-within:ring-2 focus-within:ring-[#134169]/20 focus-within:border-[#134169]">
                             <span x-show="$wire.form.car_type === 'Lv'" x-cloak
@@ -150,10 +145,10 @@
                             <input type="text" name="vehicle_number" wire:model="form.car_number"
                                 x-bind:inputmode="$wire.form.car_type === 'Lv' ? 'numeric' : 'text'"
                                 x-on:input="if ($wire.form.car_type === 'Lv') { $el.value = $el.value.replace(/\D/g, ''); $wire.set('form.car_number', $el.value, false); }"
-                                x-bind:placeholder="$wire.form.car_type === 'Lv' ? 'Digits only (e.g. 278)' : 'Vehicle number'"
+                                x-bind:placeholder="$wire.form.car_type === 'Lv' ? @js(__('Digits only (e.g. 278)')) : @js(__('Vehicle number'))"
                                 class="flex-1 min-w-0 bg-gray-50 px-4 py-2 outline-none border-0 focus:ring-0">
                         </div>
-                        <p class="text-xs text-slate-400 mt-1" x-show="$wire.form.car_type === 'Lv'" x-cloak>Prefix “LV-” is added automatically.</p>
+                        <p class="text-xs text-slate-400 mt-1" x-show="$wire.form.car_type === 'Lv'" x-cloak>{{ __('Prefix “LV-” is added automatically.') }}</p>
                         @error('form.car_number')
                             <small class="text-red-500 text-sm">{{ $message }}</small>
                         @enderror
@@ -162,10 +157,10 @@
             @else
                 <!-- Passengers (multi-select) -->
                 <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
-                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Residents</label>
+                    <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">{{ __('Residents') }}</label>
                     <div class="md:col-span-9 md:w-1/2">
                         <x-select2-multiple :options="$users" optionLabel="full_name" wire:model="form.passenger_ids"
-                            placeholder="Select one or more residents" />
+                            :placeholder="__('Select one or more residents')" />
                         @error('form.passenger_ids')
                             <small class="text-red-500 text-sm">{{ $message }}</small>
                         @enderror
@@ -174,7 +169,7 @@
             @endif
             <div class="flex items-center gap-2 mb-4">
                 <label for="default-checkbox" class="text-sm font-medium text-heading select-none">
-                    Long term
+                    {{ __('Long term') }}
                 </label>
 
                 <input id="default-checkbox" type="checkbox" wire:model.live="date_long"
@@ -184,8 +179,7 @@
             <!-- Dates -->
             <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
 
-                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Date Valid
-                    From</label>
+                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">{{ __('Date Valid From') }}</label>
                 <div class="md:col-span-9">
                     <input type="date" name="date_from" wire:model.live="form.start"
                         min="{{ now()->format('Y-m-d') }}"
@@ -197,7 +191,7 @@
             </div>
 
             <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
-                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Date Until</label>
+                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">{{ __('Date Until') }}</label>
                 <div class="md:col-span-9">
                     <input type="date" name="date_to" wire:model.live="form.end" readonly
                         class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition">
@@ -210,7 +204,7 @@
                 {{-- comment  --}}
                 <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
                     <label
-                        class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">Justification</label>
+                        class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0">{{ __('Justification') }}</label>
                     <div class="md:col-span-9">
                         <input type="text" name="comment" wire:model="form.comment"
                             class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition">
@@ -223,8 +217,7 @@
 
             <!-- Time -->
             <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
-                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Departure
-                    Time</label>
+                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">{{ __('Departure Time') }}</label>
                 <div class="md:col-span-9">
                     <input type="time" name="time_out" wire:model="form.depart_at"
                         class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition">
@@ -235,7 +228,7 @@
             </div>
 
             <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
-                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Arrival Time</label>
+                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">{{ __('Arrival Time') }}</label>
                 <div class="md:col-span-9">
                     <input type="time" name="time_in" wire:model="form.arrive_at"
                         class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition">
@@ -249,7 +242,7 @@
             <div class="md:grid md:grid-cols-12 md:items-start md:gap-4">
                 <label
                     class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 after:content-['*'] after:ml-0.5 after:text-red-500">
-                    Destination(s)
+                    {{ __('Destination(s)') }}
                 </label>
 
                 <div class="md:col-span-9" x-data="{ show: @entangle('form.destination').live === 'Other' }"
@@ -271,7 +264,7 @@
                         </label>
 
                         <label class="{{ $pill }}">
-                            <input type="radio" name="destination" wire:model.live="form.destination" value="Other" class="sr-only"> Other
+                            <input type="radio" name="destination" wire:model.live="form.destination" value="Other" class="sr-only"> {{ __('Other') }}
                         </label>
 
                     </div>
@@ -279,7 +272,7 @@
                     {{-- Other input — même largeur que autres inputs --}}
                     <div x-show="show" x-transition.opacity.duration.200ms class="mt-2">
                         <input type="text" wire:model.defer="form.destination_other"
-                            placeholder="Enter destination"
+                            placeholder="{{ __('Enter destination') }}"
                             class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition">
                     </div>
 
@@ -295,8 +288,7 @@
 
             <!-- Reason -->
             <div class="md:grid md:grid-cols-12 md:items-center md:gap-4">
-                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">Reason for
-                    Travel</label>
+                <label class="md:col-span-2 block text-sm font-medium text-gray-700 mb-1 md:mb-0 {!! $reqStar !!}">{{ __('Reason for Travel') }}</label>
                 <div class="md:col-span-9">
                     <input type="text" name="reason" wire:model="form.reason"
                         class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition">

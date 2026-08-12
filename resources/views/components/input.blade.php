@@ -9,7 +9,7 @@
 'sm' => false,
 ])
 <label for="{{ $name }}" class="block text-sm font-medium text-gray-700 mb-1">
-    {{ $label ?: $name }}
+    {{ __($label ?: $name) }}
     @if($required)
     <span class="text-red-500">*</span>
     @endif
