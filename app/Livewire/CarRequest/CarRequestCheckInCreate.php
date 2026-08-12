@@ -87,6 +87,22 @@ final class CarRequestCheckInCreate extends Component
         $this->validate();
         $item = CarRequest::findOrFail($this->car_request_id);
 
+        // Quand la demande a un véhicule, chauffeur / mesure / kilométrage / carburant
+        // sont obligatoires (ils sont masqués et optionnels pour « no vehicle »).
+        if ($item->somisy_car !== 'no_vehicle') {
+            $this->validate([
+                'car_driver_id' => 'required|exists:users,id',
+                'Kilometers_type' => 'required|in:Kilometers,Per hours',
+                'kilometers' => 'required|integer|min:0',
+                'fuel_level' => 'required|in:25%,50%,75%,100%',
+            ], [
+                'car_driver_id.required' => 'Please select a driver.',
+                'Kilometers_type.required' => 'Please choose the measure (Kilometers or Per hours).',
+                'kilometers.required' => 'Please enter the kilometers / hours.',
+                'fuel_level.required' => 'Please select the fuel level.',
+            ]);
+        }
+
         // Vérifier expiration
         if ($item->isExpired()) {
             flash()->error('This request has expired.');
@@ -124,7 +140,10 @@ final class CarRequestCheckInCreate extends Component
 
     public function render()
     {
-        $carRequests = CarRequest::select('id', 'status', 'reference', 'car_number')->where('status', MaterialRequestStatus::Approved)->get();
+        $carRequests = CarRequest::select('id', 'status', 'reference', 'car_number')
+            ->where('status', MaterialRequestStatus::Approved)
+            ->with('passengers.user:id,name,badge_number')
+            ->get();
 
         return view('livewire.car-request.car-request-check-in-create', compact('carRequests'));
     }

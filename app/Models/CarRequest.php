@@ -60,9 +60,18 @@ final class CarRequest extends Model
 
     public function getFullNameAttribute(): string
     {
+        if ($this->car_number) {
+            return "{$this->reference} — {$this->car_number}";
+        }
 
-        return $this->car_number
-            ? "{$this->reference} — {$this->car_number}"
+        // Cas « no vehicle » : pas de plaque -> identifier par le(s) résident(s)
+        $residents = $this->passengers
+            ->map(fn ($p) => $p->user?->name)
+            ->filter()
+            ->join(', ');
+
+        return $residents !== ''
+            ? "{$this->reference} — Resident: {$residents}"
             : $this->reference;
     }
 
