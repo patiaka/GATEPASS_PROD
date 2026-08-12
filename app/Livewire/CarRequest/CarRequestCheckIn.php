@@ -32,7 +32,7 @@ final class CarRequestCheckIn extends Component
 
     public function baseQuery()
     {
-        $query = Recording::with('user', 'requestable:id,company,reference,car_number,car_type', 'car_driver:id,name,department_id', 'car_driver.department:id,name')
+        $query = Recording::with('user', 'requestable:id,company,reference,car_number,car_type', 'car_driver:id,name,department_id', 'car_driver.department:id,name', 'requestable.passengers:id,car_request_id,user_id', 'requestable.passengers.user:id,name,department_id', 'requestable.passengers.user.department:id,name')
             ->whereHasMorph('requestable', [CarRequest::class])
             ->when($this->search, function ($query) {
                 $term = '%'.$this->search.'%';

@@ -37,7 +37,7 @@
                         <th class="px-4 py-3 text-left font-medium">Agent</th>
                         <th class="px-4 py-3 text-left font-medium">Company</th>
                         <th class="px-4 py-3 text-left font-medium">Vehicle</th>
-                        <th class="px-4 py-3 text-left font-medium">driver</th>
+                        <th class="px-4 py-3 text-left font-medium">Driver / Resident</th>
                         <th class="px-4 py-3 text-left font-medium">department</th>
                         <th class="px-4 py-3 text-left font-medium">gate</th>
                         <th class="px-4 py-3 text-left font-medium">fuel level</th>
@@ -71,8 +71,27 @@
                                     </span>
                                 @endif
                             </td>
-                            <td class="px-4 py-4">{{ $row->car_driver ? $row->car_driver->name : 'N/A' }}</td>
-                            <td class="px-4 py-4">{{ $row->car_driver ? $row->car_driver->department->name : 'N/A' }}
+                            @php
+                                $resident = $row->requestable->passengers->map(fn ($p) => $p->user?->name)->filter()->join(', ');
+                                $residentDept = $row->requestable->passengers->first()?->user?->department?->name;
+                            @endphp
+                            <td class="px-4 py-4">
+                                @if ($row->car_driver)
+                                    {{ $row->car_driver->name }}
+                                @elseif ($resident !== '')
+                                    {{ $resident }}
+                                @else
+                                    N/A
+                                @endif
+                            </td>
+                            <td class="px-4 py-4">
+                                @if ($row->car_driver)
+                                    {{ $row->car_driver->department?->name ?? 'N/A' }}
+                                @elseif ($residentDept)
+                                    {{ $residentDept }}
+                                @else
+                                    N/A
+                                @endif
                             </td>
                             <td class="px-4 py-4">{{ $row->gate }}</td>
                             <td class="px-4 py-4">{{ $row->fuel_level }}</td>

@@ -286,9 +286,11 @@ final class CarRequestForm extends Form
     private function normalizeCarNumber(): void
     {
         // Préfixe LV- uniquement pour les véhicules légers (type Lv).
+        // On ne garde QUE les chiffres (les gens tapent parfois « LV » eux-mêmes,
+        // ce qui donnerait « LV-LV278 ») puis on ajoute le préfixe.
         if ($this->somisy_car !== 'no_vehicle' && $this->car_type === 'Lv' && filled($this->car_number)) {
-            $number = trim((string) $this->car_number);
-            $this->car_number = Str::startsWith($number, 'LV-') ? $number : 'LV-'.$number;
+            $digits = preg_replace('/\D/', '', (string) $this->car_number);
+            $this->car_number = $digits !== '' ? 'LV-'.$digits : '';
         }
     }
 

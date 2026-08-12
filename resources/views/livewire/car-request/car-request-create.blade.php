@@ -148,7 +148,9 @@
                             <span x-show="$wire.form.car_type === 'Lv'" x-cloak
                                 class="inline-flex items-center px-3 bg-gray-100 text-slate-600 text-sm font-semibold border-r border-gray-300 select-none">LV-</span>
                             <input type="text" name="vehicle_number" wire:model="form.car_number"
-                                placeholder="Vehicle number"
+                                x-bind:inputmode="$wire.form.car_type === 'Lv' ? 'numeric' : 'text'"
+                                x-on:input="if ($wire.form.car_type === 'Lv') { $el.value = $el.value.replace(/\D/g, ''); $wire.set('form.car_number', $el.value, false); }"
+                                x-bind:placeholder="$wire.form.car_type === 'Lv' ? 'Digits only (e.g. 278)' : 'Vehicle number'"
                                 class="flex-1 min-w-0 bg-gray-50 px-4 py-2 outline-none border-0 focus:ring-0">
                         </div>
                         <p class="text-xs text-slate-400 mt-1" x-show="$wire.form.car_type === 'Lv'" x-cloak>Prefix “LV-” is added automatically.</p>
