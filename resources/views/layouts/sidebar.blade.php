@@ -1,6 +1,6 @@
 <div id="overlay" onclick="document.documentElement.classList.remove('nav-open')" class="fixed inset-0 bg-black/50 z-30"></div>
 <aside id="sidebar"
-    class="sidebar inset-y-0 left-0 z-40 flex flex-col w-72 max-w-[85vw] p-4 bg-[#0e3a61] text-white border-r border-white/10">
+    class="sidebar inset-y-0 left-0 z-40 flex flex-col min-h-0 h-screen w-72 max-w-[85vw] p-4 bg-[#0e3a61] text-white border-r border-white/10">
 
     <a href="/" class="mb-3 px-2 pb-2 flex rounded-md">
         <img src="{{ asset('assets/img/logo.png') }}" alt="Logo" class="w-32">
@@ -25,7 +25,7 @@
 
     <div class="border-b my-3"></div>
 
-    <div class="flex flex-col h-full overflow-y-auto pr-1">
+    <div class="flex flex-col flex-1 min-h-0 overflow-y-auto pr-1">
         <div class="flex items-center justify-between mb-2 pr-1">
             <h2 class="ml-3 uppercase tracking-wider text-sm font-medium text-white/70">{{ __('Menu') }}</h2>
             <button id="sidebarCollapse" type="button" title="{{ __('Collapse sidebar') }}" aria-label="{{ __('Collapse sidebar') }}"
