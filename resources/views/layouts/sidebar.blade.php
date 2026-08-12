@@ -333,8 +333,10 @@
             </li>
             @endif
         </ul>
+    </div>
 
-        <div class="mt-auto border border-white/15 rounded-xl px-4 py-3 bg-white/5">
+    {{-- Profil + Déconnexion : épinglé en pied de sidebar (hors zone défilante) --}}
+    <div class="sidebar-footer shrink-0 mt-3 border border-white/15 rounded-xl px-4 py-3 bg-white/5">
             <details class="group">
                 <summary
                     class="flex items-center gap-3 list-none cursor-pointer rounded hover:bg-white/10 px-2 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
@@ -381,6 +383,5 @@
                     </li>
                 </ul>
             </details>
-        </div>
     </div>
 </aside>

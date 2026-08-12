@@ -79,7 +79,7 @@
             /* Sous-menus & profil : apparaissent en flyout à droite de l'icône au survol */
             html.nav-mini #sidebar .overflow-y-auto { overflow: visible; }
             html.nav-mini #sidebar li,
-            html.nav-mini #sidebar .mt-auto { position: relative; }
+            html.nav-mini #sidebar .sidebar-footer { position: relative; }
 
             html.nav-mini #sidebar details:hover > ul {
                 display: block !important;
@@ -96,7 +96,7 @@
                 z-index: 70;
             }
             /* Profil (en bas) : le flyout s'ancre vers le haut */
-            html.nav-mini #sidebar .mt-auto details:hover > ul { top: auto; bottom: 0; }
+            html.nav-mini #sidebar .sidebar-footer details:hover > ul { top: auto; bottom: 0; }
 
             html.nav-mini #sidebar details:hover > ul span { display: inline; }
             html.nav-mini #sidebar details:hover > ul a { justify-content: flex-start; padding-left: .6rem; padding-right: .6rem; }
