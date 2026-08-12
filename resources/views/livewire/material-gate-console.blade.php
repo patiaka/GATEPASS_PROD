@@ -30,15 +30,15 @@
         @forelse ($results as $r)
             @php $isOut = $r->last_action === 'Exit'; @endphp
             <div wire:key="mgc-{{ $r->id }}" class="bg-white border border-gray-200 rounded-2xl shadow-sm p-4 flex flex-col">
+                @php $delegate = $r->person_out?->name ?: ($r->person_out_name ?: null); @endphp
                 <div class="flex items-start justify-between gap-2">
                     <div class="min-w-0">
-                        {{-- Référence en gros caractères : identifiant principal pour le gardien --}}
-                        <p class="text-2xl sm:text-3xl font-extrabold text-[#134169] tracking-tight leading-none truncate">
-                            {{ $r->reference }}
+                        {{-- Personne déléguée en gros caractères : identité principale pour le gardien
+                             (à défaut, le demandeur) --}}
+                        <p class="text-2xl sm:text-3xl font-extrabold text-[#134169] tracking-tight leading-tight truncate">
+                            {{ $delegate ?: ($r->user?->name ?? '—') }}
                         </p>
-                        @if ($r->company)
-                            <p class="text-xs text-slate-500 mt-1 truncate">{{ $r->company }}</p>
-                        @endif
+                        <p class="text-xs text-slate-500 mt-1 truncate">#{{ $r->reference }}@if ($r->company) · {{ $r->company }}@endif</p>
                     </div>
                     <span @class([
                         'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ring-1 whitespace-nowrap',
@@ -60,12 +60,9 @@
                     </span>
                 @endif
 
-                <p class="text-xs text-slate-500 mt-1.5 truncate">
-                    {{ __('Requester') }}: {{ $r->user?->name ?? '—' }}
-                </p>
-                @if ($r->person_out?->name || $r->person_out_name)
-                    <p class="text-xs text-slate-500 truncate">
-                        {{ __('Delegated Person') }}: {{ $r->person_out?->name ?? $r->person_out_name }}
+                @if ($delegate)
+                    <p class="text-xs text-slate-500 mt-1.5 truncate">
+                        {{ __('Requester') }}: {{ $r->user?->name ?? '—' }}
                     </p>
                 @endif
 
