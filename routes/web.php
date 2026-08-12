@@ -14,6 +14,7 @@ use App\Livewire\CarRequest\CarRequestUpdate;
 use App\Livewire\Audit\AuditLog;
 use App\Livewire\Dashboard;
 use App\Livewire\GateConsole;
+use App\Livewire\MaterialGateConsole;
 use App\Livewire\Department\DepartmentCreate;
 use App\Livewire\Department\DepartmentEdit;
 use App\Livewire\Department\DepartmentIndex;
@@ -74,6 +75,7 @@ Route::middleware(['auth'])->group(function () {
 
         // Poste de garde : check-in express (tablette)
         Route::get('gate/console', GateConsole::class)->name('gate.console');
+        Route::get('gate/console/material', MaterialGateConsole::class)->name('material.gate.console');
     });
 
     // Rapports : Admin, GM, Security

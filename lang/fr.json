@@ -60,6 +60,12 @@
     "Saving…": "Enregistrement…",
 
     "Gate console": "Poste de garde",
+    "Vehicle gate console": "Poste de garde véhicule",
+    "Material gate console": "Poste de garde matériel",
+    "Search a material — reference, company, requester…": "Rechercher un matériel — référence, société, demandeur…",
+    "No approved material found.": "Aucun matériel approuvé trouvé.",
+    "Requester": "Demandeur",
+    "Delegated Person": "Personne déléguée",
     "Guard post — record entries & exits": "Poste de garde — enregistrer entrées & sorties",
     "Gate": "Porte",
     "Front": "Avant",
