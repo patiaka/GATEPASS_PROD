@@ -94,8 +94,8 @@ final class AppServiceProvider extends ServiceProvider
 
        Gate::define('delete-request', function (User $user, MaterialRequest|CarRequest $Request) {
             if ($Request instanceof CarRequest || $Request instanceof MaterialRequest) {
-                // Une demande approuvée n'est plus supprimable (personne, admin inclus)
-                if ($Request->isApproved()) {
+                // Une demande approuvée ou expirée n'est plus supprimable (personne, admin inclus)
+                if ($Request->isApproved() || $Request->isExpired()) {
                     return false;
                 }
 
