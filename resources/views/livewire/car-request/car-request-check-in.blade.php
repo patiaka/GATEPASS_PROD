@@ -3,8 +3,8 @@
     {{-- Header --}}
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-4 mb-6">
         <div>
-            <h1 class="text-2xl font-extrabold text-[#134169]">Vehicle Check In / Out</h1>
-            <p class="text-sm text-slate-500 mt-1">Vehicle Entrance and exit management</p>
+            <h1 class="text-2xl font-extrabold text-[#134169]">{{ __("Vehicle Check In / Out") }}</h1>
+            <p class="text-sm text-slate-500 mt-1">{{ __("Vehicle Entrance and exit management") }}</p>
         </div>
 
         @if (Auth::user()->isAdmin() || Auth::user()->isSecurity())
@@ -17,7 +17,7 @@
                         stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
-                    <span class="text-sm font-medium">New Check In</span>
+                    <span class="text-sm font-medium">{{ __("New Check In") }}</span>
                 </a>
             </div>
         @endif
@@ -32,19 +32,19 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-slate-50 border-b border-slate-200">
                     <tr class="uppercase text-xs tracking-wider text-slate-500">
-                        <th class="px-4 py-3 text-left font-medium">Reference</th>
-                        <th class="px-4 py-3 text-left font-medium">Date</th>
-                        <th class="px-4 py-3 text-left font-medium">Agent</th>
-                        <th class="px-4 py-3 text-left font-medium">Company</th>
-                        <th class="px-4 py-3 text-left font-medium">Vehicle</th>
-                        <th class="px-4 py-3 text-left font-medium">Driver / Resident</th>
-                        <th class="px-4 py-3 text-left font-medium">department</th>
-                        <th class="px-4 py-3 text-left font-medium">gate</th>
-                        <th class="px-4 py-3 text-left font-medium">fuel level</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("Reference") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("Date") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("Agent") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("Company") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("Vehicle") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("Driver / Resident") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("department") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("gate") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("fuel level") }}</th>
                         {{-- <th class="px-4 py-3 text-left font-medium">destination</th> --}}
-                        <th class="px-4 py-3 text-left font-medium">kilometers / Per Hours</th>
-                        <th class="px-4 py-3 text-left font-medium">Action</th>
-                        <th class="px-4 py-3 text-left font-medium">Record</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("kilometers / Per Hours") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("Action") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("Record") }}</th>
 
                     </tr>
                 </thead>
@@ -108,7 +108,7 @@
                                         'bg-amber-500' => $row->action === 'Exit',
                                         'bg-emerald-500' => $row->action === 'Entry',
                                     ])></span>
-                                    {{ $row->action }}
+                                    {{ __($row->action) }}
                                 </span>
                             </td>
 
@@ -120,7 +120,7 @@
                                         class="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-md
                                                bg-[#134169] text-white border border-[#134169]
                                                hover:bg-white hover:text-[#134169] transition">
-                                        Record {{ $row->action === 'Exit' ? 'Entry' : 'Exit' }}
+                                        {{ __("Record") }} {{ $row->action === "Exit" ? __("Entry") : __("Exit") }}
                                     </a>
                                 @else
                                     <span class="text-slate-300">—</span>

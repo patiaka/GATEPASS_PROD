@@ -4,9 +4,9 @@
         <div>
             <!-- Title -->
             <h1 class="text-2xl font-bold text-[#134169] tracking-tight">
-                Material Check In / Out
+                {{ __("Material Check In / Out") }}
             </h1>
-            <p class="text-sm text-slate-500 mt-1">Site Materials Entrance and exit management</p>
+            <p class="text-sm text-slate-500 mt-1">{{ __("Site Materials Entrance and exit management") }}</p>
         </div>
 
         <!-- Button -->
@@ -21,7 +21,7 @@
                     <path stroke="currentColor" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
 
-                New Check In
+                {{ __("New Check In") }}
             </a>
         @endif
 
@@ -37,15 +37,15 @@
 
                 <thead class="bg-slate-50 border-b border-slate-200">
                     <tr class="uppercase text-xs tracking-wider text-slate-500">
-                        <th class="px-4 py-3 text-left font-medium">Reference</th>
-                        <th class="px-4 py-3 text-left font-medium">Date</th>
-                        <th class="px-4 py-3 text-left font-medium">Department</th>
-                        <th class="px-4 py-3 text-left font-medium">Requestor</th>
-                        <th class="px-4 py-3 text-left font-medium">Company</th>
-                        <th class="px-4 py-3 text-left font-medium">Delegated Person</th>
-                        <th class="px-4 py-3 text-left font-medium">Gate</th>
-                        <th class="px-4 py-3 text-left font-medium">Action</th>
-                        <th class="px-4 py-3 text-left font-medium">Record</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("Reference") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("Date") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("Department") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("Agent") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("Company") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("Delegated Person") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("Gate") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("Action") }}</th>
+                        <th class="px-4 py-3 text-left font-medium">{{ __("Record") }}</th>
                     </tr>
                 </thead>
 
@@ -93,7 +93,7 @@
                                         'bg-amber-500' => $row->action === 'Exit',
                                         'bg-emerald-500' => $row->action === 'Entry',
                                     ])></span>
-                                    {{ $row->action }}
+                                    {{ __($row->action) }}
                                 </span>
                             </td>
 
@@ -105,7 +105,7 @@
                                         class="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-md
                                                bg-[#134169] text-white border border-[#134169]
                                                hover:bg-white hover:text-[#134169] transition">
-                                        Record {{ $row->action === 'Exit' ? 'Entry' : 'Exit' }}
+                                        {{ __("Record") }} {{ $row->action === "Exit" ? __("Entry") : __("Exit") }}
                                     </a>
                                 @else
                                     <span class="text-slate-300">—</span>
@@ -120,7 +120,7 @@
                                     <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M3 12h18M3 17h18" />
                                     </svg>
-                                    <span class="text-sm">No record for this filter.</span>
+                                    <span class="text-sm">{{ __("No record for this filter.") }}</span>
                                 </div>
                             </td>
                         </tr>

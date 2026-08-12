@@ -2,7 +2,7 @@
     <div class="bg-white rounded-lg shadow-md">
 
         <div class="flex justify-between items-center border-b border-gray-200 p-4">
-            <h1 class="text-2xl font-bold text-[#0e3a61] tracking-tight">Edit Material Off Site Request</h1>
+            <h1 class="text-2xl font-bold text-[#0e3a61] tracking-tight">{{ __('Edit Material Off Site Request') }}</h1>
             <a href="{{ route('material.index') }}"
             class="inline-flex items-center gap-2 px-4 py-2 rounded-lg
             bg-[#0e3a61] text-white text-sm font-medium
@@ -14,7 +14,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                 </svg>
 
-                Back to list
+                {{ __('Back to list') }}
             </a>
         </div>
         <div class="p-6">
@@ -25,11 +25,11 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
                         </svg>
                         <div class="text-sm">
-                            <p class="font-semibold text-rose-800">This request was rejected.</p>
+                            <p class="font-semibold text-rose-800">{{ __('This request was rejected.') }}</p>
                             @if ($materialRequest->rejectionReason())
-                                <p class="text-rose-700 mt-0.5"><span class="font-medium">Reason:</span> {{ $materialRequest->rejectionReason() }}</p>
+                                <p class="text-rose-700 mt-0.5"><span class="font-medium">{{ __('Reason:') }}</span> {{ $materialRequest->rejectionReason() }}</p>
                             @endif
-                            <p class="text-rose-700/80 mt-1">Correct it below and click <span class="font-semibold">Revise &amp; resubmit</span> — it will restart the approval process.</p>
+                            <p class="text-rose-700/80 mt-1">{{ __('Correct it below and click') }} <span class="font-semibold">{{ __('Revise & resubmit') }}</span> {{ __('— it will restart the approval process.') }}</p>
                         </div>
                     </div>
                 </div>
@@ -42,7 +42,7 @@
                 x-on:livewire-upload-error="uploading = false"
                 x-on:livewire-upload-progress="progress = $event.detail.progress">
 
-                <p class="text-xs text-slate-400">Fields marked <span class="text-red-500 font-semibold">*</span> are required.</p>
+                <p class="text-xs text-slate-400">{{ __('Fields marked') }} <span class="text-red-500 font-semibold">*</span> {{ __('are required.') }}</p>
 
                 <div class="w-full">
                     <x-input type="text" wire:model="form.company" name="company" label="Company" place="company" />
@@ -51,30 +51,30 @@
                     @enderror
 
                                        <div class="mt-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Delegated Person</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Delegated Person') }}</label>
 
                         <div class="inline-flex items-center gap-2 mb-2">
                             <button type="button" wire:click="setPersonOutMode('list')"
                                 class="px-3 py-1.5 text-xs font-medium rounded-lg border transition {{ $personOutMode === 'list' ? 'bg-[#0e3a61] text-white border-[#0e3a61]' : 'bg-white text-gray-700 border-gray-300' }}">
-                                From list
+                                {{ __('From list') }}
                             </button>
                             <button type="button" wire:click="setPersonOutMode('manual')"
                                 class="px-3 py-1.5 text-xs font-medium rounded-lg border transition {{ $personOutMode === 'manual' ? 'bg-[#0e3a61] text-white border-[#0e3a61]' : 'bg-white text-gray-700 border-gray-300' }}">
-                                Enter manually
+                                {{ __('Enter manually') }}
                             </button>
                         </div>
 
                         @if ($personOutMode === 'list')
                             <div wire:key="person-out-list">
                                 <x-select2 :options="$users" optionLabel="full_name" wire:model="form.person_out_id"
-                                    placeholder="Select users" />
+                                    placeholder="{{ __('Select users') }}" />
                                 @error('form.person_out_id')
                                     <small class="text-red-500 text-sm">{{ $message }}</small>
                                 @enderror
                             </div>
                         @else
                             <div wire:key="person-out-manual">
-                                <input type="text" wire:model="form.person_out_name" placeholder="Enter full name"
+                                <input type="text" wire:model="form.person_out_name" placeholder="{{ __('Enter full name') }}"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] transition">
                                 @error('form.person_out_name')
                                     <small class="text-red-500 text-sm">{{ $message }}</small>
@@ -91,16 +91,16 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4" />
                                 </svg>
                             </span>
-                            Materials <span class="text-red-500 text-sm">*</span>
+                            {{ __('Materials') }} <span class="text-red-500 text-sm">*</span>
                         </h5>
                         @foreach ($form->materials as $index => $material)
                             <div class="grid grid-cols-12 gap-4 mb-3 items-start">
                                 <!-- Désignation -->
                                 <div class="col-span-3">
                                     <label for="designation"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Designation <span class="text-red-500">*</span></label>
+                                        class="block text-sm font-medium text-gray-700 mb-1">{{ __('Designation') }} <span class="text-red-500">*</span></label>
                                     <input type="text" wire:model="form.materials.{{ $index }}.designation"
-                                        placeholder="Designation"
+                                        placeholder="{{ __('Designation') }}"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] transition">
                                     @error("form.materials.$index.designation")
                                         <small class="text-red-500 text-sm">{{ $message }}</small>
@@ -110,9 +110,9 @@
                                 <!-- Quantité -->
                                 <div class="col-span-3">
                                     <label for="quantity"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Quantity <span class="text-red-500">*</span></label>
+                                        class="block text-sm font-medium text-gray-700 mb-1">{{ __('Quantity') }} <span class="text-red-500">*</span></label>
                                     <input type="number" wire:model="form.materials.{{ $index }}.quantity"
-                                        placeholder="Quantity"
+                                        placeholder="{{ __('Quantity') }}"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] transition"
                                         min="1">
                                     @error("form.materials.$index.quantity")
@@ -121,8 +121,7 @@
                                 </div>
                                 <div class="col-span-3">
                                     <label for="serial_number"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Serial
-                                        Number</label>
+                                        class="block text-sm font-medium text-gray-700 mb-1">{{ __('Serial Number') }}</label>
                                     <input type="text" wire:model="form.materials.{{ $index }}.serial_number"
                                         placeholder="serial_number"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] transition">
@@ -136,13 +135,13 @@
                                     <button type="button" wire:click="removeMaterial({{ $index }})"
                                         @disabled(count($form->materials) <= 1)
                                         class="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-md text-sm font-medium text-red-600 border border-red-200 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-red-500 disabled:opacity-40 disabled:cursor-not-allowed transition"
-                                        title="Remove this material">
+                                        title="{{ __('Remove this material') }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
-                                        Remove
+                                        {{ __('Remove') }}
                                     </button>
                                 </div>
                             </div>
@@ -158,13 +157,13 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4v16m8-8H4" />
                             </svg>
-                            Add field
+                            {{ __('Add material') }}
                         </button>
                     </div>
 
                     <!-- Images upload -->
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Add document(s) (images)</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Add document(s) (images)') }}</label>
 
                         {{-- Dropzone (clic OU glisser-déposer) --}}
                         <label for="material-photos"
@@ -185,7 +184,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
                             </svg>
-                            <span class="text-sm text-slate-600 mt-2 pointer-events-none"><span class="font-medium text-[#134169]">Click to upload</span> or drag &amp; drop</span>
+                            <span class="text-sm text-slate-600 mt-2 pointer-events-none"><span class="font-medium text-[#134169]">{{ __('Click to upload') }}</span> {{ __('or drag & drop') }}</span>
                             <span class="text-xs text-slate-400 mt-1 pointer-events-none">JPEG, PNG · max 4 MB each · up to 5 images</span>
                             <input id="material-photos" type="file" wire:model="form.photos"
                                 accept="image/jpeg,image/png,image/jpg" multiple class="hidden">
@@ -199,7 +198,7 @@
                                         <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="4" />
                                         <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
                                     </svg>
-                                    Uploading…
+                                    {{ __('Uploading…') }}
                                 </span>
                                 <span x-text="progress + '%'"></span>
                             </div>
@@ -248,7 +247,7 @@
                 {{-- Documents déjà enregistrés --}}
                 @if ($materialRequest->documents && $materialRequest->documents->isNotEmpty())
                     <div class="mt-2">
-                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Existing documents</p>
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">{{ __('Existing documents') }}</p>
                         <div class="flex flex-wrap gap-4">
                             @foreach ($materialRequest->documents as $row)
                                 <img class="max-w-[300px] h-auto rounded-md border border-gray-200"

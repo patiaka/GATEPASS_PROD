@@ -52,12 +52,12 @@
         {{-- ============ Header ============ --}}
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-[#134169]">Material Request Details</h1>
+                <h1 class="text-2xl font-bold text-[#134169]">{{ __("Material Request Details") }}</h1>
                 <div class="flex items-center gap-3 mt-1">
                     <span class="text-sm font-semibold text-slate-700">#{{ $MaterialRequest->reference }}</span>
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ring-1 {{ $statusBadge }}">
                         <span class="w-1.5 h-1.5 rounded-full {{ $statusDot }}"></span>
-                        {{ $statusValue }}
+                        {{ __($statusValue) }}
                     </span>
                 </div>
             </div>
@@ -68,7 +68,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                     </svg>
-                    Back
+                    {{ __("Back") }}
                 </a>
 
                 @can('update-request', $MaterialRequest)
@@ -81,7 +81,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687 1.687M7 17l4-1 9-9a2.121 2.121 0 00-3-3l-9 9-1 4z" />
                         </svg>
-                        {{ $MaterialRequest->isRejected() ? 'Revise & resubmit' : 'Edit' }}
+                        {{ $MaterialRequest->isRejected() ? __("Revise & resubmit") : __("Edit") }}
                     </a>
                 @endcan
 
@@ -91,8 +91,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8a2 2 0 012 2v8a2 2 0 01-2 2H8a2 2 0 01-2-2V9a2 2 0 012-2z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16 7V5a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2" />
                     </svg>
-                    <span wire:loading.remove wire:target="duplicate">Duplicate</span>
-                    <span wire:loading wire:target="duplicate">Duplicating…</span>
+                    <span wire:loading.remove wire:target="duplicate">{{ __("Duplicate") }}</span>
+                    <span wire:loading wire:target="duplicate">{{ __("Duplicating…") }}</span>
                 </button>
 
                 {{-- Bouton « Download PDF » masqué (génération PDF désactivée)
@@ -118,13 +118,13 @@
 
                 @can('cancel-request', $MaterialRequest)
                     <button wire:click="cancel" wire:target="cancel" wire:loading.attr="disabled"
-                        wire:confirm="Cancel this request? It will no longer be valid."
+                        wire:confirm="{{ __("Cancel this request? It will no longer be valid.") }}"
                         class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-rose-200 bg-rose-50 text-sm font-medium text-rose-700 hover:bg-rose-100 disabled:opacity-60 transition shadow-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M10 9v6m4-6v6M5 7h14M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m1 0v12a2 2 0 01-2 2H8a2 2 0 01-2-2V7" />
                         </svg>
-                        <span wire:loading.remove wire:target="cancel">Cancel request</span>
-                        <span wire:loading wire:target="cancel">Cancelling…</span>
+                        <span wire:loading.remove wire:target="cancel">{{ __("Cancel request") }}</span>
+                        <span wire:loading wire:target="cancel">{{ __("Cancelling…") }}</span>
                     </button>
                 @endcan
             </div>
@@ -133,15 +133,15 @@
         {{-- ============ KPI tiles ============ --}}
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
             <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-                <p class="text-xs text-slate-500">Items</p>
+                <p class="text-xs text-slate-500">{{ __("Items") }}</p>
                 <p class="text-xl font-bold text-[#134169]">{{ $items->count() }}</p>
             </div>
             <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-                <p class="text-xs text-slate-500">Total quantity</p>
+                <p class="text-xs text-slate-500">{{ __("Total quantity") }}</p>
                 <p class="text-xl font-bold text-[#134169]">{{ $totalQty }}</p>
             </div>
             <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-                <p class="text-xs text-slate-500">Documents</p>
+                <p class="text-xs text-slate-500">{{ __("Documents") }}</p>
                 <p class="text-xl font-bold text-[#134169]">{{ $documents->count() }}</p>
             </div>
         </div>
@@ -182,7 +182,7 @@
                             </tbody>
                             <tfoot>
                                 <tr class="border-t border-gray-200 bg-slate-50/60">
-                                    <td colspan="2" class="px-4 py-2.5 text-right text-xs font-semibold text-slate-500">Total</td>
+                                    <td colspan="2" class="px-4 py-2.5 text-right text-xs font-semibold text-slate-500">{{ __("Total") }}</td>
                                     <td class="px-4 py-2.5 text-center font-bold text-[#134169]">{{ $totalQty }}</td>
                                     <td></td>
                                 </tr>
@@ -246,7 +246,7 @@
                     <p class="text-xs text-slate-500 mb-1">Current status</p>
                     <div class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full {{ $statusDot }}"></span>
-                        <span class="text-lg font-bold text-slate-800">{{ $statusValue }}</span>
+                        <span class="text-lg font-bold text-slate-800">{{ __($statusValue) }}</span>
                     </div>
 
                     @if ($MaterialRequest->expire_at)
@@ -265,34 +265,34 @@
 
                 {{-- Requester --}}
                 <section class="bg-white border border-gray-200 shadow-sm rounded-xl p-5">
-                    <h2 class="font-semibold text-sm text-[#134169] mb-3">Requester</h2>
+                    <h2 class="font-semibold text-sm text-[#134169] mb-3">{{ __("Requester") }}</h2>
                     <dl class="space-y-2.5 text-sm">
                         <div class="flex justify-between gap-2">
-                            <dt class="text-slate-500">Name</dt>
+                            <dt class="text-slate-500">{{ __("Name") }}</dt>
                             <dd class="text-slate-800 font-medium text-right">{{ $MaterialRequest->user->name }}</dd>
                         </div>
                         <div class="flex justify-between gap-2">
-                            <dt class="text-slate-500">Department</dt>
+                            <dt class="text-slate-500">{{ __("Department") }}</dt>
                             <dd class="text-slate-800 text-right">{{ $MaterialRequest->user->department?->name ?? '—' }}</dd>
                         </div>
                         <div class="flex justify-between gap-2">
-                            <dt class="text-slate-500">Position</dt>
+                            <dt class="text-slate-500">{{ __("Position") }}</dt>
                             <dd class="text-slate-800 text-right">{{ $MaterialRequest->user->poste }}</dd>
                         </div>
                         <div class="flex justify-between gap-2">
-                            <dt class="text-slate-500">Delegated person</dt>
+                            <dt class="text-slate-500">{{ __("Delegated person") }}</dt>
                             <dd class="text-slate-800 text-right">{{ $MaterialRequest->person_out?->name ?? $MaterialRequest->person_out_name ?? '—' }}</dd>
                         </div>
                         <div class="flex justify-between gap-2">
-                            <dt class="text-slate-500">Company</dt>
+                            <dt class="text-slate-500">{{ __("Company") }}</dt>
                             <dd class="text-slate-800 text-right">{{ $MaterialRequest->company }}</dd>
                         </div>
                         <div class="flex justify-between gap-2 pt-2 border-t">
-                            <dt class="text-slate-500">Created</dt>
+                            <dt class="text-slate-500">{{ __("Created") }}</dt>
                             <dd class="text-slate-600 text-right">{{ $fmt($MaterialRequest->getRawOriginal('created_at')) }}</dd>
                         </div>
                         <div class="flex justify-between gap-2">
-                            <dt class="text-slate-500">Updated</dt>
+                            <dt class="text-slate-500">{{ __("Updated") }}</dt>
                             <dd class="text-slate-600 text-right">{{ $MaterialRequest->updated_at?->format('d-m-Y H:i') ?? '—' }}</dd>
                         </div>
                     </dl>
@@ -300,7 +300,7 @@
 
                 {{-- Approval timeline --}}
                 <section class="bg-white border border-gray-200 shadow-sm rounded-xl p-5">
-                    <h2 class="font-semibold text-sm text-[#134169] mb-4">Approval workflow</h2>
+                    <h2 class="font-semibold text-sm text-[#134169] mb-4">{{ __("Approval workflow") }}</h2>
                     <ol class="relative border-l border-gray-200 ml-2 space-y-5">
                         @foreach ($steps as $step)
                             @php
@@ -318,7 +318,7 @@
                             <li class="ml-5">
                                 <span class="absolute -left-[7px] flex items-center justify-center w-3.5 h-3.5 rounded-full ring-4 ring-white {{ $dot }}"></span>
                                 <div class="flex items-center justify-between gap-2">
-                                    <span class="text-sm font-semibold text-slate-700">{{ $step['role'] }}</span>
+                                    <span class="text-sm font-semibold text-slate-700">{{ __($step["role"]) }}</span>
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ring-1 {{ $badge[1] }}">{{ $badge[0] }}</span>
                                 </div>
                                 @if ($step['name'])
@@ -347,7 +347,7 @@
                 </span>
             </div>
             <div>
-                <p class="text-sm font-semibold text-[#134169] mb-1">Good to know</p>
+                <p class="text-sm font-semibold text-[#134169] mb-1">{{ __("Good to know") }}</p>
                 <ul class="space-y-1 text-xs text-slate-600">
                     <li class="flex gap-2">
                         <span class="text-blue-400">•</span>
