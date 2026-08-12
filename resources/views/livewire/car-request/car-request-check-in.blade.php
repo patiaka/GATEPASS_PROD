@@ -59,7 +59,18 @@
                             <td class="px-4 py-4 text-slate-600">{{ $row->created_at->format('d-m-Y H:i') }}</td>
                             <td class="px-4 py-4">{{ $row->user->name }}</td>
                             <td class="px-4 py-4">{{ $row->requestable->company }}</td>
-                            <td class="px-4 py-4">{{ $row->requestable->car_number }}</td>
+                            <td class="px-4 py-4">
+                                @if ($row->requestable->car_number)
+                                    {{ $row->requestable->car_number }}
+                                @else
+                                    <span class="inline-flex items-center gap-1 rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 ring-1 ring-inset ring-amber-200">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                        {{ __('Resident') }}
+                                    </span>
+                                @endif
+                            </td>
                             <td class="px-4 py-4">{{ $row->car_driver ? $row->car_driver->name : 'N/A' }}</td>
                             <td class="px-4 py-4">{{ $row->car_driver ? $row->car_driver->department->name : 'N/A' }}
                             </td>
