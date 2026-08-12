@@ -59,7 +59,7 @@
                 <th class="px-4 py-2 font-semibold">{{ __('Date') }}</th>
                 <th class="px-4 py-2 font-semibold">{{ __('Company') }}</th>
                 <th class="px-4 py-2 font-semibold">{{ __('Department') }}</th>
-                <th class="px-4 py-2 font-semibold">{{ __('Requestor') }}</th>
+                <th class="px-4 py-2 font-semibold">{{ __('Agent') }}</th>
                 <th class="px-4 py-2 font-semibold">{{ __('Status') }}</th>
                 <th class="px-4 py-2 font-semibold text-center">{{ __('Actions') }}</th>
             </tr>

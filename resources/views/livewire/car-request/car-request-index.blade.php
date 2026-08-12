@@ -103,13 +103,25 @@
                     </td> --}}
 
                     <td class="px-4 py-2">
-                        <a href="{{ route('car.show', ['CarRequest' => $row]) }}"
-                            class="inline-flex items-center gap-1.5 rounded-md bg-indigo-50 px-2 py-1
-                            text-[11px] font-semibold text-indigo-700
-                            ring-1 ring-inset ring-indigo-200
-                            hover:bg-indigo-100 hover:text-indigo-800 transition">
-                            {{ $row->reference }}
-                        </a>
+                        <div class="flex flex-col items-start gap-1">
+                            <a href="{{ route('car.show', ['CarRequest' => $row]) }}"
+                                class="inline-flex items-center gap-1.5 rounded-md bg-indigo-50 px-2 py-1
+                                text-[11px] font-semibold text-indigo-700
+                                ring-1 ring-inset ring-indigo-200
+                                hover:bg-indigo-100 hover:text-indigo-800 transition">
+                                {{ $row->reference }}
+                            </a>
+                            @if ($row->somisy_car === 'no_vehicle')
+                                <span class="inline-flex items-center gap-1 rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 ring-1 ring-inset ring-amber-200">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                    {{ __('Resident') }}
+                                </span>
+                            @elseif ($row->car_number)
+                                <span class="text-[10px] font-medium text-slate-500">{{ $row->car_number }}</span>
+                            @endif
+                        </div>
                     </td>
 
                     <td class="px-4 py-2 text-gray-700">
