@@ -1,5 +1,5 @@
 <div>
-    <x-table title="Users Database" :addbtn="false" :rows="$this->rows">
+    <x-table :title="__('Users Database')" :addbtn="false" :rows="$this->rows">
 
         <x-slot:addcreate>
             <div class="flex flex-col items-end gap-1">
@@ -100,16 +100,16 @@
         <!-- THEAD -->
         <thead class="sticky top-0 z-20">
             <tr class="uppercase tracking-wide text-[12px] bg-slate-100 text-slate-700 border-b">
-                <th class="px-3 py-2 text-left font-semibold">Department</th>
-                <th class="px-3 py-2 text-left font-semibold">Email / Name</th>
-                <th class="px-3 py-2 text-left font-semibold">Position</th>
-                <th class="px-3 py-2 text-left font-semibold">Role</th>
-                <th class="px-3 py-2 text-left font-semibold">Other roles</th>
-                <th class="px-3 py-2 text-left font-semibold">Status</th>
-                <th class="px-3 py-2 text-left font-semibold">Change PWD</th>
-                <th class="px-3 py-2 text-left font-semibold">Invite</th>
-                <th class="px-3 py-2 text-left font-semibold">Date</th>
-                <th class="px-3 py-2 text-center font-semibold">Action</th>
+                <th class="px-3 py-2 text-left font-semibold">{{ __('Department') }}</th>
+                <th class="px-3 py-2 text-left font-semibold">{{ __('Email / Name') }}</th>
+                <th class="px-3 py-2 text-left font-semibold">{{ __('Position') }}</th>
+                <th class="px-3 py-2 text-left font-semibold">{{ __('Role') }}</th>
+                <th class="px-3 py-2 text-left font-semibold">{{ __('Other roles') }}</th>
+                <th class="px-3 py-2 text-left font-semibold">{{ __('Status') }}</th>
+                <th class="px-3 py-2 text-left font-semibold">{{ __('Change PWD') }}</th>
+                <th class="px-3 py-2 text-left font-semibold">{{ __('Invite') }}</th>
+                <th class="px-3 py-2 text-left font-semibold">{{ __('Date') }}</th>
+                <th class="px-3 py-2 text-center font-semibold">{{ __('Action') }}</th>
             </tr>
         </thead>
 
@@ -278,7 +278,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
                         </svg>
-                        <p class="text-sm">No user found</p>
+                        <p class="text-sm">{{ __('No user found') }}</p>
                     </div>
                 </td>
             </tr>

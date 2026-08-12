@@ -1,5 +1,5 @@
 <div>
-    <x-table title="Department Database" :addbtn="false" :rows="$this->rows">
+    <x-table :title="__('Department Database')" :addbtn="false" :rows="$this->rows">
 
         <x-slot:addcreate>
             <x-button-add link="{{ route('department.create') }}" />
@@ -8,10 +8,10 @@
         <!-- THEAD -->
         <thead class="sticky top-0 z-20">
             <tr class="uppercase tracking-wide text-[12px] bg-slate-100 text-slate-700 border-b">
-                <th scope="col" class="px-4 py-2 text-left font-semibold">Name</th>
-                <th scope="col" class="px-4 py-2 text-left font-semibold">Director</th>
-                <th scope="col" class="px-4 py-2 text-left font-semibold">Date</th>
-                <th scope="col" class="px-4 py-2 text-center font-semibold">Action</th>
+                <th scope="col" class="px-4 py-2 text-left font-semibold">{{ __('Name') }}</th>
+                <th scope="col" class="px-4 py-2 text-left font-semibold">{{ __('Director') }}</th>
+                <th scope="col" class="px-4 py-2 text-left font-semibold">{{ __('Date') }}</th>
+                <th scope="col" class="px-4 py-2 text-center font-semibold">{{ __('Action') }}</th>
             </tr>
         </thead>
 
@@ -33,7 +33,7 @@
                             , 'bg-emerald-50 text-emerald-700 border-emerald-200'=> $row->director_id !== null,
                             // 'bg-rose-50 text-rose-700 border-rose-200' => $row->director_id === null,
                             ])>
-                            {{ $row->director ? $row->director->name : 'No Director' }}
+                            {{ $row->director ? $row->director->name : __('No Director') }}
                         </span>
                     </td>
 
@@ -82,7 +82,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
                             </svg>
-                            <p class="text-sm">No department found</p>
+                            <p class="text-sm">{{ __('No department found') }}</p>
                         </div>
                     </td>
                 </tr>

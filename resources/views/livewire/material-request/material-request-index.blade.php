@@ -1,5 +1,5 @@
 <div class="space-y-4">
-    <x-table title="All Material Offsite request" :addbtn="false" :rows="$this->rows">
+    <x-table :title="__('All Material Offsite request')" :addbtn="false" :rows="$this->rows">
         <x-slot:addcreate>
             <a href="{{ route('material.create') }}"
                 class="inline-flex items-center gap-2 px-4 py-2 rounded-lg
@@ -12,7 +12,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                 </svg>
 
-                New Material Request
+                {{ __('New Material Request') }}
             </a>
         </x-slot:addcreate>
 
@@ -20,8 +20,8 @@
             <div class="flex flex-wrap items-end gap-3">
                 @if (Auth::user()->isGm() || Auth::user()->isAdmin())
                     <div class="w-full sm:w-56">
-                        <x-select label="Filter by Department" name="department" wire:model.live="department">
-                            <option value="">All Departments</option>
+                        <x-select :label="__('Filter by Department')" name="department" wire:model.live="department">
+                            <option value="">{{ __('All Departments') }}</option>
                             @foreach ($departments as $row)
                                 <option value="{{ $row->id }}">{{ $row->name }}</option>
                             @endforeach
@@ -30,8 +30,8 @@
                 @endif
 
                 <div class="w-full sm:w-56">
-                    <x-select label="Filter by Status" wire:model.live="by_status">
-                        <option value="">All Statuses</option>
+                    <x-select :label="__('Filter by Status')" wire:model.live="by_status">
+                        <option value="">{{ __('All Statuses') }}</option>
                         @foreach (App\Enum\MaterialRequestStatus::cases() as $row)
                             <option value="{{ $row }}">{{ $row }}</option>
                         @endforeach
@@ -45,7 +45,7 @@
                             'px-3 py-1.5 rounded-md text-xs font-medium transition whitespace-nowrap',
                             'bg-[#134169] text-white shadow-sm' => $period === $key,
                             'text-slate-600 hover:text-slate-900' => $period !== $key,
-                        ])>{{ $label }}</button>
+                        ])>{{ __($label) }}</button>
                     @endforeach
                 </div>
             </div>
@@ -55,13 +55,13 @@
         <thead class="sticky top-0 z-20">
             <tr class="uppercase tracking-wide text-[12px] bg-slate-100 text-slate-700 border-b">
                 {{-- <th class="px-4 py-2 font-semibold">#</th> --}}
-                <th class="px-4 py-2 font-semibold">Reference</th>
-                <th class="px-4 py-2 font-semibold">Date</th>
-                <th class="px-4 py-2 font-semibold">Company</th>
-                <th class="px-4 py-2 font-semibold">Department</th>
-                <th class="px-4 py-2 font-semibold">Requestor</th>
-                <th class="px-4 py-2 font-semibold">Status</th>
-                <th class="px-4 py-2 font-semibold text-center">Actions</th>
+                <th class="px-4 py-2 font-semibold">{{ __('Reference') }}</th>
+                <th class="px-4 py-2 font-semibold">{{ __('Date') }}</th>
+                <th class="px-4 py-2 font-semibold">{{ __('Company') }}</th>
+                <th class="px-4 py-2 font-semibold">{{ __('Department') }}</th>
+                <th class="px-4 py-2 font-semibold">{{ __('Requestor') }}</th>
+                <th class="px-4 py-2 font-semibold">{{ __('Status') }}</th>
+                <th class="px-4 py-2 font-semibold text-center">{{ __('Actions') }}</th>
             </tr>
         </thead>
 
@@ -145,13 +145,13 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M20 7 12 3 4 7m16 0-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                             </svg>
-                            <p class="text-sm">No material request found</p>
+                            <p class="text-sm">{{ __('No material request found') }}</p>
                             <a wire:navigate href="{{ route('material.create') }}"
                                 class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#134169] text-white text-xs font-medium hover:bg-[#0f3557] transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                                 </svg>
-                                New request
+                                {{ __('New request') }}
                             </a>
                         </div>
                     </td>

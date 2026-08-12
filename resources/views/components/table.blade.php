@@ -29,7 +29,7 @@
                         </svg>
                     </span>
                     <input wire:model.live.debounce.100ms='search' type="text"
-                        class="w-full pl-10 pr-4 py-2 border rounded-md" placeholder="Search...">
+                        class="w-full pl-10 pr-4 py-2 border rounded-md" placeholder="{{ __('Search...') }}">
                 </div>
 
                 @if ($filter)
@@ -44,7 +44,7 @@
                     <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                     </svg>
-                    Reset Filters
+                    {{ __('Reset Filters') }}
                 </button>
             </div>
         </div>
