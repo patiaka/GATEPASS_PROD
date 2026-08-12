@@ -171,7 +171,12 @@
                         <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 text-sm">
                             <div>
                                 <dt class="text-xs text-slate-500">Requester</dt>
-                                <dd class="text-slate-800 font-medium">{{ $materialRequest->user->name }}</dd>
+                                <dd class="text-slate-800 font-medium">
+                                    {{ $materialRequest->user->name }}
+                                    @if ($materialRequest->user->badge_number)
+                                        <span class="ml-1 inline-flex items-center rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600 ring-1 ring-slate-200">#{{ $materialRequest->user->badge_number }}</span>
+                                    @endif
+                                </dd>
                             </div>
                             <div>
                                 <dt class="text-xs text-slate-500">Department</dt>
@@ -183,7 +188,12 @@
                             </div>
                             <div>
                                 <dt class="text-xs text-slate-500">Delegated person</dt>
-                                <dd class="text-slate-800">{{ $materialRequest->person_out?->name ?? $materialRequest->person_out_name ?? '—' }}</dd>
+                                <dd class="text-slate-800">
+                                    {{ $materialRequest->person_out?->name ?? $materialRequest->person_out_name ?? '—' }}
+                                    @if ($materialRequest->person_out?->badge_number)
+                                        <span class="ml-1 inline-flex items-center rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600 ring-1 ring-slate-200">#{{ $materialRequest->person_out->badge_number }}</span>
+                                    @endif
+                                </dd>
                             </div>
                             <div>
                                 <dt class="text-xs text-slate-500">Created</dt>

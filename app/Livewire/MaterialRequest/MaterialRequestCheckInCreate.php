@@ -41,7 +41,7 @@ final class MaterialRequestCheckInCreate extends Component
 
     public function updatedMaterialRequestId($value)
     {
-        $this->materialRequest = MaterialRequest::with(['material_request_items', 'user:id,name,email,department_id,poste', 'user.department:id,name', 'gmApproval.department:id,name', 'hodApproval.department:id,name', 'documents'])
+        $this->materialRequest = MaterialRequest::with(['material_request_items', 'user:id,name,email,department_id,poste,badge_number', 'user.department:id,name', 'person_out:id,name,badge_number', 'gmApproval.department:id,name', 'hodApproval.department:id,name', 'documents'])
             ->find($value);
 
         // Suggérer automatiquement le mouvement opposé au dernier enregistré
