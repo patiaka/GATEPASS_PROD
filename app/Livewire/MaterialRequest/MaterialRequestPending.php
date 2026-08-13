@@ -6,8 +6,10 @@ namespace App\Livewire\MaterialRequest;
 
 use App\Helper\ApproveAction;
 use App\Helper\WithFilter;
+use App\Helper\WithSorting;
 use App\Models\Department;
 use App\Models\MaterialRequest;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
@@ -18,13 +20,13 @@ use function compact;
 #[Title('Pending material request')]
 final class MaterialRequestPending extends Component
 {
-    use ApproveAction, WithFilter;
+    use ApproveAction, WithFilter, WithSorting;
 
     public $material;
 
      public function ResetFilter(): void
      {
-         $this->reset('search');
+         $this->reset('search', 'sortField', 'sortDirection');
     }
     #[Computed]
     public function rows()
@@ -49,7 +51,20 @@ final class MaterialRequestPending extends Component
             $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
         });
 
-        return $query->latest('id')->paginate(10);
+        $sortable = [
+            'reference' => 'reference',
+            'date' => 'created_at',
+            'company' => 'company',
+            'department' => fn ($q, $dir) => $q->orderBy(
+                Department::select('name')->whereIn(
+                    'departments.id',
+                    User::select('department_id')->whereColumn('users.id', 'material_requests.user_id')
+                ),
+                $dir
+            ),
+        ];
+
+        return $this->applySort($query, $sortable, fn ($q) => $q->latest('id'))->paginate(10);
     }
 
     public function render()

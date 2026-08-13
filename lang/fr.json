@@ -1,4 +1,6 @@
 {
+    "Reject the selected request(s)? This cannot be undone.": "Rejeter la ou les demandes sélectionnées ? Action irréversible.",
+    "Approve the selected request(s)?": "Approuver la ou les demandes sélectionnées ?",
     "Save": "Enregistrer",
     "Save changes": "Enregistrer les modifications",
     "Save request": "Enregistrer la demande",

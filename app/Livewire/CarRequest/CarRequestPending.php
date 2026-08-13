@@ -6,8 +6,10 @@ namespace App\Livewire\CarRequest;
 
 use App\Helper\ApproveAction;
 use App\Helper\WithFilter;
+use App\Helper\WithSorting;
 use App\Models\CarRequest;
 use App\Models\Department;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
@@ -18,12 +20,12 @@ use function compact;
 #[Title('Pending vehicle request')]
 final class CarRequestPending extends Component
 {
-    use ApproveAction, WithFilter;
+    use ApproveAction, WithFilter, WithSorting;
 
 
     public function ResetFilter(): void
     {
-        $this->reset('search');
+        $this->reset('search', 'sortField', 'sortDirection');
     }
 
     #[Computed]
@@ -44,11 +46,24 @@ final class CarRequestPending extends Component
             $query->whereNotNull('next_approver_role')->where('user_id', $auth->id);
         }
 
-        return $query
-			->when($this->search, function ($query) {
-                $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
-            })
-            ->latest('id')->paginate(10);
+        $query->when($this->search, function ($query) {
+            $query->whereAny(['reference', 'status'], 'like', '%' . $this->search . '%');
+        });
+
+        $sortable = [
+            'reference' => 'reference',
+            'date' => 'created_at',
+            'company' => 'company',
+            'department' => fn ($q, $dir) => $q->orderBy(
+                Department::select('name')->whereIn(
+                    'departments.id',
+                    User::select('department_id')->whereColumn('users.id', 'car_requests.user_id')
+                ),
+                $dir
+            ),
+        ];
+
+        return $this->applySort($query, $sortable, fn ($q) => $q->latest('id'))->paginate(10);
     }
 
     public function render()

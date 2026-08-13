@@ -50,10 +50,10 @@
                     <input type="checkbox" wire:click="selectAll" wire:model="selectedRows" id="select-all">
                 </th> --}}
                 {{-- <th class="px-4 py-2 text-left font-semibold">#</th> --}}
-                <th class="px-4 py-2 text-left font-semibold">reference</th>
-                <th class="px-4 py-2 text-left font-semibold">Date</th>
-                <th class="px-4 py-2 text-left font-semibold">Company</th>
-                <th class="px-4 py-2 text-left font-semibold">Department</th>
+                <x-th-sort field="reference" :label="__('Reference')" :sort="$sortField" :dir="$sortDirection" />
+                <x-th-sort field="date" :label="__('Date')" :sort="$sortField" :dir="$sortDirection" />
+                <x-th-sort field="company" :label="__('Company')" :sort="$sortField" :dir="$sortDirection" />
+                <x-th-sort field="department" :label="__('Department')" :sort="$sortField" :dir="$sortDirection" />
                 {{-- @if (Auth::user()->isGm() || Auth::user()->isHod())
                 <th class="px-4 py-2 text-left font-semibold">Requestor</th>
                 @endif --}}

@@ -7,8 +7,10 @@ namespace App\Livewire\MaterialRequest;
 use App\Helper\ApproveAction;
 use App\Helper\DeleteAction;
 use App\Helper\WithFilter;
+use App\Helper\WithSorting;
 use App\Models\Department;
 use App\Models\MaterialRequest;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
@@ -21,7 +23,7 @@ use function compact;
 #[Title('All material requests')]
 final class MaterialRequestIndex extends Component
 {
-    use ApproveAction, DeleteAction, WithFilter;
+    use ApproveAction, DeleteAction, WithFilter, WithSorting;
 
     #[Url(as: 'by_status')]
     public ?string $by_status = null;
@@ -30,7 +32,7 @@ final class MaterialRequestIndex extends Component
 
     public function ResetFilter(): void
     {
-        $this->reset('department', 'status', 'search', 'by_status', 'period', 'debut', 'fin');
+        $this->reset('department', 'status', 'search', 'by_status', 'period', 'debut', 'fin', 'sortField', 'sortDirection');
     }
 
     #[Computed]
@@ -59,7 +61,25 @@ final class MaterialRequestIndex extends Component
             ->tap(fn ($query) => $this->applyPeriod($query))
         ;
 
-        return $query->orderByDesc('id')->paginate(10);
+        $sortable = [
+            'reference' => 'reference',
+            'date' => 'created_at',
+            'company' => 'company',
+            'status' => 'status',
+            'requestor' => fn ($q, $dir) => $q->orderBy(
+                User::select('name')->whereColumn('users.id', 'material_requests.user_id'),
+                $dir
+            ),
+            'department' => fn ($q, $dir) => $q->orderBy(
+                Department::select('name')->whereIn(
+                    'departments.id',
+                    User::select('department_id')->whereColumn('users.id', 'material_requests.user_id')
+                ),
+                $dir
+            ),
+        ];
+
+        return $this->applySort($query, $sortable, fn ($q) => $q->orderByDesc('id'))->paginate(10);
     }
 
     public function delete(int $id): void

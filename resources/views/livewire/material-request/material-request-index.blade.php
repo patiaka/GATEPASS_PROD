@@ -54,13 +54,12 @@
         <!-- THEAD -->
         <thead class="sticky top-0 z-20">
             <tr class="uppercase tracking-wide text-[12px] bg-slate-100 text-slate-700 border-b">
-                {{-- <th class="px-4 py-2 font-semibold">#</th> --}}
-                <th class="px-4 py-2 font-semibold">{{ __('Reference') }}</th>
-                <th class="px-4 py-2 font-semibold">{{ __('Date') }}</th>
-                <th class="px-4 py-2 font-semibold">{{ __('Company') }}</th>
-                <th class="px-4 py-2 font-semibold">{{ __('Department') }}</th>
-                <th class="px-4 py-2 font-semibold">{{ __('Agent') }}</th>
-                <th class="px-4 py-2 font-semibold">{{ __('Status') }}</th>
+                <x-th-sort field="reference" :label="__('Reference')" :sort="$sortField" :dir="$sortDirection" />
+                <x-th-sort field="date" :label="__('Date')" :sort="$sortField" :dir="$sortDirection" />
+                <x-th-sort field="company" :label="__('Company')" :sort="$sortField" :dir="$sortDirection" />
+                <x-th-sort field="department" :label="__('Department')" :sort="$sortField" :dir="$sortDirection" />
+                <x-th-sort field="requestor" :label="__('Agent')" :sort="$sortField" :dir="$sortDirection" />
+                <x-th-sort field="status" :label="__('Status')" :sort="$sortField" :dir="$sortDirection" />
                 <th class="px-4 py-2 font-semibold text-center">{{ __('Actions') }}</th>
             </tr>
         </thead>

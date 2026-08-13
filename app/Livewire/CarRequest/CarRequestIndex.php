@@ -6,9 +6,11 @@ namespace App\Livewire\CarRequest;
 
 use App\Helper\ApproveAction;
 use App\Helper\WithFilter;
+use App\Helper\WithSorting;
 use App\Models\CarDriver;
 use App\Models\CarRequest;
 use App\Models\Department;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
@@ -19,7 +21,7 @@ use Livewire\Component;
 #[Title('All vehicle request')]
 final class CarRequestIndex extends Component
 {
-    use ApproveAction, WithFilter;
+    use ApproveAction, WithFilter, WithSorting;
 
     #[Url(as: 'by_status')]
     public ?string $by_status = null;
@@ -28,7 +30,7 @@ final class CarRequestIndex extends Component
 
     public function ResetFilter(): void
     {
-        $this->reset('department', 'status', 'search', 'by_status', 'period', 'debut', 'fin');
+        $this->reset('department', 'status', 'search', 'by_status', 'period', 'debut', 'fin', 'sortField', 'sortDirection');
     }
 
     #[Computed]
@@ -36,7 +38,7 @@ final class CarRequestIndex extends Component
     {
         $auth = Auth::user();
 
-        return CarRequest::with('user', 'user.department', 'hodApproval', 'gmApproval')
+        $query = CarRequest::with('user', 'user.department', 'hodApproval', 'gmApproval')
             // Visibilité par rôle (même logique que le Dashboard)
             ->visibleTo($auth)
             // Filters
@@ -51,9 +53,27 @@ final class CarRequestIndex extends Component
                 $query->whereAny(['reference', 'status'], 'like', '%'.$this->search.'%');
             })
             ->tap(fn ($query) => $this->applyPeriod($query))
-            ->latest('id')
-            ->paginate(10)
         ;
+
+        $sortable = [
+            'reference' => 'reference',
+            'date' => 'created_at',
+            'company' => 'company',
+            'status' => 'status',
+            'requestor' => fn ($q, $dir) => $q->orderBy(
+                User::select('name')->whereColumn('users.id', 'car_requests.user_id'),
+                $dir
+            ),
+            'department' => fn ($q, $dir) => $q->orderBy(
+                Department::select('name')->whereIn(
+                    'departments.id',
+                    User::select('department_id')->whereColumn('users.id', 'car_requests.user_id')
+                ),
+                $dir
+            ),
+        ];
+
+        return $this->applySort($query, $sortable, fn ($q) => $q->latest('id'))->paginate(10);
     }
 
     public function delete(int $id): void

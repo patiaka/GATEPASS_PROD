@@ -25,7 +25,8 @@
                             <button
                                 class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 disabled:opacity-60"
                                 wire:click="bulkAction('reject','car')" wire:loading.attr="disabled"
-                                wire:target="bulkAction">
+                                wire:target="bulkAction"
+                                wire:confirm="{{ __('Reject the selected request(s)? This cannot be undone.') }}">
                                 <span wire:loading.remove wire:target="bulkAction">{{ __('Reject') }}</span>
                                 <span wire:loading wire:target="bulkAction">
                                     <i class="bx bx-loader-alt fa-spin"></i> {{ __('Processing...') }}
@@ -35,7 +36,8 @@
                             <button
                                 class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium bg-emerald-600 text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-300 disabled:opacity-60"
                                 wire:click="bulkAction('approve','car')" wire:loading.attr="disabled"
-                                wire:target="bulkAction">
+                                wire:target="bulkAction"
+                                wire:confirm="{{ __('Approve the selected request(s)?') }}">
                                 <span wire:loading.remove wire:target="bulkAction">{{ __('Approve') }}</span>
                                 <span wire:loading wire:target="bulkAction">
                                     <i class="bx bx-loader-alt fa-spin"></i> {{ __('Processing...') }}
@@ -81,13 +83,12 @@
         <!-- THEAD -->
         <thead class="sticky top-0 z-20">
             <tr class="uppercase tracking-wide text-[12px] bg-slate-100 text-slate-700 border-b">
-                {{-- <th class="px-4 py-2 font-semibold">#</th> --}}
-                <th class="px-4 py-2 font-semibold">{{ __('Reference') }}</th>
-                <th class="px-4 py-2 font-semibold">{{ __('Date') }}</th>
-                <th class="px-4 py-2 font-semibold">{{ __('Company') }}</th>
-                <th class="px-4 py-2 font-semibold">{{ __('Department') }}</th>
-                <th class="px-4 py-2 font-semibold">{{ __('Requestor') }}</th>
-                <th class="px-4 py-2 font-semibold">{{ __('Status') }}</th>
+                <x-th-sort field="reference" :label="__('Reference')" :sort="$sortField" :dir="$sortDirection" />
+                <x-th-sort field="date" :label="__('Date')" :sort="$sortField" :dir="$sortDirection" />
+                <x-th-sort field="company" :label="__('Company')" :sort="$sortField" :dir="$sortDirection" />
+                <x-th-sort field="department" :label="__('Department')" :sort="$sortField" :dir="$sortDirection" />
+                <x-th-sort field="requestor" :label="__('Requestor')" :sort="$sortField" :dir="$sortDirection" />
+                <x-th-sort field="status" :label="__('Status')" :sort="$sortField" :dir="$sortDirection" />
                 <th class="px-4 py-2 font-semibold text-center">{{ __('Actions') }}</th>
             </tr>
         </thead>
