@@ -27,7 +27,7 @@
 
     <div class="flex flex-col flex-1 min-h-0 overflow-y-auto pr-1">
         <div class="flex items-center justify-between mb-2 pr-1">
-            <h2 class="ml-3 uppercase tracking-wider text-sm font-medium text-white/70">{{ __('Menu') }}</h2>
+            <h2 class="ml-3 uppercase tracking-wider text-sm font-bold text-white/70">{{ __('Menu') }}</h2>
             <button id="sidebarCollapse" type="button" title="{{ __('Collapse sidebar') }}" aria-label="{{ __('Collapse sidebar') }}"
                 onclick="var m=document.documentElement.classList.toggle('nav-mini');try{localStorage.setItem('gp-sidebar-mini',m?'1':'0')}catch(e){}"
                 class="hidden xl:inline-flex items-center justify-center w-7 h-7 rounded-md text-white/70 hover:bg-white/10 hover:text-white transition">
@@ -336,28 +336,38 @@
     </div>
 
     {{-- Profil + Déconnexion : épinglé en pied de sidebar (hors zone défilante) --}}
-    <div class="sidebar-footer shrink-0 mt-3 border border-white/15 rounded-xl px-4 py-3 bg-white/5">
-            <details class="group">
+    @php
+        $profileParts = preg_split('/\s+/', trim(Auth::user()->name)) ?: [];
+        $profileInitials = mb_strtoupper(
+            mb_substr($profileParts[0] ?? '', 0, 1) .
+            (count($profileParts) > 1 ? mb_substr(end($profileParts), 0, 1) : '')
+        );
+    @endphp
+    <div class="sidebar-footer shrink-0 mt-3">
+            <details class="group" data-autoclose>
                 <summary
-                    class="flex items-center gap-3 list-none cursor-pointer rounded hover:bg-white/10 px-2 py-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
+                    class="flex items-center gap-3 list-none cursor-pointer rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 hover:bg-white/10 hover:border-white/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
                     <div
-                        class="flex items-center justify-center w-9 h-9 bg-white/80 rounded-full border border-white/60 text-[#0E3A61] font-semibold uppercase">
-                        {{ substr(Auth::user()->name, 0, 1) }}
+                        class="profile-avatar relative flex items-center justify-center w-9 h-9 shrink-0 rounded-full
+                               bg-gradient-to-br from-[#ffd324] to-[#f0a500] text-[#0e3a61] text-sm font-bold uppercase
+                               ring-2 ring-white/20 shadow-sm">
+                        {{ $profileInitials }}
+                        <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 ring-2 ring-[#0e3a61]"></span>
                     </div>
-                    <div class="flex flex-col max-w-[160px] truncate">
-                        <span class="font-medium text-xs truncate">{{ Auth::user()->name }}</span>
-                        <span class="text-[11px] text-white/70 truncate">{{ Auth::user()->email }}</span>
+                    <div class="profile-meta flex flex-col min-w-0 flex-1">
+                        <span class="font-semibold text-sm text-white truncate leading-tight">{{ Auth::user()->name }}</span>
+                        <span class="text-[11px] text-white/60 truncate leading-tight">{{ Auth::user()->email }}</span>
                     </div>
-                    <svg class="ml-auto w-4 h-4 text-white/80 transition-transform duration-200 group-open:rotate-180"
+                    <svg class="profile-chevron ml-auto w-4 h-4 shrink-0 text-white/60 transition-transform duration-200 group-open:rotate-180"
                         fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </summary>
-                <ul class="border-t border-white/10 mt-2 pt-2 space-y-1">
+                <ul class="mt-1.5 space-y-0.5 rounded-xl border border-white/10 bg-white/5 p-1.5">
                     <li>
                         <a wire:navigate href="{{ route('user.pass') }}"
-                            class="px-3 py-2 rounded hover:bg-white/10 text-xs flex items-center gap-3 transition-colors">
-                            <svg class="w-4 h-4 text-white/85 shrink-0" fill="none" stroke="currentColor"
+                            class="px-3 py-2 rounded-lg hover:bg-white/10 text-xs font-medium text-white/90 hover:text-white flex items-center gap-3 transition-colors">
+                            <svg class="w-4 h-4 text-white/70 shrink-0" fill="none" stroke="currentColor"
                                 stroke-width="2" viewBox="0 0 24 24">
                                 <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
                                 <path d="M7 7V5a5 5 0 0110 0v2" />
@@ -367,9 +377,9 @@
                     </li>
                     <li>
                         <a onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                            class="px-3 py-2 rounded hover:bg-white/10 text-xs flex items-center gap-3 transition-colors"
+                            class="px-3 py-2 rounded-lg hover:bg-rose-500/20 text-xs font-medium text-white/90 hover:text-white flex items-center gap-3 transition-colors"
                             href="{{ route('logout') }}">
-                            <svg class="w-4 h-4 text-white/85 shrink-0" fill="none" stroke="currentColor"
+                            <svg class="w-4 h-4 text-rose-300 shrink-0" fill="none" stroke="currentColor"
                                 stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 01-2-2h6a2 2 0 012 2v1" />

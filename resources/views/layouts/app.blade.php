@@ -98,6 +98,10 @@
             /* Profil (en bas) : le flyout s'ancre vers le haut */
             html.nav-mini #sidebar .sidebar-footer details:hover > ul { top: auto; bottom: 0; }
 
+            /* Pied de profil en rail : avatar seul, centré ; texte + chevron masqués */
+            html.nav-mini #sidebar .sidebar-footer .profile-meta { display: none; }
+            html.nav-mini #sidebar .sidebar-footer summary { gap: 0; padding: .35rem; }
+
             html.nav-mini #sidebar details:hover > ul span { display: inline; }
             html.nav-mini #sidebar details:hover > ul a { justify-content: flex-start; padding-left: .6rem; padding-right: .6rem; }
         }
@@ -144,6 +148,26 @@
             window.__gpNavInit = true;
             document.addEventListener('livewire:navigated', function () {
                 document.documentElement.classList.remove('nav-open');
+            });
+
+            // Ferme les menus déroulants (profil <details data-autoclose> + "Create New")
+            // quand on clique en dehors, ou avec la touche Échap.
+            function gpCloseMenus(except) {
+                document.querySelectorAll('details[data-autoclose][open]').forEach(function (d) {
+                    if (d !== except && !d.contains(except)) d.removeAttribute('open');
+                });
+                var cb = document.getElementById('toggle-dropdown');
+                if (cb && cb.checked) {
+                    var wrap = cb.closest('.relative');
+                    if (!wrap || !wrap.contains(except)) cb.checked = false;
+                }
+            }
+
+            document.addEventListener('click', function (e) {
+                gpCloseMenus(e.target);
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') gpCloseMenus(null);
             });
         }
     </script>
