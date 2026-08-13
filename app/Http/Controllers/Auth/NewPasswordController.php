@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
@@ -84,8 +85,13 @@ final class NewPasswordController extends Controller
                 ->symbols()      // Must contain at least one symbol.
                 ->uncompromised()],
         ]);
-        DB::transaction(function () use ($request) {
-            $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
+
+        if (! $user) {
+            return back()->withErrors(['email' => 'User not found.'])->withInput($request->only('email'));
+        }
+
+        DB::transaction(function () use ($request, $user) {
             $user->forceFill([
                 'change_password' => true,
                 'password' => Hash::make($request->password),
@@ -95,6 +101,16 @@ final class NewPasswordController extends Controller
             event(new PasswordReset($user));
         });
 
-        return to_route('login')->with('status', 'Password changed successfully.');
+        // Compte bloqué : on ne connecte pas automatiquement.
+        if ($user->isBlocked()) {
+            return to_route('login')->with('status', 'Password changed successfully. Please contact an administrator.');
+        }
+
+        // Connexion automatique : l'utilisateur entre directement dans l'application
+        // après avoir changé son mot de passe (plus besoin de se reconnecter).
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return redirect()->route('dashboard')->with('status', 'Password changed successfully.');
     }
 }

@@ -25,6 +25,37 @@
     <p class="text-center text-xs text-white mt-4">&copy; 2026 Somisy - GPR Management App</p>
 
     <script>
+        // Toasts (pages invitées) : animation d'entrée + fermeture auto.
+        function gpDismissToast(t) {
+            if (!t) return;
+            t.classList.add('opacity-0', 'translate-x-4');
+            setTimeout(function () { t.remove(); }, 320);
+        }
+        function gpInitToasts() {
+            var toasts = document.querySelectorAll('#gp-toasts .gp-toast');
+            toasts.forEach(function (t, i) {
+                // Entrée
+                requestAnimationFrame(function () {
+                    t.classList.remove('opacity-0', 'translate-x-4');
+                });
+                // Fermeture auto (échelonnée)
+                setTimeout(function () { gpDismissToast(t); }, 6000 + i * 400);
+            });
+        }
+        document.addEventListener('DOMContentLoaded', gpInitToasts);
+
+        // Affiche / masque un champ mot de passe (bouton x-password-eye).
+        function gpTogglePw(btn) {
+            var input = btn.parentElement.querySelector('input');
+            if (!input) return;
+            var isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+            btn.querySelector('.gp-eye').classList.toggle('hidden', isHidden);
+            btn.querySelector('.gp-eye-off').classList.toggle('hidden', !isHidden);
+        }
+    </script>
+
+    <script>
         // Anti double-soumission pour les formulaires natifs (login, mot de passe…).
         // L'événement 'submit' ne se déclenche qu'après validation HTML5 : on désactive
         // alors le(s) bouton(s) d'envoi pour bloquer tout second clic. La soumission

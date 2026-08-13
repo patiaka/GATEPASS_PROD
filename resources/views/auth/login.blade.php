@@ -1,7 +1,7 @@
 <x-guest-layout>
 
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-    
+    <x-guest-toast />
+
     <form class="mb-3" method="POST" class="mb-3" action="{{ route('login') }}">
         @csrf
         <div class="flex flex-col gap-4">
@@ -9,14 +9,15 @@
                 <input type="email" name="email" id="inputEmail" placeholder="Email"
                     class="text-gray-900 bg-gray-50 rounded-lg text-sm block w-full p-2.5 border border-gray-300 focus:z-10 focus:ring-blue-500 focus:border-blue-500"
                     autocomplete="email" required autofocus>
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
             </div>
 
             <div class="flex flex-col">
-                <input type="password" name="password" placeholder="Password" id="inputPassword"
-                    class="text-gray-900 bg-gray-50 rounded-lg text-sm block w-full p-2.5 border border-gray-300 focus:z-10 focus:ring-blue-500 focus:border-blue-500"
-                    autocomplete="current-password" required>
-                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                <div class="relative">
+                    <input type="password" name="password" placeholder="Password" id="inputPassword"
+                        class="text-gray-900 bg-gray-50 rounded-lg text-sm block w-full p-2.5 pr-11 border border-gray-300 focus:z-10 focus:ring-blue-500 focus:border-blue-500"
+                        autocomplete="current-password" required>
+                    <x-password-eye />
+                </div>
             </div>
 
             <div>
