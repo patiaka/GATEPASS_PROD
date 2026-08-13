@@ -35,7 +35,7 @@
             </svg>
         </span>
         <div class="min-w-0">
-            <h3 class="text-sm font-semibold text-slate-700 leading-tight truncate">{{ $label }}</h3>
+            <h3 class="text-sm font-semibold text-slate-700 leading-tight truncate uppercase tracking-wide">{{ $label }}</h3>
             <p class="text-[11px] text-slate-400 truncate">{{ $sublabel }}</p>
         </div>
     </div>
