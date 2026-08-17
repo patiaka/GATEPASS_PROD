@@ -172,6 +172,78 @@
         }
     </script>
 
+    {{-- Verrouillage par inactivité (utile pour un poste de guérite partagé) --}}
+    @auth
+        @php $gpIdleTimeout = (int) \App\Models\Setting::get('idle_timeout_minutes', 15); @endphp
+        @if ($gpIdleTimeout > 0)
+            <div id="gp-idle-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/50 p-4">
+                <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center">
+                    <div class="mx-auto mb-3 flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 text-amber-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 2" />
+                        </svg>
+                    </div>
+                    <h2 class="text-lg font-bold text-slate-800">{{ __('Still there?') }}</h2>
+                    <p class="text-sm text-slate-500 mt-1">
+                        {{ __('You will be signed out in') }}
+                        <span id="gp-idle-countdown" class="font-semibold text-slate-700">60</span>
+                        {{ __('seconds due to inactivity.') }}
+                    </p>
+                    <button id="gp-idle-stay" type="button"
+                        class="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#134169] text-white text-sm font-semibold hover:bg-[#0e3a61] transition">
+                        {{ __('Stay signed in') }}
+                    </button>
+                </div>
+            </div>
+            <script>
+                if (!window.__gpIdleInit) {
+                    window.__gpIdleInit = true;
+                    (function () {
+                        var IDLE_MS = {{ $gpIdleTimeout }} * 60000;
+                        var WARN_MS = Math.min(60000, Math.floor(IDLE_MS / 2));
+                        var idleTimer, warnTimer, cdTimer;
+                        var el = function (id) { return document.getElementById(id); };
+
+                        function logout() {
+                            var f = el('logout-form');
+                            if (f) { f.submit(); } else { window.location.href = @json(route('logout')); }
+                        }
+                        function warn() {
+                            var left = Math.floor(WARN_MS / 1000);
+                            var m = el('gp-idle-modal'), c = el('gp-idle-countdown');
+                            if (c) c.textContent = left;
+                            if (m) m.classList.remove('hidden');
+                            cdTimer = setInterval(function () {
+                                left--;
+                                var c2 = el('gp-idle-countdown');
+                                if (c2) c2.textContent = left;
+                                if (left <= 0) { clearInterval(cdTimer); logout(); }
+                            }, 1000);
+                            warnTimer = setTimeout(logout, WARN_MS);
+                        }
+                        function reset() {
+                            clearTimeout(idleTimer); clearTimeout(warnTimer); clearInterval(cdTimer);
+                            var m = el('gp-idle-modal');
+                            if (m) m.classList.add('hidden');
+                            idleTimer = setTimeout(warn, Math.max(0, IDLE_MS - WARN_MS));
+                        }
+                        ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart'].forEach(function (ev) {
+                            document.addEventListener(ev, function () {
+                                var m = el('gp-idle-modal');
+                                if (m && !m.classList.contains('hidden')) return; // alerte affichée : clic explicite requis
+                                reset();
+                            }, true);
+                        });
+                        document.addEventListener('click', function (e) {
+                            if (e.target.closest && e.target.closest('#gp-idle-stay')) reset();
+                        });
+                        reset();
+                    })();
+                }
+            </script>
+        @endif
+    @endauth
 
 </body>
 

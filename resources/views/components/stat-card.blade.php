@@ -14,6 +14,7 @@
         'approved' => 'text-emerald-300',
         'pending' => 'text-amber-300',
         'rejected' => 'text-rose-300',
+        'out' => 'text-amber-300',
     ];
     $icons = [
         'all' => '<path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>',
@@ -21,6 +22,7 @@
         'approved' => '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>',
         'pending' => '<circle cx="12" cy="12" r="9"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5V12l3 2"/>',
         'rejected' => '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>',
+        'out' => '<path stroke-linecap="round" stroke-linejoin="round" d="M3 13l2-5a2 2 0 0 1 1.9-1.4h10.2A2 2 0 0 1 19 8l2 5m-18 0v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h12v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-4m-18 0h18M6.5 16.5h.01M17.5 16.5h.01"/>',
     ];
     $tx = $tones[$type] ?? 'text-white';
     $icon = $icons[$type] ?? $icons['all'];

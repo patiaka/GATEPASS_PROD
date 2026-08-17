@@ -21,11 +21,16 @@ final class SettingsIndex extends Component
     #[Validate('required|integer|min:1|max:365')]
     public int $vehicle_validity_days_long = 30;
 
+    /** Déconnexion auto après inactivité (minutes). 0 = désactivé. */
+    #[Validate('required|integer|min:0|max:240')]
+    public int $idle_timeout_minutes = 15;
+
     public function mount(): void
     {
         $this->material_validity_days = (int) Setting::get('material_validity_days', 7);
         $this->vehicle_validity_days = (int) Setting::get('vehicle_validity_days', 7);
         $this->vehicle_validity_days_long = (int) Setting::get('vehicle_validity_days_long', 30);
+        $this->idle_timeout_minutes = (int) Setting::get('idle_timeout_minutes', 15);
     }
 
     public function save(): void
@@ -35,6 +40,7 @@ final class SettingsIndex extends Component
         Setting::put('material_validity_days', $this->material_validity_days);
         Setting::put('vehicle_validity_days', $this->vehicle_validity_days);
         Setting::put('vehicle_validity_days_long', $this->vehicle_validity_days_long);
+        Setting::put('idle_timeout_minutes', $this->idle_timeout_minutes);
 
         flash()->success('Settings saved successfully.');
     }

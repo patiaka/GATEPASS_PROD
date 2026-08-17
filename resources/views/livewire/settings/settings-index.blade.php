@@ -76,6 +76,33 @@
                 </p>
             </div>
 
+            {{-- Session & sécurité --}}
+            <div class="pt-5 border-t border-gray-100">
+                <div class="flex items-center gap-2 mb-3">
+                    <svg class="w-5 h-5 text-[#134169]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <h2 class="font-semibold text-sm text-[#134169]">{{ __('Session & security') }}</h2>
+                </div>
+
+                <label for="idle_timeout_minutes" class="block text-sm font-medium text-slate-700 mb-1">
+                    {{ __('Auto-logout after inactivity') }} <span class="text-slate-400 font-normal">{{ __('(minutes)') }}</span>
+                </label>
+                <div class="flex items-center gap-3">
+                    <input id="idle_timeout_minutes" type="number" min="0" max="240"
+                        wire:model="idle_timeout_minutes"
+                        class="w-32 rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-sm focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none">
+                    <span class="text-sm text-slate-500">{{ __('minutes of inactivity') }}</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1.5">
+                    {{ __('Users are automatically signed out after this idle time (useful for shared gate terminals). Set to 0 to disable.') }}
+                </p>
+                @error('idle_timeout_minutes')
+                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
             {{-- Actions --}}
             <div class="pt-4 border-t border-gray-100 flex justify-end">
                 <button type="submit" wire:loading.attr="disabled" wire:target="save"
