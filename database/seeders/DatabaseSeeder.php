@@ -49,19 +49,29 @@ final class DatabaseSeeder extends Seeder
     ];
 
     foreach ($departments as $department) {
-        \App\Models\Department::create([
-            'name' => $department
+        \App\Models\Department::firstOrCreate([
+            'name' => $department,
         ]);
     }
 
-    // Users
-    \App\Models\User::factory()->create();
+    // Compte administrateur initial — créé SANS factory/faker pour rester
+    // compatible avec une installation de production (composer --no-dev).
+    // Idempotent : on peut relancer le seed sans créer de doublon.
+    $admin = \App\Models\User::updateOrCreate(
+        ['email' => 'admin@somisy.com'],
+        [
+            'name' => 'Administrator',
+            'poste' => 'System Administrator',
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'change_password' => true,   // connexion directe (pas de changement forcé)
+            'status' => true,            // compte actif
+            'role' => \App\Enum\RoleEnum::ADMIN->value,
+            'department_id' => \App\Models\Department::query()->min('id'),
+            'contact' => '0000000000',
+            'badge_number' => 'ADM001',
+        ]
+    );
 
-    \App\Models\User::factory()->create([
-        'email' => 'admin@somisy.com',
-        'role' => 'Administrator',
-        'contact' => '1234567890',
-        'badge_number' => 'ADM001'
-    ]);
+    $admin->syncRoles([\App\Enum\RoleEnum::ADMIN->value]);
 }
 }
