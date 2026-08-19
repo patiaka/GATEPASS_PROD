@@ -42,6 +42,13 @@ if [ "$#" -eq 0 ] || [ "$1" = "frankenphp" ]; then
     php artisan migrate --force
   fi
 
+  # Seed initial data (departments + an admin account) on a FRESH/EMPTY database.
+  # Set RUN_SEED=true ONCE, then back to false. Do NOT run on a populated DB.
+  if [ "$RUN_SEED" = "true" ]; then
+    echo "Seeding database…"
+    php artisan db:seed --force
+  fi
+
   exec frankenphp run --config /etc/caddy/Caddyfile --adapter caddyfile
 fi
 
