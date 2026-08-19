@@ -18,6 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Applique la langue choisie (session) à chaque requête web
         $middleware->web(append: [App\Http\Middleware\SetLocale::class]);
+
+        // Derrière un reverse proxy (Traefik/Dokploy, Nginx…) : faire confiance
+        // aux en-têtes X-Forwarded-* pour détecter le bon schéma (https) et l'IP réelle.
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

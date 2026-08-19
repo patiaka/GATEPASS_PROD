@@ -1,0 +1,45 @@
+# Dokploy "Compose" deployment for GatePass.
+#  - app       : FrankenPHP web server (Traefik/Dokploy routes your domain here)
+#  - scheduler : runs Laravel's scheduler (vehicle/material expiry, etc.)
+#  - worker    : queue worker (only needed if QUEUE_CONNECTION is not "sync")
+#
+# Set all environment variables in Dokploy (it writes the .env used below).
+
+x-app: &app
+  build:
+    context: .
+    dockerfile: Dockerfile
+  image: gatepass-app:latest
+  restart: unless-stopped
+  env_file:
+    - .env
+  volumes:
+    - storage:/app/storage
+
+services:
+  app:
+    <<: *app
+    expose:
+      - "80"
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@file_get_contents('http://127.0.0.1:80/up') === false ? 1 : 0);"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+
+  scheduler:
+    <<: *app
+    command: ["php", "artisan", "schedule:work"]
+    depends_on:
+      - app
+
+  # Optional — remove if QUEUE_CONNECTION=sync (jobs then run inline).
+  worker:
+    <<: *app
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--max-time=3600"]
+    depends_on:
+      - app
+
+volumes:
+  storage:

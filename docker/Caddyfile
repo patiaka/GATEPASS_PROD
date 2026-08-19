@@ -1,0 +1,22 @@
+{
+	# FrankenPHP runtime. TLS is terminated by Dokploy's Traefik, so we serve
+	# plain HTTP on :80 and disable Caddy's automatic HTTPS.
+	frankenphp
+	auto_https off
+	admin off
+}
+
+:80 {
+	root * /app/public
+	encode zstd br gzip
+
+	# Serves static files and routes everything else through public/index.php
+	# (equivalent to Laravel's try_files … /index.php).
+	php_server
+
+	# Laravel exposes a health endpoint at /up (used by Dokploy health checks).
+	log {
+		output stdout
+		format console
+	}
+}
