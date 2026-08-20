@@ -344,7 +344,7 @@
         );
     @endphp
     <div class="sidebar-footer shrink-0 mt-3">
-            <details class="group" data-autoclose>
+            <details class="group relative" data-autoclose>
                 <summary
                     class="flex items-center gap-3 list-none cursor-pointer rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 hover:bg-white/10 hover:border-white/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
                     <div
@@ -363,7 +363,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </summary>
-                <ul class="mt-1.5 space-y-0.5 rounded-xl border border-white/10 bg-white/5 p-1.5">
+                <ul class="absolute bottom-full left-0 right-0 mb-2 z-50 space-y-0.5 rounded-xl border border-white/15 bg-[#0e3a61] p-1.5 shadow-xl">
                     <li>
                         <a wire:navigate href="{{ route('user.pass') }}"
                             class="px-3 py-2 rounded-lg hover:bg-white/10 text-xs font-medium text-white/90 hover:text-white flex items-center gap-3 transition-colors">
