@@ -48,7 +48,19 @@
 
         /* Tablette / mobile : tiroir (caché par défaut, ouvert via .nav-open) */
         @media (max-width: 1279.98px) {
-            #sidebar { position: fixed; transform: translateX(-100%); transition: transform .22s ease; }
+            /* Le tiroir mobile utilise 100dvh (hauteur du viewport VISIBLE, qui
+               exclut la barre du navigateur), avec 100vh en repli. Sans ça, sur
+               mobile 100vh dépasse l'écran visible et le pied de la sidebar
+               (profil / déconnexion) passe hors écran. Le sélecteur #sidebar
+               l'emporte sur les classes utilitaires h-screen / h-[100dvh]. */
+            #sidebar {
+                position: fixed;
+                top: 0;
+                height: 100vh;
+                height: 100dvh;
+                transform: translateX(-100%);
+                transition: transform .22s ease;
+            }
             html.nav-open #sidebar { transform: translateX(0); }
             html.nav-open #overlay { display: block; }
         }
