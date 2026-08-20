@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" data-turbo-track="reload" class="h-full overflow-hidden">
+<html lang="fr" data-turbo-track="reload" class="h-full">
 
 <head>
     <meta charset="UTF-8" />
