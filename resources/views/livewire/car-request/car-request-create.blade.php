@@ -245,32 +245,31 @@
                     {{ __('Destination(s)') }}
                 </label>
 
-                <div class="md:col-span-9" x-data="{ show: @entangle('form.destination').live === 'Other' }"
-                    x-effect="show = $wire.form.destination === 'Other'">
+                <div class="md:col-span-9" x-data="{ dest: @entangle('form.destination') }">
 
-                    {{-- radios en pastilles --}}
+                    {{-- radios en pastilles (bascule 100% côté client : pas d'aller-retour serveur) --}}
                     <div class="flex flex-wrap gap-2">
 
                         <label class="{{ $pill }}">
-                            <input type="radio" name="destination" wire:model.live="form.destination" value="Paysan" class="sr-only"> Paysan
+                            <input type="radio" name="destination" x-model="dest" value="Paysan" class="sr-only"> Paysan
                         </label>
 
                         <label class="{{ $pill }}">
-                            <input type="radio" name="destination" wire:model.live="form.destination" value="Taba" class="sr-only"> Taba
+                            <input type="radio" name="destination" x-model="dest" value="Taba" class="sr-only"> Taba
                         </label>
 
                         <label class="{{ $pill }}">
-                            <input type="radio" name="destination" wire:model.live="form.destination" value="A21" class="sr-only"> A21
+                            <input type="radio" name="destination" x-model="dest" value="A21" class="sr-only"> A21
                         </label>
 
                         <label class="{{ $pill }}">
-                            <input type="radio" name="destination" wire:model.live="form.destination" value="Other" class="sr-only"> {{ __('Other') }}
+                            <input type="radio" name="destination" x-model="dest" value="Other" class="sr-only"> {{ __('Other') }}
                         </label>
 
                     </div>
 
-                    {{-- Other input — même largeur que autres inputs --}}
-                    <div x-show="show" x-transition.opacity.duration.200ms class="mt-2">
+                    {{-- Champ "Other" — affiché uniquement si "Other" est choisi --}}
+                    <div x-show="dest === 'Other'" x-cloak class="mt-2">
                         <input type="text" wire:model.defer="form.destination_other"
                             placeholder="{{ __('Enter destination') }}"
                             class="w-full md:w-1/2 border border-gray-300 bg-gray-50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition">
