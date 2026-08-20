@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" data-turbo-track="reload" class="h-full">
+<html lang="fr" data-turbo-track="reload">
 
 <head>
     <meta charset="UTF-8" />
@@ -11,6 +11,15 @@
     <link rel="stylesheet" href="{{ asset('build/assets/app-Dz6fu0Y1.css') }}"> --}}
     {{-- <script src="{{ asset('build/assets/app-Dz6fu0Y1.css') }}"></script> --}}
     <style>
+        /* App-shell plein écran basé sur la hauteur VISIBLE (100dvh).
+           Sur mobile, 100vh inclut la zone derrière la barre du navigateur :
+           le bas du contenu passerait hors écran. 100dvh = écran réellement
+           visible -> le contenu se dimensionne et défile entièrement. */
+        html, body {
+            height: 100vh;   /* repli navigateurs sans dvh */
+            height: 100dvh;
+        }
+
         /* Pour cacher/afficher les sous-menus */
         .submenu {
             display: none;
@@ -129,7 +138,7 @@
 
 </head>
 
-<body class="relative text-slate-600 h-screen h-[100dvh] flex flex-col overflow-hidden">
+<body class="relative text-slate-600 flex flex-col overflow-hidden">
     <div class="flex w-full flex-1 min-h-0 bg-slate-100">
         @include('layouts.sidebar')
 
