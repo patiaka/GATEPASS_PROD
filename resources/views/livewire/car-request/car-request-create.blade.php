@@ -23,7 +23,7 @@
 
     <form wire:submit="save" class="mt-6">
         @php
-            $pill = 'inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-gray-50 cursor-pointer text-sm font-medium text-slate-700 transition hover:border-[#134169]/50 has-[:checked]:border-[#134169] has-[:checked]:bg-[#134169]/5 has-[:checked]:text-[#134169] has-[:checked]:ring-1 has-[:checked]:ring-[#134169]';
+            $pill = 'relative inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-gray-50 cursor-pointer text-sm font-medium text-slate-700 transition hover:border-[#134169]/50 has-[:checked]:border-[#134169] has-[:checked]:bg-[#134169]/5 has-[:checked]:text-[#134169] has-[:checked]:ring-1 has-[:checked]:ring-[#134169]';
             $reqStar = 'after:content-[\'*\'] after:ml-0.5 after:text-red-500';
         @endphp
         <div class="bg-white rounded-2xl shadow-md border border-gray-200 p-8 space-y-8">
