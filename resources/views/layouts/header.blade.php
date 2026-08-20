@@ -1,6 +1,12 @@
 <header class="flex justify-between items-center px-8 py-2 border-b border-gray-200 bg-gray-50">
     <!-- Bienvenue -->
-    <div class="flex gap-4">
+    <div class="flex items-center gap-3">
+        {{-- Menu hamburger (tablette / mobile) : au niveau du "Welcome", pas de barre séparée --}}
+        <button type="button" onclick="document.documentElement.classList.toggle('nav-open')"
+            class="xl:hidden -ml-2 inline-flex items-center justify-center w-9 h-9 rounded-md text-[#0e3a61] text-2xl hover:bg-slate-200/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0e3a61]/30"
+            aria-label="{{ __('Open menu') }}">
+            ☰
+        </button>
         <div class="flex flex-col">
             <span class="text-xs">{{ __('Welcome,') }}</span>
             <span class="font-medium text-md">{{ Auth::user()->name }}</span>

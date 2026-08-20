@@ -130,12 +130,6 @@
 </head>
 
 <body class="relative text-slate-600 h-screen h-[100dvh] flex flex-col overflow-hidden">
-    <div class="xl:hidden shrink-0 flex items-center justify-between p-4 bg-white shadow">
-        <button id="sidebarToggle" type="button" onclick="document.documentElement.classList.toggle('nav-open')"
-            class="text-[#0e3a61] text-2xl focus:outline-none" aria-label="Open menu">
-            ☰
-        </button>
-    </div>
     <div class="flex w-full flex-1 min-h-0 bg-slate-100">
         @include('layouts.sidebar')
 
