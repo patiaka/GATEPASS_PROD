@@ -61,10 +61,10 @@ final class AppServiceProvider extends ServiceProvider
             }
         });
         Gate::define('cancel-request', function (User $user, MaterialRequest|CarRequest $request) {
-            // Seul l'administrateur peut annuler. Une demande approuvée n'est plus
-            // annulable ; ni une demande déjà annulée ou expirée.
+            // Seul l'administrateur peut annuler — y compris une demande APPROUVÉE
+            // (pour révoquer un laissez-passer déjà validé). On exclut seulement
+            // les demandes déjà annulées ou expirées (annulation sans objet).
             return $user->isAdmin()
-                && ! $request->isApproved()
                 && ! $request->isCancelled()
                 && ! $request->isExpired();
         });
