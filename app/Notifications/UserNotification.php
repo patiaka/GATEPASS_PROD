@@ -38,15 +38,15 @@ final class UserNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->greeting('Hello '.$this->user->name)
-            ->line('Your account has been created successfully.')
-            ->line('Here are your account details:')
-            ->line('Email: '.$this->user->email)
-            ->line('Password: '.User::DEFAULT_PASSWORD)
-            ->line('⚠️ You will be required to change this password on your first login.')
-            ->action('Login Now', route('login'))
-            // ->line('Thank you for using our application!')
-        ;
+            ->from(config('mail.from.address'), config('mail.from.name'))
+            ->subject(config('app.name').' — Your account is ready')
+            ->view('emails.user-invitation', [
+                'name' => $this->user->name,
+                'email' => $this->user->email,
+                'password' => User::DEFAULT_PASSWORD,
+                'loginUrl' => route('login'),
+                'company' => config('app.name'),
+            ]);
     }
 
     /**
