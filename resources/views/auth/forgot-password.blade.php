@@ -1,106 +1,78 @@
 <x-guest-layout>
 
-    <!-- Logo -->
-    {{-- <div class="flex justify-center mb-6">
-        <x-logo />
-    </div> --}}
-
-    <!-- Title -->
-    <div class="text-center mb-6">
-        <h2 class="text-2xl font-bold text-[#134169]">
-            Forgot Password
-        </h2>
-        <p class="text-sm text-gray-500 mt-1">
-            Enter your email to receive a reset link
-        </p>
+    {{-- En-tête --}}
+    <div class="flex items-center gap-3 mb-5">
+        <span class="flex items-center justify-center w-11 h-11 shrink-0 rounded-full bg-[#134169]/10 text-[#134169] ring-1 ring-[#134169]/15">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+            </svg>
+        </span>
+        <div>
+            <h1 class="text-lg font-bold text-[#134169] leading-tight">Forgot your password?</h1>
+            <p class="text-xs text-slate-500">Enter your email and we'll send you a reset link.</p>
+        </div>
     </div>
 
-    <!-- Error -->
-    @error('email')
-        <div class="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
-            {{ $message }}
-        </div>
-    @enderror
-
-    <!-- Success Message -->
+    {{-- Message de succès --}}
     @if (session('status'))
-        <div class="mb-4 p-3 rounded-lg bg-green-50 border border-green-200 text-green-600 text-sm flex items-center gap-2">
-            <!-- Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    d="M5 13l4 4L19 7" />
+        <div class="rounded-lg bg-emerald-50 border border-emerald-200 p-3 mb-4 flex items-start gap-2">
+            <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
             </svg>
-
-            <span>
-                Password reset link has been sent to your email.
-            </span>
+            <span class="text-xs text-emerald-700">A password reset link has been sent to your email.</span>
         </div>
     @endif
 
-    <!-- Form -->
-    <form method="POST" action="{{ route('password.email') }}" class="space-y-5">
+    {{-- Erreur --}}
+    @error('email')
+        <div class="rounded-lg bg-rose-50 border border-rose-200 p-3 mb-4 flex items-start gap-2">
+            <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            </svg>
+            <span class="text-xs text-rose-700">{{ $message }}</span>
+        </div>
+    @enderror
+
+    <form method="POST" action="{{ route('password.email') }}" class="grid gap-4">
         @csrf
 
-        <div>
-            {{-- <label class="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
-            </label> --}}
-
+        <div class="flex flex-col">
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <div class="relative">
-
-                <!-- Icon -->
-                {{-- <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            d="M16 12H8m0 0l4-4m-4 4l4 4" />
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 pointer-events-none">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <rect width="20" height="16" x="2" y="4" rx="2" />
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                     </svg>
-                </span> --}}
-
-                <!-- Input -->
-                <input type="email" name="email" placeholder="Enter your email" required autofocus
-                    class="w-full px-4 py-3 rounded-xl border border-gray-300 bg-gray-50
-                      text-sm text-gray-700 placeholder-gray-400
-                      focus:bg-white focus:ring-2 focus:ring-[#134169]/30 focus:border-[#134169]
-                      outline-none transition duration-200">
+                </span>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required autofocus
+                    autocomplete="email"
+                    class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900
+                           focus:ring-2 focus:ring-[#134169]/20 focus:border-[#134169] outline-none transition">
             </div>
         </div>
 
-        <!-- Button -->
         <button type="submit"
-            class="w-full py-3 rounded-xl bg-[#134169] text-white text-base font-semibold
-                   hover:bg-[#0f3554] active:scale-[0.98] transition duration-200
-                   shadow-sm flex items-center justify-center gap-2">
-
-            <span>Send Reset Link</span>
-
-            <!-- Icon -->
-            {{-- <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    d="M16 12H8m0 0l4-4m-4 4l4 4" />
-            </svg> --}}
+            class="w-full bg-[#134169] text-white font-semibold py-2.5 px-4 rounded-lg hover:bg-[#0e3354] transition duration-200
+                   focus:outline-none focus:ring-2 focus:ring-[#134169]/40 active:scale-[0.99] shadow-sm">
+            Send reset link
         </button>
 
-        <!-- 2FA -->
         @if (Session::has('two_factor:user_id'))
-            <div class="text-center text-sm text-gray-500">
-                <a href="{{ route('2fa_verify_code') }}" class="text-[#134169] hover:underline">
-                    Resend verification code
-                </a>
+            <div class="text-center text-sm text-slate-500">
+                <a href="{{ route('2fa_verify_code') }}" class="text-[#134169] hover:underline">Resend verification code</a>
             </div>
         @endif
-
     </form>
 
-    <!-- Back -->
-    <div class="text-center mt-6">
+    {{-- Retour --}}
+    <div class="text-center mt-5">
         <a href="{{ route('login') }}"
-            class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#134169] transition">
-
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    d="M15 18l-6-6 6-6" />
+            class="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#134169] transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 18l-6-6 6-6" />
             </svg>
-
             Back to login
         </a>
     </div>
