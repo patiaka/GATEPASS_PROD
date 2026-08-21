@@ -31,6 +31,13 @@ final class CarRequestShow extends Component
             'car_drivers.user:id,name,contact,badge_number',
             'passengers.user:id,name,contact,badge_number',
         );
+
+        // Historique des mouvements (check-in / out) — le plus récent en premier.
+        $this->carRequest->load([
+            'recordings' => fn ($q) => $q
+                ->with(['user:id,name', 'car_driver:id,name'])
+                ->orderByDesc('created_at'),
+        ]);
     }
 
     /**

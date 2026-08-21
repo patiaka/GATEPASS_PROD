@@ -25,6 +25,11 @@ final class MaterialRequestShow extends Component
         $this->MaterialRequest = $MaterialRequest;
 
         $this->MaterialRequest->loadMissing('user:id,name,email,department_id,poste', 'user.department:id,name', 'gmApproval.department:id,name', 'hodApproval.department:id,name', 'documents', 'person_out:id,name,badge_number');
+
+        // Historique des mouvements (check-in / out) — le plus récent en premier.
+        $this->MaterialRequest->load([
+            'recordings' => fn ($q) => $q->with('user:id,name')->orderByDesc('created_at'),
+        ]);
     }
 
     /**

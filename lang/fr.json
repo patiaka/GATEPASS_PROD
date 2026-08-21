@@ -1,4 +1,10 @@
 {
+    "Details": "Détails",
+    "History": "Historique",
+    "Check-in / out history": "Historique des entrées / sorties",
+    "Recorded by": "Enregistré par",
+    "No check-in / out recorded yet.": "Aucune entrée / sortie enregistrée pour le moment.",
+    "Fuel": "Carburant",
     "Currently out": "Actuellement sortis",
     "Session & security": "Session et sécurité",
     "Auto-logout after inactivity": "Déconnexion auto après inactivité",

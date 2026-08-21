@@ -28,6 +28,7 @@
         $drivers = $carRequest->car_drivers;
         $passengers = $carRequest->passengers;
         $hasVehicle = $carRequest->somisy_car !== 'no_vehicle';
+        $movements = $carRequest->recordings;
     @endphp
 
     <main class="p-4 md:p-6 space-y-6 bg-gray-50">
@@ -113,8 +114,22 @@
             </div>
         </div>
 
-        {{-- ============ 2-column layout ============ --}}
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {{-- ============ Onglets (Details / History) ============ --}}
+        <div x-data="{ tab: 'details' }">
+            <div class="flex items-center gap-1 border-b border-gray-200 mb-6">
+                <button type="button" @click="tab = 'details'"
+                    :class="tab === 'details' ? 'border-[#134169] text-[#134169]' : 'border-transparent text-slate-500 hover:text-slate-700'"
+                    class="px-4 py-2 -mb-px border-b-2 text-sm font-semibold transition">{{ __('Details') }}</button>
+                <button type="button" @click="tab = 'history'"
+                    :class="tab === 'history' ? 'border-[#134169] text-[#134169]' : 'border-transparent text-slate-500 hover:text-slate-700'"
+                    class="inline-flex items-center gap-2 px-4 py-2 -mb-px border-b-2 text-sm font-semibold transition">
+                    {{ __('History') }}
+                    <span class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold">{{ $movements->count() }}</span>
+                </button>
+            </div>
+
+        {{-- ============ Details ============ --}}
+        <div x-show="tab === 'details'" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             {{-- ---------- Left ---------- --}}
             <div class="lg:col-span-2 space-y-6">
@@ -312,6 +327,57 @@
                     </ol>
                 </section>
             </div>
+        </div>
+
+        {{-- ============ History (check-in / out) ============ --}}
+        <div x-show="tab === 'history'" x-cloak class="space-y-6">
+            <section class="bg-white border border-gray-200 shadow-sm rounded-xl p-5">
+                <div class="flex items-center gap-2 mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#134169]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="9" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 2" />
+                    </svg>
+                    <h2 class="font-semibold text-sm text-[#134169]">{{ __('Check-in / out history') }}</h2>
+                    <span class="text-xs text-slate-400">({{ $movements->count() }})</span>
+                </div>
+
+                @forelse ($movements as $rec)
+                    @php $isExit = $rec->action === 'Exit'; @endphp
+                    <div class="flex items-start gap-3 py-3 {{ ! $loop->last ? 'border-b border-gray-100' : '' }}">
+                        <span class="mt-0.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ring-1 {{ $isExit ? 'bg-amber-50 text-amber-700 ring-amber-200' : 'bg-emerald-50 text-emerald-700 ring-emerald-200' }}">
+                            <span class="w-1.5 h-1.5 rounded-full {{ $isExit ? 'bg-amber-500' : 'bg-emerald-500' }}"></span>
+                            {{ __($rec->action) }}
+                        </span>
+                        <div class="flex-1 min-w-0 text-sm">
+                            <div class="flex flex-wrap items-center gap-x-4 gap-y-0.5">
+                                <span class="text-slate-700"><span class="text-slate-400 text-xs">{{ __('Gate') }}:</span> {{ $rec->gate ?? '—' }}</span>
+                                @if ($rec->car_driver)
+                                    <span class="text-slate-700"><span class="text-slate-400 text-xs">{{ __('Driver') }}:</span> {{ $rec->car_driver->name }}</span>
+                                @endif
+                                @if ($rec->kilometers)
+                                    <span class="text-slate-700"><span class="text-slate-400 text-xs">Km:</span> {{ $rec->kilometers }}</span>
+                                @endif
+                                @if ($rec->fuel_level)
+                                    <span class="text-slate-700"><span class="text-slate-400 text-xs">{{ __('Fuel') }}:</span> {{ $rec->fuel_level }}</span>
+                                @endif
+                            </div>
+                            <p class="text-[11px] text-slate-400 mt-0.5">
+                                {{ __('Recorded by') }} {{ $rec->user?->name ?? '—' }} ·
+                                {{ \Illuminate\Support\Carbon::parse($rec->created_at)->format('d-m-Y H:i') }}
+                            </p>
+                        </div>
+                    </div>
+                @empty
+                    <div class="flex flex-col items-center gap-2 py-8 text-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-6M12 17V7M15 17v-4M3 3v18h18" />
+                        </svg>
+                        <p class="text-sm">{{ __('No check-in / out recorded yet.') }}</p>
+                    </div>
+                @endforelse
+            </section>
+        </div>
+
         </div>
     </main>
 </div>
