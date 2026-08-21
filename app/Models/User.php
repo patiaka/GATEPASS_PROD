@@ -233,6 +233,15 @@ final class User extends Authenticatable
     }
 
     /**
+     * Envoie l'email de réinitialisation via une notification EN FILE d'attente
+     * (le formulaire « mot de passe oublié » répond instantanément).
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new \App\Notifications\ResetPasswordNotification($token));
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
