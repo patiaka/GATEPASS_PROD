@@ -75,7 +75,7 @@ final class UserIndex extends Component
     public function invite_user(User $user)
     {
         $user->update([
-            'password' => Hash::make('password'),
+            'password' => Hash::make(User::DEFAULT_PASSWORD),
             'change_password' => false,
         ]);
 

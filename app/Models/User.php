@@ -18,6 +18,9 @@ final class User extends Authenticatable
 {
     use DateFormat, HasRoles, Notifiable;
 
+    /** Mot de passe par défaut attribué aux nouveaux comptes (à changer à la 1re connexion). */
+    public const DEFAULT_PASSWORD = 'Welcome@123';
+
     /**
      * The attributes that are mass assignable.
      *

@@ -42,8 +42,8 @@ final class UsersImport implements OnEachRow, SkipsOnFailure, WithHeadingRow, Wi
             'badge_number' => (string) $data['badge_number'],
             'role' => $this->role,
             'department_id' => $this->departmentId,
-            // Mot de passe temporaire : l'utilisateur devra le définir à la connexion
-            'password' => Hash::make('password'),
+            // Mot de passe par défaut : l'utilisateur devra le changer à la connexion
+            'password' => Hash::make(User::DEFAULT_PASSWORD),
             'change_password' => false,
         ]);
 

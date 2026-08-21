@@ -79,6 +79,9 @@ final class UserForm extends Form
             ...$this->only(['name', 'email', 'department_id', 'poste', 'badge_number', 'contact']),
             // colonne users.role NOT NULL : on met le rôle principal (le 1er coché)
             'role' => $this->roles[0],
+            // Mot de passe par défaut (à changer à la 1re connexion)
+            'password' => Hash::make(User::DEFAULT_PASSWORD),
+            'change_password' => false,
         ]);
         $item->syncRoles($this->roles);
 

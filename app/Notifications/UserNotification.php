@@ -42,7 +42,7 @@ final class UserNotification extends Notification implements ShouldQueue
             ->line('Your account has been created successfully.')
             ->line('Here are your account details:')
             ->line('Email: '.$this->user->email)
-            ->line('Password: password')
+            ->line('Password: '.User::DEFAULT_PASSWORD)
             ->line('⚠️ You will be required to change this password on your first login.')
             ->action('Login Now', route('login'))
             // ->line('Thank you for using our application!')
