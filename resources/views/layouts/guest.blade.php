@@ -5,7 +5,7 @@
     @vite(['resources/css/app.css'])
 
     {{-- Analytics (Umami) --}}
-    <script defer src="https://umami.syama.resolute-ltd.com.au/script.js" data-website-id="77d18503-dce4-49cb-9515-41768a293745"></script>
+    <script defer src="https://umami.syama.resolute-ltd.com.au/script.js" data-website-id="0c6dabe3-9320-43ae-b7b9-2c587073ab90"></script>
 </head>
 
 <body class="min-h-screen flex flex-col gap-10 items-center justify-center bg-gray-100"
