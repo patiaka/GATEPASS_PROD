@@ -45,5 +45,8 @@ final class UserPassChange extends Component
         $this->reset('current_password', 'password', 'password_confirmation');
 
         flash()->success('Password changed successfully');
+
+        // Redirection directe vers le tableau de bord après le changement.
+        return $this->redirectRoute('dashboard', navigate: true);
     }
 }
