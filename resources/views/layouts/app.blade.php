@@ -136,6 +136,9 @@
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    {{-- Analytics (Umami) --}}
+    <script defer src="https://umami.syama.resolute-ltd.com.au/script.js" data-website-id="77d18503-dce4-49cb-9515-41768a293745"></script>
+
 </head>
 
 <body class="relative text-slate-600 flex flex-col overflow-hidden">
