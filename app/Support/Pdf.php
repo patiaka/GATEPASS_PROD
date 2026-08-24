@@ -29,9 +29,16 @@ final class Pdf
      *   vers le profil du compte de service (« Could not find Chrome »).
      * - noSandbox() : requis par Chrome headless sous Windows Server.
      * - timeout(120) : laisse le temps à Chrome de démarrer et rendre.
+     * - set_time_limit(180) : le max_execution_time de la prod est à 30 s, soit
+     *   moins que le démarrage de Chrome sur un rapport de plusieurs pages
+     *   (« Maximum execution time of 30 seconds exceeded »).
      */
     public static function make(string $html): Browsershot
     {
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(180);
+        }
+
         $tmp = storage_path('app/pdftmp');
         if (! is_dir($tmp)) {
             @mkdir($tmp, 0775, true);
@@ -72,24 +79,58 @@ final class Pdf
      */
     public static function chromePath(): ?string
     {
+        // 1. Chemin explicite. Un chemin erroné ne bloque pas : on continue la
+        //    recherche plutôt que de retomber sur la résolution de Puppeteer,
+        //    qui échoue sous IIS.
         $configured = config('browsershot.chrome_path');
-        if (is_string($configured) && $configured !== '') {
-            return is_file($configured) ? $configured : null;
+        if (is_string($configured) && $configured !== '' && is_file($configured)) {
+            return $configured;
         }
 
-        $roots = array_filter([
+        // 2. Navigateur installé sur la machine.
+        $roots = array_unique(array_filter([
             getenv('ProgramFiles') ?: null,
             getenv('ProgramFiles(x86)') ?: null,
             'C:\\Program Files',
             'C:\\Program Files (x86)',
-        ]);
+        ]));
 
         foreach (self::CANDIDATES as $candidate) {
-            foreach (array_unique($roots) as $root) {
+            foreach ($roots as $root) {
                 $path = sprintf($candidate, rtrim($root, '\\'));
 
                 if (is_file($path)) {
                     return $path;
+                }
+            }
+        }
+
+        // 3. Navigateur téléchargé par `npx puppeteer browsers install chrome`.
+        return self::puppeteerChrome();
+    }
+
+    /**
+     * Dernière version installée dans un cache Puppeteer, dont le format est
+     * `<cache>/chrome/win64-<version>/chrome-win64/chrome.exe`.
+     */
+    private static function puppeteerChrome(): ?string
+    {
+        $caches = array_unique(array_filter([
+            config('browsershot.puppeteer_cache_dir'),
+            getenv('PUPPETEER_CACHE_DIR') ?: null,
+            ($home = getenv('USERPROFILE') ?: getenv('HOME')) ? $home.'/.cache/puppeteer' : null,
+        ]));
+
+        foreach ($caches as $cache) {
+            $base = rtrim(str_replace('\\', '/', (string) $cache), '/');
+
+            foreach (['chrome/*/chrome-win64/chrome.exe', 'chrome/*/chrome-linux64/chrome'] as $pattern) {
+                $matches = glob($base.'/'.$pattern) ?: [];
+
+                if ($matches !== []) {
+                    rsort($matches, SORT_NATURAL);
+
+                    return $matches[0];
                 }
             }
         }
