@@ -10,6 +10,9 @@
     $keys = array_keys($sources);
     $single = count($keys) === 1;
     $pct = fn (int $value, int $total) => $total > 0 ? round($value / $total * 100, 1) : 0.0;
+    // $print : document servi au navigateur pour impression (marges CSS +
+    // ouverture du dialogue). Sinon, les marges viennent de Browsershot.
+    $print = $print ?? false;
 @endphp
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
@@ -36,6 +39,9 @@
 
         @page {
             size: A4 portrait;
+            {{-- Browsershot fixe lui-même ses marges ; à l'impression navigateur
+                 c'est la feuille de style qui doit les fournir. --}}
+            @if ($print) margin: 10mm 9mm 12mm; @endif
         }
 
         body {
@@ -292,10 +298,82 @@
             font-weight: 600;
             color: #fff;
         }
+
+        @if ($print)
+            /* ── Impression navigateur ─────────────────────────────────
+               À l'écran : une feuille A4 centrée, avec la barre d'action.
+               À l'impression : la feuille reprend toute la page. */
+            @media screen {
+                body {
+                    background: #eef2f7;
+                    padding-bottom: 40px;
+                }
+
+                .sheet {
+                    width: 190mm;
+                    margin: 0 auto;
+                    padding: 10mm 9mm;
+                    background: #fff;
+                    box-shadow: 0 10px 30px rgba(15, 23, 42, .14);
+                }
+
+                .bar {
+                    position: sticky;
+                    top: 0;
+                    z-index: 10;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 10px 16px;
+                    margin-bottom: 16px;
+                    background: var(--brand);
+                    color: #fff;
+                    font-size: 12px;
+                }
+
+                .bar button {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    border: 0;
+                    border-radius: 6px;
+                    padding: 7px 14px;
+                    background: #ffd324;
+                    color: #10314f;
+                    font: inherit;
+                    font-weight: 700;
+                    cursor: pointer;
+                }
+
+                .bar a {
+                    margin-left: auto;
+                    color: #cfe1f2;
+                    font-size: 11px;
+                }
+            }
+
+            @media print {
+                .no-print {
+                    display: none !important;
+                }
+            }
+        @endif
     </style>
 </head>
 
 <body>
+
+    @if ($print)
+        <div class="bar no-print">
+            <button type="button" onclick="window.print()">
+                {{ __('Print / Save as PDF') }}
+            </button>
+            <span>{{ __('In the print dialog, choose “Save as PDF” as the destination.') }}</span>
+            <a href="{{ route('reports.offsite') }}">{{ __('Back to the report') }}</a>
+        </div>
+    @endif
+
+    <div class="sheet">
 
     {{-- ─────────────────────────── En-tête ─────────────────────────── --}}
     <div class="head">
@@ -546,6 +624,17 @@
     <p class="note" style="margin-top:14px">
         {{ __('Figures cover the selected period and filters. Check-outs and check-ins count gate movements; requests count submitted forms.') }}
     </p>
+
+    </div>{{-- .sheet --}}
+
+    @if ($print)
+        {{-- Ouvre le dialogue d'impression une fois la page peinte. --}}
+        <script>
+            window.addEventListener('load', function () {
+                window.setTimeout(function () { window.print(); }, 400);
+            });
+        </script>
+    @endif
 
 </body>
 

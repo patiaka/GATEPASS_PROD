@@ -372,5 +372,12 @@
     "Offsite Records report": "Rapport des sorties",
     "Generated on": "Généré le",
     "By": "Par",
-    "Figures cover the selected period and filters. Check-outs and check-ins count gate movements; requests count submitted forms.": "Les chiffres portent sur la période et les filtres sélectionnés. Les sorties et entrées comptent les passages aux portes ; les demandes comptent les formulaires soumis."
+    "Figures cover the selected period and filters. Check-outs and check-ins count gate movements; requests count submitted forms.": "Les chiffres portent sur la période et les filtres sélectionnés. Les sorties et entrées comptent les passages aux portes ; les demandes comptent les formulaires soumis.",
+
+    "Print / Save as PDF": "Imprimer / Enregistrer en PDF",
+    "In the print dialog, choose “Save as PDF” as the destination.": "Dans la boîte de dialogue, choisissez « Enregistrer au format PDF » comme destination.",
+    "Back to the report": "Retour au rapport",
+    "Opens a printable page — choose “Save as PDF”": "Ouvre une page imprimable — choisissez « Enregistrer au format PDF »",
+    "Generates the PDF on the server (requires Chrome)": "Génère le PDF sur le serveur (nécessite Chrome)",
+    "Server": "Serveur"
 }

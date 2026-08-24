@@ -18,20 +18,36 @@
             </p>
         </div>
 
-        <button type="button" wire:click="exportPdf" wire:loading.attr="disabled" wire:target="exportPdf"
-            class="inline-flex items-center gap-2 rounded-lg bg-[#134169] px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#0e3252] disabled:cursor-wait disabled:opacity-60 self-start">
-            <svg wire:loading.remove wire:target="exportPdf" class="w-4 h-4" fill="none" stroke="currentColor"
-                stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M12 10v6m0 0l-3-3m3 3l3-3M4 6a2 2 0 012-2h7l5 5v9a2 2 0 01-2 2H6a2 2 0 01-2-2V6z" />
-            </svg>
-            <svg wire:loading wire:target="exportPdf" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-            </svg>
-            <span wire:loading.remove wire:target="exportPdf">{{ __('Export PDF') }}</span>
-            <span wire:loading wire:target="exportPdf">{{ __('Generating…') }}</span>
-        </button>
+        <div class="flex items-center gap-2 self-start">
+            {{-- Chemin principal : la page imprimable, rendue par le navigateur
+                 de l'utilisateur — aucune dépendance serveur. --}}
+            <a href="{{ $printUrl }}" target="_blank" rel="noopener"
+                title="{{ __('Opens a printable page — choose “Save as PDF”') }}"
+                class="inline-flex items-center gap-2 rounded-lg bg-[#134169] px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#0e3252]">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 10v6m0 0l-3-3m3 3l3-3M4 6a2 2 0 012-2h7l5 5v9a2 2 0 01-2 2H6a2 2 0 01-2-2V6z" />
+                </svg>
+                {{ __('Export PDF') }}
+            </a>
+
+            {{-- Chemin secondaire : génération par Chrome headless sur le serveur. --}}
+            <button type="button" wire:click="exportPdf" wire:loading.attr="disabled" wire:target="exportPdf"
+                title="{{ __('Generates the PDF on the server (requires Chrome)') }}"
+                class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-gray-50 disabled:cursor-wait disabled:opacity-60">
+                <svg wire:loading.remove wire:target="exportPdf" class="w-4 h-4" fill="none" stroke="currentColor"
+                    stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M5 12a7 7 0 0114 0M5 12a7 7 0 0014 0M5 12H3m18 0h-2M12 5V3m0 18v-2" />
+                </svg>
+                <svg wire:loading wire:target="exportPdf" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                </svg>
+                <span wire:loading.remove wire:target="exportPdf">{{ __('Server') }}</span>
+                <span wire:loading wire:target="exportPdf">{{ __('Generating…') }}</span>
+            </button>
+        </div>
     </div>
 
     {{-- Filters bar --}}

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Enum\RoleEnum;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\Reports\OffsitePrintController;
+use App\Livewire\Audit\AuditLog;
 use App\Livewire\CarRequest\CarRequestCheckIn;
 use App\Livewire\CarRequest\CarRequestCheckInCreate;
 use App\Livewire\CarRequest\CarRequestCreate;
@@ -11,13 +13,12 @@ use App\Livewire\CarRequest\CarRequestIndex;
 use App\Livewire\CarRequest\CarRequestPending;
 use App\Livewire\CarRequest\CarRequestShow;
 use App\Livewire\CarRequest\CarRequestUpdate;
-use App\Livewire\Audit\AuditLog;
 use App\Livewire\Dashboard;
-use App\Livewire\GateConsole;
-use App\Livewire\MaterialGateConsole;
 use App\Livewire\Department\DepartmentCreate;
 use App\Livewire\Department\DepartmentEdit;
 use App\Livewire\Department\DepartmentIndex;
+use App\Livewire\GateConsole;
+use App\Livewire\MaterialGateConsole;
 use App\Livewire\MaterialRequest\MaterialRequestCheckIn;
 use App\Livewire\MaterialRequest\MaterialRequestCheckInCreate;
 use App\Livewire\MaterialRequest\MaterialRequestCreate;
@@ -44,14 +45,14 @@ Route::get('locale/{locale}', function (string $locale) {
 
 Route::middleware(['auth'])->group(function () {
     // Seuls HOD, GM et Admin
-    Route::middleware('role:' . RoleEnum::HOD->value . ',' . RoleEnum::GM->value . ',' . RoleEnum::ADMIN->value . ',' . RoleEnum::DIRECTOR->value)
+    Route::middleware('role:'.RoleEnum::HOD->value.','.RoleEnum::GM->value.','.RoleEnum::ADMIN->value.','.RoleEnum::DIRECTOR->value)
         ->group(function () {
             Route::get('material/request/pending', MaterialRequestPending::class)->name('material.pending');
             Route::get('car/request/pending', CarRequestPending::class)->name('car.pending');
         });
 
     // Admin uniquement
-    Route::middleware('role:' . RoleEnum::ADMIN->value)->group(function () {
+    Route::middleware('role:'.RoleEnum::ADMIN->value)->group(function () {
         Route::get('user', UserIndex::class)->name('user.index');
         Route::get('user/{user}/edit', UserUpdate::class)->name('user.edit');
         Route::get('user/create', UserCreate::class)->name('user.create');
@@ -63,13 +64,13 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Check-in : listes visibles par Admin, GM, Security (lecture)
-    Route::middleware('role:' . RoleEnum::Security->value . ',' . RoleEnum::ADMIN->value . ',' . RoleEnum::GM->value)->group(function () {
+    Route::middleware('role:'.RoleEnum::Security->value.','.RoleEnum::ADMIN->value.','.RoleEnum::GM->value)->group(function () {
         Route::get('material/request/check/in', MaterialRequestCheckIn::class)->name('material.check');
         Route::get('car/request/check/in', CarRequestCheckIn::class)->name('car.check');
     });
 
     // Check-in : enregistrement réservé à Admin et Security (GM ne fait que consulter)
-    Route::middleware('role:' . RoleEnum::Security->value . ',' . RoleEnum::ADMIN->value)->group(function () {
+    Route::middleware('role:'.RoleEnum::Security->value.','.RoleEnum::ADMIN->value)->group(function () {
         Route::get('car/request/check/in/create', CarRequestCheckInCreate::class)->name('car.check_create');
         Route::get('material/request/check/in/create', MaterialRequestCheckInCreate::class)->name('material.check_create');
 
@@ -79,8 +80,10 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Rapports : Admin, GM, Security
-    Route::middleware('role:' . RoleEnum::ADMIN->value . ',' . RoleEnum::GM->value . ',' . RoleEnum::Security->value)->group(function () {
+    Route::middleware('role:'.RoleEnum::ADMIN->value.','.RoleEnum::GM->value.','.RoleEnum::Security->value)->group(function () {
         Route::get('reports/offsite', OffsiteReport::class)->name('reports.offsite');
+        // Version imprimable : le navigateur de l'utilisateur produit le PDF.
+        Route::get('reports/offsite/print', OffsitePrintController::class)->name('reports.offsite.print');
     });
     // Routes accessibles à tous
     Route::get('/', Dashboard::class)->name('dashboard');
@@ -96,4 +99,4 @@ Route::middleware(['auth'])->group(function () {
     Route::get('user/pass', UserPassChange::class)->name('user.pass');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
