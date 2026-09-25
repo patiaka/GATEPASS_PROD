@@ -41,6 +41,7 @@ final class MaterialRequestUpdate extends Component
 
         $this->form->materials = $MaterialRequest->material_request_items
             ->map(fn ($item) => [
+                'id' => $item->id,
                 'designation' => $item->designation,
                 'quantity' => $item->quantity,
                 'serial_number' => $item->serial_number,
@@ -70,9 +71,9 @@ final class MaterialRequestUpdate extends Component
             $this->materialRequest->resetForResubmission();
             RequestCreated::dispatch($this->materialRequest->fresh());
             flash()->success('Request corrected and resubmitted for approval.');
-
-            return $this->redirectRoute('material.index');
         }
+
+        return $this->redirectRoute('material.index');
     }
 
 

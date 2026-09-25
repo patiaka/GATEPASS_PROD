@@ -200,24 +200,24 @@ final class MaterialRequestForm extends Form
         $existingItems = $this->materialRequest->material_request_items->keyBy('id');
 
         foreach ($this->materials as $material) {
-            if (isset($material['id'])) {
-                // Update existing item
-                $existingItems[$material['id']]->update([
-                    'designation' => $material['designation'],
-                    'quantity' => $material['quantity'],
-                ]);
+            $attributes = [
+                'designation' => $material['designation'],
+                'quantity' => $material['quantity'],
+                'serial_number' => $material['serial_number'] ?? null,
+            ];
+
+            $existing = isset($material['id']) ? $existingItems->get($material['id']) : null;
+
+            if ($existing) {
+                $existing->update($attributes);
             } else {
-                // Create a new item
-                $this->materialRequest->material_request_items()->create([
-                    'designation' => $material['designation'],
-                    'quantity' => $material['quantity'],
-                ]);
+                $this->materialRequest->material_request_items()->create($attributes);
             }
         }
 
         // Delete items that were removed
-        $toDelete = $existingItems->keys()->diff(collect($this->materials)->pluck('id'));
-        
+        $toDelete = $existingItems->keys()->diff(collect($this->materials)->pluck('id')->filter());
+
         $this->materialRequest->material_request_items()->whereIn('id', $toDelete)->delete();
     }
 }
