@@ -85,7 +85,7 @@
                         <th class="border border-black px-2 py-2 w-12 text-left">#</th>
                         <th class="border border-black px-2 py-2 text-left">Description / Designation</th>
                         <th class="border border-black px-2 py-2 w-24 text-center">Quantity</th>
-                        <th class="border border-black px-2 py-2 w-40 text-left">Serial Number</th>
+                        <th class="border border-black px-2 py-2 w-40 text-left">Additional info</th>
                     </tr>
                 </thead>
                 <tbody>
